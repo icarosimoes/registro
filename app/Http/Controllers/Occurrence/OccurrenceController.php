@@ -39,6 +39,7 @@ class OccurrenceController extends Controller
      */
     public function store(Request $request)
     {
+        
         $occurrence = $this->service->store($request->all());
         if ($occurrence) {
             echo json_encode(['success' => true, 'message' => 'Registro Cadastrado com sucesso.']);

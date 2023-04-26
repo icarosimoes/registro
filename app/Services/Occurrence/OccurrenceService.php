@@ -80,9 +80,13 @@ class OccurrenceService extends Service
         return $typeOccurrence;
     }
 
-    public function store(array $data)
+    public function store($data)
     {
         $this->validate($data);
+
+        $path = request()->file('file')->store('registers');
+        dd($path);
+
         $occurrence = new Occurrence();
         $occurrence->title = $data['title'];
         $occurrence->deadline = $data['deadline'];
