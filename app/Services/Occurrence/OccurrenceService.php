@@ -10,6 +10,7 @@ use App\Models\TypeOccurrence;
 use App\Models\User;
 use App\Services\Service;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class OccurrenceService extends Service
@@ -84,9 +85,11 @@ class OccurrenceService extends Service
     {
         $this->validate($data);
 
-        $path = request()->file('file')->store('registers');
-        dd($path);
-
+        if (request()->hasFile('file') && request()->file->isValid() ){
+            request()->file('file')->store('registers');
+        }
+ 
+         
         $occurrence = new Occurrence();
         $occurrence->title = $data['title'];
         $occurrence->deadline = $data['deadline'];
