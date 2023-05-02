@@ -29,12 +29,23 @@
                                 <!-- /.card-header -->
                                 <!-- form start -->
                                 <div class="card-body">
-                                    <div class="form-group">
-                                        <label for="Name">Titulo</label>
-                                        <input type="text" class="form-control" value="{{ $data->title }}" name="title"
-                                            id="title" placeholder="" required>
-                                        <input type="hidden" name="id" id="id" value="{{ $data->id }}">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <div class="form-group">
+                                                <label for="Name">Titulo</label>
+                                                <input type="text" class="form-control" value="{{ $data->title }}" name="title" id="title" placeholder="" required>
+                                                <input type="hidden" name="id" id="id" value="{{ $data->id }}">
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="Name">Anexo</label>
+                                                <input type="file" class="form-control" id="file">
+                                                
+                                            </div>
+                                        </div>
                                     </div>
+                                    
                                     @foreach ($occurrenceComments as $occurrenceComment)
                                         <div class="col">
                                             <div class="direct-chat-msg">
