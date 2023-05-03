@@ -57,6 +57,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('list/occurrence', 'Occurrence\OccurrenceController@index')->name('occurrence.list');
         Route::get('list/create', 'Occurrence\OccurrenceController@create')->name('occurrence.create');
         Route::post('occurrence/store', 'Occurrence\OccurrenceController@store');
+        Route::get('list/edit/download_file/{occurrence}', 'Occurrence\OccurrenceController@downloadFile')->name('occurrence.edit.download_file');
         Route::get('list/edit/{id}', 'Occurrence\OccurrenceController@edit')->name('occurrence.edit');
         Route::post('occurrence/update', 'Occurrence\OccurrenceController@update');
         Route::get('list/view/{id}', 'Occurrence\OccurrenceController@show')->name('occurrence.view');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Occurrence;
 
 use App\Http\Controllers\Controller;
+use App\Models\Occurrence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
@@ -40,8 +41,8 @@ class OccurrenceController extends Controller
      */
     public function store(Request $request)
     {
-        
-      
+
+
         $occurrence = $this->service->store($request->all());
         if ($occurrence) {
             echo json_encode(['success' => true, 'message' => 'Registro Cadastrado com sucesso.']);
@@ -92,7 +93,7 @@ class OccurrenceController extends Controller
                 'occurrenceComments' => $getOccurrenceComments,
                 'participants' => $getParticipants,
             ]);
-        }else{
+        } else {
             return Redirect::back()->withErrors(['Acesso não permitido, MOTIVO: Esse registro não foi atribuido a você, ou você não foi o criador.', 'The Message']);
         }
     }
@@ -114,12 +115,18 @@ class OccurrenceController extends Controller
         }
     }
 
+    public function downloadFile(Occurrence $occurrence)
+    {
+        return Storage::download($occurrence->file);
+    }
+
+
     public function getOccurrence()
     {
         $data = $this->service->index();
-        if($data){
+        if ($data) {
             echo json_encode(['success' => true, 'data' => $data]);
-        }else{
+        } else {
             echo json_encode(['success' => false, 'data' => []]);
         }
     }
@@ -135,8 +142,8 @@ class OccurrenceController extends Controller
         $occurrence = $this->service->destroy($id);
         if ($occurrence) {
             return redirect()->route('occurrence.list');
-        }else{
-            return Redirect::back()->withErrors(['Não foi possível remover esse registro, ele pode ter ligações com outras funcionalidades.','']);
+        } else {
+            return Redirect::back()->withErrors(['Não foi possível remover esse registro, ele pode ter ligações com outras funcionalidades.', '']);
         }
     }
 }
