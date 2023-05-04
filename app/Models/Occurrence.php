@@ -14,6 +14,14 @@ class Occurrence extends Model
         return $this->belongsTo('App\Models\User');
     }
 
+    public function createdBy(){
+        return $this->belongsTo(User::class,'created_by');
+    }
+
+    public function updatedBy(){
+        return $this->belongsTo(User::class,'updated_by');
+    }
+
     protected static function booted()
     {
 

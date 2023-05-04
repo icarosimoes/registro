@@ -161,6 +161,7 @@ class OccurrenceService extends Service
             if (!empty($data['comments'])) {
                 $occurrence->comments = $data['comments'] ?? $occurrence->comments;
             }
+            $occurrence->updated_by = Auth::id();
             $occurrence->save();
             $insertID = $occurrence->id;
 

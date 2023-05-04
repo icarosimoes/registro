@@ -113,7 +113,7 @@
                                                     data-toggle="tooltip" data-placement="top" title="Excluir"
                                                     class="btn btn-danger"><i class="fas fa-trash"></i></a>
                                                 {{-- @endcan --}}
-                                                <button class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Criado em: {{ (new DateTime($item->created_at))->format('d/m/Y H:i:s') }} Por:  | Atualizado em: {{ (new DateTime($item->updated_at))->format('d/m/Y H:i:s') }} Por: "><i class="fas fa-info-circle"></i></button>
+                                                <button class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Criado em: {{ (new DateTime($item->created_at))->format('d/m/Y H:i:s') }} Por: {{ @$item->createdBy->name }}  | Atualizado em: {{ (new DateTime($item->updated_at))->format('d/m/Y H:i:s') }} Por: {{ @$item->updatedBy->name }} "><i class="fas fa-info-circle"></i></button>
                                             </div>
                                         </td>
                                     </tr>
