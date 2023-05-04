@@ -118,7 +118,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Participantes</label>
+                                    <label>Notificar</label>
                                     <div class="select2-purple">
                                         <select class="select2" id="participants" name="participants"
                                             multiple="multiple" data-placeholder="Selecione 1 ou mais participantes"

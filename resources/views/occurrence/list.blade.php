@@ -21,8 +21,11 @@
                                 <div class="col">
                                     <a type="button" href="{{ route('occurrence.create') }}" data-toggle="tooltip"
                                         data-placement="top" title="Novo Registro"
-                                        class="btn bg-gradient-secondary btn-sm float-right"><i class="fas fa-plus"></i>
+                                        class="btn bg-gradient-secondary btn-sm "><i class="fas fa-plus"></i>
                                         Novo Registro</a>
+                                </div>
+                                <div class="col text-right">
+                                    <button type="button" id="filter" class="btn bg-gradient-info btn-sm "><i class="fas fa-filter"></i> Filtro </button>
                                 </div>
                             </div>
                         </div>
@@ -34,6 +37,31 @@
                                 </button>
                             </div>
                         @endif
+
+                        <form name="form" id="form" action="" enctype="multipart/form-data" method="GET">
+                            <div class="callout callout-info" id="card_filter" style="display: none">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label for="Name">Status</label>
+                                            <select class="form-control" name="status" id="status">
+                                                <option value="0">Todos</option>
+                                                <option value="1">Em Aberto</option>
+                                                <option value="2">Em Andamento</option>
+                                                <option value="3">Fechado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="row">
+                                    <div class="col text-right">
+                                        <button type="submit" class="btn btn-sm btn-info btn-flat"><i class="fas fa-search"></i> Aplicar</button>
+                                    </div>
+                                </div>
+                              </div>
+
+                        </form>
                         <table name="DataTableUser" id="DataTableUser" class="table table-striped table-sm table-hover">
                             <thead>
                                 <tr>
@@ -101,5 +129,5 @@
 
         </div>
     </div>
-
+    @section('plugins.scriptListOccurrence', true)
 @endsection

@@ -465,6 +465,17 @@ return [
             ],
         ],
         [
+            'name' => 'scriptListOccurrence',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/occurrence/occurrence_list.js',
+                ],
+            ],
+        ],
+        [
             'name' => 'scriptCreateMeeting',
             'active' => false,
             'files' => [

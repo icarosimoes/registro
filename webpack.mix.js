@@ -24,6 +24,7 @@ mix.react('resources/js/app.js', 'public/js')
     //occurrence
     .js('resources/js/Jquery/modules/occurrence/occurrence_create.js', 'public/js/jquery/modules/occurrence')
     .js('resources/js/Jquery/modules/occurrence/occurrence_update.js', 'public/js/jquery/modules/occurrence')
+    .js('resources/js/Jquery/modules/occurrence/occurrence_list.js', 'public/js/jquery/modules/occurrence')
     //meeting
     .js('resources/js/Jquery/modules/meeting/meeting.js', 'public/js/jquery/modules/meeting')
     .js('resources/js/Jquery/modules/meeting/meeting_update.js', 'public/js/jquery/modules/meeting')
