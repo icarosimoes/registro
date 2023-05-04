@@ -29,9 +29,9 @@ class Occurrence extends Model
             $occurrence->created_by = Auth::id();
         });
 
-        static::updating(function ($occurrence) {
-            $occurrence->updated_by = Auth::id();
-        });
+        // static::updating(function ($occurrence) {
+        //     $occurrence->updated_by = Auth::id();
+        // });
 
         // static::deleting(function ($occurrence) {
         //     $occurrence->deleted_by = Auth::id();

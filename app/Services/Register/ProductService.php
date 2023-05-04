@@ -12,9 +12,10 @@ use App\Models\Register\Unit;
 use App\Services\Service;
 use Illuminate\Support\Facades\Validator;
 use NumberFormatter;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class ProductService extends Service
 {
+     
 
     public function index($id)
     {

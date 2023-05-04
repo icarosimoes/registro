@@ -53,6 +53,12 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('permission/remove/{id}', 'Admin\PermissionController@destroy')->name('permission.remove');
     });
 
+    Route::prefix('register')->group(function(){
+        Route::resource('sector','Register\SectorController');
+        
+    }); 
+    
+    
     Route::prefix('occurrence')->group(function(){
         Route::get('list/occurrence', 'Occurrence\OccurrenceController@index')->name('occurrence.list');
         Route::get('list/create', 'Occurrence\OccurrenceController@create')->name('occurrence.create');
@@ -64,6 +70,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('list/destroy/{id}', 'Occurrence\OccurrenceController@destroy')->name('occurrence.delete');
         Route::get('get/occurrence', 'Occurrence\OccurrenceController@getOccurrence');
     });
+
     Route::prefix('event')->group(function(){
         //meeting
         Route::get('list/meeting', 'Event\Meeting\MeetingController@index')->name('meeting.list');

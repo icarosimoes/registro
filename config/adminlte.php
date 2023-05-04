@@ -212,9 +212,22 @@ return [
         // ['header' => 'account_settings'],
         // ['header' => 'modules'],
         [
+            'text' => 'Cadastro',
+            'icon' => 'fas fa-fw fa fa-save',
+            'submenu' => [
+                [
+                    'text' => 'Setores',
+                    'url' => 'register/sector',
+                ],
+                
+            ],
+        ],
+        
+        [
             'text' => 'Registros',
             'icon' => 'fas fa-fw fa fa-clipboard',
             'submenu' => [
+                
                 [
                     'text' => 'Lista de Registros',
                     'url' => 'occurrence/list/occurrence',
@@ -439,6 +452,39 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/admin/edit_user_profile.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptCreateSector',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/sector/sector_create.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptUpdateSector',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/sector/sector_update.js',
+                ],
+            ],
+        ],  
+        [
+            'name' => 'scriptListSector',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/sector/sector_list.js',
                 ],
             ],
         ],

@@ -15,6 +15,12 @@ mix.react('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .js('resources/js/Jquery/global.js', 'public/js/jquery')
     .js('resources/js/Jquery/modules/admin/list.js', 'public/js/jquery/modules/admin')
+    
+    //register
+    .js('resources/js/Jquery/modules/register/sector/sector_create.js', 'public/js/jquery/modules/register/sector')
+    .js('resources/js/Jquery/modules/register/sector/sector_update.js', 'public/js/jquery/modules/register/sector')
+    .js('resources/js/Jquery/modules/register/sector/sector_list.js', 'public/js/jquery/modules/register/sector')
+
     // admin module
     .js('resources/js/Jquery/modules/admin/create_user.js', 'public/js/jquery/modules/admin')
     .js('resources/js/Jquery/modules/admin/edit_user.js', 'public/js/jquery/modules/admin')
