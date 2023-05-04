@@ -25,6 +25,8 @@ class OccurrenceService extends Service
         
         if( request()->status != 0 ){
             $occurrence->where('status',request()->status);
+        }elseif(request()->status == null){
+            $occurrence->whereIn('status',[1,2]);
         }
         
         $occurrence = $occurrence->get();
