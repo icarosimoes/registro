@@ -104,7 +104,7 @@
                                                 @if ($item->status == 1 || $item->status == 2)
                                                     <a href="{{ route('occurrence.edit', ['id' => $item['id']]) }}"
                                                         data-toggle="tooltip" data-placement="top" title="Editar"
-                                                        class="btn btn-info"><i class="fas fa-pencil-alt"></i></a>
+                                                        class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a>
                                                 @endif
 
                                                 {{-- @endcan --}}
@@ -113,7 +113,7 @@
                                                     data-toggle="tooltip" data-placement="top" title="Excluir"
                                                     class="btn btn-danger"><i class="fas fa-trash"></i></a>
                                                 {{-- @endcan --}}
-
+                                                <button class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Criado em: {{ (new DateTime($item->created_at))->format('d/m/Y H:i:s') }} Por:  | Atualizado em: {{ (new DateTime($item->updated_at))->format('d/m/Y H:i:s') }} Por: "><i class="fas fa-info-circle"></i></button>
                                             </div>
                                         </td>
                                     </tr>
