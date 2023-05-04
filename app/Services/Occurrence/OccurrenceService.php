@@ -10,6 +10,8 @@ use App\Models\TypeOccurrence;
 use App\Models\User;
 use App\Services\Service;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class OccurrenceService extends Service
@@ -19,7 +21,15 @@ class OccurrenceService extends Service
 
     public function index()
     {
-        $occurrence = Occurrence::All()->sortByDesc('created_at');
+        $occurrence = Occurrence::orderBy('created_at');
+        
+        if( request()->status != 0 ){
+            $occurrence->where('status',request()->status);
+        }elseif(request()->status == null){
+            $occurrence->whereIn('status',[1,2]);
+        }
+        
+        $occurrence = $occurrence->get();
         return $occurrence;
     }
 
@@ -80,13 +90,20 @@ class OccurrenceService extends Service
         return $typeOccurrence;
     }
 
-    public function store(array $data)
+    public function store($data)
     {
         $this->validate($data);
+
+        if (request()->hasFile('file') && request()->file->isValid() ){
+           $filePath = request()->file('file')->store('registers');
+        }
+ 
+         
         $occurrence = new Occurrence();
         $occurrence->title = $data['title'];
         $occurrence->deadline = $data['deadline'];
         $occurrence->receiver_user = $data['receiver'];
+        $occurrence->file = $filePath;
         if (!empty($data['comments'])){
             $occurrence->comments = $data['comments'];
         }
@@ -120,16 +137,31 @@ class OccurrenceService extends Service
 
     public function update(array $data)
     {
+        DB::beginTransaction();
         $this->validate($data);
+        
+        $filePath = null;
+        if (request()->hasFile('file') && request()->file->isValid() ){
+            $occurrence =  Occurrence::find($data['id']);
+            Storage::delete($occurrence->file);
+            $filePath = request()->file('file')->store('registers');
+            $occurrence->file = $filePath ;
+            $occurrence->save();
+        }
+
+        
         if (!empty($data['id'])) {
             $occurrence = $this->show($data['id']);
             $occurrence->title = $data['title'] ?? $occurrence->title;
             $occurrence->status = $data['status'] ?? $occurrence->status;
             $occurrence->deadline = $data['deadline'] ?? $occurrence->deadline;
             $occurrence->receiver_user = $data['receiver'] ?? $occurrence->receiver_user;
+            
+            
             if (!empty($data['comments'])) {
                 $occurrence->comments = $data['comments'] ?? $occurrence->comments;
             }
+            $occurrence->updated_by = Auth::id();
             $occurrence->save();
             $insertID = $occurrence->id;
 
@@ -158,6 +190,7 @@ class OccurrenceService extends Service
                 ];
                 Occurrence_comments::insert($Occurrence_comments);
             }
+            DB::commit();
             return $occurrence;
         } else {
             return false;

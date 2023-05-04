@@ -212,9 +212,22 @@ return [
         // ['header' => 'account_settings'],
         // ['header' => 'modules'],
         [
+            'text' => 'Cadastro',
+            'icon' => 'fas fa-fw fa fa-save',
+            'submenu' => [
+                [
+                    'text' => 'Setores',
+                    'url' => 'register/sector',
+                ],
+                
+            ],
+        ],
+        
+        [
             'text' => 'Registros',
             'icon' => 'fas fa-fw fa fa-clipboard',
             'submenu' => [
+                
                 [
                     'text' => 'Lista de Registros',
                     'url' => 'occurrence/list/occurrence',
@@ -443,6 +456,39 @@ return [
             ],
         ],
         [
+            'name' => 'scriptCreateSector',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/sector/sector_create.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptUpdateSector',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/sector/sector_update.js',
+                ],
+            ],
+        ],  
+        [
+            'name' => 'scriptListSector',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/sector/sector_list.js',
+                ],
+            ],
+        ],
+        [
             'name' => 'scriptCreateOccurrence',
             'active' => false,
             'files' => [
@@ -461,6 +507,17 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/occurrence/occurrence_update.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptListOccurrence',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/occurrence/occurrence_list.js',
                 ],
             ],
         ],

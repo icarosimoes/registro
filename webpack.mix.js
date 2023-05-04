@@ -15,6 +15,12 @@ mix.react('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .js('resources/js/Jquery/global.js', 'public/js/jquery')
     .js('resources/js/Jquery/modules/admin/list.js', 'public/js/jquery/modules/admin')
+    
+    //register
+    .js('resources/js/Jquery/modules/register/sector/sector_create.js', 'public/js/jquery/modules/register/sector')
+    .js('resources/js/Jquery/modules/register/sector/sector_update.js', 'public/js/jquery/modules/register/sector')
+    .js('resources/js/Jquery/modules/register/sector/sector_list.js', 'public/js/jquery/modules/register/sector')
+
     // admin module
     .js('resources/js/Jquery/modules/admin/create_user.js', 'public/js/jquery/modules/admin')
     .js('resources/js/Jquery/modules/admin/edit_user.js', 'public/js/jquery/modules/admin')
@@ -24,6 +30,7 @@ mix.react('resources/js/app.js', 'public/js')
     //occurrence
     .js('resources/js/Jquery/modules/occurrence/occurrence_create.js', 'public/js/jquery/modules/occurrence')
     .js('resources/js/Jquery/modules/occurrence/occurrence_update.js', 'public/js/jquery/modules/occurrence')
+    .js('resources/js/Jquery/modules/occurrence/occurrence_list.js', 'public/js/jquery/modules/occurrence')
     //meeting
     .js('resources/js/Jquery/modules/meeting/meeting.js', 'public/js/jquery/modules/meeting')
     .js('resources/js/Jquery/modules/meeting/meeting_update.js', 'public/js/jquery/modules/meeting')

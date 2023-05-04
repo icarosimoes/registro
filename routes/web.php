@@ -53,16 +53,24 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('permission/remove/{id}', 'Admin\PermissionController@destroy')->name('permission.remove');
     });
 
+    Route::prefix('register')->group(function(){
+        Route::resource('sector','Register\SectorController');
+        
+    }); 
+    
+    
     Route::prefix('occurrence')->group(function(){
         Route::get('list/occurrence', 'Occurrence\OccurrenceController@index')->name('occurrence.list');
         Route::get('list/create', 'Occurrence\OccurrenceController@create')->name('occurrence.create');
         Route::post('occurrence/store', 'Occurrence\OccurrenceController@store');
+        Route::get('list/edit/download_file/{occurrence}', 'Occurrence\OccurrenceController@downloadFile')->name('occurrence.edit.download_file');
         Route::get('list/edit/{id}', 'Occurrence\OccurrenceController@edit')->name('occurrence.edit');
         Route::post('occurrence/update', 'Occurrence\OccurrenceController@update');
         Route::get('list/view/{id}', 'Occurrence\OccurrenceController@show')->name('occurrence.view');
         Route::get('list/destroy/{id}', 'Occurrence\OccurrenceController@destroy')->name('occurrence.delete');
         Route::get('get/occurrence', 'Occurrence\OccurrenceController@getOccurrence');
     });
+
     Route::prefix('event')->group(function(){
         //meeting
         Route::get('list/meeting', 'Event\Meeting\MeetingController@index')->name('meeting.list');

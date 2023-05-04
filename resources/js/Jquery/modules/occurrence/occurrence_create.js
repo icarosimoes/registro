@@ -34,7 +34,7 @@ $(function() {
         form_data.append('receiver', $('#receiver').val());
         form_data.append('receiver', $('#receiver').val());
         form_data.append('comments', $('#comments').val());
-
+        form_data.append('file', $('#file').prop('files')[0]);     
         $('.overlay').removeClass('d-none');
 
         $.ajax({
