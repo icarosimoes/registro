@@ -23,6 +23,7 @@ mix.react('resources/js/app.js', 'public/js')
 
     // admin module
     .js('resources/js/Jquery/modules/admin/create_user.js', 'public/js/jquery/modules/admin')
+    .js('resources/js/Jquery/modules/admin/list_user.js', 'public/js/jquery/modules/admin')
     .js('resources/js/Jquery/modules/admin/edit_user.js', 'public/js/jquery/modules/admin')
     .js('resources/js/Jquery/modules/admin/edit_user_profile.js', 'public/js/jquery/modules/admin')
     .js('resources/js/Jquery/modules/admin/create_profile.js', 'public/js/jquery/modules/admin')

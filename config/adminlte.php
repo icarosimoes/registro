@@ -423,6 +423,17 @@ return [
             ],
         ],
         [
+            'name' => 'scriptListUser',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/admin/list_user.js',
+                ],
+            ],
+        ],
+        [
             'name' => 'scriptCreateUser',
             'active' => false,
             'files' => [

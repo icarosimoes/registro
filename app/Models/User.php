@@ -9,9 +9,10 @@ use App\Models\Module;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable
 {
+    use SoftDeletes;
     use Notifiable;
 
     /**

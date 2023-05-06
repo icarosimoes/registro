@@ -27,8 +27,8 @@
                     <tr>
                       <th>Nome</th>
                       <th>email</th>
-                      <th>Imagem</th>
-                      <th>Ações</th>
+                      <th class="text-center">Imagem</th>
+                      <th class="text-center">Ações</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -50,10 +50,10 @@
                         <td style="text-align:center;">
                           <div class="btn-group btn-group-sm">
                           {{-- @can('checkRouters', $route = 'edit.users') --}}
-                           <a class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Editar" href="{{route('edit.users',['id' => $user->id])}}"><i class="fas fa-pencil-alt"></i></a>
+                           <a class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Editar" href="{{route('edit.users',['id' => $user->id])}}"><i class="fas fa-pencil-alt"></i></a>
                           {{-- @endcan --}}
                           {{-- @can('checkRouters', $route = 'delete.users') --}}
-                          <a class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Excluir" href="{{ route('delete.users', ['id' => $user->id]) }}"><i class="fas fa-trash"></i></a>
+                          <button class="btn btn-danger btn-sm remove" data-toggle="tooltip" data-id="{{ $user->id }}" data-placement="top" title="Excluir" ><i class="fas fa-trash"></i></button>
                           {{-- @endcan --}}
                         </div>
                         </td>
@@ -69,6 +69,29 @@
  
     </div>
 </div>
+
+{{-- Modal delete --}}
+<div class="modal" tabindex="-1" id='modal_delete' >
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Excluir</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Deseja realmente excluir ?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        <a id="btn_delete" href="" data-id  class="btn btn-danger">Deletar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section('plugins.scriptListUser', true)
 @endsection
 
 
