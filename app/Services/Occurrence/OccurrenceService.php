@@ -21,7 +21,7 @@ class OccurrenceService extends Service
 
     public function index()
     {
-        $occurrence = Occurrence::orderBy('created_at');
+        $occurrence = Occurrence::orderBy('created_at','desc');
         
         if( request()->status != 0 ){
             $occurrence->where('status',request()->status);
