@@ -511,6 +511,17 @@ return [
             ],
         ],
         [
+            'name' => 'scriptShowOccurrence',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/occurrence/occurrence_show.js',
+                ],
+            ],
+        ],
+        [
             'name' => 'scriptUpdateOccurrence',
             'active' => false,
             'files' => [

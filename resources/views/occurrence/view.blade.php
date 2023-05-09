@@ -162,5 +162,5 @@
     </div>
 </div>
 </div>
-@section('plugins.scriptUpdateOccurrence', true)
+@section('plugins.scriptShowOccurrence', true)
 @endsection
