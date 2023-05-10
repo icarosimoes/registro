@@ -423,6 +423,17 @@ return [
             ],
         ],
         [
+            'name' => 'scriptListUser',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/admin/list_user.js',
+                ],
+            ],
+        ],
+        [
             'name' => 'scriptCreateUser',
             'active' => false,
             'files' => [
@@ -496,6 +507,17 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/occurrence/occurrence_create.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptShowOccurrence',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/occurrence/occurrence_show.js',
                 ],
             ],
         ],

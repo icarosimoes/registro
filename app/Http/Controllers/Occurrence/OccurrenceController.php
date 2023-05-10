@@ -59,14 +59,25 @@ class OccurrenceController extends Controller
      */
     public function show($id)
     {
-        $getOccurrenceComments = $this->service->getOccurrenceComments($id);
         $occurrence = $this->service->show($id);
-        $receiver = $this->service->getUSer($occurrence->receiver_user);
-        return view('occurrence/view')->with([
-            'data' => $occurrence,
-            'receiver' => $receiver,
-            'occurrenceComments' => $getOccurrenceComments,
-        ]);
+        $validateUser = $this->service->validateUser($occurrence->users_id, $occurrence->receiver_user, $occurrence->id);
+        if ($validateUser) {
+            $receiver = $this->service->getUSer($occurrence->receiver_user);
+            $typeOccurrence = $this->service->getTypeOccurrence();
+            $getUser = $this->service->getUSer();
+            $getOccurrenceComments = $this->service->getOccurrenceComments($id);
+            $getParticipants = $this->service->getParticipants($id);
+            return view('occurrence/view')->with([
+                'data' => $occurrence,
+                'receiver' => $receiver,
+                'types' => $typeOccurrence,
+                'users' => $getUser,
+                'occurrenceComments' => $getOccurrenceComments,
+                'participants' => $getParticipants,
+            ]);
+        } else {
+            return Redirect::back()->withErrors(['Acesso não permitido, MOTIVO: Esse registro não foi atribuido a você, ou você não foi o criador.', 'The Message']);
+        }
     }
 
     /**

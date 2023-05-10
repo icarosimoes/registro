@@ -124,6 +124,6 @@ class UserController extends Controller
         $user = $this->service->destroy($id);
         if($user){
             return redirect()->route('list.users');
-         }
+        }
     }
 }
