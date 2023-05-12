@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Register;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Func;
 
 class FunctionController extends Controller
 {
@@ -14,7 +15,8 @@ class FunctionController extends Controller
      */
     public function index()
     {
-        //
+        $functions = Func::get();
+        return view('register/func/list')->with(['data' => $functions]);
     }
 
     /**
@@ -24,7 +26,7 @@ class FunctionController extends Controller
      */
     public function create()
     {
-        //
+        return view('register/func/create');
     }
 
     /**
@@ -35,7 +37,10 @@ class FunctionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $function = new Func();
+        $function->name = $request->name;
+        $function->save();
+        return $function;
     }
 
     /**
@@ -44,9 +49,9 @@ class FunctionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Func $function)
     {
-        //
+        return view('register/func/view',compact('function'));
     }
 
     /**
@@ -55,9 +60,9 @@ class FunctionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Func $function)
     {
-        //
+        return view('register/func/edit',compact('function'));
     }
 
     /**
@@ -67,9 +72,11 @@ class FunctionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Func $function )
     {
-        //
+        $function->name = $request->name;
+        $function->save();
+        return $function;
     }
 
     /**
@@ -78,8 +85,9 @@ class FunctionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Func $function)
     {
-        //
+        $function->delete();
+        return $function;   
     }
 }

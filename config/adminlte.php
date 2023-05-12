@@ -223,6 +223,10 @@ return [
                     'text' => 'Local',
                     'url' => 'register/local',
                 ],
+                [
+                    'text' => 'Função',
+                    'url' => 'register/function',
+                ],
                 
             ],
         ],
@@ -500,6 +504,39 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/sector/sector_list.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptCreateFunction',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/function/function_create.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptUpdateFunction',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/function/function_update.js',
+                ],
+            ],
+        ],  
+        [
+            'name' => 'scriptListFunction',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/function/function_list.js',
                 ],
             ],
         ],
