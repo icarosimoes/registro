@@ -216,8 +216,12 @@ return [
             'icon' => 'fas fa-fw fa fa-save',
             'submenu' => [
                 [
-                    'text' => 'Setores',
+                    'text' => 'Departamento',
                     'url' => 'register/sector',
+                ],
+                [
+                    'text' => 'Local',
+                    'url' => 'register/local',
                 ],
                 
             ],
@@ -496,6 +500,39 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/sector/sector_list.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptCreateLocal',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/local/local_create.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptUpdateLocal',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/local/local_update.js',
+                ],
+            ],
+        ],  
+        [
+            'name' => 'scriptListLocal',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/local/local_list.js',
                 ],
             ],
         ],

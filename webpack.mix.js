@@ -20,6 +20,9 @@ mix.react('resources/js/app.js', 'public/js')
     .js('resources/js/Jquery/modules/register/sector/sector_create.js', 'public/js/jquery/modules/register/sector')
     .js('resources/js/Jquery/modules/register/sector/sector_update.js', 'public/js/jquery/modules/register/sector')
     .js('resources/js/Jquery/modules/register/sector/sector_list.js', 'public/js/jquery/modules/register/sector')
+    .js('resources/js/Jquery/modules/register/local/local_create.js', 'public/js/jquery/modules/register/local')
+    .js('resources/js/Jquery/modules/register/local/local_update.js', 'public/js/jquery/modules/register/local')
+    .js('resources/js/Jquery/modules/register/local/local_list.js', 'public/js/jquery/modules/register/local')
 
     // admin module
     .js('resources/js/Jquery/modules/admin/create_user.js', 'public/js/jquery/modules/admin')

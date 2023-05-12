@@ -47,6 +47,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('edit/profile/{id}', 'Admin\ProfileController@edit')->name('edit.profile');
         Route::post('new/profile/update', 'Admin\ProfileController@update');
         Route::get('profile/destroy/{id}', 'Admin\ProfileController@destroy')->name('destroy.profile');
+        
         //profile permission
         Route::get('list/permission/{id}', 'Admin\PermissionController@index')->name('list.permission');
         Route::post('permission/create/{id}', 'Admin\PermissionController@create')->name('new.permission');
@@ -55,6 +56,8 @@ Route::group(['middleware' => ['auth']], function(){
 
     Route::prefix('register')->group(function(){
         Route::resource('sector','Register\SectorController');
+        Route::resource('local','Register\LocalController');
+        Route::resource('function','Register\FunctionController');
         
     }); 
     
