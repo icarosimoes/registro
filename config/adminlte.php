@@ -227,6 +227,10 @@ return [
                     'text' => 'Função',
                     'url' => 'register/function',
                 ],
+                [
+                    'text' => 'Procedimentos',
+                    'url' => 'register/procedure',
+                ],
                 
             ],
         ],
@@ -537,6 +541,39 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/function/function_list.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptCreateProcedure',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/procedure/procedure_create.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptUpdateProcedure',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/procedure/procedure_update.js',
+                ],
+            ],
+        ],  
+        [
+            'name' => 'scriptListProcedure',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/register/procedure/procedure_list.js',
                 ],
             ],
         ],

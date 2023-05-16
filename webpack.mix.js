@@ -26,6 +26,9 @@ mix.react('resources/js/app.js', 'public/js')
     .js('resources/js/Jquery/modules/register/function/function_create.js', 'public/js/jquery/modules/register/function')
     .js('resources/js/Jquery/modules/register/function/function_update.js', 'public/js/jquery/modules/register/function')
     .js('resources/js/Jquery/modules/register/function/function_list.js', 'public/js/jquery/modules/register/function')
+    .js('resources/js/Jquery/modules/register/procedure/procedure_create.js', 'public/js/jquery/modules/register/procedure')
+    .js('resources/js/Jquery/modules/register/procedure/procedure_update.js', 'public/js/jquery/modules/register/procedure')
+    .js('resources/js/Jquery/modules/register/procedure/procedure_list.js', 'public/js/jquery/modules/register/procedure')
 
     // admin module
     .js('resources/js/Jquery/modules/admin/create_user.js', 'public/js/jquery/modules/admin')
