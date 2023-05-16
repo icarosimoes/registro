@@ -58,7 +58,8 @@ Route::group(['middleware' => ['auth']], function(){
         Route::resource('sector','Register\SectorController');
         Route::resource('local','Register\LocalController');
         Route::resource('function','Register\FunctionController');
-        
+        Route::get('procedure/download/{procedure}', 'Register\ProcedureController@download')->name('procedure.download');
+        Route::resource('procedure','Register\ProcedureController');
     }); 
     
     
