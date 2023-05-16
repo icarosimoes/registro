@@ -30,7 +30,7 @@
                             <!-- form start -->
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-8">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="Name">Titulo</label>
                                             <input type="text" class="form-control" value="{{ $data->title }}"
@@ -39,13 +39,34 @@
                                                 value="{{ $data->id }}">
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="Name">Local</label>
+                                            <select class="form-control"  id="local" required>
+                                                <option value="{{@$data->local_id}}">{{ @$data->local->name }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="Name">Departamento</label>
+                                            <select class="form-control select2"  id="sector" required>
+                                                <option value="{{@$data->sector_id}}">{{ @$data->sector->name }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                   
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="Name">Anexo</label>
                                             <div class="input-group mb-3">
                                                 <input type="file" id="file" class="form-control">
                                                 <div class="input-group-append">
-                                                    <a target="_blank" href="{{ route('occurrence.edit.download_file',$data->id) }}" class="btn btn-secondary"><i
+                                                    <a target="_blank"
+                                                        href="{{ route('occurrence.edit.download_file', $data->id) }}"
+                                                        class="btn btn-secondary"><i
                                                             class="fas fa-download"></i></a>
                                                 </div>
                                             </div>

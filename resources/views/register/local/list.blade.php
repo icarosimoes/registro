@@ -6,23 +6,23 @@
             <div class="col-sm-12">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Lista de Setores</li>
+                    <li class="breadcrumb-item active">Lista de Locais</li>
                 </ol>
             </div>
             <div class="col-md-12">
                 <div class="card card-secondary card-outline">
                     <div class="card-header">
-                        <h3 class="card-title">Lista de Despartamento</h3>
+                        <h3 class="card-title">Lista de Locais</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="form-group">
                             <div class="row">
                                 <div class="col">
-                                    <a type="button" href="{{ route('sector.create') }}" data-toggle="tooltip"
+                                    <a type="button" href="{{ route('local.create') }}" data-toggle="tooltip"
                                         data-placement="top" title="Novo Departamento"
                                         class="btn bg-gradient-secondary btn-sm float-right"><i class="fas fa-plus"></i>
-                                        Novo Departamento</a>
+                                        Novo Local</a>
                                 </div>
                             </div>
                         </div>
@@ -45,14 +45,14 @@
                                                 <div class="btn-group-sm">
                                                     {{-- @can('checkRouters', $route =
                                                     'view.client') --}}
-                                                    <a href="{{ route('sector.show', [$item->id]) }}"
+                                                    <a href="{{ route('local.show', [$item->id]) }}"
                                                         data-toggle="tooltip" data-placement="top" title="Visualizar"
                                                         class="btn btn-default"><i class="fas fa-eye"></i></a> 
                                                     {{-- @endcan
                                                     --}}
                                                     {{-- @can('checkRouters', $route =
                                                     'edit.client') --}}
-                                                    <a href="{{ route('sector.edit', [$item->id]) }}"
+                                                    <a href="{{ route('local.edit', [$item->id]) }}"
                                                         data-toggle="tooltip" data-placement="top" title="Editar"
                                                         class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a>
                                                     {{-- @endcan
@@ -97,12 +97,12 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-              <button id="delete_sector"  class="btn btn-danger">Deletar</button>
+              <button id="btn_delete"  class="btn btn-danger">Deletar</button>
             </div>
           </div>
         </div>
       </div>
       
 
-      @section('plugins.scriptListSector', true)
+      @section('plugins.scriptListLocal', true)
 @endsection

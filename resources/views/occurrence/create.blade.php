@@ -28,23 +28,41 @@
                             <!-- form start -->
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-7">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="Name">Titulo</label>
                                             <input type="text" class="form-control" name="title" id="title"
                                                 placeholder="" required>
                                         </div>
                                     </div>
-                                    <div class="col">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="Name">Local</label>
+                                            <select class="form-control"  id="local" required>
+                                                
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="Name">Departamento</label>
+                                            <select class="form-control select2"  id="sector" required>
+                                                
+                                            </select>
+                                        </div>
+                                    </div>
+                                  
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="Name">Anexo</label>
                                             <input type="file" class="form-control" name="file" id="file"
-                                                placeholder="" required>
+                                                placeholder="" >
                                         </div>
                                     </div>
-
                                 </div>
-
                                 <div class="form-group">
                                     <label for="Name">Descrição</label>
                                     <textarea class="form-control" name="description" id="description" cols="30" rows="5" required></textarea>

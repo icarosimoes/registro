@@ -7,8 +7,8 @@
         <div class="col-sm-12">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                <li class="breadcrumb-item active"><a href="{{ route('sector.index') }}">Lista de Departamentos</a></li>
-                <li class="breadcrumb-item active">Novo Departamento</li>
+                <li class="breadcrumb-item active"><a href="{{ route('procedure.index') }}">Lista de Procedimentos</a></li>
+                <li class="breadcrumb-item active">Novo Procedimento</li>
             </ol>
         </div>
         <div class="col-md-12">
@@ -22,7 +22,7 @@
                     <div class="col-md-12">
                         <div class="card card-secondary card-outline">
                             <div class="card-header">
-                                <h3 class="card-title">Novo Departamento</h3>
+                                <h3 class="card-title">Visualizar Procedimento</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
@@ -30,9 +30,22 @@
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="form-group">
-                                            <label for="Name">Departamento</label>
-                                            <input type="text" class="form-control" name="sector" id="sector"
+                                            <label for="Name">Procedimento</label>
+                                            <input type="text" disabled class="form-control" id="name" value="{{ $procedure->name }}"
                                                 placeholder="" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="Name">Link</label>
+                                            <input type="text" disabled class="form-control" id="link" value="{{ $procedure->link }}"
+                                                placeholder="" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="Name">Anexo</label>
+                                            <a target="_blank" href="{{ route('occurrence.edit.download_file',$procedure->id) }}" class="btn btn-secondary"><i class="fas fa-download"></i></a>
                                         </div>
                                     </div>
                                  
@@ -47,10 +60,10 @@
                             </div>
                             <!-- /.card-body -->
 
-                            <div class="card-footer">
+                            {{-- <div class="card-footer">
                                 <button type="submit" id="submit" name="submit"
                                     class="btn btn-secondary float-lg-right"><i class="fas fa-save"></i> Salvar</button>
-                            </div>
+                            </div> --}}
                             </form>
                         </div>
                     </div>
@@ -60,5 +73,5 @@
     </div>
 </div>
 </div>
-@section('plugins.scriptCreateSector', true)
+{{-- @section('plugins.scriptCreateSector', true) --}}
 @endsection

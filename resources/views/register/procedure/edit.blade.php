@@ -7,22 +7,23 @@
         <div class="col-sm-12">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                <li class="breadcrumb-item active"><a href="{{ route('sector.index') }}">Lista de Departamentos</a></li>
-                <li class="breadcrumb-item active">Novo Departamento</li>
+                <li class="breadcrumb-item active"><a href="{{ route('procedure.index') }}">Lista de Procedimentos</a>
+                </li>
+                <li class="breadcrumb-item active">Editar Procedimento</li>
             </ol>
         </div>
         <div class="col-md-12">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-2">
-                        <form name="formSector" id="formSector" enctype="multipart/form-data" method="POST">
+                        <form name="form" id="formSector" enctype="multipart/form-data" method="POST">
                             @csrf
                             <!-- {{ csrf_field() }} -->
                     </div> <!-- col-md3 -->
                     <div class="col-md-12">
                         <div class="card card-secondary card-outline">
                             <div class="card-header">
-                                <h3 class="card-title">Novo Departamento</h3>
+                                <h3 class="card-title">Editar Procedimento</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
@@ -30,12 +31,31 @@
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="form-group">
-                                            <label for="Name">Departamento</label>
-                                            <input type="text" class="form-control" name="sector" id="sector"
-                                                placeholder="" required>
+                                            <label for="Name">Procedimento</label>
+                                            <input type="text" class="form-control" id="name"
+                                                value="{{ $procedure->name }}"placeholder="" required>
+                                            <input type="hidden" id="id" value="{{ $procedure->id }}">
                                         </div>
                                     </div>
-                                 
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="Name">Link</label>
+                                            <input type="text" class="form-control" id="link" value="{{ $procedure->link }}"placeholder="">
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="form-group">
+                                            <label for="Name">Anexo</label>
+                                            <div class="input-group mb-3">
+                                                <input type="file" id="file" class="form-control">
+                                                <div class="input-group-append">
+                                                    <a target="_blank" href="{{ route('procedure.download',$procedure->id) }}" class="btn btn-secondary"><i
+                                                            class="fas fa-download"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
 
                                 <div class="overlay-wrapper">
@@ -60,5 +80,5 @@
     </div>
 </div>
 </div>
-@section('plugins.scriptCreateSector', true)
+@section('plugins.scriptUpdateProcedure', true)
 @endsection

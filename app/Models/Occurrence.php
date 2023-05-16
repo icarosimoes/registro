@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Local;
+use App\Sector;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -10,6 +12,14 @@ class Occurrence extends Model
     public function type_occurrences(){
         return $this->belongsTo('App\Models\TypeOccurrence');
     }
+    public function sector(){
+        return $this->belongsTo(Sector::class,'sector_id');
+    }
+    
+    public function local(){
+        return $this->belongsTo(Local::class,'local_id');
+    }
+
     public function users(){
         return $this->belongsTo('App\Models\User');
     }

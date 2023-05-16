@@ -7,22 +7,22 @@
         <div class="col-sm-12">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                <li class="breadcrumb-item active"><a href="{{ route('sector.index') }}">Lista de Departamentos</a></li>
-                <li class="breadcrumb-item active">Novo Departamento</li>
+                <li class="breadcrumb-item active"><a href="{{ route('sector.index') }}">Lista de Funções</a></li>
+                <li class="breadcrumb-item active">Editar Função</li>
             </ol>
         </div>
         <div class="col-md-12">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-2">
-                        <form name="formSector" id="formSector" enctype="multipart/form-data" method="POST">
+                        <form name="form" id="formSector" enctype="multipart/form-data" method="POST">
                             @csrf
                             <!-- {{ csrf_field() }} -->
                     </div> <!-- col-md3 -->
                     <div class="col-md-12">
                         <div class="card card-secondary card-outline">
                             <div class="card-header">
-                                <h3 class="card-title">Novo Departamento</h3>
+                                <h3 class="card-title">Editar Função </h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
@@ -30,9 +30,9 @@
                                 <div class="row">
                                     <div class="col-3">
                                         <div class="form-group">
-                                            <label for="Name">Departamento</label>
-                                            <input type="text" class="form-control" name="sector" id="sector"
-                                                placeholder="" required>
+                                            <label for="Name">Função</label>
+                                            <input type="text"  class="form-control" name="sector" id="name" value="{{ $function->name }}"placeholder="" required>
+                                            <input type="hidden"  id="function_id" value="{{ $function->id }}" >
                                         </div>
                                     </div>
                                  
@@ -60,5 +60,5 @@
     </div>
 </div>
 </div>
-@section('plugins.scriptCreateSector', true)
+@section('plugins.scriptUpdateFunction', true)
 @endsection

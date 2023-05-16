@@ -4,7 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-class Sector extends Model
+
+class Local extends Model
 {
     use SoftDeletes;
 
