@@ -1,5 +1,6 @@
 @extends('adminlte::page')
 @section('content')
+@section('plugins.Select2', true)
 @section('plugins.Datatables', true)
     <div class="container">
         <div class="row justify-content-center">
@@ -41,7 +42,7 @@
                         <form name="form" id="form" action="" enctype="multipart/form-data" method="GET">
                             <div class="callout callout-info" id="card_filter" style="display: none">
                                 <div class="row">
-                                    <div class="col-sm-2">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="Name">Status</label>
                                             <select class="form-control" name="status" id="status">
@@ -49,6 +50,22 @@
                                                 <option value="1">Em Aberto</option>
                                                 <option value="2">Em Andamento</option>
                                                 <option value="3">Fechado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="Name">Local</label>
+                                            <select class="form-control" name="local" id="local">
+                                                
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="Name">Departamento</label>
+                                            <select class="form-control" name="sector" id="sector">
+                                                
                                             </select>
                                         </div>
                                     </div>

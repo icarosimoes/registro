@@ -22,7 +22,16 @@ class OccurrenceService extends Service
     public function index()
     {
         $occurrence = Occurrence::orderBy('created_at','desc');
-        
+
+
+        if(request()->local){
+            $occurrence->where('local_id',request()->local);
+        }
+
+        if(request()->sector){
+            $occurrence->where('sector_id',request()->sector);
+        }
+
         if( request()->status != 0 ){
             $occurrence->where('status',request()->status);
         }elseif(request()->status == null){
