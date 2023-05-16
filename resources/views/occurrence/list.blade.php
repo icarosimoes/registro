@@ -68,7 +68,8 @@
                                     <th>ID</th>
                                     <th width="42%">Title</th>
                                     <th>Status</th>
-                                    <th>Criado Por</th>
+                                    <th>Local</th>
+                                    <th>Departamento</th>
                                     <th>Prazo</th>
                                     <th>Atualizado em</th>
                                     <th class="w-20">Ações</th>
@@ -89,7 +90,8 @@
                                                 <span class="badge bg-success">{{ 'Fechado' }}</span>
                                             @endif
                                         </td>
-                                        <td>{{ $item['users']->name }}</td>
+                                        <td>{{ @$item->local->name }}</td>
+                                        <td>{{ @$item->sector->name }}</td>
                                         <td>{{ (new DateTime($item->deadline))->format('d/m/Y') }}</td>
                                         <td>{{ (new DateTime($item->updated_at))->format('d/m/Y') }}</td>
                                         <td>

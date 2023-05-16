@@ -94,6 +94,7 @@ class OccurrenceService extends Service
     {
         $this->validate($data);
 
+        $filePath=null;
         if (request()->hasFile('file') && request()->file->isValid() ){
            $filePath = request()->file('file')->store('registers');
         }
@@ -103,6 +104,9 @@ class OccurrenceService extends Service
         $occurrence->title = $data['title'];
         $occurrence->deadline = $data['deadline'];
         $occurrence->receiver_user = $data['receiver'];
+        $occurrence->local_id = $data['local_id'];
+        $occurrence->sector_id = $data['sector_id'];
+        
         $occurrence->file = $filePath;
         if (!empty($data['comments'])){
             $occurrence->comments = $data['comments'];
@@ -156,6 +160,8 @@ class OccurrenceService extends Service
             $occurrence->status = $data['status'] ?? $occurrence->status;
             $occurrence->deadline = $data['deadline'] ?? $occurrence->deadline;
             $occurrence->receiver_user = $data['receiver'] ?? $occurrence->receiver_user;
+            $occurrence->local_id = $data['local_id']; 
+            $occurrence->sector_id = $data['sector_id']; 
             
             
             if (!empty($data['comments'])) {

@@ -21,11 +21,17 @@ Route::get('inactive/user', 'HomeController@inactive')->name('inactive.user');
 Route::get('auth/logout', 'Auth\LoginController@logout');
 Auth::routes();
 
-Route::group(['middleware' => ['auth']], function(){
-   Route::get('/home', 'HomeController@index')->name('home');
-   Route::get('/', 'HomeController@index');
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/', 'HomeController@index');
 
-    Route::prefix('admin')->group(function(){
+    Route::prefix('helper')->group(function () {
+        Route::get('get_locals', 'Helper\SelectController@getLocals')->name('helper.locals');
+        Route::get('get_sectors', 'Helper\SelectController@getSectors')->name('helper.sectors');
+    });
+
+
+    Route::prefix('admin')->group(function () {
         //user
         Route::get('list/user', 'Admin\UserController@index')->name('list.users');
         Route::get('new/user', 'Admin\UserController@create')->name('new.users');
@@ -47,23 +53,23 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('edit/profile/{id}', 'Admin\ProfileController@edit')->name('edit.profile');
         Route::post('new/profile/update', 'Admin\ProfileController@update');
         Route::get('profile/destroy/{id}', 'Admin\ProfileController@destroy')->name('destroy.profile');
-        
+
         //profile permission
         Route::get('list/permission/{id}', 'Admin\PermissionController@index')->name('list.permission');
         Route::post('permission/create/{id}', 'Admin\PermissionController@create')->name('new.permission');
         Route::get('permission/remove/{id}', 'Admin\PermissionController@destroy')->name('permission.remove');
     });
 
-    Route::prefix('register')->group(function(){
-        Route::resource('sector','Register\SectorController');
-        Route::resource('local','Register\LocalController');
-        Route::resource('function','Register\FunctionController');
+    Route::prefix('register')->group(function () {
+        Route::resource('sector', 'Register\SectorController');
+        Route::resource('local', 'Register\LocalController');
+        Route::resource('function', 'Register\FunctionController');
         Route::get('procedure/download/{procedure}', 'Register\ProcedureController@download')->name('procedure.download');
-        Route::resource('procedure','Register\ProcedureController');
-    }); 
-    
-    
-    Route::prefix('occurrence')->group(function(){
+        Route::resource('procedure', 'Register\ProcedureController');
+    });
+
+
+    Route::prefix('occurrence')->group(function () {
         Route::get('list/occurrence', 'Occurrence\OccurrenceController@index')->name('occurrence.list');
         Route::get('list/create', 'Occurrence\OccurrenceController@create')->name('occurrence.create');
         Route::post('occurrence/store', 'Occurrence\OccurrenceController@store');
@@ -75,7 +81,7 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('get/occurrence', 'Occurrence\OccurrenceController@getOccurrence');
     });
 
-    Route::prefix('event')->group(function(){
+    Route::prefix('event')->group(function () {
         //meeting
         Route::get('list/meeting', 'Event\Meeting\MeetingController@index')->name('meeting.list');
         Route::get('meeting/create', 'Event\Meeting\MeetingController@create')->name('meeting.create');
@@ -104,7 +110,3 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('shiftreport/tested/remove/{id}', 'Event\ShiftReport\ShifitReportController@testedRemove');
     });
 });
-
-
-
-

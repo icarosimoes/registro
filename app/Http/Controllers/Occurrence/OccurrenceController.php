@@ -96,6 +96,7 @@ class OccurrenceController extends Controller
             $getUser = $this->service->getUSer();
             $getOccurrenceComments = $this->service->getOccurrenceComments($id);
             $getParticipants = $this->service->getParticipants($id);
+            
             return view('occurrence/edit')->with([
                 'data' => $occurrence,
                 'receiver' => $receiver,
