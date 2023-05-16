@@ -129,7 +129,11 @@ class OccurrenceController extends Controller
 
     public function downloadFile(Occurrence $occurrence)
     {
-        return Storage::download($occurrence->file);
+        if (Storage::exists($occurrence->file)){
+            return Storage::download($occurrence->file);
+        }
+        return 'Nenhum arquivo encontrado.';
+        
     }
 
 
