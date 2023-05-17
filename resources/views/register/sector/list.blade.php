@@ -31,7 +31,7 @@
                             <thead>
                                 <tr>
                                     <th>Id</th>
-                                    <th>Setor</th>
+                                    <th>Departamento</th>
                                     <th class="text-right">Ações</th>
                                 </tr>
                             </thead>

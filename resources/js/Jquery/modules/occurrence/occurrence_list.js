@@ -112,8 +112,19 @@ $(function () {
 
     })
 
+    $("#btnNext").click(function () {
+        var name = $("#titleExport").val();
+        if (!name) {
+            name = "Indefinido";
+        }
+        $("#btnExport").prop('href', base_url + "/occurrence/get/export_pdf/" + name);
+        $("#btnNext").addClass('d-none');
+        $("#btnExport").removeClass('d-none');
+        $("#titleExport").attr('disabled', true);
+    });
 
 
+   
 
 
 });

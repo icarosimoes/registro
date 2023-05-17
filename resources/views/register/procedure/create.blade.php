@@ -28,7 +28,7 @@
                             <!-- form start -->
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-3">
+                                    <div class="col-6">
                                         <div class="form-group">
                                             <label for="Name">Procedimento</label>
                                             <input type="text" class="form-control"  id="name"
@@ -42,13 +42,13 @@
                                                 placeholder="" >
                                         </div>
                                     </div>
-                                    <div class="col-3">
+                                    {{-- <div class="col-3">
                                         <div class="form-group">
                                             <label for="Name">Anexo</label>
                                             <input type="file" class="form-control"  id="file"
                                                 placeholder="" >
                                         </div>
-                                    </div>
+                                    </div> --}}
                                  
                                 </div>
                                 
