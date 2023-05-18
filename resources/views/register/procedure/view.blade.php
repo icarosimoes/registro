@@ -42,12 +42,12 @@
                                                 placeholder="" required>
                                         </div>
                                     </div>
-                                    <div class="col-3">
+                                    {{-- <div class="col-3">
                                         <div class="form-group">
                                             <label for="Name">Anexo</label>
                                             <a target="_blank" href="{{ route('occurrence.edit.download_file',$procedure->id) }}" class="btn btn-secondary"><i class="fas fa-download"></i></a>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                  
                                 </div>
 

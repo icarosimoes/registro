@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Occurrence;
 
 use App\Http\Controllers\Controller;
 use App\Models\Occurrence;
+use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
-
+use PDF;
 class OccurrenceController extends Controller
 {
     /**
@@ -17,7 +18,10 @@ class OccurrenceController extends Controller
      */
     public function index()
     {
+        session()->forget('data');
         $data = $this->service->index();
+        session()->put('data', $data);
+
         return view('occurrence/list')->with(['data' => $data]);
     }
 
@@ -129,7 +133,11 @@ class OccurrenceController extends Controller
 
     public function downloadFile(Occurrence $occurrence)
     {
-        return Storage::download($occurrence->file);
+        if (Storage::exists($occurrence->file)){
+            return Storage::download($occurrence->file);
+        }
+        return 'Nenhum arquivo encontrado.';
+        
     }
 
 
@@ -157,5 +165,22 @@ class OccurrenceController extends Controller
         } else {
             return Redirect::back()->withErrors(['Não foi possível remover esse registro, ele pode ter ligações com outras funcionalidades.', '']);
         }
+    }
+
+    public function exportPdf($name){
+        
+        if(!$name){
+            $name = "Indefinido";
+        }
+
+        $data = session()->get('data');
+        if (session()->get('params')) {
+            $params = session()->get('params');
+        }else{
+            $params = false;
+        }
+
+        $pdf = PDF::loadView('occurrence/export_pdf',compact(['data', 'name']))->setPaper('a4', 'landscape');
+        return $pdf->stream('relatorio.pdf'); 
     }
 }

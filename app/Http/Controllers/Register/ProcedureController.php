@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Register;
 
 use App\Http\Controllers\Controller;
 use App\Procedure;
+use App\ProcedureFiles;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -108,12 +109,42 @@ class ProcedureController extends Controller
         return $procedure;   
     }
 
-    public function download(Procedure $procedure)
+    public function download(ProcedureFiles $procedureFiles)
     {
-        if(Storage::exists($procedure->file)){
-            return Storage::download($procedure->file);   
+        if(Storage::exists($procedureFiles->file)){
+            return Storage::download($procedureFiles->file);   
         }
         return 'Nenhum arquivo anexado';        
     }
+
+    public function attachFile(Request $request,Procedure $procedure)
+    {
+
+
+        if ($request->hasFile('file')){
+
+            $pathFile = $request->file->store('procedure');
+
+            $procedureFile =  new ProcedureFiles();
+            $procedureFile->procedure_id = $procedure->id;
+            $procedureFile->name = $request->name;
+            $procedureFile->file = $pathFile;
+            $procedureFile->save();
+            return response()->json('Arquivo anexado com sucesso');
+
+        }
+        return response()->json('Arquivo é um campo obrigatório',422);        
+    }
+    public function filesProcedure(Procedure $procedure){
+        $files = ProcedureFiles::where('procedure_id', $procedure->id)->get();
+        return response()->json($files);
+    
+    }
+
+    public function deleteFilesProcedure(ProcedureFiles $procedureFiles){
+        $procedureFiles->delete();
+        return response()->json('Arquivo apagado com sucesso');
+    }
+
 
 }

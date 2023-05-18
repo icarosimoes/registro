@@ -64,7 +64,10 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('sector', 'Register\SectorController');
         Route::resource('local', 'Register\LocalController');
         Route::resource('function', 'Register\FunctionController');
-        Route::get('procedure/download/{procedure}', 'Register\ProcedureController@download')->name('procedure.download');
+        Route::get('procedure/download/{procedureFiles}', 'Register\ProcedureController@download')->name('procedure.download');
+        Route::post('procedure/upload/{procedure}', 'Register\ProcedureController@attachFile')->name('procedure.attach');
+        Route::get('procedure/files/{procedure}', 'Register\ProcedureController@filesProcedure')->name('procedure.files');
+        Route::delete('procedure/files/{procedureFiles}', 'Register\ProcedureController@deleteFilesProcedure')->name('procedure.files.delete');
         Route::resource('procedure', 'Register\ProcedureController');
     });
 
@@ -79,6 +82,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('list/view/{id}', 'Occurrence\OccurrenceController@show')->name('occurrence.view');
         Route::get('list/destroy/{id}', 'Occurrence\OccurrenceController@destroy')->name('occurrence.delete');
         Route::get('get/occurrence', 'Occurrence\OccurrenceController@getOccurrence');
+        Route::get('get/export_pdf/{name}', 'Occurrence\OccurrenceController@exportPdf');
     });
 
     Route::prefix('event')->group(function () {

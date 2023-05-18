@@ -43,7 +43,7 @@
                                             <input type="text" class="form-control" id="link" value="{{ $procedure->link }}"placeholder="">
                                         </div>
                                     </div>
-                                    <div class="col-3">
+                                    {{-- <div class="col-3">
                                         <div class="form-group">
                                             <label for="Name">Anexo</label>
                                             <div class="input-group mb-3">
@@ -54,7 +54,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> --}}
 
                                 </div>
 

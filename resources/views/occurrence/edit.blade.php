@@ -64,9 +64,9 @@
                                             <div class="input-group mb-3">
                                                 <input type="file" id="file" class="form-control">
                                                 <div class="input-group-append">
-                                                    <a target="_blank"
+                                                    <a  target="_blank"
                                                         href="{{ route('occurrence.edit.download_file', $data->id) }}"
-                                                        class="btn btn-secondary"><i
+                                                        class="btn btn-secondary {{ $data->file ?'':'disabled' }}"><i
                                                             class="fas fa-download"></i></a>
                                                 </div>
                                             </div>
