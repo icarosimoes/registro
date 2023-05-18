@@ -247,7 +247,7 @@ return [
             ],
         ],
         [
-            'text' => 'Eventos',
+            'text' => 'Formulários',
             'icon' => 'fas fa-fw fa fa-clipboard',
             'submenu' => [
                 [
