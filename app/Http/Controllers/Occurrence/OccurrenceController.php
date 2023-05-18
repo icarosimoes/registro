@@ -8,7 +8,7 @@ use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
-use Barryvdh\DomPDF\PDF;
+use PDF;
 class OccurrenceController extends Controller
 {
     /**
@@ -180,7 +180,7 @@ class OccurrenceController extends Controller
             $params = false;
         }
 
-        $pdf = PDF::loadView('modules/contracts/recurrents/report/report',compact(['data', 'name']))->setPaper('a4', 'landscape');
+        $pdf = PDF::loadView('occurrence/export_pdf',compact(['data', 'name']))->setPaper('a4', 'landscape');
         return $pdf->stream('relatorio.pdf'); 
     }
 }

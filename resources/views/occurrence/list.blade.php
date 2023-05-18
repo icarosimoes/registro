@@ -156,6 +156,7 @@
 
     </div>
 </div>
+
 <!-- Modal export pdf-->
 <div class="modal fade" id="export-pdf" tabindex="-1" role="dialog" aria-labelledby="export-pdf"
     aria-hidden="true">
