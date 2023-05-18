@@ -9,6 +9,6 @@ class meeting extends Model
 {
     public function users()
     {
-        return $this->BelongsTo('App\Models\User');
+        return $this->BelongsTo('App\Models\User')->withTrashed();
     }
 }

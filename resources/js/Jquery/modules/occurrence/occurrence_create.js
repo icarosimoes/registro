@@ -59,7 +59,10 @@ $(function() {
                     $('.overlay').addClass('d-none');
                 }
             }
-        });
+        }).catch()
+        .always(()=>{
+          $('.overlay').addClass('d-none');
+        })
     });
 
 

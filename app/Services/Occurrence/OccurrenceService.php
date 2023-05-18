@@ -8,6 +8,7 @@ use App\Models\Occurrence_comments;
 use App\Models\Occurrence_participants;
 use App\Models\TypeOccurrence;
 use App\Models\User;
+use App\Models\Notification;
 use App\Services\Service;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -109,6 +110,7 @@ class OccurrenceService extends Service
         }
  
          
+        DB::beginTransaction();
         $occurrence = new Occurrence();
         $occurrence->title = $data['title'];
         $occurrence->deadline = $data['deadline'];
@@ -133,6 +135,14 @@ class OccurrenceService extends Service
                     'created_at' => date("Y-m-d H:i:s"),
                 ];
                 Occurrence_participants::insert($data);
+                //REGISTRA AS NOTIFICACOES
+                $notification = new Notification();
+                $notification->user_id = $participants[$i];
+                $notification->occurrence_id = $insertID;
+                $notification->checked = 'not';
+                $notification->save();
+
+                
             }
         }
 
@@ -145,6 +155,7 @@ class OccurrenceService extends Service
             ];
             Occurrence_comments::insert($Occurrence_comments);
         }
+        DB::commit();
         return $occurrence;
     }
 
