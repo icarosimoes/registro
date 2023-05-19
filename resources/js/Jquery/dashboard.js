@@ -1,5 +1,9 @@
 $(document).ready(function() {
-/* ChartJS
+
+  
+
+
+  /* ChartJS
      * -------
      * Here we will create a few charts using ChartJS
      */

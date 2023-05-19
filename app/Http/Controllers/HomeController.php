@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use App\Models\Notification;
 class HomeController extends Controller
 {
     var $errorPermission = false;
@@ -47,5 +47,24 @@ class HomeController extends Controller
             'totalOccurrenceClosed' => $totalOccurrenceClosed,
             'totalUsers' => $totalUsers
         ]);
+    }
+
+    public function getNotification(Request $request){
+        
+        $notification = Notification::where('user_id',$request->user_id)
+        ->where('checked','not')
+        ->get();
+        
+        
+        return response()->json($notification);
+    }
+    public function indexNotification(Request $request){
+        
+        $notifications = Notification::where('user_id',2)
+        ->where('checked','not')
+        ->get();
+        
+        
+        return view('notification',compact('notifications'));
     }
 }

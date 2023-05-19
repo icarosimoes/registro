@@ -30,7 +30,11 @@
                 @include('adminlte::partials.navbar.logout-link')
             @endif
         @endif
-
+        <a href="{{  route('notification.list') }}" id='btn_notification' type="button" class="btn btn-danger">
+            <span class="badge badge-light" id='btn_notification_bag'>0</span>
+            <span class="sr-only">unread messages</span>
+        </a>
+         <!-- <button></button><span class="badge badge-pill badge-danger">9</span> -->
         {{-- Right sidebar toggler link --}}
         @if(config('adminlte.right_sidebar'))
             @include('adminlte::partials.navbar.right-sidebar-link')
