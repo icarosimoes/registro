@@ -50,4 +50,5 @@ mix.react('resources/js/app.js', 'public/js')
     .js('resources/js/Jquery/modules/shiftReport/shiftReportUpdate.js', 'public/js/jquery/modules/shiftReport')
     .js('resources/js/Jquery/modules/shiftReport/shiftReport_list.js', 'public/js/jquery/modules/shiftReport')
     //dashboard
-    .js('resources/js/Jquery/dashboard.js', 'public/js/jquery');
+    .js('resources/js/Jquery/dashboard.js', 'public/js/jquery')
+    .js('resources/js/Jquery/notification.js', 'public/js/jquery');

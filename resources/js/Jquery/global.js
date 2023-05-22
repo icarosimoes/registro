@@ -9,7 +9,7 @@ $(document).ready(function() {
 
   function refreshNotification(){
     let data = {
-      user_id:2 
+    //  user_id:$('#btn_notification').data('user') 
     }
     let route = base_url+'/notification'  
     $.post(route,data,(response)=>{
