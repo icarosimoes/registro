@@ -9,27 +9,33 @@ use Illuminate\Support\Facades\Auth;
 
 class Occurrence extends Model
 {
-    public function type_occurrences(){
+    public function type_occurrences()
+    {
         return $this->belongsTo('App\Models\TypeOccurrence');
     }
-    public function sector(){
-        return $this->belongsTo(Sector::class,'sector_id');
-    }
-    
-    public function local(){
-        return $this->belongsTo(Local::class,'local_id');
+    public function sector()
+    {
+        return $this->belongsTo(Sector::class, 'sector_id');
     }
 
-    public function users(){
+    public function local()
+    {
+        return $this->belongsTo(Local::class, 'local_id');
+    }
+
+    public function users()
+    {
         return $this->belongsTo('App\Models\User');
     }
 
-    public function createdBy(){
-        return $this->belongsTo(User::class,'created_by');
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function updatedBy(){
-        return $this->belongsTo(User::class,'updated_by');
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
     protected static function booted()
@@ -39,15 +45,22 @@ class Occurrence extends Model
             $occurrence->created_by = Auth::id();
         });
 
-        // static::updating(function ($occurrence) {
-        //     $occurrence->updated_by = Auth::id();
-        // });
+        static::updating(function ($occurrence) {
+            dd('sdfsdf');
+            $occurrence->updated_by = Auth::id();
 
-        // static::deleting(function ($occurrence) {
-        //     $occurrence->deleted_by = Auth::id();
-        //     $occurrence->save();
-        // });
+            if (!empty(request()->participants)) {
+                $participants = explode(",", request()->participants);
+                
+                foreach ($participants  as  $participant) {
+
+                    $notification = new Notification();
+                    $notification->occurrence_id = $occurrence->id;
+                    $notification->checked = 'not';
+                    $notification->user_id = $participant;
+                    $notification->save();
+                }
+            }
+        });
     }
-
-
 }
