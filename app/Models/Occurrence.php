@@ -46,7 +46,7 @@ class Occurrence extends Model
         });
 
         static::updating(function ($occurrence) {
-            dd('sdfsdf');
+            
             $occurrence->updated_by = Auth::id();
 
             if (!empty(request()->participants)) {
