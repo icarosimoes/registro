@@ -35,3 +35,10 @@ jobs:
             ls -la
             cd /var/www/aero/public_html/aero && sh ./server_deploy.sh
             cd /var/www/condmais/aero && sh ./server_deploy.sh
+            cd /var/www/qm_chess/aero && sh ./server_deploy.sh
+            cd /var/www/marau/aero && sh ./server_deploy.sh
+            cd /var/www/nanda/aero && sh ./server_deploy.sh
+            cd /var/www/aerohotel/aero && sh ./server_deploy.sh
+            cd /var/www/maishotel/aero && sh ./server_deploy.sh
+            cd /var/www/mais_chess/aero && sh ./server_deploy.sh
+            cd /var/www/viewmais_chess/aero && sh ./server_deploy.sh
