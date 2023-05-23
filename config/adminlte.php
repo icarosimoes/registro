@@ -742,5 +742,16 @@ return [
                 ],
             ],
         ],
+        [
+            'name' => 'scriptNotification',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification.js',
+                ],
+            ],
+        ],
     ],
 ];

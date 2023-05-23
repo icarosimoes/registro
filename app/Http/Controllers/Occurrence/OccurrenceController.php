@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Occurrence;
 
 use App\Http\Controllers\Controller;
 use App\Models\Occurrence;
+use App\Models\Notification;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use PDF;
+use DB;
 class OccurrenceController extends Controller
 {
     /**
@@ -92,6 +94,14 @@ class OccurrenceController extends Controller
      */
     public function edit($id)
     {
+        DB::beginTransaction();
+        //verifica se a origem do link é das notificacoes
+        if (request()->notification){
+            $notification = Notification::find(request()->notification);
+            $notification->checked = 'yes';
+            $notification->save();
+        }
+
         $occurrence = $this->service->show($id);
         $validateUser = $this->service->validateUser($occurrence->users_id, $occurrence->receiver_user, $occurrence->id);
         if ($validateUser) {
@@ -100,7 +110,7 @@ class OccurrenceController extends Controller
             $getUser = $this->service->getUSer();
             $getOccurrenceComments = $this->service->getOccurrenceComments($id);
             $getParticipants = $this->service->getParticipants($id);
-            
+        DB::commit();     
             return view('occurrence/edit')->with([
                 'data' => $occurrence,
                 'receiver' => $receiver,

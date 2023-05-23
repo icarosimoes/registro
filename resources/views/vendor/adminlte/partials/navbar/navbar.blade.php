@@ -30,7 +30,10 @@
                 @include('adminlte::partials.navbar.logout-link')
             @endif
         @endif
-
+        <a href="{{  route('notification.list') }}" id='btn_notification' data-user="{{Auth::id()}}" type="button" class="btn btn-dafault">
+            <i class="far fa-bell"></i> <span class="badge badge-danger" id='btn_notification_bag'>0</span>
+        </a>
+         <!-- <button></button><span class="badge badge-pill badge-danger">9</span> -->
         {{-- Right sidebar toggler link --}}
         @if(config('adminlte.right_sidebar'))
             @include('adminlte::partials.navbar.right-sidebar-link')
