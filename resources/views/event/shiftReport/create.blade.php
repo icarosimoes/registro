@@ -86,6 +86,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="appendFrequency">
+                                                    
                                                     {{-- <tr>
                                                         <td><input type="text" class="form-control form-control-sm"></td>
                                                         <td><input type="text" class="form-control form-control-sm"></td>

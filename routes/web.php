@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/notification', 'HomeController@getNotification');
     Route::get('/notification', 'HomeController@indexNotification')->name('notification.list');
     Route::prefix('helper')->group(function () {
+        Route::get('get_functions', 'Helper\SelectController@getFunctions')->name('helper.locals');
         Route::get('get_locals', 'Helper\SelectController@getLocals')->name('helper.locals');
         Route::get('get_sectors', 'Helper\SelectController@getSectors')->name('helper.sectors');
     });
