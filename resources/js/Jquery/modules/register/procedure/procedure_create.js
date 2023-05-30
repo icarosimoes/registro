@@ -22,9 +22,9 @@ $(function() {
 
         var form_data = new FormData();
 
-         form_data.append('name', $("#name").val());
-         form_data.append('link', $("#link").val());
-         form_data.append('file', $('#file').prop('files')[0]);                  
+        form_data.append('name', $("#name").val());
+        form_data.append('link', $("#link").val());
+        form_data.append('file', $('#file').prop('files')[0]);                  
         $('.overlay').removeClass('d-none');
 
         $.ajax({

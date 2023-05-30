@@ -4,5 +4,6 @@
 /.vscode
 .env
 /public
+/public/fonts
 /public/css
 /public/js
