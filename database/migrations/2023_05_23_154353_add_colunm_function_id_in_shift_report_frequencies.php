@@ -14,7 +14,7 @@ class AddColunmFunctionIdInShiftReportFrequencies extends Migration
     public function up()
     {
         Schema::table('shift_report_frequencies', function (Blueprint $table) {
-            $table->foreignId('func_id')->nullable()->after();
+            $table->foreignId('func_id')->nullable()->after('id');
         });
     }
 
@@ -26,7 +26,7 @@ class AddColunmFunctionIdInShiftReportFrequencies extends Migration
     public function down()
     {
         Schema::table('shift_report_frequencies', function (Blueprint $table) {
-            //
+            $table->dropColumn('func_id');
         });
     }
 }
