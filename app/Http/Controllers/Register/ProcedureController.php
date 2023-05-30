@@ -7,7 +7,7 @@ use App\Procedure;
 use App\ProcedureFiles;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
+use DB;
 class ProcedureController extends Controller
 {
     /**
@@ -39,21 +39,30 @@ class ProcedureController extends Controller
      */
     public function store(Request $request)
     {
-        $path = null;
-        if($request->file->isValid()){
-            $path = $request->file->store('procedure');
-        }
+        DB::beginTransaction();
+        
  
         $procedure = new Procedure();
         $procedure->name = $request->name;
         $procedure->link = $request->link;
-        $procedure->file = $path;
         $procedure->save();
+
+        if($request->file->isValid()){
+            $pathFile = $request->file->store('procedure');
+
+            $procedureFile =  new ProcedureFiles();
+            $procedureFile->procedure_id = $procedure->id;
+            $procedureFile->name = "Anexo Principal";
+            $procedureFile->file = $pathFile;
+            $procedureFile->save();
+        }
+        DB::commit();
         return $procedure;
+
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified resour
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response

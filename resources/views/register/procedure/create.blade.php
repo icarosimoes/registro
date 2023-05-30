@@ -42,13 +42,13 @@
                                                 placeholder="" >
                                         </div>
                                     </div>
-                                    {{-- <div class="col-3">
+                                    <div class="col-3">
                                         <div class="form-group">
                                             <label for="Name">Anexo</label>
                                             <input type="file" class="form-control"  id="file"
                                                 placeholder="" >
                                         </div>
-                                    </div> --}}
+                                    </div>
                                  
                                 </div>
                                 
