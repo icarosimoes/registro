@@ -187,10 +187,37 @@ class OccurrenceService extends Service
             if (!empty($data['comments'])) {
                 $occurrence->comments = $data['comments'] ?? $occurrence->comments;
             }
-            $occurrence->updated_by = Auth::id();
+            
             $occurrence->save();
             $insertID = $occurrence->id;
 
+            //rotina  para ferificar se modificou o campo NOTIFICAR 
+            $participants = Occurrence_participants::where('occurrences_id', $insertID)->get();
+            
+            if (!empty($data['participants'])) {
+                $participants_request = explode(",", $data['participants']);
+                foreach ($participants_request  as $participant_request ) {
+                    $participant_exist = false;
+                    foreach($participants as $parti){
+                        if ($parti->users_id == $participant_request){
+                            $participant_exist = true;   
+                        }
+                    }
+                    if($participant_exist){
+                        continue;
+                    }else{
+                        //se encontrou alguma diferença : modifica o campo updated_at só pra entrar no evento updating e gerar as notificacoes
+                        $occurrence->updated_at = now();
+                        $occurrence->save();
+                    }
+                }
+            }
+
+            
+            
+            
+            
+            
             if (!empty($data['participants'])) {
                 $participants = explode(",", $data['participants']);
                 for ($i = 0; $i < count($participants); $i++) {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Helper;
 
+use App\Func;
 use App\Http\Controllers\Controller;
 use App\Local;
 use App\Sector;
@@ -31,5 +32,17 @@ class SelectController extends Controller
         });
 
         return  $sectors;
+    }
+    
+    function getFunctions(Request $request){
+        $functions = Func::select('id','name')
+        ->selectSearch($request)
+        ->paginate(100);
+
+        $functions->map(function($item){
+            return $item->text = @$item->id .' - '.@$item->name;
+        });
+
+        return  $functions;
     }
 }
