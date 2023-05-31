@@ -76,7 +76,7 @@ $(document).ready(function() {
                     "<td>" +
                     // "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemCustomerComplaint'><i class='fas fa-trash'></i></a> " +
                     // "<a href='#' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceCustomerComp'><i class='fas fa-filter'></i></a> " +
-                    "<small id='showIdOccurenceCustomerComp' class='badge d-none badge-success codeOccurenceCustomerComp'><i class='far fa-registered'></i> " + value.occurrences_id + "</small>" +
+                    "<a href='"+base_url+"/occurrence/list/edit/"+value.occurrences_id+" '><small id='showIdOccurenceCustomerComp' class='badge d-none badge-success codeOccurenceCustomerComp'><i class='far fa-registered'></i> " + value.occurrences_id + "</small></a>" +
                     "</td>" +
                     "</tr>";
                 addItem(html, "#addCustomerComplaint", ".removeItemCustomerComplaint", ".itemCustomerComplaint");
