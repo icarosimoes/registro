@@ -43,7 +43,6 @@ $(document).ready(function() {
             //carregar itens da manutenção
             var shiftReport_maintenence = $("#shiftReport_maintenence").val();
             $.each(JSON.parse(shiftReport_maintenence), function(index, value) {
-                console.log(value.occurrences_id);
                 var html = "<tr class='itemMaintenance'>" +
                     "<td><input  id='maintenence_uh[]' value='" + value.uh + "' name='maintenence_uh[]' type='text' class='form-control form-control-sm' required></td>" +
                     "<input type='hidden' name='maintenence_id[]' id='maintenence_id[]' value='" + value.id + "'>" +
@@ -58,7 +57,7 @@ $(document).ready(function() {
                     "<td>" +
                     // "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></a> " +
                     // "<a href='#' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></a> " +
-                    "<small id='showIdOccurenceMaintenence' class='badge d-none badge-success codeOccurenceMaintenence'><i class='far fa-registered'></i> " + value.occurrences_id + "</small>" +
+                    "<a href='"+base_url+"/occurrence/list/edit/"+value.occurrences_id+" '><small id='showIdOccurenceMaintenence' class='badge d-none badge-success codeOccurenceMaintenence'><i class='far fa-registered'></i> " + value.occurrences_id + "</small></a>" +
                     "</td>" +
                     "</tr>";
                 addItem(html, "#addItemMaintenance", ".removeItemMaintenance", ".itemMaintenance");
@@ -76,7 +75,7 @@ $(document).ready(function() {
                     "<td>" +
                     // "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemCustomerComplaint'><i class='fas fa-trash'></i></a> " +
                     // "<a href='#' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceCustomerComp'><i class='fas fa-filter'></i></a> " +
-                    "<a href='"+ base_url+"/occurrence/list/edit/"+value.occurrences_id+"'><small id='showIdOccurenceCustomerComp' class='badge d-none badge-success codeOccurenceCustomerComp'><i class='far fa-registered'></i> " + value.occurrences_id + "</small></a>" +
+                    "<a href='"+base_url+"/occurrence/list/edit/"+value.occurrences_id+" '><small id='showIdOccurenceCustomerComp' class='badge d-none badge-success codeOccurenceCustomerComp'><i class='far fa-registered'></i> " + value.occurrences_id + "</small></a>" +
                     "</td>" +
                     "</tr>";
                 addItem(html, "#addCustomerComplaint", ".removeItemCustomerComplaint", ".itemCustomerComplaint");
@@ -93,7 +92,7 @@ $(document).ready(function() {
                     "<td>" +
                     //"<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemComments'><i class='fas fa-trash'></i></a> " +
                     //"<a href='#' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceComments'><i class='fas fa-filter'></i></a> " +
-                    "<small id='showIdOccurenceComments' class='badge d-none badge-success codeOccurenceComments'><i class='far fa-registered'></i> " + value.occurrences_id + "</small>" +
+                    "<a href='"+base_url+"/occurrence/list/edit/"+value.occurrences_id+" '><small id='showIdOccurenceComments' class='badge d-none badge-success codeOccurenceComments'><i class='far fa-registered'></i> " + value.occurrences_id + "</small></a>" +
                     "</td>" +
                     "</tr>";
                 addItem(html, "#addComments", ".removeItemComments", ".itemComments");
