@@ -6,7 +6,7 @@ $.ajaxSetup({
     }
 });
 
-$(function() {
+$(function () {
 
     //Initialize Select2 Elements
     $('.select2').select2({
@@ -22,18 +22,53 @@ $(function() {
     });
 
     //Adicionar Itens 
-    $("#addFrequency").click(function() {
+    $("#addFrequency").click(function () {
         var html = "<tr class='itemFrequency'>" +
             "<td><input id='frequency_employee[]' name='frequency_employee[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td><input id='frequency_occupation[]' name='frequency_occupation[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td><select class='form-control function' name='frequency_occupation[]' ></select></td>" +
+            // "<td><input id='frequency_occupation[]' name='frequency_occupation[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td>" +
             "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemFrequency'><i class='fas fa-trash'></i></a>" +
             "</td>" +
             "</tr>";
+                
         addItem(html, "#appendFrequency", ".removeItemFrequency", ".itemFrequency");
+
+        //    select 2 function
+        $('.function').select2({
+            theme: 'classic',
+            ajax: {
+                url: base_url + '/helper/get_functions',
+                dataType: 'json',
+                data: function (params) {
+                    var query = {
+                        term: params.term,
+                        page: params.page || 1
+                    }
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                },
+                processResults: function (response) {
+
+                    // Transforms the top-level key of the response object from 'items' to 'results'
+                    let more_pagination = true;
+                    //se não tem mais paginas
+                    if (response.next_page_url == null) {
+                        more_pagination = false
+                    }
+                    return {
+                        results: response.data,
+                        pagination: {
+                            "more": more_pagination
+                        }
+                    }
+                }
+            }
+        })
+
     });
 
-    $("#addExtra").click(function() {
+    $("#addExtra").click(function () {
         var html = "<tr class='itemExtra'>" +
             "<td><input id='extra_extrawork[]' name='extra_extrawork[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td><input id='extra_reasons[]' name='extra_reasons[]' type='text' class='form-control form-control-sm' required></td>" +
@@ -44,7 +79,7 @@ $(function() {
         addItem(html, "#addItemExtra", ".removeItemExtra", ".itemExtra");
     });
     var countMaintenance = 0;
-    $("#addMaintenance").click(function() {
+    $("#addMaintenance").click(function () {
         var html = "<tr class='itemMaintenance-" + countMaintenance + "'>" +
             "<td><input  id='maintenence_uh[]' name='maintenence_uh[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value=''>" +
@@ -64,11 +99,11 @@ $(function() {
             "</tr>";
         addItem(html, "#addItemMaintenance", ".removeItemMaintenance", ".itemMaintenance-" + countMaintenance);
         countMaintenance++;
-        $(".searchItemOccurenceMaintenence").click(function() {
+        $(".searchItemOccurenceMaintenence").click(function () {
             var parent_element = $(this).parent().parent().attr('class');
             var numberClass = parent_element.split('-');
             var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
-            $("#buttonOccurrence").click(function() {
+            $("#buttonOccurrence").click(function () {
                 $("#showIdOccurenceMaintenence-" + selectNumber).removeClass('d-none');
                 var idOccurence = $("#idOccurence").val();
                 $("#id_oc_maintenence-" + selectNumber).val(idOccurence);
@@ -82,7 +117,7 @@ $(function() {
     });
 
     var countCustomerComplaint = 0;
-    $("#btnAddCustomerComplaint").click(function() {
+    $("#btnAddCustomerComplaint").click(function () {
         var html = "<tr class='itemCustomerComplaint-" + countCustomerComplaint + "'>" +
             "<td><input id='customer_comp_problem[]' name='customer_comp_problem[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='id_oc_customer_comp[]' id='id_oc_customer_comp-" + countCustomerComplaint + "' value=''>" +
@@ -95,11 +130,11 @@ $(function() {
             "</tr>";
         addItem(html, "#addCustomerComplaint", ".removeItemCustomerComplaint", ".itemCustomerComplaint-" + countCustomerComplaint);
         countCustomerComplaint++;
-        $(".searchItemOccurenceCustomerComp").click(function() {
+        $(".searchItemOccurenceCustomerComp").click(function () {
             var parent_element = $(this).parent().parent().attr('class');
             var numberClass = parent_element.split('-');
             var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
-            $("#buttonOccurrence").click(function() {
+            $("#buttonOccurrence").click(function () {
                 $("#showIdOccurenceCustomerComp-" + selectNumber).removeClass('d-none');
                 var idOccurence = $("#idOccurence").val(); //modal
                 $("#id_oc_customer_comp-" + selectNumber).val(idOccurence);
@@ -113,7 +148,7 @@ $(function() {
     });
 
     var countComments = 0;
-    $("#btnAddComments").click(function() {
+    $("#btnAddComments").click(function () {
         var html = "<tr class='itemComments-" + countComments + "'>" +
             "<td><input id='comments[]' name='comments[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='id_oc_comments[]' id='id_oc_comments-" + countComments + "' value=''>" +
@@ -125,11 +160,11 @@ $(function() {
             "</tr>";
         addItem(html, "#addComments", ".removeItemComments", ".itemComments-" + countComments);
         countComments++;
-        $(".searchItemOccurenceComments").click(function() {
+        $(".searchItemOccurenceComments").click(function () {
             var parent_element = $(this).parent().parent().attr('class');
             var numberClass = parent_element.split('-');
             var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
-            $("#buttonOccurrence").click(function() {
+            $("#buttonOccurrence").click(function () {
                 $("#showIdOccurenceComments-" + selectNumber).removeClass('d-none');
                 var idOccurence = $("#idOccurence").val(); //modal
                 $("#id_oc_comments-" + selectNumber).val(idOccurence);
@@ -143,7 +178,7 @@ $(function() {
     });
 
     //CRIAR RELATÓRIO DE TURNO
-    $('form[name="formShiftReport"]').submit(function(event) {
+    $('form[name="formShiftReport"]').submit(function (event) {
         event.preventDefault();
         var form_data = new FormData();
         var valid = 0;
@@ -180,57 +215,57 @@ $(function() {
 
         //FREQUÊNCIA
         var frequency_employee = new Array();
-        $('input[name="frequency_employee[]"]').each(function() {
+        $('input[name="frequency_employee[]"]').each(function () {
             frequency_employee.push($(this).val());
         });
         form_data.append('frequency_employee[]', frequency_employee);
 
         var frequency_occupation = new Array();
-        $('input[name="frequency_occupation[]"]').each(function() {
+        $('select[name="frequency_occupation[]"]').each(function () {
             frequency_occupation.push($(this).val());
         });
         form_data.append('frequency_occupation[]', frequency_occupation);
 
         //EXTRA
         var extra_extrawork = new Array();
-        $('input[name="extra_extrawork[]"]').each(function() {
+        $('input[name="extra_extrawork[]"]').each(function () {
             extra_extrawork.push($(this).val());
         });
         form_data.append('extra_extrawork[]', extra_extrawork);
 
         var extra_reasons = new Array();
-        $('input[name="extra_reasons[]"]').each(function() {
+        $('input[name="extra_reasons[]"]').each(function () {
             extra_reasons.push($(this).val().replace(",", "-"));
         });
         form_data.append('extra_reasons[]', extra_reasons);
 
         //MANUTENÇÃO
         var maintenence_uh = new Array();
-        $('input[name="maintenence_uh[]"]').each(function() {
+        $('input[name="maintenence_uh[]"]').each(function () {
             maintenence_uh.push($(this).val());
         });
         form_data.append('maintenence_uh[]', maintenence_uh);
 
         var maintenence_status = new Array();
-        $('select[name="maintenence_status[]"]').each(function() {
+        $('select[name="maintenence_status[]"]').each(function () {
             maintenence_status.push($(this).val());
         });
         form_data.append('maintenence_status[]', maintenence_status);
 
         var maintenence_reason = new Array();
-        $('input[name="maintenence_reason[]"]').each(function() {
+        $('input[name="maintenence_reason[]"]').each(function () {
             maintenence_reason.push($(this).val());
         });
         form_data.append('maintenence_reason[]', maintenence_reason);
 
         var maintenence_providence = new Array();
-        $('input[name="maintenence_providence[]"]').each(function() {
+        $('input[name="maintenence_providence[]"]').each(function () {
             maintenence_providence.push($(this).val().replace(",", "-"));
         });
         form_data.append('maintenence_providence[]', maintenence_providence);
 
         var id_oc_maintenence = new Array();
-        $('input[name="id_oc_maintenence[]"]').each(function() {
+        $('input[name="id_oc_maintenence[]"]').each(function () {
             if ($(this).val()) {
                 id_oc_maintenence.push($(this).val());
             } else {
@@ -242,19 +277,19 @@ $(function() {
 
         //RECLAMAÇÃO DO CLIENTE
         var customer_comp_problem = new Array();
-        $('input[name="customer_comp_problem[]"]').each(function() {
+        $('input[name="customer_comp_problem[]"]').each(function () {
             customer_comp_problem.push($(this).val().replace(",", "-"));
         });
         form_data.append('customer_comp_problem[]', customer_comp_problem);
 
         var customer_comp_providence = new Array();
-        $('input[name="customer_comp_providence[]"]').each(function() {
+        $('input[name="customer_comp_providence[]"]').each(function () {
             customer_comp_providence.push($(this).val().replace(",", "-"));
         });
         form_data.append('customer_comp_providence[]', customer_comp_providence);
 
         var id_oc_customer_comp = new Array();
-        $('input[name="id_oc_customer_comp[]"]').each(function() {
+        $('input[name="id_oc_customer_comp[]"]').each(function () {
             if ($(this).val()) {
                 id_oc_customer_comp.push($(this).val());
             } else {
@@ -265,13 +300,13 @@ $(function() {
 
         // //OBSERVAÇÕES
         var comments = new Array();
-        $('input[name="comments[]"]').each(function() {
+        $('input[name="comments[]"]').each(function () {
             comments.push($(this).val().replace(",", "-"));
         });
         form_data.append('comments[]', comments);
 
         var id_oc_comments = new Array();
-        $('input[name="id_oc_comments[]"]').each(function() {
+        $('input[name="id_oc_comments[]"]').each(function () {
             if ($(this).val()) {
                 id_oc_comments.push($(this).val());
             } else {
@@ -291,12 +326,12 @@ $(function() {
                 contentType: false,
                 processData: false,
                 enctype: 'multipart/form-data',
-                success: function(response) {
+                success: function (response) {
                     const obj = JSON.parse(response);
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
                         $('.overlay').addClass('d-none');
-                        window.location.replace(base_url + "/event/list/shiftreport");
+                        //window.location.replace(base_url + "/event/list/shiftreport");
                     } else {
                         DefaultAlert("error", obj.message);
                         $('.overlay').addClass('d-none');
@@ -315,10 +350,10 @@ $(function() {
     }
 
     function loadItemsOccurrenceModal(stringClass) {
-        $(stringClass).click(function() {
-            $.get(base_url + "/occurrence/get/occurrence", function(response) {
+        $(stringClass).click(function () {
+            $.get(base_url + "/occurrence/get/occurrence", function (response) {
                 var data = JSON.parse(response);
-                $.each(data.data, function(index, value) {
+                $.each(data.data, function (index, value) {
                     var html = "<option value='" + value.id + "'>Código: " + value.id + " - " + value.title + "</option>";
                     $("#idOccurence").append(html);
                 });
@@ -328,7 +363,7 @@ $(function() {
 
     function addItem(html, IdAppend, btnClassRemove, classItemRemove) {
         $(IdAppend).append(html);
-        $(btnClassRemove).click(function() {
+        $(btnClassRemove).click(function () {
             $(this).closest(classItemRemove).remove();
         });
     }
