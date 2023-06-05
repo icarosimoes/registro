@@ -83,7 +83,8 @@
                                                     <tr>
                                                         <th>Funcionário</th>
                                                         <th>Função</th>
-                                                        {{-- <th class="w-20">Ações</th> --}}
+                                                        <th></th>
+                                                        <th class="w-20 text-center">Ações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="appendFrequency">

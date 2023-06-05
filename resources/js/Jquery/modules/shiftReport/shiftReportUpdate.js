@@ -6,7 +6,7 @@ $.ajaxSetup({
     }
 });
 
-$(function() {
+$(function () {
 
     //Initialize Select2 Elements
     $('.select2').select2({
@@ -20,33 +20,85 @@ $(function() {
         timer: 3000
     });
     //Adicionar Itens 
-    $("#addFrequency").click(function() {
+    $("#addFrequency").click(function () {
         var html = "<tr class='itemFrequency'>" +
             "<td><input id='frequency_employee[]' name='frequency_employee[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td><input id='frequency_occupation[]' name='frequency_occupation[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td> <select class='select2'></select> </td>" +
+            // "<td><input id='frequency_occupation[]' name='frequency_occupation[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td>" +
             "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemFrequency'><i class='fas fa-trash'></i></a>" +
             "</td>" +
             "</tr>";
         addItem(html, "#appendFrequency", ".removeItemFrequency", ".itemFrequency");
+
     });
 
     //carregar itens da frequência
     var shiftReport_frequency = $("#shiftReport_frequency").val();
-    $.each(JSON.parse(shiftReport_frequency), function(index, value) {
+
+    $.each(JSON.parse(shiftReport_frequency), function (index, value) {
         var html = "<tr class='itemFrequency'>" +
-            "<td><input id='frequency_employee[]' value='" + value.employee + "' name='frequency_employee[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td width='500'><input id='frequency_employee[]' value='" + value.employee + "' name='frequency_employee[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='frequency_id[]' id='frequency_id[]' value='" + value.id + "'>" +
-            "<td><input id='frequency_occupation[]' value='" + value.occupation + "' name='frequency_occupation[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td>" +
+            "<td width='500'><select required class='form-control function' name='frequency_occupation[]'>"
+
+        if (value.func) {
+            html += "<option value='" + value.func.id + "' >" + value.func.id + " - " + value.func.name + "</option>"
+        }
+
+        html += "</select>" +
+            // "<input  value='" + value.occupation + "' type='text' class='form-control form-control-sm' required>"+
+            "</td>"
+
+        if (value.occupation) {
+            html += "<td width='100'><input  readonly value='" + value.occupation + "' type='text' class='form-control form-control-sm' ></td>"
+        } else {
+            html += "<td></td>"
+        }
+
+        // "<td width='100'><input  readonly value='" + value.occupation + "' type='hidden' class='form-control form-control-sm' ></td>" +
+        html += "<td class='text-center'>" +
             // "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemFrequency'><i class='fas fa-trash'></i></a>" +
             "</td>" +
             "</tr>";
+
         addItem(html, "#appendFrequency", ".removeItemFrequency", ".itemFrequency");
+
     });
+    $('.function').select2({
+        theme: 'classic',
+        ajax: {
+            url: base_url + '/helper/get_functions',
+            dataType: 'json',
+            data: function (params) {
+                var query = {
+                    term: params.term,
+                    page: params.page || 1
+                }
+                // Query parameters will be ?search=[term]&page=[page]
+                return query;
+            },
+            processResults: function (response) {
+
+                // Transforms the top-level key of the response object from 'items' to 'results'
+                let more_pagination = true;
+                //se não tem mais paginas
+                if (response.next_page_url == null) {
+                    more_pagination = false
+                }
+                return {
+                    results: response.data,
+                    pagination: {
+                        "more": more_pagination
+                    }
+                }
+            }
+        }
+    })
 
 
-    $("#addExtra").click(function() {
+
+    $("#addExtra").click(function () {
         var html = "<tr class='itemExtra'>" +
             "<td><input id='extra_extrawork[]' name='extra_extrawork[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td><input id='extra_reasons[]' name='extra_reasons[]' type='text' class='form-control form-control-sm' required></td>" +
@@ -58,7 +110,7 @@ $(function() {
     });
     //carregar itens extra
     var shiftReport_extra = $("#shiftReport_extra").val();
-    $.each(JSON.parse(shiftReport_extra), function(index, value) {
+    $.each(JSON.parse(shiftReport_extra), function (index, value) {
         var html = "<tr class='itemExtra'>" +
             "<td><input id='extra_extrawork[]' value='" + value.extrawork + "' name='extra_extrawork[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td><input id='extra_reasons[]' value='" + value.reasons + "' name='extra_reasons[]' type='text' class='form-control form-control-sm' required></td>" +
@@ -72,7 +124,7 @@ $(function() {
 
 
     var countMaintenance = 0;
-    $("#addMaintenance").click(function() {
+    $("#addMaintenance").click(function () {
         var html = "<tr class='itemMaintenance-" + countMaintenance + "'>" +
             "<td><input  id='maintenence_uh[]' name='maintenence_uh[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value=''>" +
@@ -92,11 +144,11 @@ $(function() {
             "</tr>";
         addItem(html, "#addItemMaintenance", ".removeItemMaintenance", ".itemMaintenance");
         countMaintenance++;
-        $(".searchItemOccurenceMaintenence").click(function() {
+        $(".searchItemOccurenceMaintenence").click(function () {
             var parent_element = $(this).parent().parent().attr('class');
             var numberClass = parent_element.split('-');
             var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
-            $("#buttonOccurrence").click(function() {
+            $("#buttonOccurrence").click(function () {
                 $("#showIdOccurenceMaintenence-" + selectNumber).removeClass('d-none');
                 var idOccurence = $("#idOccurence").val();
                 $("#id_oc_maintenence-" + selectNumber).val(idOccurence);
@@ -109,7 +161,7 @@ $(function() {
 
     //carregar itens da manutenção
     var shiftReport_maintenence = $("#shiftReport_maintenence").val();
-    $.each(JSON.parse(shiftReport_maintenence), function(index, value) {
+    $.each(JSON.parse(shiftReport_maintenence), function (index, value) {
         var html = "<tr class='itemMaintenance'>" +
             "<td><input  id='maintenence_uh[]' value='" + value.uh + "' name='maintenence_uh[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='maintenence_id[]' id='maintenence_id[]' value='" + value.id + "'>" +
@@ -131,7 +183,7 @@ $(function() {
     });
 
     var countCustomerComplaint = 0;
-    $("#btnAddCustomerComplaint").click(function() {
+    $("#btnAddCustomerComplaint").click(function () {
         var html = "<tr class='itemCustomerComplaint-" + countCustomerComplaint + "'>" +
             "<td><input id='customer_comp_problem[]' name='customer_comp_problem[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='id_oc_customer_comp[]' id='id_oc_customer_comp-" + countCustomerComplaint + "' value=''>" +
@@ -144,11 +196,11 @@ $(function() {
             "</tr>";
         addItem(html, "#addCustomerComplaint", ".removeItemCustomerComplaint", ".itemCustomerComplaint");
         countCustomerComplaint++;
-        $(".searchItemOccurenceCustomerComp").click(function() {
+        $(".searchItemOccurenceCustomerComp").click(function () {
             var parent_element = $(this).parent().parent().attr('class');
             var numberClass = parent_element.split('-');
             var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
-            $("#buttonOccurrence").click(function() {
+            $("#buttonOccurrence").click(function () {
                 $("#showIdOccurenceCustomerComp-" + selectNumber).removeClass('d-none');
                 var idOccurence = $("#idOccurence").val(); //modal
                 $("#id_oc_customer_comp-" + selectNumber).val(idOccurence);
@@ -161,7 +213,7 @@ $(function() {
 
     //carregar reclamação do cliente
     var shiftReport_customer_comp = $("#shiftReport_customer_comp").val();
-    $.each(JSON.parse(shiftReport_customer_comp), function(index, value) {
+    $.each(JSON.parse(shiftReport_customer_comp), function (index, value) {
         var html = "<tr class='itemCustomerComplaint'>" +
             "<td><input id='customer_comp_problem[]' value='" + value.problem + "' name='customer_comp_problem[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='customer_comp_id[]' id='customer_comp_id[]' value='" + value.id + "'>" +
@@ -176,7 +228,7 @@ $(function() {
     });
 
     var countComments = 0;
-    $("#btnAddComments").click(function() {
+    $("#btnAddComments").click(function () {
         var html = "<tr class='itemComments-" + countComments + "'>" +
             "<td><input id='comments[]' name='comments[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='id_oc_comments[]' id='id_oc_comments-" + countComments + "' value=''>" +
@@ -188,11 +240,11 @@ $(function() {
             "</tr>";
         addItem(html, "#addComments", ".removeItemComments", ".itemComments");
         countComments++;
-        $(".searchItemOccurenceComments").click(function() {
+        $(".searchItemOccurenceComments").click(function () {
             var parent_element = $(this).parent().parent().attr('class');
             var numberClass = parent_element.split('-');
             var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
-            $("#buttonOccurrence").click(function() {
+            $("#buttonOccurrence").click(function () {
                 $("#showIdOccurenceComments-" + selectNumber).removeClass('d-none');
                 var idOccurence = $("#idOccurence").val(); //modal
                 $("#id_oc_comments-" + selectNumber).val(idOccurence);
@@ -205,7 +257,7 @@ $(function() {
     });
     //carregar observações
     var shiftReport_comments = $("#shiftReport_comments").val();
-    $.each(JSON.parse(shiftReport_comments), function(index, value) {
+    $.each(JSON.parse(shiftReport_comments), function (index, value) {
         var html = "<tr class='itemComments'>" +
             "<td><input id='comments[]' value='" + value.comments + "' name='comments[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='comments_id[]' id='comments_id[]' value='" + value.id + "'>" +
@@ -218,7 +270,7 @@ $(function() {
         addItem(html, "#addComments", ".removeItemComments", ".itemComments");
     });
     //CRIAR RELATÓRIO DE TURNO
-    $('form[name="formShiftReportEdit"]').submit(function(event) {
+    $('form[name="formShiftReportEdit"]').submit(function (event) {
         event.preventDefault();
         var form_data = new FormData();
         var valid = 0;
@@ -256,69 +308,71 @@ $(function() {
 
         //FREQUÊNCIA
         var frequency_employee = new Array();
-        $('input[name="frequency_employee[]"]').each(function() {
+        $('input[name="frequency_employee[]"]').each(function () {
             frequency_employee.push($(this).val());
         });
         form_data.append('frequency_employee[]', frequency_employee);
 
         var frequency_occupation = new Array();
-        $('input[name="frequency_occupation[]"]').each(function() {
-            frequency_occupation.push($(this).val());
+        $('select[name="frequency_occupation[]"]').each(function () {
+            if($(this).val()){
+                frequency_occupation.push($(this).val());
+            }
         });
         form_data.append('frequency_occupation[]', frequency_occupation);
 
         var frequency_id = new Array();
-        $('input[name="frequency_id[]"]').each(function() {
+        $('input[name="frequency_id[]"]').each(function () {
             frequency_id.push($(this).val());
         });
         form_data.append('frequency_id[]', frequency_id);
 
         //EXTRA
         var extra_extrawork = new Array();
-        $('input[name="extra_extrawork[]"]').each(function() {
+        $('input[name="extra_extrawork[]"]').each(function () {
             extra_extrawork.push($(this).val());
         });
         form_data.append('extra_extrawork[]', extra_extrawork);
 
         var extra_reasons = new Array();
-        $('input[name="extra_reasons[]"]').each(function() {
+        $('input[name="extra_reasons[]"]').each(function () {
             extra_reasons.push($(this).val().replace(",", "-"));
         });
         form_data.append('extra_reasons[]', extra_reasons);
 
         var extra_id = new Array();
-        $('input[name="extra_id[]"]').each(function() {
+        $('input[name="extra_id[]"]').each(function () {
             extra_id.push($(this).val().replace(",", "-"));
         });
         form_data.append('extra_id[]', extra_id);
 
         //MANUTENÇÃO
         var maintenence_uh = new Array();
-        $('input[name="maintenence_uh[]"]').each(function() {
+        $('input[name="maintenence_uh[]"]').each(function () {
             maintenence_uh.push($(this).val());
         });
         form_data.append('maintenence_uh[]', maintenence_uh);
 
         var maintenence_status = new Array();
-        $('select[name="maintenence_status[]"]').each(function() {
+        $('select[name="maintenence_status[]"]').each(function () {
             maintenence_status.push($(this).val());
         });
         form_data.append('maintenence_status[]', maintenence_status);
 
         var maintenence_reason = new Array();
-        $('input[name="maintenence_reason[]"]').each(function() {
+        $('input[name="maintenence_reason[]"]').each(function () {
             maintenence_reason.push($(this).val());
         });
         form_data.append('maintenence_reason[]', maintenence_reason);
 
         var maintenence_providence = new Array();
-        $('input[name="maintenence_providence[]"]').each(function() {
+        $('input[name="maintenence_providence[]"]').each(function () {
             maintenence_providence.push($(this).val().replace(",", "-"));
         });
         form_data.append('maintenence_providence[]', maintenence_providence);
 
         var id_oc_maintenence = new Array();
-        $('input[name="id_oc_maintenence[]"]').each(function() {
+        $('input[name="id_oc_maintenence[]"]').each(function () {
             if ($(this).val()) {
                 id_oc_maintenence.push($(this).val());
             } else {
@@ -328,7 +382,7 @@ $(function() {
         form_data.append('id_oc_maintenence[]', id_oc_maintenence);
 
         var maintenence_id = new Array();
-        $('input[name="maintenence_id[]"]').each(function() {
+        $('input[name="maintenence_id[]"]').each(function () {
             maintenence_id.push($(this).val());
         });
         form_data.append('maintenence_id[]', maintenence_id);
@@ -336,19 +390,19 @@ $(function() {
 
         //RECLAMAÇÃO DO CLIENTE
         var customer_comp_problem = new Array();
-        $('input[name="customer_comp_problem[]"]').each(function() {
+        $('input[name="customer_comp_problem[]"]').each(function () {
             customer_comp_problem.push($(this).val().replace(",", "-"));
         });
         form_data.append('customer_comp_problem[]', customer_comp_problem);
 
         var customer_comp_providence = new Array();
-        $('input[name="customer_comp_providence[]"]').each(function() {
+        $('input[name="customer_comp_providence[]"]').each(function () {
             customer_comp_providence.push($(this).val().replace(",", "-"));
         });
         form_data.append('customer_comp_providence[]', customer_comp_providence);
 
         var id_oc_customer_comp = new Array();
-        $('input[name="id_oc_customer_comp[]"]').each(function() {
+        $('input[name="id_oc_customer_comp[]"]').each(function () {
             if ($(this).val()) {
                 id_oc_customer_comp.push($(this).val());
             } else {
@@ -358,20 +412,20 @@ $(function() {
         form_data.append('id_oc_customer_comp[]', id_oc_customer_comp);
 
         var customer_comp_id = new Array();
-        $('input[name="customer_comp_id[]"]').each(function() {
+        $('input[name="customer_comp_id[]"]').each(function () {
             customer_comp_id.push($(this).val().replace(",", "-"));
         });
         form_data.append('customer_comp_id[]', customer_comp_id);
 
         // //OBSERVAÇÕES
         var comments = new Array();
-        $('input[name="comments[]"]').each(function() {
+        $('input[name="comments[]"]').each(function () {
             comments.push($(this).val().replace(",", "-"));
         });
         form_data.append('comments[]', comments);
 
         var id_oc_comments = new Array();
-        $('input[name="id_oc_comments[]"]').each(function() {
+        $('input[name="id_oc_comments[]"]').each(function () {
             if ($(this).val()) {
                 id_oc_comments.push($(this).val());
             } else {
@@ -381,7 +435,7 @@ $(function() {
         form_data.append('id_oc_comments[]', id_oc_comments);
 
         var comments_id = new Array();
-        $('input[name="comments_id[]"]').each(function() {
+        $('input[name="comments_id[]"]').each(function () {
             comments_id.push($(this).val());
         });
         form_data.append('comments_id[]', comments_id);
@@ -397,7 +451,7 @@ $(function() {
                 contentType: false,
                 processData: false,
                 enctype: 'multipart/form-data',
-                success: function(response) {
+                success: function (response) {
                     const obj = JSON.parse(response);
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
@@ -412,6 +466,7 @@ $(function() {
         }
     });
 
+
     // exemplo: DefaultAlert("success","Cadastro efetuado com sucesso."); 
     function DefaultAlert(type, msg) {
         Toast.fire({
@@ -422,7 +477,7 @@ $(function() {
 
     function addItem(html, IdAppend, btnClassRemove, classItemRemove) {
         $(IdAppend).append(html);
-        $(btnClassRemove).click(function() {
+        $(btnClassRemove).click(function () {
             $(this).closest(classItemRemove).remove();
         });
     }

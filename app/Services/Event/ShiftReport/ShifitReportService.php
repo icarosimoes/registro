@@ -31,7 +31,7 @@ class ShifitReportService extends Service
 
     public function getShiftReport_frequency($id)
     {
-        $shiftReport_frequency = ShiftReport_frequency::where([['shift_reports_id', $id]])->get();
+        $shiftReport_frequency = ShiftReport_frequency::with('func')->where([['shift_reports_id', $id]])->get();
         return $shiftReport_frequency;
     }
     public function getShiftReport_extra($id)
@@ -95,7 +95,7 @@ class ShifitReportService extends Service
             $data = [
                 'shift_reports_id' => $insertID,
                 'employee' => $frequency_employee[$i],
-                'occupation' => $frequency_occupation[$i],
+                'func_id' => $frequency_occupation[$i],
                 'created_at' => Date('Y-m-d H:i:s'),
             ];
             ShiftReport_frequency::insert($data);
@@ -232,7 +232,8 @@ class ShifitReportService extends Service
             $data = [
                 'shift_reports_id' => $insertID,
                 'employee' => $frequency_employee[$i],
-                'occupation' => $frequency_occupation[$i],
+                'func_id'=>  $frequency_occupation[$i],
+                'occupation' => null,
                 'created_at' => Date('Y-m-d H:i:s'),
             ];
             ShiftReport_frequency::where('id', $frequency_id[$i])->update($data);
