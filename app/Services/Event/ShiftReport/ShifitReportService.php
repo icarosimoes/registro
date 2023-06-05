@@ -232,7 +232,8 @@ class ShifitReportService extends Service
             $data = [
                 'shift_reports_id' => $insertID,
                 'employee' => $frequency_employee[$i],
-                'occupation' => $frequency_occupation[$i],
+                'func_id'=>  $frequency_occupation[$i],
+                'occupation' => null,
                 'created_at' => Date('Y-m-d H:i:s'),
             ];
             ShiftReport_frequency::where('id', $frequency_id[$i])->update($data);

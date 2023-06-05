@@ -40,7 +40,7 @@ $(function () {
         var html = "<tr class='itemFrequency'>" +
             "<td width='500'><input id='frequency_employee[]' value='" + value.employee + "' name='frequency_employee[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='frequency_id[]' id='frequency_id[]' value='" + value.id + "'>" +
-            "<td width='500'><select class='form-control function' name='frequency_occupation[]'>"
+            "<td width='500'><select required class='form-control function' name='frequency_occupation[]'>"
 
         if (value.func) {
             html += "<option value='" + value.func.id + "' >" + value.func.id + " - " + value.func.name + "</option>"
@@ -315,7 +315,9 @@ $(function () {
 
         var frequency_occupation = new Array();
         $('select[name="frequency_occupation[]"]').each(function () {
-            frequency_occupation.push($(this).val());
+            if($(this).val()){
+                frequency_occupation.push($(this).val());
+            }
         });
         form_data.append('frequency_occupation[]', frequency_occupation);
 
@@ -454,7 +456,7 @@ $(function () {
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
                         $('.overlay').addClass('d-none');
-                        // window.location.replace(base_url + "/event/list/shiftreport");
+                        window.location.replace(base_url + "/event/list/shiftreport");
                     } else {
                         DefaultAlert("error", obj.message);
                         $('.overlay').addClass('d-none');
