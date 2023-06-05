@@ -58,7 +58,7 @@ $(function () {
 
         // "<td width='100'><input  readonly value='" + value.occupation + "' type='hidden' class='form-control form-control-sm' ></td>" +
         html += "<td class='text-center'>" +
-            "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemFrequency'><i class='fas fa-trash'></i></a>" +
+            // "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemFrequency'><i class='fas fa-trash'></i></a>" +
             "</td>" +
             "</tr>";
 
