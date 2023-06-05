@@ -31,7 +31,7 @@ class ShifitReportService extends Service
 
     public function getShiftReport_frequency($id)
     {
-        $shiftReport_frequency = ShiftReport_frequency::where([['shift_reports_id', $id]])->get();
+        $shiftReport_frequency = ShiftReport_frequency::with('func')->where([['shift_reports_id', $id]])->get();
         return $shiftReport_frequency;
     }
     public function getShiftReport_extra($id)
