@@ -24,8 +24,8 @@ $(function () {
     //Adicionar Itens 
     $("#addFrequency").click(function () {
         var html = "<tr class='itemFrequency'>" +
-            "<td><input id='frequency_employee[]' name='frequency_employee[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td><select class='form-control function' name='frequency_occupation[]' ></select></td>" +
+            "<td width='500'><input id='frequency_employee[]' name='frequency_employee[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td width='500'><select  class='form-control function' name='frequency_occupation[]' ></select></td>" +
             // "<td><input id='frequency_occupation[]' name='frequency_occupation[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td>" +
             "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemFrequency'><i class='fas fa-trash'></i></a>" +
@@ -331,7 +331,7 @@ $(function () {
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
                         $('.overlay').addClass('d-none');
-                        //window.location.replace(base_url + "/event/list/shiftreport");
+                        window.location.replace(base_url + "/event/list/shiftreport");
                     } else {
                         DefaultAlert("error", obj.message);
                         $('.overlay').addClass('d-none');
