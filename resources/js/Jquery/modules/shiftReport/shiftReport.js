@@ -81,7 +81,8 @@ $(function () {
     var countMaintenance = 0;
     $("#addMaintenance").click(function () {
         var html = "<tr class='itemMaintenance-" + countMaintenance + "'>" +
-            "<td><input  id='maintenence_uh[]' name='maintenence_uh[]' type='text' class='form-control form-control-sm' required></td>" +
+            // "<td><input  id='maintenence_uh[]' name='maintenence_uh[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td width='300' ><select name='maintenence_uh[]' class=' form-control local' required></select></td>" +
             "<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value=''>" +
             "<td>" +
             "<select id='maintenence_status[]' name='maintenence_status[]' class='form-control form-control-sm' required>" +
@@ -114,6 +115,40 @@ $(function () {
         });
         //carregar itens(options) atualizados da modal selecionar ocorrência
         loadItemsOccurrenceModal(".searchItemOccurenceMaintenence");
+        
+        //    select 2 function
+        $('.local').select2({
+            theme: 'classic',
+            ajax: {
+                url: base_url + '/helper/get_locals',
+                dataType: 'json',
+                data: function (params) {
+                    var query = {
+                        term: params.term,
+                        page: params.page || 1
+                    }
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                },
+                processResults: function (response) {
+
+                    // Transforms the top-level key of the response object from 'items' to 'results'
+                    let more_pagination = true;
+                    //se não tem mais paginas
+                    if (response.next_page_url == null) {
+                        more_pagination = false
+                    }
+                    return {
+                        results: response.data,
+                        pagination: {
+                            "more": more_pagination
+                        }
+                    }
+                }
+            }
+        })
+
+    
     });
 
     var countCustomerComplaint = 0;
@@ -212,7 +247,7 @@ $(function () {
         //     $("#alertError").removeClass('d-none');
         //     $("#alertError").html("<strong>Opps!</strong> Todos os campos da 'RECLAMAÇÃO DO CLIENTE' são obrigatórios.");
         // }
-
+        
         //FREQUÊNCIA
         var frequency_employee = new Array();
         $('input[name="frequency_employee[]"]').each(function () {
@@ -240,8 +275,9 @@ $(function () {
         form_data.append('extra_reasons[]', extra_reasons);
 
         //MANUTENÇÃO
+        
         var maintenence_uh = new Array();
-        $('input[name="maintenence_uh[]"]').each(function () {
+        $('select[name="maintenence_uh[]"]').each(function () {
             maintenence_uh.push($(this).val());
         });
         form_data.append('maintenence_uh[]', maintenence_uh);

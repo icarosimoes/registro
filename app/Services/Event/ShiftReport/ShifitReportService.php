@@ -41,7 +41,7 @@ class ShifitReportService extends Service
     }
     public function getShiftReport_maintenence($id)
     {
-        $shiftReport_maintenence = ShiftReport_maintenence::where([['shift_reports_id', $id]])->get();
+        $shiftReport_maintenence = ShiftReport_maintenence::with('local')->where([['shift_reports_id', $id]])->get();
         return $shiftReport_maintenence;
     }
     public function getShiftReport_customer_comp($id)
@@ -121,7 +121,7 @@ class ShifitReportService extends Service
                 if ($id_oc_maintenence[$i] == 0) {
                     $data = [
                         'shift_reports_id' => $insertID,
-                        'uh' => $maintenence_uh[$i],
+                        'local_id' => $maintenence_uh[$i],
                         'status' => $maintenence_status[$i],
                         'reason' => $maintenence_reason[$i],
                         'providence' => $maintenence_providence[$i],
@@ -257,7 +257,8 @@ class ShifitReportService extends Service
             for ($i = 0; $i < count($maintenence_uh); $i++) {
                 $data = [
                     'shift_reports_id' => $insertID,
-                    'uh' => $maintenence_uh[$i],
+                    'local_id' =>  $maintenence_uh[$i],
+                    'uh' => null ,
                     'status' => $maintenence_status[$i],
                     'reason' => $maintenence_reason[$i],
                     'providence' => $maintenence_providence[$i],

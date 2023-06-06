@@ -163,8 +163,21 @@ $(function () {
     var shiftReport_maintenence = $("#shiftReport_maintenence").val();
     $.each(JSON.parse(shiftReport_maintenence), function (index, value) {
         var html = "<tr class='itemMaintenance'>" +
-            "<td><input  id='maintenence_uh[]' value='" + value.uh + "' name='maintenence_uh[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<input type='hidden' name='maintenence_id[]' id='maintenence_id[]' value='" + value.id + "'>" +
+            "<td width='300'><select name='maintenence_uh[]' class='form-control local' required>"
+
+            if (value.local){
+                html += "<option value='"+value.local.id+"'>"+value.local.id+" - "+value.local.name+"</option>"
+            }
+            
+            html += "</select></td>"
+            
+            if(value.uh){
+                html += "<td width='100'><input   value='" + value.uh + "'  type='text' class='form-control form-control-sm' readonly></td>"
+            }else{
+                html += "<td></td>"
+            }
+
+            html += "<input type='hidden' name='maintenence_id[]' id='maintenence_id[]' value='" + value.id + "'>" +
             "<td>" +
             "<select id='maintenence_status[]' value='" + value.status + "' name='maintenence_status[]' class='form-control form-control-sm' required>" +
             "<option value='BLOQUEADO'>BLOQUEADO</option>" +
@@ -180,6 +193,37 @@ $(function () {
             "</td>" +
             "</tr>";
         addItem(html, "#addItemMaintenance", ".removeItemMaintenance", ".itemMaintenance");
+         //    select 2 function
+         $('.local').select2({
+            theme: 'classic',
+            ajax: {
+                url: base_url + '/helper/get_locals',
+                dataType: 'json',
+                data: function (params) {
+                    var query = {
+                        term: params.term,
+                        page: params.page || 1
+                    }
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                },
+                processResults: function (response) {
+
+                    // Transforms the top-level key of the response object from 'items' to 'results'
+                    let more_pagination = true;
+                    //se não tem mais paginas
+                    if (response.next_page_url == null) {
+                        more_pagination = false
+                    }
+                    return {
+                        results: response.data,
+                        pagination: {
+                            "more": more_pagination
+                        }
+                    }
+                }
+            }
+        })
     });
 
     var countCustomerComplaint = 0;
@@ -348,7 +392,7 @@ $(function () {
 
         //MANUTENÇÃO
         var maintenence_uh = new Array();
-        $('input[name="maintenence_uh[]"]').each(function () {
+        $('select[name="maintenence_uh[]"]').each(function () {
             maintenence_uh.push($(this).val());
         });
         form_data.append('maintenence_uh[]', maintenence_uh);
