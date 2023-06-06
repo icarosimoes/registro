@@ -22,15 +22,15 @@ $(function () {
     //Adicionar Itens 
     $("#addFrequency").click(function () {
         var html = "<tr class='itemFrequency'>" +
-            "<td><input id='frequency_employee[]' name='frequency_employee[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td> <select class='select2'></select> </td>" +
-            // "<td><input id='frequency_occupation[]' name='frequency_occupation[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td>" +
-            "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemFrequency'><i class='fas fa-trash'></i></a>" +
+            "<td width='500'><input id='frequency_employee[]' name='frequency_employee[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td width='500'><select name='frequency_occupation[]' class='form-control form-control-sm function'></select> </td>" +
+            "<td></td>" +
+            "<td class='text-center'>" +
+            "<button  data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemFrequency'><i class='fas fa-trash'></i></button>" +
             "</td>" +
             "</tr>";
         addItem(html, "#appendFrequency", ".removeItemFrequency", ".itemFrequency");
-
+        activeSelectFunction()
     });
 
     //carregar itens da frequência
@@ -58,52 +58,22 @@ $(function () {
 
         // "<td width='100'><input  readonly value='" + value.occupation + "' type='hidden' class='form-control form-control-sm' ></td>" +
         html += "<td class='text-center'>" +
-            // "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemFrequency'><i class='fas fa-trash'></i></a>" +
+            "<button data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemFrequency'><i class='fas fa-trash'></i></button>" +
             "</td>" +
             "</tr>";
 
         addItem(html, "#appendFrequency", ".removeItemFrequency", ".itemFrequency");
 
     });
-    $('.function').select2({
-        theme: 'classic',
-        ajax: {
-            url: base_url + '/helper/get_functions',
-            dataType: 'json',
-            data: function (params) {
-                var query = {
-                    term: params.term,
-                    page: params.page || 1
-                }
-                // Query parameters will be ?search=[term]&page=[page]
-                return query;
-            },
-            processResults: function (response) {
-
-                // Transforms the top-level key of the response object from 'items' to 'results'
-                let more_pagination = true;
-                //se não tem mais paginas
-                if (response.next_page_url == null) {
-                    more_pagination = false
-                }
-                return {
-                    results: response.data,
-                    pagination: {
-                        "more": more_pagination
-                    }
-                }
-            }
-        }
-    })
-
+    activeSelectFunction()
 
 
     $("#addExtra").click(function () {
         var html = "<tr class='itemExtra'>" +
-            "<td><input id='extra_extrawork[]' name='extra_extrawork[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td><input id='extra_reasons[]' name='extra_reasons[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td>" +
-            "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemExtra'><i class='fas fa-trash'></i></a>" +
+            "<td width='500'><input id='extra_extrawork[]' name='extra_extrawork[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td width='500'><input id='extra_reasons[]' name='extra_reasons[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td class='text-center'>" +
+            "<button  data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemExtra'><i class='fas fa-trash'></i></button>" +
             "</td>" +
             "</tr>";
         addItem(html, "#addItemExtra", ".removeItemExtra", ".itemExtra");
@@ -112,11 +82,11 @@ $(function () {
     var shiftReport_extra = $("#shiftReport_extra").val();
     $.each(JSON.parse(shiftReport_extra), function (index, value) {
         var html = "<tr class='itemExtra'>" +
-            "<td><input id='extra_extrawork[]' value='" + value.extrawork + "' name='extra_extrawork[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td><input id='extra_reasons[]' value='" + value.reasons + "' name='extra_reasons[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td width='500'><input id='extra_extrawork[]' value='" + value.extrawork + "' name='extra_extrawork[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td width='500'><input id='extra_reasons[]' value='" + value.reasons + "' name='extra_reasons[]' type='text' class='form-control form-control-sm' required></td>" +
             "<input type='hidden' name='extra_id[]' id='extra_id[]' value='" + value.id + "'>" +
-            "<td>" +
-            // "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemExtra'><i class='fas fa-trash'></i></a>" +
+            "<td class='text-center'>" +
+            "<button  data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemExtra'><i class='fas fa-trash'></i></button>" +
             "</td>" +
             "</tr>";
         addItem(html, "#addItemExtra", ".removeItemExtra", ".itemExtra");
@@ -165,19 +135,19 @@ $(function () {
         var html = "<tr class='itemMaintenance'>" +
             "<td width='300'><select name='maintenence_uh[]' class='form-control local' required>"
 
-            if (value.local){
-                html += "<option value='"+value.local.id+"'>"+value.local.id+" - "+value.local.name+"</option>"
-            }
-            
-            html += "</select></td>"
-            
-            if(value.uh){
-                html += "<td width='100'><input   value='" + value.uh + "'  type='text' class='form-control form-control-sm' readonly></td>"
-            }else{
-                html += "<td></td>"
-            }
+        if (value.local) {
+            html += "<option value='" + value.local.id + "'>" + value.local.id + " - " + value.local.name + "</option>"
+        }
 
-            html += "<input type='hidden' name='maintenence_id[]' id='maintenence_id[]' value='" + value.id + "'>" +
+        html += "</select></td>"
+
+        if (value.uh) {
+            html += "<td width='100'><input   value='" + value.uh + "'  type='text' class='form-control form-control-sm' readonly></td>"
+        } else {
+            html += "<td></td>"
+        }
+
+        html += "<input type='hidden' name='maintenence_id[]' id='maintenence_id[]' value='" + value.id + "'>" +
             "<td>" +
             "<select id='maintenence_status[]' value='" + value.status + "' name='maintenence_status[]' class='form-control form-control-sm' required>" +
             "<option value='BLOQUEADO'>BLOQUEADO</option>" +
@@ -193,8 +163,8 @@ $(function () {
             "</td>" +
             "</tr>";
         addItem(html, "#addItemMaintenance", ".removeItemMaintenance", ".itemMaintenance");
-         //    select 2 function
-         $('.local').select2({
+        //    select 2 function
+        $('.local').select2({
             theme: 'classic',
             ajax: {
                 url: base_url + '/helper/get_locals',
@@ -331,8 +301,9 @@ $(function () {
         //VALIDAÇÕES
         if (!$('input[name="frequency_employee[]"]').length) {
             valid = 1;
-            $("#alertError").removeClass('d-none');
-            $("#alertError").html("<strong>Opps!</strong> Todos os campos da 'FREQUÊNCIA' são obrigatórios.");
+            DefaultAlert('error',"<strong>Opps!</strong> Todos os campos da 'FREQUÊNCIA' são obrigatórios.")
+            // $("#alertError").removeClass('d-none');
+            // $("#alertError").html("<strong>Opps!</strong> Todos os campos da 'FREQUÊNCIA' são obrigatórios.");
         }
         // if (!$('input[name="extra_extrawork[]"]').length) {
         //     valid = 1;
@@ -359,7 +330,7 @@ $(function () {
 
         var frequency_occupation = new Array();
         $('select[name="frequency_occupation[]"]').each(function () {
-            if($(this).val()){
+            if ($(this).val()) {
                 frequency_occupation.push($(this).val());
             }
         });
@@ -499,17 +470,54 @@ $(function () {
                     const obj = JSON.parse(response);
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
-                        $('.overlay').addClass('d-none');
-                        window.location.replace(base_url + "/event/list/shiftreport");
+                        // $('.overlay').addClass('d-none');
+                        //window.location.replace(base_url + "/event/list/shiftreport");
                     } else {
                         DefaultAlert("error", obj.message);
-                        $('.overlay').addClass('d-none');
+                        // $('.overlay').addClass('d-none');
                     }
                 }
-            });
+            }).catch(()=>{
+                DefaultAlert('error','Não foi possível salvar')
+            }).always(()=>{
+                $('.overlay').addClass('d-none');
+            })
         }
     });
 
+    //ativa select 2 nos select de funcao
+    function activeSelectFunction() {
+        $('.function').select2({
+            theme: 'classic',
+            ajax: {
+                url: base_url + '/helper/get_functions',
+                dataType: 'json',
+                data: function (params) {
+                    var query = {
+                        term: params.term,
+                        page: params.page || 1
+                    }
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                },
+                processResults: function (response) {
+
+                    // Transforms the top-level key of the response object from 'items' to 'results'
+                    let more_pagination = true;
+                    //se não tem mais paginas
+                    if (response.next_page_url == null) {
+                        more_pagination = false
+                    }
+                    return {
+                        results: response.data,
+                        pagination: {
+                            "more": more_pagination
+                        }
+                    }
+                }
+            }
+        })
+    }
 
     // exemplo: DefaultAlert("success","Cadastro efetuado com sucesso."); 
     function DefaultAlert(type, msg) {

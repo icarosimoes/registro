@@ -102,12 +102,12 @@
                                             </table>
                                         </div>
                                     </div>
-                                    {{-- <div class="card-footer text-center">
+                                    <div class="card-footer text-center">
                                         <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addFrequency"
                                             href="javascript:">Adicionar Novo
                                             Item</a>
 
-                                    </div> --}}
+                                    </div> 
                                 </div>
                             </div>{{-- end FREQUÊNCIA --}}
 
@@ -124,6 +124,7 @@
                                                     <tr>
                                                         <th>Mão de obra extra</th>
                                                         <th>Motivo</th>
+                                                        <th class="text-center">Ações</th>
                                                         {{-- <th class="w-20">Ações</th> --}}
                                                     </tr>
                                                 </thead>
@@ -141,12 +142,12 @@
                                             </table>
                                         </div>
                                     </div>
-                                    {{-- <div class="card-footer text-center">
+                                    <div class="card-footer text-center">
                                         <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addExtra"
                                             href="javascript:">Adicionar Novo
                                             Item</a>
 
-                                    </div> --}}
+                                    </div> 
                                 </div>
                             </div>{{-- end extra --}}
 

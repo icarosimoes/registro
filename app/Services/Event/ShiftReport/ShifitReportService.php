@@ -228,27 +228,28 @@ class ShifitReportService extends Service
         $insertID = $shiftReport->id;
 
         //Frequência
+        
+        ShiftReport_frequency::where('shift_reports_id', $insertID)->delete();
         for ($i = 0; $i < count($frequency_employee); $i++) {
-            $data = [
-                'shift_reports_id' => $insertID,
-                'employee' => $frequency_employee[$i],
-                'func_id'=>  $frequency_occupation[$i],
-                'occupation' => null,
-                'created_at' => Date('Y-m-d H:i:s'),
-            ];
-            ShiftReport_frequency::where('id', $frequency_id[$i])->update($data);
+            $shiftReport_frequency = new ShiftReport_frequency();   
+            $shiftReport_frequency->shift_reports_id = $insertID;
+            $shiftReport_frequency->employee = $frequency_employee[$i];  
+            $shiftReport_frequency->func_id = $frequency_occupation[$i];
+            $shiftReport_frequency->occupation = null;
+            $shiftReport_frequency->save();
+            
         }
 
         //extra
+        ShiftReport_extra::where('shift_reports_id',$insertID)->delete();
         if (!empty($extra_extrawork[0])) {
             for ($i = 0; $i < count($extra_extrawork); $i++) {
-                $data = [
-                    'shift_reports_id' => $insertID,
-                    'extrawork' => $extra_extrawork[$i],
-                    'reasons' => $extra_reasons[$i],
-                    'created_at' => Date('Y-m-d H:i:s'),
-                ];
-                ShiftReport_extra::where('id', $extra_id[$i])->update($data);
+                $shiftReport_extra = new ShiftReport_extra();
+                $shiftReport_extra->shift_reports_id = $insertID;
+                $shiftReport_extra->extrawork = $extra_extrawork[$i];
+                $shiftReport_extra->reasons = $extra_reasons[$i];
+                $shiftReport_extra->save();
+                
             }
         }
 
