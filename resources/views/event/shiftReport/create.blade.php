@@ -157,7 +157,7 @@
                                             <table name="DataTableUser" id="DataTableUser" class="table table-sm tablenotstyle">
                                                 <thead>
                                                     <tr>
-                                                        <th>UH</th>
+                                                        <th>Local</th>
                                                         <th>Status</th>
                                                         <th>Motivo</th>
                                                         <th>Providência</th>
