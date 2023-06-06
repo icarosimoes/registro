@@ -254,18 +254,17 @@ class ShifitReportService extends Service
         }
 
         //manutenção
+        ShiftReport_maintenence::where('shift_reports_id', $insertID)->delete();
         if (!empty($maintenence_uh[0])) {
             for ($i = 0; $i < count($maintenence_uh); $i++) {
-                $data = [
-                    'shift_reports_id' => $insertID,
-                    'local_id' =>  $maintenence_uh[$i],
-                    'uh' => null ,
-                    'status' => $maintenence_status[$i],
-                    'reason' => $maintenence_reason[$i],
-                    'providence' => $maintenence_providence[$i],
-                    'created_at' => Date('Y-m-d H:i:s'),
-                ];
-                ShiftReport_maintenence::where('id', $maintenence_id[$i])->update($data);
+                $shiftReport_maintenence =  new ShiftReport_maintenence();
+                $shiftReport_maintenence->shift_reports_id = $insertID; 
+                $shiftReport_maintenence->local_id = $maintenence_uh[$i]; 
+                $shiftReport_maintenence->uh = null; 
+                $shiftReport_maintenence->status = $maintenence_status[$i]; 
+                $shiftReport_maintenence->reason = $maintenence_reason[$i]; 
+                $shiftReport_maintenence->providence = $maintenence_providence[$i]; 
+                $shiftReport_maintenence->save();
             }
         }
 

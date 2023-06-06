@@ -96,8 +96,9 @@ $(function () {
     var countMaintenance = 0;
     $("#addMaintenance").click(function () {
         var html = "<tr class='itemMaintenance-" + countMaintenance + "'>" +
-            "<td><input  id='maintenence_uh[]' name='maintenence_uh[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td width='300'><select name='maintenence_uh[]' class='form-control form-control-sm local' required></td>" +
             "<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value=''>" +
+            "<td></td>"+
             "<td>" +
             "<select id='maintenence_status[]' name='maintenence_status[]' class='form-control form-control-sm' required>" +
             "<option value='BLOQUEADO'>BLOQUEADO</option>" +
@@ -106,27 +107,29 @@ $(function () {
             "</td>" +
             "<td><input id='maintenence_reason[]' name='maintenence_reason[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td><input id='maintenence_providence[]' name='maintenence_providence[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td>" +
+            "<td class='text-center>'" +
             "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></a> " +
             "<a href='#' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></a> " +
             "<small id='showIdOccurenceMaintenence-" + countMaintenance + "' class='badge d-none badge-success codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'></i></small>" +
             "</td>" +
             "</tr>";
         addItem(html, "#addItemMaintenance", ".removeItemMaintenance", ".itemMaintenance");
+        activeSelectLocal()
         countMaintenance++;
-        $(".searchItemOccurenceMaintenence").click(function () {
-            var parent_element = $(this).parent().parent().attr('class');
-            var numberClass = parent_element.split('-');
-            var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
-            $("#buttonOccurrence").click(function () {
-                $("#showIdOccurenceMaintenence-" + selectNumber).removeClass('d-none');
-                var idOccurence = $("#idOccurence").val();
-                $("#id_oc_maintenence-" + selectNumber).val(idOccurence);
-                $(".codeOccurenceMaintenence-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
-                $("#ModalSelectOcurrence").modal('hide');
-                selectNumber = null;
-            });
-        });
+        // $(".searchItemOccurenceMaintenence").click(function () {
+        //     debugger
+        //     var parent_element = $(this).parent().parent().attr('class');
+        //     var numberClass = parent_element.split('-');
+        //     var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
+        //     $("#buttonOccurrence").click(function () {
+        //         $("#showIdOccurenceMaintenence-" + selectNumber).removeClass('d-none');
+        //         var idOccurence = $("#idOccurence").val();
+        //         $("#id_oc_maintenence-" + selectNumber).val(idOccurence);
+        //         $(".codeOccurenceMaintenence-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
+        //         $("#ModalSelectOcurrence").modal('hide');
+        //         selectNumber = null;
+        //     });
+        // });
     });
 
     //carregar itens da manutenção
@@ -156,44 +159,16 @@ $(function () {
             "</td>" +
             "<td><input id='maintenence_reason[]' value='" + value.reason + "' name='maintenence_reason[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td><input id='maintenence_providence[]' value='" + value.providence + "' name='maintenence_providence[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td>" +
-            // "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></a> " +
-            // "<a href='#' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></a> " +
-            "<small id='showIdOccurenceMaintenence' class='badge d-none badge-success codeOccurenceMaintenence'><i class='far fa-registered'></i> " + value.occurrences_id + "</small>" +
+            "<td class='text_center'>" +
+            "<button type='button'  data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></button> " +
+            "<button type='button'  data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></button> " +
+            "<small id='showIdOccurenceMaintenence-" + countMaintenance + "' class='badge d-none badge-success codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'>" + value.occurrences_id + "</i></small>" +
+            // "<small id='showIdOccurenceMaintenence' class='badge d-none badge-success codeOccurenceMaintenence'><i class='far fa-registered'></i> " + value.occurrences_id + "</small>" +
             "</td>" +
             "</tr>";
         addItem(html, "#addItemMaintenance", ".removeItemMaintenance", ".itemMaintenance");
-        //    select 2 function
-        $('.local').select2({
-            theme: 'classic',
-            ajax: {
-                url: base_url + '/helper/get_locals',
-                dataType: 'json',
-                data: function (params) {
-                    var query = {
-                        term: params.term,
-                        page: params.page || 1
-                    }
-                    // Query parameters will be ?search=[term]&page=[page]
-                    return query;
-                },
-                processResults: function (response) {
-
-                    // Transforms the top-level key of the response object from 'items' to 'results'
-                    let more_pagination = true;
-                    //se não tem mais paginas
-                    if (response.next_page_url == null) {
-                        more_pagination = false
-                    }
-                    return {
-                        results: response.data,
-                        pagination: {
-                            "more": more_pagination
-                        }
-                    }
-                }
-            }
-        })
+        activeSelectLocal()
+        
     });
 
     var countCustomerComplaint = 0;
@@ -210,19 +185,19 @@ $(function () {
             "</tr>";
         addItem(html, "#addCustomerComplaint", ".removeItemCustomerComplaint", ".itemCustomerComplaint");
         countCustomerComplaint++;
-        $(".searchItemOccurenceCustomerComp").click(function () {
-            var parent_element = $(this).parent().parent().attr('class');
-            var numberClass = parent_element.split('-');
-            var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
-            $("#buttonOccurrence").click(function () {
-                $("#showIdOccurenceCustomerComp-" + selectNumber).removeClass('d-none');
-                var idOccurence = $("#idOccurence").val(); //modal
-                $("#id_oc_customer_comp-" + selectNumber).val(idOccurence);
-                $(".codeOccurenceCustomerComp-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
-                $("#ModalSelectOcurrence").modal('hide');
-                selectNumber = null;
-            });
-        });
+        // $(".searchItemOccurenceCustomerComp").click(function () {
+        //     var parent_element = $(this).parent().parent().attr('class');
+        //     var numberClass = parent_element.split('-');
+        //     var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
+        //     $("#buttonOccurrence").click(function () {
+        //         $("#showIdOccurenceCustomerComp-" + selectNumber).removeClass('d-none');
+        //         var idOccurence = $("#idOccurence").val(); //modal
+        //         $("#id_oc_customer_comp-" + selectNumber).val(idOccurence);
+        //         $(".codeOccurenceCustomerComp-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
+        //         $("#ModalSelectOcurrence").modal('hide');
+        //         selectNumber = null;
+        //     });
+        // });
     });
 
     //carregar reclamação do cliente
@@ -254,20 +229,22 @@ $(function () {
             "</tr>";
         addItem(html, "#addComments", ".removeItemComments", ".itemComments");
         countComments++;
-        $(".searchItemOccurenceComments").click(function () {
-            var parent_element = $(this).parent().parent().attr('class');
-            var numberClass = parent_element.split('-');
-            var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
-            $("#buttonOccurrence").click(function () {
-                $("#showIdOccurenceComments-" + selectNumber).removeClass('d-none');
-                var idOccurence = $("#idOccurence").val(); //modal
-                $("#id_oc_comments-" + selectNumber).val(idOccurence);
-                $(".codeOccurenceComments-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
-                $("#ModalSelectOcurrence").modal('hide');
-                selectNumber = null;
-            });
-        });
+        
 
+    });
+
+    $(document).on('click',".searchItemOccurenceComments",function () {
+        var parent_element = $(this).parent().parent().attr('class');
+        var numberClass = parent_element.split('-');
+        var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
+        $("#buttonOccurrence").click(function () {
+            $("#showIdOccurenceComments-" + selectNumber).removeClass('d-none');
+            var idOccurence = $("#idOccurence").val(); //modal
+            $("#id_oc_comments-" + selectNumber).val(idOccurence);
+            $(".codeOccurenceComments-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
+            $("#ModalSelectOcurrence").modal('hide');
+            selectNumber = null;
+        });
     });
     //carregar observações
     var shiftReport_comments = $("#shiftReport_comments").val();
@@ -485,6 +462,38 @@ $(function () {
         }
     });
 
+    function activeSelectLocal(){
+        $('.local').select2({
+            theme: 'classic',
+            ajax: {
+                url: base_url + '/helper/get_locals',
+                dataType: 'json',
+                data: function (params) {
+                    var query = {
+                        term: params.term,
+                        page: params.page || 1
+                    }
+                    // Query parameters will be ?search=[term]&page=[page]
+                    return query;
+                },
+                processResults: function (response) {
+
+                    // Transforms the top-level key of the response object from 'items' to 'results'
+                    let more_pagination = true;
+                    //se não tem mais paginas
+                    if (response.next_page_url == null) {
+                        more_pagination = false
+                    }
+                    return {
+                        results: response.data,
+                        pagination: {
+                            "more": more_pagination
+                        }
+                    }
+                }
+            }
+        })
+    }
     //ativa select 2 nos select de funcao
     function activeSelectFunction() {
         $('.function').select2({
