@@ -11,7 +11,7 @@ use App\Models\ShiftReport\ShiftReport_maintenence;
 use App\Services\Service;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\DB;
 class ShifitReportService extends Service
 {
     public function index(int $id = null)
@@ -192,6 +192,7 @@ class ShifitReportService extends Service
 
     public function update(array $data)
     {
+        DB::beginTransaction();
         //Frequência
         $frequency_id = explode(",", $data['frequency_id'][0]);
         $frequency_employee = explode(",", $data['frequency_employee'][0]);
@@ -206,6 +207,8 @@ class ShifitReportService extends Service
         $maintenence_status = explode(",", $data['maintenence_status'][0]);
         $maintenence_reason = explode(",", $data['maintenence_reason'][0]);
         $maintenence_providence = explode(",", $data['maintenence_providence'][0]);
+        $maintenence_oc = explode(",", $data['id_oc_maintenence'][0]);
+         
         //Reclamação do cliente
         $customer_comp_problem = explode(",", $data['customer_comp_problem'][0]);
         $customer_comp_providence = explode(",", $data['customer_comp_providence'][0]);
@@ -252,7 +255,7 @@ class ShifitReportService extends Service
                 
             }
         }
-
+        
         //manutenção
         ShiftReport_maintenence::where('shift_reports_id', $insertID)->delete();
         if (!empty($maintenence_uh[0])) {
@@ -264,6 +267,7 @@ class ShifitReportService extends Service
                 $shiftReport_maintenence->status = $maintenence_status[$i]; 
                 $shiftReport_maintenence->reason = $maintenence_reason[$i]; 
                 $shiftReport_maintenence->providence = $maintenence_providence[$i]; 
+                $shiftReport_maintenence->occurrences_id = $maintenence_oc[$i]==''?null:$maintenence_oc[$i]; 
                 $shiftReport_maintenence->save();
             }
         }
@@ -292,7 +296,7 @@ class ShifitReportService extends Service
                 ShiftReport_comments::where('id', $comments_id[$i])->update($data);
             }
         }
-
+        DB::commit();
         return $shiftReport;
 
     }

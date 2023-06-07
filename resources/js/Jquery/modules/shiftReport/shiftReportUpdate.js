@@ -92,13 +92,13 @@ $(function () {
         addItem(html, "#addItemExtra", ".removeItemExtra", ".itemExtra");
     });
 
-
+    //ADD MANUTENCAO
     var countMaintenance = 0;
     $("#addMaintenance").click(function () {
         var html = "<tr class='itemMaintenance-" + countMaintenance + "'>" +
-            "<td width='300'><select name='maintenence_uh[]' class='form-control form-control-sm local' required></td>" +
-            "<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value=''>" +
-            "<td></td>"+
+            "<td width='300'><select name='maintenence_uh[]' class='form-control form-control-sm local' required>" +
+            " <input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value=''></td>" +
+            "<td></td>" +
             "<td>" +
             "<select id='maintenence_status[]' name='maintenence_status[]' class='form-control form-control-sm' required>" +
             "<option value='BLOQUEADO'>BLOQUEADO</option>" +
@@ -107,10 +107,11 @@ $(function () {
             "</td>" +
             "<td><input id='maintenence_reason[]' name='maintenence_reason[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td><input id='maintenence_providence[]' name='maintenence_providence[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td class='text-center>'" +
-            "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></a> " +
-            "<a href='#' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></a> " +
-            "<small id='showIdOccurenceMaintenence-" + countMaintenance + "' class='badge d-none badge-success codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'></i></small>" +
+            // "<td><input  id='id_oc_maintenence-"+countMaintenance+"'   name='id_oc_maintenence[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td class='text-center'>" +
+            "<button  type='button' data-toggle='tooltip' data-count='"+countMaintenance+"' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></button> " +
+            "<button  type='button' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></button> " +
+            "<a  id='showIdOccurenceMaintenence-" + countMaintenance + "' class='d-none btn btn-sm btn-success codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'></i></a>" +
             "</td>" +
             "</tr>";
         addItem(html, "#addItemMaintenance", ".removeItemMaintenance", ".itemMaintenance");
@@ -135,7 +136,7 @@ $(function () {
     //carregar itens da manutenção
     var shiftReport_maintenence = $("#shiftReport_maintenence").val();
     $.each(JSON.parse(shiftReport_maintenence), function (index, value) {
-        var html = "<tr class='itemMaintenance'>" +
+        var html = "<tr class='itemMaintenance-" + countMaintenance + "'>" +
             "<td width='300'><select name='maintenence_uh[]' class='form-control local' required>"
 
         if (value.local) {
@@ -156,19 +157,23 @@ $(function () {
             "<option value='BLOQUEADO'>BLOQUEADO</option>" +
             "<option value='DISPONÍVEL'>DISPONÍVEL</option>" +
             "</select>" +
-            "</td>" +
+            "<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value=''></td>" +
             "<td><input id='maintenence_reason[]' value='" + value.reason + "' name='maintenence_reason[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td><input id='maintenence_providence[]' value='" + value.providence + "' name='maintenence_providence[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td class='text_center'>" +
-            "<button type='button'  data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></button> " +
+            "<button type='button'  data-toggle='tooltip' data-placement='top' data-count='"+countMaintenance+"' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></button> " +
             "<button type='button'  data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></button> " +
-            "<small id='showIdOccurenceMaintenence-" + countMaintenance + "' class='badge d-none badge-success codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'>" + value.occurrences_id + "</i></small>" +
+            "<a id='showIdOccurenceMaintenence-" + countMaintenance + "' class='btn btn-sm btn-success  codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'>" + value.occurrences_id + "</i></a>" +
             // "<small id='showIdOccurenceMaintenence' class='badge d-none badge-success codeOccurenceMaintenence'><i class='far fa-registered'></i> " + value.occurrences_id + "</small>" +
             "</td>" +
             "</tr>";
+            
+            
+            
         addItem(html, "#addItemMaintenance", ".removeItemMaintenance", ".itemMaintenance");
+        countMaintenance++;
         activeSelectLocal()
-        
+
     });
 
     var countCustomerComplaint = 0;
@@ -199,7 +204,26 @@ $(function () {
         //     });
         // });
     });
+    //remove itens de manutencao
+    $(document).on('click', ".removeItemMaintenance", function () {
+        let count = $(this).attr('data-count')
+        $('.itemMaintenance-'+count).remove()
+    })
+    $(document).on('click', ".searchItemOccurenceMaintenence", function () {
 
+        var parent_element = $(this).parent().parent().attr('class');
+        var numberClass = parent_element.split('-');
+        var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
+        $("#buttonOccurrence").click(function () {
+            $("#showIdOccurenceMaintenence-" + selectNumber).removeClass('d-none');
+            var idOccurence = $("#idOccurence").val();
+            console.log(selectNumber)
+            $("#id_oc_maintenence-" + selectNumber).val(idOccurence);
+            $(".codeOccurenceMaintenence-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
+            $("#ModalSelectOcurrence").modal('hide');
+            selectNumber = null;
+        });
+    });
     //carregar reclamação do cliente
     var shiftReport_customer_comp = $("#shiftReport_customer_comp").val();
     $.each(JSON.parse(shiftReport_customer_comp), function (index, value) {
@@ -229,23 +253,11 @@ $(function () {
             "</tr>";
         addItem(html, "#addComments", ".removeItemComments", ".itemComments");
         countComments++;
-        
+
 
     });
 
-    $(document).on('click',".searchItemOccurenceComments",function () {
-        var parent_element = $(this).parent().parent().attr('class');
-        var numberClass = parent_element.split('-');
-        var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
-        $("#buttonOccurrence").click(function () {
-            $("#showIdOccurenceComments-" + selectNumber).removeClass('d-none');
-            var idOccurence = $("#idOccurence").val(); //modal
-            $("#id_oc_comments-" + selectNumber).val(idOccurence);
-            $(".codeOccurenceComments-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
-            $("#ModalSelectOcurrence").modal('hide');
-            selectNumber = null;
-        });
-    });
+
     //carregar observações
     var shiftReport_comments = $("#shiftReport_comments").val();
     $.each(JSON.parse(shiftReport_comments), function (index, value) {
@@ -278,7 +290,7 @@ $(function () {
         //VALIDAÇÕES
         if (!$('input[name="frequency_employee[]"]').length) {
             valid = 1;
-            DefaultAlert('error',"<strong>Opps!</strong> Todos os campos da 'FREQUÊNCIA' são obrigatórios.")
+            DefaultAlert('error', "<strong>Opps!</strong> Todos os campos da 'FREQUÊNCIA' são obrigatórios.")
             // $("#alertError").removeClass('d-none');
             // $("#alertError").html("<strong>Opps!</strong> Todos os campos da 'FREQUÊNCIA' são obrigatórios.");
         }
@@ -341,7 +353,7 @@ $(function () {
         //MANUTENÇÃO
         var maintenence_uh = new Array();
         $('select[name="maintenence_uh[]"]').each(function () {
-            maintenence_uh.push($(this).val());
+             maintenence_uh.push($(this).val());
         });
         form_data.append('maintenence_uh[]', maintenence_uh);
 
@@ -454,15 +466,15 @@ $(function () {
                         // $('.overlay').addClass('d-none');
                     }
                 }
-            }).catch(()=>{
-                DefaultAlert('error','Não foi possível salvar')
-            }).always(()=>{
+            }).catch(() => {
+                DefaultAlert('error', 'Não foi possível salvar')
+            }).always(() => {
                 $('.overlay').addClass('d-none');
             })
         }
     });
 
-    function activeSelectLocal(){
+    function activeSelectLocal() {
         $('.local').select2({
             theme: 'classic',
             ajax: {
