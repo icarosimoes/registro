@@ -156,16 +156,25 @@ $(function () {
             "<select id='maintenence_status[]' value='" + value.status + "' name='maintenence_status[]' class='form-control form-control-sm' required>" +
             "<option value='BLOQUEADO'>BLOQUEADO</option>" +
             "<option value='DISPONÍVEL'>DISPONÍVEL</option>" +
-            "</select>" +
-            "<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value=''></td>" +
-            "<td><input id='maintenence_reason[]' value='" + value.reason + "' name='maintenence_reason[]' type='text' class='form-control form-control-sm' required></td>" +
+            "</select>"
+            if(value.occurrences_id){
+                html+="<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value='"+value.occurrences_id+"'></td>" 
+            }else{
+                html+="<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value=''></td>" 
+            } 
+            html+="<td><input id='maintenence_reason[]' value='" + value.reason + "' name='maintenence_reason[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td><input id='maintenence_providence[]' value='" + value.providence + "' name='maintenence_providence[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td class='text_center'>" +
-            "<button type='button'  data-toggle='tooltip' data-placement='top' data-count='"+countMaintenance+"' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></button> " +
-            "<button type='button'  data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></button> " +
-            "<a id='showIdOccurenceMaintenence-" + countMaintenance + "' class='btn btn-sm btn-success  codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'>" + value.occurrences_id + "</i></a>" +
+            "<td class='text_center'>"+
+            "<button type='button'  data-toggle='tooltip' data-placement='top' data-count='"+countMaintenance+"' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></button>"+
+            "<button type='button'  data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></button> " 
+            if(value.occurrences_id){
+              html += "<a href='"+base_url+"/occurrence/list/edit/"+value.occurrences_id+" ' id='showIdOccurenceMaintenence-" + countMaintenance + "' class='btn btn-sm btn-success  codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'>" + value.occurrences_id + "</i></a>" 
+            }else{
+              html += "<a  id='showIdOccurenceMaintenence-" + countMaintenance + "' class='btn btn-sm btn-success d-none codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'>" + value.occurrences_id + "</i></a>"  
+            }
+               
             // "<small id='showIdOccurenceMaintenence' class='badge d-none badge-success codeOccurenceMaintenence'><i class='far fa-registered'></i> " + value.occurrences_id + "</small>" +
-            "</td>" +
+            html +="</td>" +
             "</tr>";
             
             
@@ -210,7 +219,7 @@ $(function () {
         $('.itemMaintenance-'+count).remove()
     })
     $(document).on('click', ".searchItemOccurenceMaintenence", function () {
-
+        debugger
         var parent_element = $(this).parent().parent().attr('class');
         var numberClass = parent_element.split('-');
         var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
