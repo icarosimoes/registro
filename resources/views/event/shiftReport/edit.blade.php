@@ -102,12 +102,12 @@
                                             </table>
                                         </div>
                                     </div>
-                                    {{-- <div class="card-footer text-center">
+                                    <div class="card-footer text-center">
                                         <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addFrequency"
                                             href="javascript:">Adicionar Novo
                                             Item</a>
 
-                                    </div> --}}
+                                    </div> 
                                 </div>
                             </div>{{-- end FREQUÊNCIA --}}
 
@@ -124,6 +124,7 @@
                                                     <tr>
                                                         <th>Mão de obra extra</th>
                                                         <th>Motivo</th>
+                                                        <th class="text-center">Ações</th>
                                                         {{-- <th class="w-20">Ações</th> --}}
                                                     </tr>
                                                 </thead>
@@ -141,12 +142,12 @@
                                             </table>
                                         </div>
                                     </div>
-                                    {{-- <div class="card-footer text-center">
+                                    <div class="card-footer text-center">
                                         <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addExtra"
                                             href="javascript:">Adicionar Novo
                                             Item</a>
 
-                                    </div> --}}
+                                    </div> 
                                 </div>
                             </div>{{-- end extra --}}
 
@@ -166,7 +167,7 @@
                                                         <th>Status</th>
                                                         <th>Motivo</th>
                                                         <th>Providência</th>
-                                                        {{-- <th style="width: 120px">Ações</th> --}}
+                                                        <th class="text-center">Ações</th> 
                                                     </tr>
                                                 </thead>
                                                 <tbody id="addItemMaintenance">
@@ -193,12 +194,12 @@
                                             </table>
                                         </div>
                                     </div>
-                                    {{-- <div class="card-footer text-center">
+                                    <div class="card-footer text-center">
                                         <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addMaintenance"
                                             href="javascript:">Adicionar Novo
                                             Item</a>
 
-                                    </div> --}}
+                                    </div> 
                                 </div>
                             </div>{{-- end extra --}}
 
@@ -215,7 +216,7 @@
                                                     <tr>
                                                         <th>Problema</th>
                                                         <th>Providências</th>
-                                                        {{-- <th style="width: 120px">Ações</th> --}}
+                                                        <th class="text-center">Ações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="addCustomerComplaint">
@@ -235,12 +236,12 @@
                                             </table>
                                         </div>
                                     </div>
-                                    {{-- <div class="card-footer text-center">
+                                    <div class="card-footer text-center">
                                         <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="btnAddCustomerComplaint"
                                             href="javascript:">Adicionar Novo
                                             Item</a>
 
-                                    </div> --}}
+                                    </div>
                                 </div>
                             </div>{{-- end RECLAMAÇÃO DO CLIENTE --}}
 
@@ -256,7 +257,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Registros</th>
-                                                        {{-- <th style="width: 120px">Ações</th> --}}
+                                                        <th class="text-center">Ações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="addComments">
@@ -275,12 +276,11 @@
                                             </table>
                                         </div>
                                     </div>
-                                    {{-- <div class="card-footer text-center">
+                                    <div class="card-footer text-center">
                                         <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="btnAddComments"
                                             href="javascript:">Adicionar Novo
                                             Item</a>
-
-                                    </div> --}}
+                                    </div>
                                 </div>
                             </div>{{-- end OBSERVAÇÕES --}}
 

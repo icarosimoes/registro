@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Event\ShiftReport;
 
 use App\Models\Occurrence;
@@ -11,6 +12,7 @@ use App\Models\ShiftReport\ShiftReport_maintenence;
 use App\Services\Service;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ShifitReportService extends Service
 {
@@ -102,7 +104,7 @@ class ShifitReportService extends Service
         }
 
         //extra
-       
+
         if (!empty($extra_extrawork[0])) {
             for ($i = 0; $i < count($extra_extrawork); $i++) {
                 $data = [
@@ -187,11 +189,11 @@ class ShifitReportService extends Service
         }
 
         return $shiftReport;
-
     }
 
     public function update(array $data)
     {
+        DB::beginTransaction();
         //Frequência
         $frequency_id = explode(",", $data['frequency_id'][0]);
         $frequency_employee = explode(",", $data['frequency_employee'][0]);
@@ -206,13 +208,17 @@ class ShifitReportService extends Service
         $maintenence_status = explode(",", $data['maintenence_status'][0]);
         $maintenence_reason = explode(",", $data['maintenence_reason'][0]);
         $maintenence_providence = explode(",", $data['maintenence_providence'][0]);
+        $maintenence_oc = explode(",", $data['id_oc_maintenence'][0]);
+
         //Reclamação do cliente
         $customer_comp_problem = explode(",", $data['customer_comp_problem'][0]);
         $customer_comp_providence = explode(",", $data['customer_comp_providence'][0]);
-        $customer_comp_id = explode(",", $data['customer_comp_id'][0]);
+        $id_oc_customer_comp = explode(",", $data['id_oc_customer_comp'][0]);
+        // $customer_comp_id = explode(",", $data['customer_comp_id'][0]);
         //comments
         if (isset($data['comments'])) {
             $comments = explode(",", $data['comments'][0]);
+            $id_oc_comments = explode(",", $data['id_oc_comments'][0]);
             $comments_id = explode(",", $data['comments_id'][0]);
         }
 
@@ -228,73 +234,74 @@ class ShifitReportService extends Service
         $insertID = $shiftReport->id;
 
         //Frequência
+
+        ShiftReport_frequency::where('shift_reports_id', $insertID)->delete();
         for ($i = 0; $i < count($frequency_employee); $i++) {
-            $data = [
-                'shift_reports_id' => $insertID,
-                'employee' => $frequency_employee[$i],
-                'func_id'=>  $frequency_occupation[$i],
-                'occupation' => null,
-                'created_at' => Date('Y-m-d H:i:s'),
-            ];
-            ShiftReport_frequency::where('id', $frequency_id[$i])->update($data);
+            $shiftReport_frequency = new ShiftReport_frequency();
+            $shiftReport_frequency->shift_reports_id = $insertID;
+            $shiftReport_frequency->employee = $frequency_employee[$i];
+            $shiftReport_frequency->func_id = $frequency_occupation[$i];
+            $shiftReport_frequency->occupation = null;
+            $shiftReport_frequency->save();
         }
 
         //extra
+        ShiftReport_extra::where('shift_reports_id', $insertID)->delete();
         if (!empty($extra_extrawork[0])) {
             for ($i = 0; $i < count($extra_extrawork); $i++) {
-                $data = [
-                    'shift_reports_id' => $insertID,
-                    'extrawork' => $extra_extrawork[$i],
-                    'reasons' => $extra_reasons[$i],
-                    'created_at' => Date('Y-m-d H:i:s'),
-                ];
-                ShiftReport_extra::where('id', $extra_id[$i])->update($data);
+                $shiftReport_extra = new ShiftReport_extra();
+                $shiftReport_extra->shift_reports_id = $insertID;
+                $shiftReport_extra->extrawork = $extra_extrawork[$i];
+                $shiftReport_extra->reasons = $extra_reasons[$i];
+                $shiftReport_extra->save();
             }
         }
 
         //manutenção
+        ShiftReport_maintenence::where('shift_reports_id', $insertID)->delete();
         if (!empty($maintenence_uh[0])) {
             for ($i = 0; $i < count($maintenence_uh); $i++) {
-                $data = [
-                    'shift_reports_id' => $insertID,
-                    'local_id' =>  $maintenence_uh[$i],
-                    'uh' => null ,
-                    'status' => $maintenence_status[$i],
-                    'reason' => $maintenence_reason[$i],
-                    'providence' => $maintenence_providence[$i],
-                    'created_at' => Date('Y-m-d H:i:s'),
-                ];
-                ShiftReport_maintenence::where('id', $maintenence_id[$i])->update($data);
+                $shiftReport_maintenence =  new ShiftReport_maintenence();
+                $shiftReport_maintenence->shift_reports_id = $insertID;
+                $shiftReport_maintenence->local_id = $maintenence_uh[$i];
+                $shiftReport_maintenence->uh = null;
+                $shiftReport_maintenence->status = $maintenence_status[$i];
+                $shiftReport_maintenence->reason = $maintenence_reason[$i];
+                $shiftReport_maintenence->providence = $maintenence_providence[$i];
+                $shiftReport_maintenence->occurrences_id = $maintenence_oc[$i] == '' ? null : $maintenence_oc[$i];
+                $shiftReport_maintenence->save();
             }
         }
 
         //Reclamação do cliente
+
+        ShiftReport_customer_complaint::where('shift_reports_id', $insertID)->delete();
         if (!empty($customer_comp_problem[0])) {
             for ($i = 0; $i < count($customer_comp_problem); $i++) {
-                $data = [
-                    'shift_reports_id' => $insertID,
-                    'problem' => $customer_comp_problem[$i],
-                    'providence' => $customer_comp_providence[$i],
-                    'created_at' => Date('Y-m-d H:i:s'),
-                ];
-                ShiftReport_customer_complaint::where('id', $customer_comp_id[$i])->update($data);
-            }
-       }
-
-        //Observações
-        if (!empty($comments[0])) {
-            for ($i = 0; $i < count($comments); $i++) {
-                $data = [
-                    'shift_reports_id' => $insertID,
-                    'comments' => $comments[$i],
-                    'created_at' => Date('Y-m-d H:i:s'),
-                ];
-                ShiftReport_comments::where('id', $comments_id[$i])->update($data);
+                $shiftReport_customer_complaint = new ShiftReport_customer_complaint();
+                $shiftReport_customer_complaint->shift_reports_id = $insertID;
+                $shiftReport_customer_complaint->problem = $customer_comp_problem[$i];
+                $shiftReport_customer_complaint->providence = $customer_comp_providence[$i];
+                $shiftReport_customer_complaint->occurrences_id = $id_oc_customer_comp[$i]== '0'? null :$id_oc_customer_comp[$i];
+                $shiftReport_customer_complaint->save();
             }
         }
 
-        return $shiftReport;
+        //Observações
+        
+        if (!empty($comments[0])) {
 
+            ShiftReport_comments::where('shift_reports_id', $insertID)->delete();
+            for ($i = 0; $i < count($comments); $i++) {
+                $shiftReport_comments = new ShiftReport_comments();
+                $shiftReport_comments->shift_reports_id = $insertID;
+                $shiftReport_comments->comments = $comments[$i];
+                $shiftReport_comments->occurrences_id = $id_oc_comments[$i]== '0'? null :$id_oc_comments[$i];
+                $shiftReport_comments->save();
+            }
+        }
+        DB::commit();
+        return $shiftReport;
     }
 
     public function tested(int $id)
