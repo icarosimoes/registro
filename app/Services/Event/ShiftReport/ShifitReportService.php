@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Event\ShiftReport;
 
 use App\Models\Occurrence;
@@ -12,6 +13,7 @@ use App\Services\Service;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
 class ShifitReportService extends Service
 {
     public function index(int $id = null)
@@ -102,7 +104,7 @@ class ShifitReportService extends Service
         }
 
         //extra
-       
+
         if (!empty($extra_extrawork[0])) {
             for ($i = 0; $i < count($extra_extrawork); $i++) {
                 $data = [
@@ -187,7 +189,6 @@ class ShifitReportService extends Service
         }
 
         return $shiftReport;
-
     }
 
     public function update(array $data)
@@ -208,11 +209,12 @@ class ShifitReportService extends Service
         $maintenence_reason = explode(",", $data['maintenence_reason'][0]);
         $maintenence_providence = explode(",", $data['maintenence_providence'][0]);
         $maintenence_oc = explode(",", $data['id_oc_maintenence'][0]);
-         
+
         //Reclamação do cliente
         $customer_comp_problem = explode(",", $data['customer_comp_problem'][0]);
         $customer_comp_providence = explode(",", $data['customer_comp_providence'][0]);
-        $customer_comp_id = explode(",", $data['customer_comp_id'][0]);
+        $id_oc_customer_comp = explode(",", $data['id_oc_customer_comp'][0]);
+        // $customer_comp_id = explode(",", $data['customer_comp_id'][0]);
         //comments
         if (isset($data['comments'])) {
             $comments = explode(",", $data['comments'][0]);
@@ -231,20 +233,19 @@ class ShifitReportService extends Service
         $insertID = $shiftReport->id;
 
         //Frequência
-        
+
         ShiftReport_frequency::where('shift_reports_id', $insertID)->delete();
         for ($i = 0; $i < count($frequency_employee); $i++) {
-            $shiftReport_frequency = new ShiftReport_frequency();   
+            $shiftReport_frequency = new ShiftReport_frequency();
             $shiftReport_frequency->shift_reports_id = $insertID;
-            $shiftReport_frequency->employee = $frequency_employee[$i];  
+            $shiftReport_frequency->employee = $frequency_employee[$i];
             $shiftReport_frequency->func_id = $frequency_occupation[$i];
             $shiftReport_frequency->occupation = null;
             $shiftReport_frequency->save();
-            
         }
 
         //extra
-        ShiftReport_extra::where('shift_reports_id',$insertID)->delete();
+        ShiftReport_extra::where('shift_reports_id', $insertID)->delete();
         if (!empty($extra_extrawork[0])) {
             for ($i = 0; $i < count($extra_extrawork); $i++) {
                 $shiftReport_extra = new ShiftReport_extra();
@@ -252,38 +253,38 @@ class ShifitReportService extends Service
                 $shiftReport_extra->extrawork = $extra_extrawork[$i];
                 $shiftReport_extra->reasons = $extra_reasons[$i];
                 $shiftReport_extra->save();
-                
             }
         }
-        
+
         //manutenção
         ShiftReport_maintenence::where('shift_reports_id', $insertID)->delete();
         if (!empty($maintenence_uh[0])) {
             for ($i = 0; $i < count($maintenence_uh); $i++) {
                 $shiftReport_maintenence =  new ShiftReport_maintenence();
-                $shiftReport_maintenence->shift_reports_id = $insertID; 
-                $shiftReport_maintenence->local_id = $maintenence_uh[$i]; 
-                $shiftReport_maintenence->uh = null; 
-                $shiftReport_maintenence->status = $maintenence_status[$i]; 
-                $shiftReport_maintenence->reason = $maintenence_reason[$i]; 
-                $shiftReport_maintenence->providence = $maintenence_providence[$i]; 
-                $shiftReport_maintenence->occurrences_id = $maintenence_oc[$i]==''?null:$maintenence_oc[$i]; 
+                $shiftReport_maintenence->shift_reports_id = $insertID;
+                $shiftReport_maintenence->local_id = $maintenence_uh[$i];
+                $shiftReport_maintenence->uh = null;
+                $shiftReport_maintenence->status = $maintenence_status[$i];
+                $shiftReport_maintenence->reason = $maintenence_reason[$i];
+                $shiftReport_maintenence->providence = $maintenence_providence[$i];
+                $shiftReport_maintenence->occurrences_id = $maintenence_oc[$i] == '' ? null : $maintenence_oc[$i];
                 $shiftReport_maintenence->save();
             }
         }
 
         //Reclamação do cliente
+
+        ShiftReport_customer_complaint::where('shift_reports_id', $insertID)->delete();
         if (!empty($customer_comp_problem[0])) {
             for ($i = 0; $i < count($customer_comp_problem); $i++) {
-                $data = [
-                    'shift_reports_id' => $insertID,
-                    'problem' => $customer_comp_problem[$i],
-                    'providence' => $customer_comp_providence[$i],
-                    'created_at' => Date('Y-m-d H:i:s'),
-                ];
-                ShiftReport_customer_complaint::where('id', $customer_comp_id[$i])->update($data);
+                $shiftReport_customer_complaint = new ShiftReport_customer_complaint();
+                $shiftReport_customer_complaint->shift_reports_id = $insertID;
+                $shiftReport_customer_complaint->problem = $customer_comp_problem[$i];
+                $shiftReport_customer_complaint->providence = $customer_comp_providence[$i];
+                $shiftReport_customer_complaint->occurrences_id = $id_oc_customer_comp[$i]== '0'? null :$id_oc_customer_comp[$i];
+                $shiftReport_customer_complaint->save();
             }
-       }
+        }
 
         //Observações
         if (!empty($comments[0])) {
@@ -298,7 +299,6 @@ class ShifitReportService extends Service
         }
         DB::commit();
         return $shiftReport;
-
     }
 
     public function tested(int $id)

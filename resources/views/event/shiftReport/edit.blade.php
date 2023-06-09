@@ -216,7 +216,7 @@
                                                     <tr>
                                                         <th>Problema</th>
                                                         <th>Providências</th>
-                                                        {{-- <th style="width: 120px">Ações</th> --}}
+                                                        <th class="text-center">Ações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="addCustomerComplaint">
@@ -236,12 +236,12 @@
                                             </table>
                                         </div>
                                     </div>
-                                    {{-- <div class="card-footer text-center">
+                                    <div class="card-footer text-center">
                                         <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="btnAddCustomerComplaint"
                                             href="javascript:">Adicionar Novo
                                             Item</a>
 
-                                    </div> --}}
+                                    </div>
                                 </div>
                             </div>{{-- end RECLAMAÇÃO DO CLIENTE --}}
 

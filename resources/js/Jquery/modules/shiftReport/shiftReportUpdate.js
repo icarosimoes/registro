@@ -109,7 +109,7 @@ $(function () {
             "<td><input id='maintenence_providence[]' name='maintenence_providence[]' type='text' class='form-control form-control-sm' required></td>" +
             // "<td><input  id='id_oc_maintenence-"+countMaintenance+"'   name='id_oc_maintenence[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td class='text-center'>" +
-            "<button  type='button' data-toggle='tooltip' data-count='"+countMaintenance+"' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></button> " +
+            "<button  type='button' data-toggle='tooltip' data-count='" + countMaintenance + "' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></button> " +
             "<button  type='button' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></button> " +
             "<a  id='showIdOccurenceMaintenence-" + countMaintenance + "' class='d-none btn btn-sm btn-success codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'></i></a>" +
             "</td>" +
@@ -157,69 +157,41 @@ $(function () {
             "<option value='BLOQUEADO'>BLOQUEADO</option>" +
             "<option value='DISPONÍVEL'>DISPONÍVEL</option>" +
             "</select>"
-            if(value.occurrences_id){
-                html+="<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value='"+value.occurrences_id+"'></td>" 
-            }else{
-                html+="<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value=''></td>" 
-            } 
-            html+="<td><input id='maintenence_reason[]' value='" + value.reason + "' name='maintenence_reason[]' type='text' class='form-control form-control-sm' required></td>" +
+        if (value.occurrences_id) {
+            html += "<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value='" + value.occurrences_id + "'></td>"
+        } else {
+            html += "<input type='hidden' name='id_oc_maintenence[]' id='id_oc_maintenence-" + countMaintenance + "' value=''></td>"
+        }
+        html += "<td><input id='maintenence_reason[]' value='" + value.reason + "' name='maintenence_reason[]' type='text' class='form-control form-control-sm' required></td>" +
             "<td><input id='maintenence_providence[]' value='" + value.providence + "' name='maintenence_providence[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td class='text_center'>"+
-            "<button type='button'  data-toggle='tooltip' data-placement='top' data-count='"+countMaintenance+"' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></button>"+
-            "<button type='button'  data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></button> " 
-            if(value.occurrences_id){
-              html += "<a href='"+base_url+"/occurrence/list/edit/"+value.occurrences_id+" ' id='showIdOccurenceMaintenence-" + countMaintenance + "' class='btn btn-sm btn-success  codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'>" + value.occurrences_id + "</i></a>" 
-            }else{
-              html += "<a  id='showIdOccurenceMaintenence-" + countMaintenance + "' class='btn btn-sm btn-success d-none codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'>" + value.occurrences_id + "</i></a>"  
-            }
-               
-            // "<small id='showIdOccurenceMaintenence' class='badge d-none badge-success codeOccurenceMaintenence'><i class='far fa-registered'></i> " + value.occurrences_id + "</small>" +
-            html +="</td>" +
+            "<td class='text-center'>" +
+            "<button type='button'  data-toggle='tooltip' data-placement='top' data-count='" + countMaintenance + "' title='Excluir' class='btn btn-sm btn-default removeItemMaintenance'><i class='fas fa-trash'></i></button>" +
+            "<button type='button'  data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceMaintenence'><i class='fas fa-filter'></i></button> "
+        if (value.occurrences_id) {
+            html += "<a href='" + base_url + "/occurrence/list/edit/" + value.occurrences_id + " ' id='showIdOccurenceMaintenence-" + countMaintenance + "' class='btn btn-sm btn-success  codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'>" + value.occurrences_id + "</i></a>"
+        } else {
+            html += "<a  id='showIdOccurenceMaintenence-" + countMaintenance + "' class='btn btn-sm btn-success d-none codeOccurenceMaintenence-" + countMaintenance + "'><i class='far fa-registered'>" + value.occurrences_id + "</i></a>"
+        }
+
+        // "<small id='showIdOccurenceMaintenence' class='badge d-none badge-success codeOccurenceMaintenence'><i class='far fa-registered'></i> " + value.occurrences_id + "</small>" +
+        html += "</td>" +
             "</tr>";
-            
-            
-            
+
+
+
         addItem(html, "#addItemMaintenance", ".removeItemMaintenance", ".itemMaintenance");
         countMaintenance++;
         activeSelectLocal()
 
     });
 
-    var countCustomerComplaint = 0;
-    $("#btnAddCustomerComplaint").click(function () {
-        var html = "<tr class='itemCustomerComplaint-" + countCustomerComplaint + "'>" +
-            "<td><input id='customer_comp_problem[]' name='customer_comp_problem[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<input type='hidden' name='id_oc_customer_comp[]' id='id_oc_customer_comp-" + countCustomerComplaint + "' value=''>" +
-            "<td><input id='customer_comp_providence[]' name='customer_comp_providence[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td>" +
-            "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemCustomerComplaint'><i class='fas fa-trash'></i></a> " +
-            "<a href='#' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceCustomerComp'><i class='fas fa-filter'></i></a> " +
-            "<small id='showIdOccurenceCustomerComp-" + countCustomerComplaint + "' class='badge d-none badge-success codeOccurenceCustomerComp-" + countCustomerComplaint + "'></small>" +
-            "</td>" +
-            "</tr>";
-        addItem(html, "#addCustomerComplaint", ".removeItemCustomerComplaint", ".itemCustomerComplaint");
-        countCustomerComplaint++;
-        // $(".searchItemOccurenceCustomerComp").click(function () {
-        //     var parent_element = $(this).parent().parent().attr('class');
-        //     var numberClass = parent_element.split('-');
-        //     var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
-        //     $("#buttonOccurrence").click(function () {
-        //         $("#showIdOccurenceCustomerComp-" + selectNumber).removeClass('d-none');
-        //         var idOccurence = $("#idOccurence").val(); //modal
-        //         $("#id_oc_customer_comp-" + selectNumber).val(idOccurence);
-        //         $(".codeOccurenceCustomerComp-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
-        //         $("#ModalSelectOcurrence").modal('hide');
-        //         selectNumber = null;
-        //     });
-        // });
-    });
+
     //remove itens de manutencao
     $(document).on('click', ".removeItemMaintenance", function () {
         let count = $(this).attr('data-count')
-        $('.itemMaintenance-'+count).remove()
+        $('.itemMaintenance-' + count).remove()
     })
     $(document).on('click', ".searchItemOccurenceMaintenence", function () {
-        debugger
         var parent_element = $(this).parent().parent().attr('class');
         var numberClass = parent_element.split('-');
         var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
@@ -233,20 +205,53 @@ $(function () {
             selectNumber = null;
         });
     });
-    //carregar reclamação do cliente
-    var shiftReport_customer_comp = $("#shiftReport_customer_comp").val();
-    $.each(JSON.parse(shiftReport_customer_comp), function (index, value) {
-        var html = "<tr class='itemCustomerComplaint'>" +
-            "<td><input id='customer_comp_problem[]' value='" + value.problem + "' name='customer_comp_problem[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<input type='hidden' name='customer_comp_id[]' id='customer_comp_id[]' value='" + value.id + "'>" +
-            "<td><input id='customer_comp_providence[]' value='" + value.providence + "' name='customer_comp_providence[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<td>" +
-            // "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemCustomerComplaint'><i class='fas fa-trash'></i></a> " +
-            // "<a href='#' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceCustomerComp'><i class='fas fa-filter'></i></a> " +
-            "<small id='showIdOccurenceCustomerComp' class='badge d-none badge-success codeOccurenceCustomerComp'>" + value.occurrences_id + "</small>" +
+    
+    //reclamacao do cliente
+    var countCustomerComplaint = 0;
+    $("#btnAddCustomerComplaint").click(function () {
+        var html = "<tr class='itemCustomerComplaint-" + countCustomerComplaint + "'>" +
+            "<td><input id='customer_comp_problem[]' name='customer_comp_problem[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<input type='hidden' name='id_oc_customer_comp[]' id='id_oc_customer_comp-" + countCustomerComplaint + "' value=''>" +
+            "<td><input id='customer_comp_providence[]' name='customer_comp_providence[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td class='text-center'>" +
+            "<button type='button' data-count='"+countCustomerComplaint+"' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemCustomerComplaint'><i class='fas fa-trash'></i></button> " +
+            "<button type='button' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceCustomerComp'><i class='fas fa-filter'></i></button> " +
+            "<a id='showIdOccurenceCustomerComp-" + countCustomerComplaint + "' class='btn d-none btn-sm btn-success codeOccurenceCustomerComp-" + countCustomerComplaint + "'></a>" +
             "</td>" +
             "</tr>";
         addItem(html, "#addCustomerComplaint", ".removeItemCustomerComplaint", ".itemCustomerComplaint");
+        countCustomerComplaint++;
+        
+    });
+
+    
+    //carregar reclamação do cliente
+    var shiftReport_customer_comp = $("#shiftReport_customer_comp").val();
+    $.each(JSON.parse(shiftReport_customer_comp), function (index, value) {
+        var html = "<tr class='itemCustomerComplaint-"+countCustomerComplaint+"'>" +
+            "<td><input id='customer_comp_problem[]' value='" + value.problem + "' name='customer_comp_problem[]' type='text' class='form-control form-control-sm' required>"
+            if(value.occurrences_id){
+               html+= "<input type='hidden' name='id_oc_customer_comp[]' id='id_oc_customer_comp-" + countCustomerComplaint + "' value='"+value.occurrences_id+"'>" 
+            }else{
+               html+= "<input type='hidden' name='id_oc_customer_comp[]' id='id_oc_customer_comp-" + countCustomerComplaint + "' value=''>"  
+            } 
+            html+="</td>" +
+            "<td><input id='customer_comp_providence[]' value='" + value.providence + "' name='customer_comp_providence[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<td class='text-center'>" +
+            "<button type='button' data-count='"+countCustomerComplaint+"' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemCustomerComplaint'><i class='fas fa-trash'></i></button> " +
+            "<button type='button' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceCustomerComp'><i class='fas fa-filter'></i></button> " 
+            
+            if(value.occurrences_id){
+                html +="<button type='button' id='showIdOccurenceCustomerComp-"+countCustomerComplaint+"' class='btn   btn-success btn-sm codeOccurenceCustomerComp-"+countCustomerComplaint+"'><i class='far fa-registered'></i>" + value.occurrences_id + "</button>" 
+            }else{
+                html +="<button type='button' id='showIdOccurenceCustomerComp-"+countCustomerComplaint+"' class='btn d-none  btn-success btn-sm codeOccurenceCustomerComp-"+countCustomerComplaint+"'></button>"   
+            }
+            
+            
+            html+="</td>" +
+            "</tr>";
+        addItem(html, "#addCustomerComplaint", ".removeItemCustomerComplaint", ".itemCustomerComplaint");
+        countCustomerComplaint++;
     });
 
     var countComments = 0;
@@ -265,6 +270,29 @@ $(function () {
 
 
     });
+
+    //button de perquisar registro de reclamacao de clinte
+    $(document).on('click',".searchItemOccurenceCustomerComp",function () {
+        
+        var parent_element = $(this).parent().parent().attr('class');
+        var numberClass = parent_element.split('-');
+        var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
+        $("#buttonOccurrence").click(function () {
+            $("#showIdOccurenceCustomerComp-" + selectNumber).removeClass('d-none');
+            var idOccurence = $("#idOccurence").val(); //modal
+            $("#id_oc_customer_comp-" + selectNumber).val(idOccurence);
+            $(".codeOccurenceCustomerComp-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
+            $("#ModalSelectOcurrence").modal('hide');
+            selectNumber = null;
+        });
+    });
+    
+    //remove itens de reclamacao de cliente
+    $(document).on('click', ".removeItemCustomerComplaint", function () {
+        let count = $(this).attr('data-count')
+        console.log(count)
+        $('.itemCustomerComplaint-' + count).remove()
+    })   
 
 
     //carregar observações
@@ -362,7 +390,7 @@ $(function () {
         //MANUTENÇÃO
         var maintenence_uh = new Array();
         $('select[name="maintenence_uh[]"]').each(function () {
-             maintenence_uh.push($(this).val());
+            maintenence_uh.push($(this).val());
         });
         form_data.append('maintenence_uh[]', maintenence_uh);
 
