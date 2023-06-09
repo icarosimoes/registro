@@ -218,6 +218,7 @@ class ShifitReportService extends Service
         //comments
         if (isset($data['comments'])) {
             $comments = explode(",", $data['comments'][0]);
+            $id_oc_comments = explode(",", $data['id_oc_comments'][0]);
             $comments_id = explode(",", $data['comments_id'][0]);
         }
 
@@ -287,14 +288,16 @@ class ShifitReportService extends Service
         }
 
         //Observações
+        
         if (!empty($comments[0])) {
+
+            ShiftReport_comments::where('shift_reports_id', $insertID)->delete();
             for ($i = 0; $i < count($comments); $i++) {
-                $data = [
-                    'shift_reports_id' => $insertID,
-                    'comments' => $comments[$i],
-                    'created_at' => Date('Y-m-d H:i:s'),
-                ];
-                ShiftReport_comments::where('id', $comments_id[$i])->update($data);
+                $shiftReport_comments = new ShiftReport_comments();
+                $shiftReport_comments->shift_reports_id = $insertID;
+                $shiftReport_comments->comments = $comments[$i];
+                $shiftReport_comments->occurrences_id = $id_oc_comments[$i]== '0'? null :$id_oc_comments[$i];
+                $shiftReport_comments->save();
             }
         }
         DB::commit();

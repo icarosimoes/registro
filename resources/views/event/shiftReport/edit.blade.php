@@ -257,7 +257,7 @@
                                                 <thead>
                                                     <tr>
                                                         <th>Registros</th>
-                                                        {{-- <th style="width: 120px">Ações</th> --}}
+                                                        <th class="text-center">Ações</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="addComments">
@@ -276,12 +276,11 @@
                                             </table>
                                         </div>
                                     </div>
-                                    {{-- <div class="card-footer text-center">
+                                    <div class="card-footer text-center">
                                         <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="btnAddComments"
                                             href="javascript:">Adicionar Novo
                                             Item</a>
-
-                                    </div> --}}
+                                    </div>
                                 </div>
                             </div>{{-- end OBSERVAÇÕES --}}
 

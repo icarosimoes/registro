@@ -254,22 +254,7 @@ $(function () {
         countCustomerComplaint++;
     });
 
-    var countComments = 0;
-    $("#btnAddComments").click(function () {
-        var html = "<tr class='itemComments-" + countComments + "'>" +
-            "<td><input id='comments[]' name='comments[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<input type='hidden' name='id_oc_comments[]' id='id_oc_comments-" + countComments + "' value=''>" +
-            "<td>" +
-            "<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemComments'><i class='fas fa-trash'></i></a> " +
-            "<a href='#' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceComments'><i class='fas fa-filter'></i></a> " +
-            "<small id='showIdOccurenceComments-" + countComments + "' class='badge d-none badge-success codeOccurenceComments-" + countComments + "'></small>" +
-            "</td>" +
-            "</tr>";
-        addItem(html, "#addComments", ".removeItemComments", ".itemComments");
-        countComments++;
-
-
-    });
+   
 
     //button de perquisar registro de reclamacao de clinte
     $(document).on('click',".searchItemOccurenceCustomerComp",function () {
@@ -294,21 +279,68 @@ $(function () {
         $('.itemCustomerComplaint-' + count).remove()
     })   
 
-
-    //carregar observações
-    var shiftReport_comments = $("#shiftReport_comments").val();
-    $.each(JSON.parse(shiftReport_comments), function (index, value) {
-        var html = "<tr class='itemComments'>" +
-            "<td><input id='comments[]' value='" + value.comments + "' name='comments[]' type='text' class='form-control form-control-sm' required></td>" +
-            "<input type='hidden' name='comments_id[]' id='comments_id[]' value='" + value.id + "'>" +
-            "<td>" +
-            //"<a href='#' data-toggle='tooltip' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemComments'><i class='fas fa-trash'></i></a> " +
-            //"<a href='#' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceComments'><i class='fas fa-filter'></i></a> " +
-            "<small id='showIdOccurenceComments' class='badge d-none badge-success codeOccurenceComments'>" + value.occurrences_id + "</small>" +
+    var countComments = 0;
+    $("#btnAddComments").click(function () {
+        var html = "<tr class='itemComments-" + countComments + "'>" +
+            "<td width='900'><input id='comments[]' name='comments[]' type='text' class='form-control form-control-sm' required></td>" +
+            "<input type='hidden' name='id_oc_comments[]' id='id_oc_comments-" + countComments + "' value=''>" +
+            "<td class='text-center'>" +
+            "<button type='button'  data-toggle='tooltip' data-count='"+countComments+"' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemComments'><i class='fas fa-trash'></i></button> " +
+            "<button type='button' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceComments'><i class='fas fa-filter'></i></button> " +
+            "<a id='showIdOccurenceComments-" + countComments + "' class='btn d-none btn-success btn-sm codeOccurenceComments-" + countComments + "'></a>" +
             "</td>" +
             "</tr>";
         addItem(html, "#addComments", ".removeItemComments", ".itemComments");
+        countComments++;
+
+
     });
+    //carregar observações
+    var shiftReport_comments = $("#shiftReport_comments").val();
+    $.each(JSON.parse(shiftReport_comments), function (index, value) {
+        var html = "<tr class='itemComments-"+countComments+"'>" +
+            "<td><input id='comments[]' value='" + value.comments + "' name='comments[]' type='text' class='form-control form-control-sm' required>" 
+            if(value.occurrences_id ){
+                html += "<input type='hidden' name='id_oc_comments[]' id='id_oc_comments-" + countComments + "' value='"+value.occurrences_id +"'>"
+            }else{
+                html += "<input type='hidden' name='id_oc_comments[]' id='id_oc_comments-" + countComments + "' value=''>"
+            }
+             html +="</td> <input type='hidden' name='comments_id[]' id='comments_id[]' value='" + value.id + "'>"+
+            "<td class='text-center'>"+
+            "<button type='button' data-toggle='tooltip' data-count='"+countComments+"' data-placement='top' title='Excluir' class='btn btn-sm btn-default removeItemComments'><i class='fas fa-trash'></i></button> " +
+            "<button type='button' data-toggle='modal' data-target='#ModalSelectOcurrence' class='btn btn-sm btn-default searchItemOccurenceComments'><i class='fas fa-filter'></i></button> " 
+            if(value.occurrences_id){
+                html +="<small id='showIdOccurenceComments-"+countComments+"'  class='btn btn-sm btn-success codeOccurenceComments-"+countComments+"'><i class='far fa-registered'></i>" + value.occurrences_id + "</small>" 
+            }else{
+                html +="<small id='showIdOccurenceComments-"+countComments+"'  class='btn btn-sm  d-none btn-success codeOccurenceComments-"+countComments+"'></small>"  
+            }
+            html +="</td>" +
+            "</tr>";
+        addItem(html, "#addComments", ".removeItemComments", ".itemComments");
+        countComments++;
+    });
+    
+    $(document).on('click', ".removeItemComments", function () {
+        let count = $(this).attr('data-count')
+        $('.itemComments-' + count).remove()
+    })   
+
+    //button de perquisar registro de observacoes
+    $(document).on('click',".searchItemOccurenceComments",function () {
+      
+        var parent_element = $(this).parent().parent().attr('class');
+        var numberClass = parent_element.split('-');
+        var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição
+        $("#buttonOccurrence").click(function () {
+            $("#showIdOccurenceComments-" + selectNumber).removeClass('d-none');
+            var idOccurence = $("#idOccurence").val(); //modal
+            $("#id_oc_comments-" + selectNumber).val(idOccurence);
+            $(".codeOccurenceComments-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
+            $("#ModalSelectOcurrence").modal('hide');
+            selectNumber = null;
+        });
+    });
+    
     //CRIAR RELATÓRIO DE TURNO
     $('form[name="formShiftReportEdit"]').submit(function (event) {
         event.preventDefault();
