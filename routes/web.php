@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Console\Scheduling\Event;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -114,5 +115,9 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('shiftreport/delete/{id}', 'Event\ShiftReport\ShifitReportController@destroy')->name('shiftreport.delete');
         Route::get('shiftreport/tested/{id}', 'Event\ShiftReport\ShifitReportController@tested');
         Route::get('shiftreport/tested/remove/{id}', 'Event\ShiftReport\ShifitReportController@testedRemove');
+
+        Route::resource('check_suite','Event\CheckSuites\CheckSuitesController');    
+
+
     });
 });

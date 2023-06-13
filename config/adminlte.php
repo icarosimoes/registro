@@ -260,6 +260,11 @@ return [
                     'icon' => 'fas fa-fw fa fa-clipboard',
                     'url' => 'event/list/shiftreport'
                 ],
+                [
+                    'text' => 'Cenferências das suítes',
+                    'icon' => 'fas fa-fw fa fa-clipboard',
+                    'url' => 'event/check_suite'
+                ],
             ],  
         ],
         [
