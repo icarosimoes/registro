@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Helper;
 use App\Func;
 use App\Http\Controllers\Controller;
 use App\Local;
+use App\Models\Occurrence;
 use App\Sector;
 use Illuminate\Http\Request;
 
@@ -20,6 +21,18 @@ class SelectController extends Controller
         });
 
         return  $locals;
+    }
+    
+    function getOccurrences(Request $request){
+        $occurrences = Occurrence::select('id','title')
+        ->selectSearch($request)
+        ->paginate(100);
+
+        $occurrences->map(function($item){
+            return $item->text = @$item->id .' - '.@$item->title;
+        });
+
+        return  $occurrences;
     }
     
     function getSectors(Request $request){

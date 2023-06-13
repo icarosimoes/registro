@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Event\CheckSuites;
 
+use App\CheckSuite;
+use App\CheckSuiteItem;
 use App\Http\Controllers\Controller;
+use CreateCheckSuiteItems;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CheckSuitesController extends Controller
 {
@@ -37,10 +41,31 @@ class CheckSuitesController extends Controller
      */
     public function store(Request $request)
     {
-        $local = new Local();
-        $local->name = $request->name;
-        $local->save();
-        return $local;
+        DB::beginTransaction();
+        
+        //salva check suite
+        $check_suite = new CheckSuite();
+        $check_suite->date = $request->date;
+        $check_suite->suite = $request->suite;
+        $check_suite->inspected_by = $request->inspected_by;
+        $check_suite->status = $request->status;
+        $check_suite->obs = $request->obs;
+        $check_suite->save();
+
+        //salva items check suite
+      
+        foreach ( $request->valuation as $key => $value){
+            $checkSuiteItems =  new CheckSuiteItem();
+            $checkSuiteItems->check_suite_id = $check_suite->id;
+            $checkSuiteItems->occurrences_id = $request->occurrences_id[$key];
+            $checkSuiteItems->item = $key ;
+            $checkSuiteItems->valuation = $value ;
+            $checkSuiteItems->register = $request->register[$key] ;
+            $checkSuiteItems->save();
+        }
+
+        DB::commit();
+        return $check_suite;
     }
 
     /**

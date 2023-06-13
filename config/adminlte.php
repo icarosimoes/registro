@@ -714,6 +714,18 @@ return [
                 ],
             ],
         ],
+        //CHECK SUITE
+        [
+            'name' => 'scriptCreateCheckSuite',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/check_suite/check_suite_create.js',
+                ],
+            ],
+        ],
         [
             'name' => 'scriptCreateProfile',
             'active' => false,
