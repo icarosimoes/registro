@@ -260,6 +260,11 @@ return [
                     'icon' => 'fas fa-fw fa fa-clipboard',
                     'url' => 'event/list/shiftreport'
                 ],
+                [
+                    'text' => 'Cenferências das suítes',
+                    'icon' => 'fas fa-fw fa fa-clipboard',
+                    'url' => 'event/check_suite'
+                ],
             ],  
         ],
         [
@@ -706,6 +711,40 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/meeting/meeting_update.js',
+                ],
+            ],
+        ],
+        //CHECK SUITE
+        [
+            'name' => 'scriptListCheckSuite',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/check_suite/check_suite_list.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptCreateCheckSuite',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/check_suite/check_suite_create.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptUpdateCheckSuite',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/check_suite/check_suite_update.js',
                 ],
             ],
         ],
