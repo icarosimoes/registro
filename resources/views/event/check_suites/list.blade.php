@@ -49,7 +49,7 @@
                                                 <div class="btn-group-sm">
                                                     {{-- @can('checkRouters', $route =
                                                     'view.client') --}}
-                                                    <a href="{{ route('local.show', [$item->id]) }}"
+                                                    <a href="{{ route('check_suite.show', [$item->id]) }}"
                                                         data-toggle="tooltip" data-placement="top" title="Visualizar"
                                                         class="btn btn-default"><i class="fas fa-eye"></i></a> 
                                                     {{-- @endcan

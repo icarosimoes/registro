@@ -73,9 +73,9 @@ class CheckSuitesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Local $local)
+    public function show(CheckSuite $checkSuite)
     {
-        return view('register/local/view',compact('local'));
+        return view('event/check_suites/view',compact('checkSuite'));
     }
 
     /**
