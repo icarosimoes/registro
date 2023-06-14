@@ -18,9 +18,8 @@ class CheckSuitesController extends Controller
      */
     public function index()
     {
-        // $locals = Local::get();
-        $data = [];
-        return view('event/check_suites/list')->with(['data' => $data]);
+        $checkSuites = CheckSuite::get();
+        return view('event/check_suites/list')->with(['data' => $checkSuites]);
     }
 
     /**
@@ -85,9 +84,9 @@ class CheckSuitesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Local $local)
+    public function edit(CheckSuite $checkSuite)
     {
-        return view('register/local/edit',compact('local'));
+        return view('event/check_suites/edit',compact('checkSuite'));
     }
 
     /**
@@ -97,11 +96,33 @@ class CheckSuitesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Local $local)
+    public function update(Request $request, CheckSuite $check_suite)
     {
-        $local->name = $request->name;
-        $local->save();
-        return $local;
+        DB::beginTransaction();
+
+        $check_suite->date = $request->date;
+        $check_suite->suite = $request->suite;
+        $check_suite->inspected_by = $request->inspected_by;
+        $check_suite->status = $request->status;
+        $check_suite->obs = $request->obs;
+        $check_suite->save();
+
+
+        //salva items check suite
+        CheckSuiteItem::where('check_suite_id',$check_suite->id)->delete();
+        foreach ( $request->valuation as $key => $value){
+            $checkSuiteItems =  new CheckSuiteItem();
+            $checkSuiteItems->check_suite_id = $check_suite->id;
+            $checkSuiteItems->occurrences_id = $request->occurrences_id[$key];
+            $checkSuiteItems->item = $key ;
+            $checkSuiteItems->valuation = $value ;
+            $checkSuiteItems->register = $request->register[$key] ;
+            $checkSuiteItems->save();
+        }
+
+        DB::commit();
+        return $check_suite;
+        
     }
 
     /**

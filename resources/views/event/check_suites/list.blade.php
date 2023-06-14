@@ -31,7 +31,9 @@
                             <thead>
                                 <tr>
                                     <th>Id</th>
-                                    <th>Local</th>
+                                    <th>Date</th>
+                                    <th>Suite</th>
+                                    <th>Inspecionado por</th>
                                     <th class="text-right">Ações</th>
                                 </tr>
                             </thead>
@@ -39,8 +41,10 @@
                                 @foreach ($data as $item)
                                     <tr >
                                         {{-- @foreach ($roles as $role) --}}
-                                            <td width="100">{{ $item->id }}</td>
-                                            <td width="800">{{ $item->name }}</td>
+                                            <td width="50">{{ $item->id }}</td>
+                                            <td >{{ $item->date }}</td>
+                                            <td >{{ $item->suite }}</td>
+                                            <td >{{ $item->inspected_by }}</td>
                                             <td class="text-right">
                                                 <div class="btn-group-sm">
                                                     {{-- @can('checkRouters', $route =
@@ -52,7 +56,7 @@
                                                     --}}
                                                     {{-- @can('checkRouters', $route =
                                                     'edit.client') --}}
-                                                    <a href="{{ route('local.edit', [$item->id]) }}"
+                                                    <a href="{{ route('check_suite.edit', [$item->id]) }}"
                                                         data-toggle="tooltip" data-placement="top" title="Editar"
                                                         class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a>
                                                     {{-- @endcan

@@ -119,6 +119,8 @@ $(function() {
         }
     });
 
+    
+
     // exemplo: DefaultAlert("success","Cadastro efetuado com sucesso."); 
     function DefaultAlert(type, msg) {
         Toast.fire({

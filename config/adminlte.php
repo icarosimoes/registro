@@ -727,6 +727,17 @@ return [
             ],
         ],
         [
+            'name' => 'scriptUpdateCheckSuite',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/check_suite/check_suite_update.js',
+                ],
+            ],
+        ],
+        [
             'name' => 'scriptCreateProfile',
             'active' => false,
             'files' => [
