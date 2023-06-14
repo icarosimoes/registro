@@ -131,9 +131,9 @@ class CheckSuitesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Local $local)
+    public function destroy(CheckSuite $checkSuite)
     {
-        $local->delete();
-        return $local;   
+        $checkSuite->delete();
+        return $checkSuite;   
     }
 }

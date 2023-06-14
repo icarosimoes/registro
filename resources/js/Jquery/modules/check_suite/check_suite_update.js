@@ -84,6 +84,7 @@ $(function() {
             const but_occurrence = $('#item-'+item).siblings('.show_occurence_id')[0]
             $(but_occurrence).removeClass('d-none')
             $(but_occurrence).children('i').html($('#idOccurence').val())
+            $(but_occurrence).attr('href',base_url+'/occurrence/list/edit/'+$('#idOccurence').val())
         }
         $('#ModalSelectOcurrence').modal('hide')
 
@@ -124,7 +125,7 @@ $(function() {
 
     //carrega os items 
     const check_suite_items = JSON.parse($('#check_suite_items').val()) 
-    console.log(check_suite_items)
+    
 
     // carrega avaliacao
     $('select[name="item"]').each((index,element)=>{
@@ -142,13 +143,17 @@ $(function() {
     })
 
     $('.show_occurence_id').each((index,element)=>{
+        
         $($(element).children()[0]).html(check_suite_items[index].occurrences_id)
         
         if(check_suite_items[index].occurrences_id){
             $(element).removeClass('d-none')
+            $(element).attr('href', base_url+'/occurrence/list/edit/'+check_suite_items[index].occurrences_id)
         }
     })
     
+    
+
 
     // exemplo: DefaultAlert("success","Cadastro efetuado com sucesso."); 
     function DefaultAlert(type, msg) {

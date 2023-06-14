@@ -31,7 +31,7 @@
                             <thead>
                                 <tr>
                                     <th>Id</th>
-                                    <th>Date</th>
+                                    <th>Data</th>
                                     <th>Suite</th>
                                     <th>Inspecionado por</th>
                                     <th class="text-right">Ações</th>
@@ -42,7 +42,7 @@
                                     <tr >
                                         {{-- @foreach ($roles as $role) --}}
                                             <td width="50">{{ $item->id }}</td>
-                                            <td >{{ $item->date }}</td>
+                                            <td >{{ date("d/m/Y",strtotime($item->date)) }}</td>
                                             <td >{{ $item->suite }}</td>
                                             <td >{{ $item->inspected_by }}</td>
                                             <td class="text-right">
@@ -108,5 +108,5 @@
       </div>
       
 
-      @section('plugins.scriptListLocal', true)
+      @section('plugins.scriptListCheckSuite', true)
 @endsection

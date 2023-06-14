@@ -30,10 +30,10 @@ $(function() {
         let data = {
             _method : 'DELETE', 
                     }
-        let route ='/register/local/'+id
+        let route ='/event/check_suite/'+id
         $.post(route,data,(response)=>{
             $('#modal_delete').modal('hide');
-            window.location.replace(base_url + "/register/local");
+            window.location.replace(base_url + "/event/check_suite");
         }).catch(()=>{
             DefaultAlert('error','Não foi possível')
         }).always(()=>{
@@ -41,6 +41,10 @@ $(function() {
         })
     })
     
+
+
+
+
     function DefaultAlert(type, msg) {
         Toast.fire({
             icon: type,
