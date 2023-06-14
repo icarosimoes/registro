@@ -62,7 +62,7 @@ $(function() {
         let route  = '/event/check_suite/'+check_suite_id
         $.post(route,form_data,(response)=>{
             DefaultAlert("success", 'Salvo com sucesso !');   
-            //window.location.replace(base_url + "/register/local");
+            window.location.replace(base_url + "/event/check_suite");
         }).catch(()=>{
             DefaultAlert("error", 'Não foi possivel salvar');   
         }).always(()=>{
