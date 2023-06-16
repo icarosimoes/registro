@@ -6,6 +6,7 @@ use App\Func;
 use App\Http\Controllers\Controller;
 use App\Local;
 use App\Models\Occurrence;
+use App\Models\User;
 use App\Sector;
 use Illuminate\Http\Request;
 
@@ -57,5 +58,17 @@ class SelectController extends Controller
         });
 
         return  $functions;
+    }
+
+    function getUsers(Request $request){
+        $users = User::select('id','name')
+        ->selectSearch($request)
+        ->paginate(100);
+        
+        $users->map(function($item){
+            return $item->text = @$item->id .' - '.@$item->name;
+        });
+
+        return  $users;
     }
 }

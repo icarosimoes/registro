@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Event\CheckSuites;
 use App\CheckSuite;
 use App\CheckSuiteItem;
 use App\Http\Controllers\Controller;
+use App\Local;
+use App\Models\User;
 use CreateCheckSuiteItems;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,10 +18,37 @@ class CheckSuitesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $checkSuites = CheckSuite::get();
-        return view('event/check_suites/list')->with(['data' => $checkSuites]);
+        $filter = $request->all();
+
+        $checkSuites = CheckSuite::orderBy('id','DESC');
+
+        if(isset($request->local)){
+            $checkSuites->where('local_id',$request->local);    
+            $filter['local']= Local::find($request->local);
+        }
+
+        if(isset($request->user)){
+            $checkSuites->where('user_id',$request->user); 
+            $filter['user']= User::find($request->user);   
+        }
+        
+        if(isset($request->date_start ) && $request->date_start != null){
+            $checkSuites->where('date','>=',$request->date_start);    
+        }
+
+        if(isset($request->date_end) && $request->date_end != null ){
+            $checkSuites->where('date','<=',$request->date_end .' 23:59:59');    
+        }
+        
+        if(isset($request->maid)){
+            $checkSuites->where('maid','like',"%$request->maid%" );    
+        }
+                      
+
+        $checkSuites= $checkSuites->get();
+        return view('event/check_suites/list')->with(['data' => $checkSuites,"filter"=>$filter]);
     }
 
     /**
@@ -45,9 +74,10 @@ class CheckSuitesController extends Controller
         //salva check suite
         $check_suite = new CheckSuite();
         $check_suite->date = $request->date;
-        $check_suite->suite = $request->suite;
-        $check_suite->inspected_by = $request->inspected_by;
+        $check_suite->local_id = $request->local_id;
+        $check_suite->user_id = $request->user_id;
         $check_suite->status = $request->status;
+        $check_suite->maid = $request->maid;
         $check_suite->obs = $request->obs;
         $check_suite->save();
 
@@ -85,7 +115,8 @@ class CheckSuitesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(CheckSuite $checkSuite)
-    {
+    {   
+        
         return view('event/check_suites/edit',compact('checkSuite'));
     }
 
@@ -101,8 +132,8 @@ class CheckSuitesController extends Controller
         DB::beginTransaction();
 
         $check_suite->date = $request->date;
-        $check_suite->suite = $request->suite;
-        $check_suite->inspected_by = $request->inspected_by;
+        $check_suite->local_id = $request->local_id;
+        $check_suite->user_id = $request->user_id;
         $check_suite->status = $request->status;
         $check_suite->obs = $request->obs;
         $check_suite->save();

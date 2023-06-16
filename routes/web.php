@@ -31,6 +31,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('get_functions', 'Helper\SelectController@getFunctions')->name('helper.locals');
         Route::get('get_locals', 'Helper\SelectController@getLocals')->name('helper.locals');
         Route::get('get_sectors', 'Helper\SelectController@getSectors')->name('helper.sectors');
+        Route::get('get_users', 'Helper\SelectController@getUsers')->name('helper.sectors');
         Route::get('get_occurrences', 'Helper\SelectController@getOccurrences')->name('helper.sectors');
     });
 
