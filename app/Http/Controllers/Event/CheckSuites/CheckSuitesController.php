@@ -135,6 +135,7 @@ class CheckSuitesController extends Controller
         $check_suite->local_id = $request->local_id;
         $check_suite->user_id = $request->user_id;
         $check_suite->status = $request->status;
+        $check_suite->maid = $request->maid;
         $check_suite->obs = $request->obs;
         $check_suite->save();
 
