@@ -39,14 +39,17 @@
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="Name">Suite</label>
-                                            <input type="text" disabled class="form-control" id="suite" value="{{$checkSuite->suite}}" placeholder=""
-                                                required>
+                                            <select disabled class="form-control" name="" id="local" required >
+                                                <option value="{{ $checkSuite->local->id }}">{{ $checkSuite->local->id.' - '.$checkSuite->local->name }}</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="Name">Inspecionado por</label>
-                                            <input type="text" disabled class="form-control" id="inspected_by" placeholder="" required value="{{$checkSuite->inspected_by}}">
+                                            <select disabled class="form-control" name="" id="user" required >
+                                                <option value="{{$checkSuite->user->id }}">{{ $checkSuite->user->id.' - '.$checkSuite->user->name }}</option>
+                                            </select>
                                         </div>
                                     </div>
 
@@ -56,9 +59,9 @@
                                         <thead>
                                             <tr>
                                                 <td width='50'>ITEM</td>
-                                                <td  width='400'>CONFERÊNCIA DAS SUÍTES</td>
+                                                <td  width='520'>CONFERÊNCIA DAS SUÍTES</td>
                                                 <td width='100'>AVALIAÇÃO</td>
-                                                <td width='500'>REGISTRO</td>
+                                                <td width='400'>REGISTRO</td>
                                                 <td></td>
                                             </tr>
                                         </thead>

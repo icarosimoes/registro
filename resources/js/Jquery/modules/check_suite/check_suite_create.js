@@ -47,9 +47,10 @@ $(function() {
         
         form_data = {
             date:$("#date").val(),
-            suite:$("#suite").val(),
-            inspected_by:$("#inspected_by").val(),
+            local_id:$("#local").val(),
+            user_id:$("#user").val(),
             status:status,
+            maid:$("#maid").val(),
             obs:$("#obs").val(),
             valuation:valuation,
             register:register,
@@ -120,6 +121,75 @@ $(function() {
     });
 
     
+    data_select = [] // gabiarra para pegar o obj escolhido no select2
+    $('#local').select2({
+        theme: 'bootstrap4',
+        ajax: {
+          url: base_url+'/helper/get_locals',
+          dataType: 'json',
+
+            data: function (params) {
+            var query = {
+              term: params.term,
+              page: params.page || 1
+            }
+
+            // Query parameters will be ?search=[term]&page=[page]
+            return query;
+          },
+          processResults: function (response) {
+            //se a primeira paginacao
+            if (response.current_page == 1){ data_select = response.data }
+            else{ data_select = data_select.concat(response.data) }
+
+            // Transforms the top-level key of the response object from 'items' to 'results'
+             let more_pagination = true;
+             //se não tem mais paginas
+             if (response.next_page_url == null){ more_pagination = false }
+             return {
+                 results:response.data,
+                 pagination: {
+                    "more": more_pagination
+                  }
+                }
+           }
+        }
+    });
+
+    $('#user').select2({
+        theme: 'bootstrap4',
+        ajax: {
+          url: base_url+'/helper/get_users',
+          dataType: 'json',
+
+            data: function (params) {
+            var query = {
+              term: params.term,
+              page: params.page || 1
+            }
+
+            // Query parameters will be ?search=[term]&page=[page]
+            return query;
+          },
+          processResults: function (response) {
+            //se a primeira paginacao
+            if (response.current_page == 1){ data_select = response.data }
+            else{ data_select = data_select.concat(response.data) }
+
+            // Transforms the top-level key of the response object from 'items' to 'results'
+             let more_pagination = true;
+             //se não tem mais paginas
+             if (response.next_page_url == null){ more_pagination = false }
+             return {
+                 results:response.data,
+                 pagination: {
+                    "more": more_pagination
+                  }
+                }
+           }
+        }
+    });
+
 
     // exemplo: DefaultAlert("success","Cadastro efetuado com sucesso."); 
     function DefaultAlert(type, msg) {

@@ -1,5 +1,7 @@
 @extends('adminlte::page')
 @section('content')
+@section('plugins.Select2', true)
+
 @section('plugins.Datatables', true)
     <div class="container">
         <div class="row justify-content-center">
@@ -18,15 +20,73 @@
                     <div class="card-body">
                         <div class="form-group">
                             <div class="row">
-                                <div class="col">
+                                <div class="col text-left">
                                     <a type="button" href="{{ route('check_suite.create') }}" data-toggle="tooltip"
                                         data-placement="top" title="Novo Departamento"
-                                        class="btn bg-gradient-secondary btn-sm float-right"><i class="fas fa-plus"></i>
+                                        class="btn bg-gradient-secondary btn-sm "><i class="fas fa-plus"></i>
                                         Nova Conferência</a>
+                                        
                                 </div>
+                                <div class="col text-right">
+                                    <button type="button" id="filter" class="btn bg-gradient-info btn-sm "><i
+                                            class="fas fa-filter"></i> Filtro </button>
+                                </div>    
                             </div>
                         </div>
-
+                        <form name="form" id="form" action="" enctype="multipart/form-data" method="GET">
+                            <div class="callout callout-info" id="card_filter" style="display: none">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="Name">De</label>
+                                            <input class="form-control" type="date" name="date_start" value="{{ @$filter['date_start'] }}">
+                                        </div>   
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="Name">Até</label>
+                                            <input class="form-control" type="date" name="date_end" value="{{ @$filter['date_end'] }}">
+                                        </div>   
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="Name">Local</label>
+                                            <select class="form-control" name="local" id="local">
+                                                @if (isset($filter['local']))
+                                                <option value="{{$filter['local']->id}}">{{$filter['local']->id.' - '.$filter['local']->name}}</option>
+                                                    
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="Name">Inspecionado Por</label>
+                                            <select class="form-control" name="user" id="user">
+                                                @if (isset($filter['user']))
+                                                <option value="{{ $filter['user']->id }}">{{ $filter['user']->id.' - '.$filter['user']->name }}</option>
+                                                    
+                                                @endif
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="Name">Camareira</label>
+                                            <input class="form-control" type="text" name="maid" value="{{ @$filter['maid'] }}">
+                                        </div>   
+                                    </div>
+    
+                                </div>
+                                <div class="row">
+                                    <div class="col text-right">
+                                        <button type="submit" class="btn btn-sm btn-info btn-flat"><i
+                                                class="fas fa-search"></i> Aplicar</button>
+                                    </div>
+                                </div>
+                            </div>
+    
+                        </form>
                         <table name="DataTableUser" id="DataTableUser" class="table table-striped table-sm table-hover">
                             <thead>
                                 <tr>
@@ -34,6 +94,7 @@
                                     <th>Data</th>
                                     <th>Suite</th>
                                     <th>Inspecionado por</th>
+                                    <th>Camareira</th>
                                     <th class="text-right">Ações</th>
                                 </tr>
                             </thead>
@@ -43,8 +104,9 @@
                                         {{-- @foreach ($roles as $role) --}}
                                             <td width="50">{{ $item->id }}</td>
                                             <td >{{ date("d/m/Y",strtotime($item->date)) }}</td>
-                                            <td >{{ $item->suite }}</td>
-                                            <td >{{ $item->inspected_by }}</td>
+                                            <td >{{ @$item->local->name }}</td>
+                                            <td >{{ @$item->user->name }}</td>
+                                            <td >{{ @$item->maid }}</td>
                                             <td class="text-right">
                                                 <div class="btn-group-sm">
                                                     {{-- @can('checkRouters', $route =

@@ -31,21 +31,28 @@
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="Name">Data</label>
-                                            <input type="date" class="form-control" id="date" placeholder=""
+                                            <input type="datetime-local" class="form-control" id="date" placeholder=""
                                                 required>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="Name">Suite</label>
-                                            <input type="text" class="form-control" id="suite" placeholder=""
-                                                required>
+                                            <select class="form-control" name="" id="local" required></select>
+                                            {{-- <input type="text" class="form-control" id="suite" placeholder="" --}}
+                                                {{-- required> --}}
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="Name">Inspecionado por</label>
-                                            <input type="text" class="form-control" id="inspected_by" placeholder="" required>
+                                            <select type="text" class="form-control" id="user" placeholder="" required></select>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="Name">Camareira</label>
+                                            <input type="text" class="form-control" id="maid" placeholder="" required>
                                         </div>
                                     </div>
 
@@ -67,7 +74,7 @@
                                                 <td><p>PORTA DA ENTRADA, Nº DO QUARTO E ARCO DA PORTA ESTÃO LIMPOS?</p></td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -85,7 +92,7 @@
                                                 <td>PAVIMENTO ASPIRADO, PISO SEM MANCHAS, AROMATIZADO E REJUNTE LIMPO?</td>
                                                 <td>
                                                     <select  required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -102,7 +109,7 @@
                                                 <td>AS ESCADAS E GARAGEM ESTÃO LIMPAS?	</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -119,7 +126,7 @@
                                                 <td>BOM FUNCIONAMENTO DAS LUZES, INTERRUPTORES E TOMADAS?</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -136,7 +143,7 @@
                                                 <td>TEMPERATURA AMENA DO QUARTO? LIGAR AR CONDICIONADO.</td>
                                                 <td>
                                                     <select  required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -153,7 +160,7 @@
                                                 <td>TELEFONE ESTÁ COM FUNCIONAMENTO PLENO E LIMPO?</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -170,7 +177,7 @@
                                                 <td>SOFÁS, CAMAS E CABECEIRAS LIMPAS?</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -187,7 +194,7 @@
                                                 <td>TELEVISÃO LIMPA E FUNCIONANDO?</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -204,7 +211,7 @@
                                                 <td>MINI BAR LIMPO POR FORA E POR DENTRO?</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -221,7 +228,7 @@
                                                 <td>MATERIAL DE INFORMAÇÃO (CARDÁPIOS) COMPLETOS E EM BOM ESTADO?</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -238,7 +245,7 @@
                                                 <td>CONFERIU OS ITENS DO FRIGOBAR? </td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -255,7 +262,7 @@
                                                 <td>CONFERIU OS ITENS DO MINIBAR? </td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -272,7 +279,7 @@
                                                 <td>CONFERIU OS ITENS DO SEX SHOP? </td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -289,7 +296,7 @@
                                                 <td>CONFERIU OS UTENSÍLIOS QUE PRECISAM ESTAR NA SUÍTE?</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -306,7 +313,7 @@
                                                 <td>02 TRAVESSEIROS COM FRONHAS E 02 LENÇÓIS? LIMPOS E EM BOM ESTADO?  </td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -323,7 +330,7 @@
                                                 <td>PRESENÇA DE SUJEIRAS, MANCHAS, DESBOTAMENTOS, BURACOS, INFILTRAÇÃO OU MUDANÇA NA COR DAS PINTURAS? </td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -340,7 +347,7 @@
                                                 <td>CONFERIU AS AUTOMATIZAÇÕES (PAINEL DE COMANDO)?	</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -357,7 +364,7 @@
                                                 <td>OS MOBILIÁRIOS LIMPOS E EM BOM ESTADO DE USO? </td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -374,7 +381,7 @@
                                                 <td>O PAPEL DE PAREDE ESTÁ LIMPO E EM BOM ESTADO?</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -391,7 +398,7 @@
                                                 <td>OS VIDROS ESTÃO LIMPOS E SEM DANOS?	</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -408,7 +415,7 @@
                                                 <td>OS UTENSÍLIOS COMO BANDEJAS, COPOS, ESTÃO DEVIDAMENTE LIMPOS?</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -425,7 +432,7 @@
                                                 <td>AS EMBALAGENS DOS COMESTÍVEIS ESTÃO LIMPAS, SEM POEIRA?	</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -442,7 +449,7 @@
                                                 <td>LACRE DE HIGIENIZAÇÃO DO VASO SANITÁRIO CONFORME TREINAMENTO DA ABmoteis?	</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -459,7 +466,7 @@
                                                 <td>ESPELHO LIMPO E EM BOM ESTADO?	</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -476,7 +483,7 @@
                                                 <td>CONFERIR TEMPERATURA DA ÁGUA DOS CHUVEIROS E HIDROMASSAGEM?	</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -493,7 +500,7 @@
                                                 <td>CONFERIU OS ITENS DE CONSUMO DO BANHEIRO?</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -510,7 +517,7 @@
                                                 <td>2 TOALHAS DE BANHO E 1 TAPETE? LIMPOS E EM BOM ESTADO?	</td>
                                                 <td>
                                                     <select  required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -527,7 +534,7 @@
                                                 <td>SECADOR FUNCIONANDO?	</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -544,7 +551,7 @@
                                                 <td>AS LOUÇAS E METAIS DO BANHEIRO ESTÃO LIMPOS E EM BOM USO?	</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -561,7 +568,7 @@
                                                 <td>BANHEIRO AROMATIZADO ?</td>
                                                 <td>
                                                     <select required class="form-control form-control-sm" name="item" id="">
-                                                        <option value=""></option>
+                                                        
                                                         <option value="sim">SIM</option>
                                                         <option value="nao">NÃO</option>
                                                     </select>
@@ -593,9 +600,9 @@
                                         <div class="form-group">
                                             
                                             <input type="radio" required name="status_conf" id="status1" value="liberado">    
-                                            <label for="">CONFERIDA E LIBERADA</label>
+                                            <label for="status1">CONFERIDA E LIBERADA</label>
                                             <input type="radio" required class="ml-5" name="status_conf" id="status2" value="bloqueado">                                            
-                                            <label for="" >CONFERIDA E BLOQUEADA</label>                                        
+                                            <label for="status2" >CONFERIDA E BLOQUEADA</label>                                        
                                         </div>  
                                     </div>
                                 </div>
