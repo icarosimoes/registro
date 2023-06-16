@@ -52,6 +52,7 @@ $(function() {
             local_id:$("#local").val(),
             user_id:$("#user").val(),
             status:status,
+            maid:$("#maid").val(),
             obs:$("#obs").val(),
             valuation:valuation,
             register:register,

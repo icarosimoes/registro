@@ -52,6 +52,13 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label for="Name">Camareira</label>
+                                            <input disabled class="form-control" type="text" value="{{$checkSuite->maid}}" id="maid">
+                                            {{-- <input type="text" class="form-control" id="inspected_by" placeholder="" required value="{{$checkSuite->inspected_by}}"> --}}
+                                        </div>
+                                    </div>
 
                                 </div>
                                 <div class="row">
