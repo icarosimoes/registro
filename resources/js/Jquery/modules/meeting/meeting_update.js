@@ -153,11 +153,11 @@ $(function () {
         });
         form_data.append('topics_covered_id[]', topics_covered_id);
 
-        if (valid === 0) {
-            $('.overlay').removeClass('d-none');
-        }
+        form_data.append('datetime', $('#datetime').val());        
+        form_data.append('local', $('#local').val());        
 
         if (valid === 0) {
+            $('.overlay').removeClass('d-none');
             $.ajax({
                 url: base_url + "/event/meeting/update",
                 type: "POST",
@@ -171,14 +171,17 @@ $(function () {
                     const obj = JSON.parse(response);
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
-                        $('.overlay').addClass('d-none');
-                        window.location.replace(base_url + "/event/list/meeting");
+              
+                    window.location.replace(base_url + "/event/list/meeting");
                     } else {
                         DefaultAlert("error", obj.message);
-                        $('.overlay').addClass('d-none');
+              
                     }
                 }
-            });
+            }).catch()
+            .always(()=>{
+                $('.overlay').addClass('d-none');
+            })
         }
     });
     /**

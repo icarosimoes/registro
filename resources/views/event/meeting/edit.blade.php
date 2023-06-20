@@ -23,6 +23,30 @@
                 <div class="container-fluid">
                     <!-- form start -->
                     <form name="formMeetingEdit" id="formMeetingEdit" enctype="multipart/form-data" method="POST">
+                        
+                        <div class="col-sm-12">
+                            <div class="card card-secondary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">Editar reunião</h3>
+                                </div><!-- /.card-header -->
+
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <input value="{{ $meeting->datetime }}" id="datetime" class="form-control" type="datetime-local"  required>
+                                        </div>
+                                        <div class="col-3">
+                                            <input value="{{ $meeting->local }}" id="local" class="form-control" type="text" required>   
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                {{-- <div class="card-footer text-center">
+                                    <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
+                                        href="javascript:">Adicionar Novo Item</a>
+                                </div> --}}
+                            </div>
+                        </div>
                         <div class="col-sm-12">
                             <div class="card card-secondary card-outline">
                                 <div class="card-header">
