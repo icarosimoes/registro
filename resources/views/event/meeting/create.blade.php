@@ -33,10 +33,20 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-3">
+                                            <label for="">Data e Hora </label>
                                             <input id="datetime" class="form-control" type="datetime-local" required>
                                         </div>
                                         <div class="col-3">
+                                            <label for="">Local</label>
                                             <input id="local" class="form-control" type="text" required>   
+                                        </div>
+                                        <div class="col-3">
+                                            <label for="approval">Aprovação</label>
+                                            <select name="" id="approval" class="form-control">
+                                                <option value=""></option>
+                                                <option value="approved">Aprovado</option>
+                                                <option value="disapproved">Reprovado</option>
+                                            </select>
                                         </div>
                                         
                                     </div>

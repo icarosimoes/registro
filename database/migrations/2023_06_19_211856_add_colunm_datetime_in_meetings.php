@@ -16,6 +16,7 @@ class AddColunmDatetimeInMeetings extends Migration
         Schema::table('meetings', function (Blueprint $table) {
             $table->dateTime('datetime')->after('status')->nullable();
             $table->string('local')->after('datetime')->nullable();
+            $table->string('approval')->after('local')->nullable();
         });
     }
 
@@ -29,6 +30,7 @@ class AddColunmDatetimeInMeetings extends Migration
         Schema::table('meetings', function (Blueprint $table) {
             $table->dropColumn('datetime');
             $table->dropColumn('local');
+            $table->dropColumn('approval');
         });
     }
 }

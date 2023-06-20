@@ -100,6 +100,7 @@ class MeetingService extends Service
         $meeting->users_id = Auth::user()->id;
         $meeting->datetime = $data['datetime'];
         $meeting->local = $data['local'];
+        $meeting->approval = $data['approval'];
         $meeting->save();
         $insertID = $meeting->id;
 
@@ -184,6 +185,7 @@ class MeetingService extends Service
         $meeting->users_id = Auth::user()->id;
         $meeting->datetime = $data['datetime'];
         $meeting->local = $data['local'];
+        $meeting->approval = $data['approval'];
         $meeting->save();
         $insertID = $meeting->id;
 

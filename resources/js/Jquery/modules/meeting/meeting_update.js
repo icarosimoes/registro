@@ -155,7 +155,7 @@ $(function () {
 
         form_data.append('datetime', $('#datetime').val());        
         form_data.append('local', $('#local').val());        
-
+        form_data.append('approval', $('#approval').val());        
         if (valid === 0) {
             $('.overlay').removeClass('d-none');
             $.ajax({
@@ -184,6 +184,11 @@ $(function () {
             })
         }
     });
+
+    $('#approval').val($('#approval').attr('data-value'))
+
+
+
     /**
      * 
      * @param {string} type 
