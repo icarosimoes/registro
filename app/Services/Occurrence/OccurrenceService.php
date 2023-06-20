@@ -140,6 +140,7 @@ class OccurrenceService extends Service
                 $notification->user_id = $participants[$i];
                 $notification->occurrence_id = $insertID;
                 $notification->checked = 'not';
+                $notification->msg = 'Novo registro criado.';
                 $notification->save();
 
                 

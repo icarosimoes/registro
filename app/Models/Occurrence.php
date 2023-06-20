@@ -72,6 +72,7 @@ class Occurrence extends Model
                     $notification->occurrence_id = $occurrence->id;
                     $notification->checked = 'not';
                     $notification->user_id = $participant;
+                    $notification->msg = 'Atualização de registro';
                     $notification->save();
                 }
             }
