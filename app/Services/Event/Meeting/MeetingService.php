@@ -9,10 +9,12 @@ use App\Models\Meeting\meeting_registered_participants;
 use App\Models\Meeting\meeting_subjects;
 use App\Models\Meeting\meeting_topics_covered;
 use App\Models\Meeting\participants;
+use App\Models\Notification;
 use App\Models\Occurrence;
 use App\Models\User;
 use App\Services\Service;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class MeetingService extends Service
@@ -86,6 +88,7 @@ class MeetingService extends Service
 
     public function store(array $data)
     {
+        DB::beginTransaction();
         $topics = explode(",", $data['topics'][0]);
         $topics_covered = explode(",", $data['topics_covered'][0]);
         $providence = explode(",", $data['providence'][0]); 
@@ -126,6 +129,15 @@ class MeetingService extends Service
                 'created_at' => date('Y-m-d H:i:s')
             ];
             meeting_registered_participants::insert($data);
+            
+                 //enviar notificacao
+                 $notification = new Notification();
+                 $notification->user_id = $users_registered[$i];
+                 $notification->meeting_id = $insertID;     
+                 $notification->checked = 'not'; 
+                 $notification->msg = 'Criada nova reunião'; 
+                 $notification->save();
+                 
         }
 
         if(isset($invited_users)){
@@ -136,9 +148,10 @@ class MeetingService extends Service
                     'created_at' => date('Y-m-d H:i:s')
                 ];
                 meeting_invited_participants::insert($data);
+   
             }
         }
-
+        
         for($i=0; $i < count($topics_covered); $i++){
             $data = [
                 'meetings_id' => $insertID,
@@ -149,6 +162,7 @@ class MeetingService extends Service
             ];
             meeting_topics_covered::insert($data);
         }
+        DB::commit();
         return $meeting;
     }
 
@@ -219,6 +233,14 @@ class MeetingService extends Service
                 'created_at' => date('Y-m-d H:i:s')
             ];
             meeting_registered_participants::where('meetings_id', $insertID)->update($data);
+
+            //enviar notificacao
+            $notification = new Notification();
+            $notification->user_id = $users_registered[$i];
+            $notification->meeting_id = $insertID;     
+            $notification->checked = 'not'; 
+            $notification->msg = 'Atualização de reunião'; 
+            $notification->save();
         }
 
         if(isset($data['invited_users'][0])){
