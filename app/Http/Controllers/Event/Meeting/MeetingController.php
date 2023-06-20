@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Event\Meeting;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 
 class MeetingController extends Controller
@@ -73,6 +74,15 @@ class MeetingController extends Controller
      */
     public function edit($id)
     {
+        //verifica se a origem é de notificaçoes
+        if(request()->notification){
+            $notification = Notification::find(request()->notification);
+            $notification->checked = 'yes';
+            $notification->save();
+        }
+
+
+
         $usersRegistered = $this->service->usersRegistered();
         $occurrences = $this->service->getOcurrence();
         $meeting = $this->service->show($id);

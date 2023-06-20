@@ -282,6 +282,12 @@ return [
                 ],
             ],
         ],
+        [
+            'text' => 'Notificações',
+            'url' => 'notification',
+            'icon' => 'ml-1 mr-1 fas fa-bell bags_notification',
+            'badge' => '3'
+        ],
         ['header' => 'documentation'],
     ],
 
