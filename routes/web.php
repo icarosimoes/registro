@@ -76,7 +76,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('procedure', 'Register\ProcedureController');
     });
 
-
     Route::prefix('occurrence')->group(function () {
         Route::get('list/occurrence', 'Occurrence\OccurrenceController@index')->name('occurrence.list');
         Route::get('list/create', 'Occurrence\OccurrenceController@create')->name('occurrence.create');
