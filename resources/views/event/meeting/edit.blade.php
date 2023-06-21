@@ -180,26 +180,76 @@
                                             class="btn btn-success">{{ $meeting->start_meeting == null ? 'Iniciar Reunião' : 'Reunião Iniciada: ' . date('d/m/Y - H:i', strtotime($meeting->start_meeting)) }}</button>
                                     </div>
                                 </div>
-                                @if ($meeting->start_meeting)
-                                    
-                                @foreach ($meeting_subjects as $subjects)
-                                                                    
-                                <div class="row mt-3">
-                                    <div class="col">
-                                        <label for="">Pauta</label> 
-                                        <input class="form-control" type="text" readonly value="{{$subjects->subject}}">
-                                    </div>
+                                <div id="list_meeting">
+                                    @if ($meeting->start_meeting)
+
+                                        @foreach ($meeting_subjects as $subjects)
+                                            <div class="row mt-3">
+                                                <div class="col">
+                                                    <label for="">Pauta</label>
+                                                    <input class="form-control" type="text" readonly
+                                                        value="{{ $subjects->subject }}">
+                                                </div>
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col">
+                                                    <label for="">Observações</label>
+                                                    <textarea data-id="{{ $subjects->id }}" class="form-control obs_subject" name="" cols="30"
+                                                        rows="5">{{ $subjects->obs_subject }}</textarea>
+                                                </div>
+                                            </div>
+                                        @endforeach
+
+
+                                        @foreach ($meeting_new_subjects as $subjects)
+                                            <div id="{{$subjects->id}}">
+                                            <div class="row mt-3">
+                                                <div class="col">
+                                                    <label for="">
+                                                        Nova Pauta</label>
+                                                    <div class="input-group">
+
+                                                        <input class="form-control new_subject" type="text"
+                                                            value="{{ $subjects->subject }}">
+                                                            <div class="input-group-append">
+                                                                <button data-id="{{$subjects->id}}" class="btn btn-secondary btn-sm trash_subject"
+                                                                    type="button"><i class="fas fa-trash"></i></button>
+                                                            </div>
+                                                    </div>
+                                                   
+
+                                                </div>
+                                                {{-- <div class="col-1"><button class="btn btn-sm btn-secondary"></button>
+                                                </div> --}}
+                                            </div>
+                                            <div class="row mt-2">
+                                                <div class="col">
+                                                    <label for="">Observações</label>
+                                                    <textarea data-id="{{ $subjects->id }}" class="form-control obs_new_subject" name="" cols="30"
+                                                        rows="5">{{ $subjects->obs_subject }}</textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endforeach
+
+
+                                    @endif
+                                </div>
+                                <div>
+
+
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col">
-                                        <label for="">Observações</label> 
-                                        <textarea data-id="{{$subjects->id}}" class="form-control obs_subject" name="" cols="30" rows="5" >{{$subjects->obs_subject}}</textarea>
+                                        <div class="card-footer text-center" style="cursor: pointer" id="add_new_subject">
+                                            <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a>Adicionar Novos
+                                                Assuntos</a>
+                                        </div>
                                     </div>
                                 </div>
-                                @endforeach
-                                @endif
+
                             </div>
-                            
+
                         </div>
                     </div>
 

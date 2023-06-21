@@ -87,6 +87,7 @@ class MeetingController extends Controller
         $usersRegistered = $this->service->usersRegistered();
         $occurrences = $this->service->getOcurrence();
         $meeting = $this->service->show($id);
+        $meeting_new_subjects = $this->service->meeting_new_subjects($id);
         $meeting_subjects = $this->service->meeting_subjects($id);
         $meeting_topics_covereds = $this->service->meeting_topics_covereds($id);
         $meeting_registered_participants = $this->service->meeting_registered_participants($id);
@@ -96,6 +97,7 @@ class MeetingController extends Controller
             'ocurrences' => $occurrences,
             'meeting' => $meeting,
             'meeting_subjects' => $meeting_subjects,
+            'meeting_new_subjects' => $meeting_new_subjects,
             'meeting_topics_covereds' => $meeting_topics_covereds,
             'meeting_registered_participants' => $meeting_registered_participants,
             'meeting_invited_participants' => $meeting_invited_participants

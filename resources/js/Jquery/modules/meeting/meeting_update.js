@@ -164,6 +164,25 @@ $(function () {
         form_data.append('obs_subjects_ids', obs_subjects_ids);        
         form_data.append('obs_subjects_values', obs_subjects_values);        
 
+        //novas pautas
+        let obs_new_subjects = []
+        $(".obs_new_subject").each((index,item)=>{
+            const value = $(item).val()
+            obs_new_subjects.push(value) 
+            
+        })
+        form_data.append('obs_new_subjects', obs_new_subjects);        
+        
+        let new_subjects = []
+        $(".new_subject").each((index,item)=>{
+            const value = $(item).val()
+            new_subjects.push(value) 
+            
+        })
+        form_data.append('new_subjects', new_subjects);        
+
+        
+        
         form_data.append('datetime', $('#datetime').val());        
         form_data.append('local', $('#local').val());        
         form_data.append('approval', $('#approval').val());        
@@ -214,6 +233,41 @@ $(function () {
         })
     })
 
+    let count_new_subject = 0
+    $('#add_new_subject').on('click',()=>{
+        count_new_subject++
+      let html = '<div id="a-'+count_new_subject+'">'+
+           '<div class="row mt-3">'+
+           '<div class="col">'+
+           '<label for="">Nova Pauta</label>'+
+           '<div class="input-group">'+
+           '<input class="form-control new_subject"  type="text" '+
+           'value="">'+
+           '<div class="input-group-append">'+
+           '<button data-id="a-'+count_new_subject+'" class="btn btn-secondary btn-sm trash_subject"'+
+               'type="button"><i class="fas fa-trash"></i></button>'+
+       '</div>'+
+       '</div>'+
+       '</div>'+
+   '</div>'+
+   '<div class="row mt-2">'+
+       '<div class="col">'+
+           '<label for="">Observações</label>'+
+           '<textarea data-id="" class="form-control obs_new_subject" name="" cols="30"'+
+               'rows="5"></textarea>'+
+       '</div>'+
+   '</div>'+
+   '</div>'
+   
+   $('#list_meeting').append(html)
+    })
+
+
+    //novas pautas 
+    $(document).on('click','.trash_subject',(e)=>{
+       const id =  $(e.currentTarget).attr('data-id')
+       $('#'+id).remove()
+    })
 
     /**
      * 
