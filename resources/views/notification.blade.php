@@ -60,6 +60,7 @@
                             <thead>
                                 <tr>
                                     <th>Id</th>
+                                    <th>Menssagem</th>
                                     <th>Link</th>
                                     <th class="text-right">Visto</th>
                                 </tr>
@@ -68,8 +69,12 @@
                                @foreach($notifications as $item)
                                <tr>
                                     <td>{{$item->id}}</td>
+                                    <td>{{$item->msg}}</td>
                                     @if( $item->occurrence_id)
                                     <td><a href="{{route('occurrence.edit',[$item->occurrence_id]).'?notification='.$item->id}}">Registro {{$item->occurrence_id}}</a>  </td>
+                                    @endif
+                                    @if( $item->meeting_id)
+                                    <td><a href="{{route('meeting.edit',[$item->meeting_id]).'?notification='.$item->id}}">Reunião {{$item->meeting_id}}</a>  </td>
                                     @endif
                                     @if($item->checked == 'yes')
                                     <td class="text-right"> <input disabled  type="checkbox" checked name="checked"></td>

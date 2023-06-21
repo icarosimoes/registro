@@ -153,11 +153,41 @@ $(function () {
         });
         form_data.append('topics_covered_id[]', topics_covered_id);
 
+        let obs_subjects_ids = []
+        let obs_subjects_values = []
+        $(".obs_subject").each((index,item)=>{
+            const id = $(item).attr('data-id')
+            const value = $(item).val()
+            obs_subjects_ids.push(id) 
+            obs_subjects_values.push(value) 
+        })
+        form_data.append('obs_subjects_ids', obs_subjects_ids);        
+        form_data.append('obs_subjects_values', obs_subjects_values);        
+
+        //novas pautas
+        let obs_new_subjects = []
+        $(".obs_new_subject").each((index,item)=>{
+            const value = $(item).val()
+            obs_new_subjects.push(value) 
+            
+        })
+        form_data.append('obs_new_subjects', obs_new_subjects);        
+        
+        let new_subjects = []
+        $(".new_subject").each((index,item)=>{
+            const value = $(item).val()
+            new_subjects.push(value) 
+            
+        })
+        form_data.append('new_subjects', new_subjects);        
+
+        
+        
+        form_data.append('datetime', $('#datetime').val());        
+        form_data.append('local', $('#local').val());        
+        form_data.append('approval', $('#approval').val());        
         if (valid === 0) {
             $('.overlay').removeClass('d-none');
-        }
-
-        if (valid === 0) {
             $.ajax({
                 url: base_url + "/event/meeting/update",
                 type: "POST",
@@ -171,16 +201,74 @@ $(function () {
                     const obj = JSON.parse(response);
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
-                        $('.overlay').addClass('d-none');
-                        window.location.replace(base_url + "/event/list/meeting");
+              
+                    window.location.replace(base_url + "/event/list/meeting");
                     } else {
                         DefaultAlert("error", obj.message);
-                        $('.overlay').addClass('d-none');
+              
                     }
                 }
-            });
+            }).catch()
+            .always(()=>{
+                $('.overlay').addClass('d-none');
+            })
         }
     });
+
+    $('#approval').val($('#approval').attr('data-value'))
+
+
+    $('#btn_start_meeting').on('click',()=>{
+        $('.overlay').removeClass('d-none');
+        const id = $("#meeting_id").val()
+        const route = base_url+'/event/meeting/start_meeting/'+id
+        const data = {}
+        $.post(route,data,(response)=>{
+            DefaultAlert("success", 'Reunião Iniciada');  
+            $('#btn_start_meeting').text('Reunião iniciada: '+response)
+            $('#btn_start_meeting').attr('disabled','disabled')
+        }).catch()
+        .always(()=>{
+            $('.overlay').addClass('d-none');
+        })
+    })
+
+    let count_new_subject = 0
+    $('#add_new_subject').on('click',()=>{
+        count_new_subject++
+      let html = '<div id="a-'+count_new_subject+'">'+
+           '<div class="row mt-3">'+
+           '<div class="col">'+
+           '<label for="">Nova Pauta</label>'+
+           '<div class="input-group">'+
+           '<input class="form-control new_subject"  type="text" '+
+           'value="">'+
+           '<div class="input-group-append">'+
+           '<button data-id="a-'+count_new_subject+'" class="btn btn-secondary btn-sm trash_subject"'+
+               'type="button"><i class="fas fa-trash"></i></button>'+
+       '</div>'+
+       '</div>'+
+       '</div>'+
+   '</div>'+
+   '<div class="row mt-2">'+
+       '<div class="col">'+
+           '<label for="">Observações</label>'+
+           '<textarea data-id="" class="form-control obs_new_subject" name="" cols="30"'+
+               'rows="5"></textarea>'+
+       '</div>'+
+   '</div>'+
+   '</div>'
+   
+   $('#list_meeting').append(html)
+    })
+
+
+    //novas pautas 
+    $(document).on('click','.trash_subject',(e)=>{
+       const id =  $(e.currentTarget).attr('data-id')
+       $('#'+id).remove()
+    })
+
     /**
      * 
      * @param {string} type 

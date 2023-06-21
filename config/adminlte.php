@@ -261,7 +261,7 @@ return [
                     'url' => 'event/list/shiftreport'
                 ],
                 [
-                    'text' => 'Cenferências das suítes',
+                    'text' => 'Conferências das suítes',
                     'icon' => 'fas fa-fw fa fa-clipboard',
                     'url' => 'event/check_suite'
                 ],
@@ -281,6 +281,12 @@ return [
                     'url' => 'admin/list/profile',
                 ],
             ],
+        ],
+        [
+            'text' => 'Notificações',
+            'url' => 'notification',
+            'icon' => 'ml-1 mr-1 fas fa-bell bags_notification',
+            'badge' => '3'
         ],
         ['header' => 'documentation'],
     ],

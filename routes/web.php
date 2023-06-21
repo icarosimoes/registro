@@ -76,7 +76,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('procedure', 'Register\ProcedureController');
     });
 
-
     Route::prefix('occurrence')->group(function () {
         Route::get('list/occurrence', 'Occurrence\OccurrenceController@index')->name('occurrence.list');
         Route::get('list/create', 'Occurrence\OccurrenceController@create')->name('occurrence.create');
@@ -99,6 +98,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('meeting/update', 'Event\Meeting\MeetingController@update');
         Route::get('meeting/view/{id}', 'Event\Meeting\MeetingController@show')->name('meeting.view');
         Route::get('meeting/destroy/{id}', 'Event\Meeting\MeetingController@destroy')->name('meeting.delete');
+        Route::post('meeting/start_meeting/{meeting}', 'Event\Meeting\MeetingController@startMeeting')->name('meeting.start_meeting');
 
         Route::get('meeting/downlaod/{id}', 'Event\Meeting\MeetingController@file_download')->name('meeting.downlaod.file');
 

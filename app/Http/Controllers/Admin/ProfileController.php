@@ -3,14 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
     public function __construct()
     {
-        parent::__construct();
-        $this->middleware('can:checkPermission');
+        // parent::__construct();
+        // $this->middleware('can:checkPermission');
     }
     /**
      * Display a listing of the resource.
@@ -19,8 +20,9 @@ class ProfileController extends Controller
      */
     public function index()
     {
-        $role = $this->service->index();
-        return view('modules/admin/profile/list')->with(['roles' => $role]);
+        // $role = $this->service->index();
+        $roles = Role::all();
+        return view('modules/admin/profile/list')->with(['roles' => $roles]);
     }
 
     /**
@@ -68,7 +70,7 @@ class ProfileController extends Controller
      */
     public function edit($id)
     {
-        $role = $this->service->show($id);
+        $role = Role::findOrFail($id);
         return view('modules/admin/profile/edit')->with(['role' => $role]);
     }
 
