@@ -180,6 +180,8 @@
                                             class="btn btn-success">{{ $meeting->start_meeting == null ? 'Iniciar Reunião' : 'Reunião Iniciada: ' . date('d/m/Y - H:i', strtotime($meeting->start_meeting)) }}</button>
                                     </div>
                                 </div>
+                                @if ($meeting->start_meeting)
+                                    
                                 @foreach ($meeting_subjects as $subjects)
                                                                     
                                 <div class="row mt-3">
@@ -195,6 +197,7 @@
                                     </div>
                                 </div>
                                 @endforeach
+                                @endif
                             </div>
                             
                         </div>
