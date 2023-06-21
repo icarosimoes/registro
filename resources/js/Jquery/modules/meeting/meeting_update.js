@@ -153,6 +153,17 @@ $(function () {
         });
         form_data.append('topics_covered_id[]', topics_covered_id);
 
+        let obs_subjects_ids = []
+        let obs_subjects_values = []
+        $(".obs_subject").each((index,item)=>{
+            const id = $(item).attr('data-id')
+            const value = $(item).val()
+            obs_subjects_ids.push(id) 
+            obs_subjects_values.push(value) 
+        })
+        form_data.append('obs_subjects_ids', obs_subjects_ids);        
+        form_data.append('obs_subjects_values', obs_subjects_values);        
+
         form_data.append('datetime', $('#datetime').val());        
         form_data.append('local', $('#local').val());        
         form_data.append('approval', $('#approval').val());        
@@ -187,6 +198,21 @@ $(function () {
 
     $('#approval').val($('#approval').attr('data-value'))
 
+
+    $('#btn_start_meeting').on('click',()=>{
+        $('.overlay').removeClass('d-none');
+        const id = $("#meeting_id").val()
+        const route = base_url+'/event/meeting/start_meeting/'+id
+        const data = {}
+        $.post(route,data,(response)=>{
+            DefaultAlert("success", 'Reunião Iniciada');  
+            $('#btn_start_meeting').text('Reunião iniciada: '+response)
+            $('#btn_start_meeting').attr('disabled','disabled')
+        }).catch()
+        .always(()=>{
+            $('.overlay').addClass('d-none');
+        })
+    })
 
 
     /**

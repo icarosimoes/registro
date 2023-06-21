@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Event\Meeting;
 
 use App\Http\Controllers\Controller;
+use App\Models\Meeting\meeting;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 
@@ -110,6 +111,7 @@ class MeetingController extends Controller
      */
     public function update(Request $request)
     {
+        
         $meeting = $this->service->update($request->all());
         if($meeting){
             echo json_encode(['success' => true, 'message' => 'Registro Alterado com sucesso!']);
@@ -155,5 +157,11 @@ class MeetingController extends Controller
        if($afectedRows){
           return redirect()->route('meeting.list');
        }
+    }
+
+    public function startMeeting(meeting $meeting){
+        $meeting->start_meeting = now();
+        $meeting->save();
+        return  date('d/m/Y - H:i',strtotime($meeting->start_meeting));
     }
 }
