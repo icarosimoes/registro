@@ -99,6 +99,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('meeting/view/{id}', 'Event\Meeting\MeetingController@show')->name('meeting.view');
         Route::get('meeting/destroy/{id}', 'Event\Meeting\MeetingController@destroy')->name('meeting.delete');
         Route::post('meeting/start_meeting/{meeting}', 'Event\Meeting\MeetingController@startMeeting')->name('meeting.start_meeting');
+        Route::get('meeting/export_pdf/{meeting}', 'Event\Meeting\MeetingController@exportPdfMeeting')->name('meeting.export_pdf_meeting');
 
         Route::get('meeting/downlaod/{id}', 'Event\Meeting\MeetingController@file_download')->name('meeting.downlaod.file');
 
