@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Event\Meeting;
 use App\Http\Controllers\Controller;
 use App\Models\Meeting\meeting;
 use App\Models\Notification;
+use PDF;
 use Illuminate\Http\Request;
 
 class MeetingController extends Controller
@@ -44,9 +45,9 @@ class MeetingController extends Controller
     public function store(Request $request)
     {
         $meeting = $this->service->store($request->all());
-        if($meeting){
+        if ($meeting) {
             echo json_encode(['success' => true, 'message' => 'Registro inserido com sucesso!']);
-        }else{
+        } else {
             echo json_encode(['success' => false, 'message' => 'Erro ao tentar cadastrar']);
         }
     }
@@ -65,7 +66,7 @@ class MeetingController extends Controller
     public function file_download($id)
     {
         $getMeetingSubject = $this->service->getMeetingSubjectID($id);
-        return response()->download('storage/'.$getMeetingSubject->url_archive);
+        return response()->download('storage/' . $getMeetingSubject->url_archive);
     }
     /**
      * Show the form for editing the specified resource.
@@ -76,7 +77,7 @@ class MeetingController extends Controller
     public function edit($id)
     {
         //verifica se a origem é de notificaçoes
-        if(request()->notification){
+        if (request()->notification) {
             $notification = Notification::find(request()->notification);
             $notification->checked = 'yes';
             $notification->save();
@@ -113,11 +114,11 @@ class MeetingController extends Controller
      */
     public function update(Request $request)
     {
-        
+
         $meeting = $this->service->update($request->all());
-        if($meeting){
+        if ($meeting) {
             echo json_encode(['success' => true, 'message' => 'Registro Alterado com sucesso!']);
-        }else{
+        } else {
             echo json_encode(['success' => false, 'message' => 'Erro ao Alterar registro']);
         }
     }
@@ -135,9 +136,9 @@ class MeetingController extends Controller
     public function store_participants(Request $request)
     {
         $participants = $this->service->store_participants($request->all());
-        if($participants){
+        if ($participants) {
             echo json_encode(['success' => true, 'data' => $participants]);
-        }else{
+        } else {
             echo json_encode(['success' => false, 'data' => []]);
         }
     }
@@ -155,15 +156,49 @@ class MeetingController extends Controller
      */
     public function destroy($id)
     {
-       $afectedRows = $this->service->destroy($id);
-       if($afectedRows){
-          return redirect()->route('meeting.list');
-       }
+        $afectedRows = $this->service->destroy($id);
+        if ($afectedRows) {
+            return redirect()->route('meeting.list');
+        }
     }
 
-    public function startMeeting(meeting $meeting){
+    public function startMeeting(meeting $meeting)
+    {
         $meeting->start_meeting = now();
         $meeting->save();
-        return  date('d/m/Y - H:i',strtotime($meeting->start_meeting));
+        return  date('d/m/Y - H:i', strtotime($meeting->start_meeting));
+    }
+
+    public function exportPdfMeeting(meeting $meeting)
+    {
+        $usersRegistered = $this->service->usersRegistered();
+        $occurrences = $this->service->getOcurrence();
+        $meeting = $this->service->show($meeting->id);
+        $meeting_new_subjects = $this->service->meeting_new_subjects($meeting->id);
+        $meeting_subjects = $this->service->meeting_subjects($meeting->id);
+        $meeting_topics_covereds = $this->service->meeting_topics_covereds($meeting->id);
+        $meeting_registered_participants = $this->service->meeting_registered_participants($meeting->id);
+        $meeting_invited_participants = $this->service->meeting_invited_participants($meeting->id);
+        
+        $name = 'Indefinido';
+        if (request()->name){
+           $name = request()->name; 
+        }
+                
+        $pdf = PDF::loadView('event/meeting/export_pdf', compact([
+            'meeting',
+            'usersRegistered',
+            'occurrences',
+            'meeting',
+            'meeting_subjects',
+            'meeting_new_subjects',
+            'meeting_topics_covereds',
+            'meeting_registered_participants',
+            'meeting_invited_participants',
+            'name',
+
+        ]))->setPaper('a4', 'landscape');
+        return $pdf->stream('relatorio.pdf');
+       
     }
 }

@@ -227,6 +227,7 @@ $(function () {
             DefaultAlert("success", 'Reunião Iniciada');  
             $('#btn_start_meeting').text('Reunião iniciada: '+response)
             $('#btn_start_meeting').attr('disabled','disabled')
+            window.location.reload();
         }).catch()
         .always(()=>{
             $('.overlay').addClass('d-none');
@@ -263,12 +264,37 @@ $(function () {
     })
 
 
+
     //novas pautas 
     $(document).on('click','.trash_subject',(e)=>{
        const id =  $(e.currentTarget).attr('data-id')
        $('#'+id).remove()
     })
 
+    
+    
+    $("#btnNext").click(function () {
+        var name = $("#titleExport").val();
+        if (!name) {
+            name = "Indefinido";
+        }
+        const id =  $("#meeting_id").val()
+        $("#btnExport").prop('href', base_url + "/event/meeting/export_pdf/" + id +'?name='+name);
+        $("#btnNext").addClass('d-none');
+        $("#btnExport").removeClass('d-none');
+        $("#titleExport").attr('disabled', true);
+    });
+
+    $("#btnExport").on('click',()=>{
+        $("#titleExport").val('')
+        $("#titleExport").attr('disabled', false);
+        $("#btnNext").removeClass('d-none');
+        $("#btnExport").addClass('d-none');
+    })
+
+    
+    
+    
     /**
      * 
      * @param {string} type 
