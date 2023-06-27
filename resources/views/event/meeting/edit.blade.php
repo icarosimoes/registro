@@ -28,7 +28,9 @@
                         <div class="card card-secondary card-outline">
                             <div class="card-header">
                                 <h3 class="card-title">Editar reunião</h3>
-                                <a data-toggle="modal" data-target="#export-pdf" class="btn btn-warning btn-flat btn-sm float-right mb-0"><i class="fas fa-file-export"></i>
+                                <a data-toggle="modal" data-target="#export-pdf"
+                                    class="btn btn-warning btn-flat btn-sm float-right mb-0"><i
+                                        class="fas fa-file-export"></i>
                                     Exportar</a>
                             </div><!-- /.card-header -->
 
@@ -145,28 +147,7 @@
                     </div>
 
 
-                    {{-- CARD ASSUNTOS ABORDADOS --}}
-                    <div class="col-sm-12">
-                        <div class="card card-secondary card-outline">
-                            <div class="card-header">
-                                <h3 class="card-title">Assuntos Abordados</h3>
-                            </div>
-                            <!-- /.card-header -->
-                            <!-- form start -->
-                            <div class="card-body">
-                                <div class="card-body table-responsive p-0">
-                                    <div id="divRowtopics_covered" class="row">
-                                        <input type="hidden" id="meeting_topics_covereds"
-                                            name="meeting_topics_covereds" value="{{ $meeting_topics_covereds }}">
-                                    </div>
-                                </div>
-                            </div>
-                            {{-- <div class="card-footer text-center">
-                                    <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopics_covered"
-                                        href="javascript:">Adicionar Novo Item</a>
-                                </div> --}}
-                        </div>
-                    </div>
+
                     {{-- INICIAR REUNIAO  --}}
                     <div class="col-sm-12">
                         <div class="card card-secondary card-outline">
@@ -204,38 +185,40 @@
 
 
                                         @foreach ($meeting_new_subjects as $subjects)
-                                            <div id="{{$subjects->id}}">
-                                            <div class="row mt-3">
-                                                <div class="col">
-                                                    <label for="">
-                                                        Nova Pauta</label>
-                                                    <div class="input-group">
+                                            <div id="{{ $subjects->id }}">
+                                                <div class="row mt-3">
+                                                    <div class="col">
+                                                        <label for="">
+                                                            Nova Pauta</label>
+                                                        <div class="input-group">
 
-                                                        <input class="form-control new_subject" type="text"
-                                                            value="{{ $subjects->subject }}">
+                                                            <input class="form-control new_subject" type="text"
+                                                                value="{{ $subjects->subject }}">
                                                             <div class="input-group-append">
-                                                                <button data-id="{{$subjects->id}}" class="btn btn-secondary btn-sm trash_subject"
-                                                                    type="button"><i class="fas fa-trash"></i></button>
+                                                                <button data-id="{{ $subjects->id }}"
+                                                                    class="btn btn-secondary btn-sm trash_subject"
+                                                                    type="button"><i
+                                                                        class="fas fa-trash"></i></button>
                                                             </div>
-                                                    </div>
-                                                   
+                                                        </div>
 
-                                                </div>
-                                                {{-- <div class="col-1"><button class="btn btn-sm btn-secondary"></button>
+
+                                                    </div>
+                                                    {{-- <div class="col-1"><button class="btn btn-sm btn-secondary"></button>
                                                 </div> --}}
-                                            </div>
-                                            <div class="row mt-2">
-                                                <div class="col">
-                                                    <label for="">Observações</label>
-                                                    <textarea data-id="{{ $subjects->id }}" class="form-control obs_new_subject" name="" cols="30"
-                                                        rows="5">{{ $subjects->obs_subject }}</textarea>
+                                                </div>
+                                                <div class="row mt-2">
+                                                    <div class="col">
+                                                        <label for="">Observações</label>
+                                                        <textarea data-id="{{ $subjects->id }}" class="form-control obs_new_subject" name="" cols="30"
+                                                            rows="5">{{ $subjects->obs_subject }}</textarea>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
                                         @endforeach
 
 
-                                    @endif
+
                                 </div>
                                 <div>
 
@@ -243,18 +226,44 @@
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col">
-                                        <div class="card-footer text-center" style="cursor: pointer" id="add_new_subject">
+                                        <div class="card-footer text-center" style="cursor: pointer"
+                                            id="add_new_subject">
                                             <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a>Adicionar Novos
                                                 Assuntos</a>
                                         </div>
                                     </div>
                                 </div>
+                                @endif
 
                             </div>
 
                         </div>
                     </div>
 
+                    {{-- CARD ASSUNTOS ABORDADOS --}}
+                    @if ($meeting->start_meeting)
+                    <div class="col-sm-12">
+                        <div class="card card-secondary card-outline">
+                            <div class="card-header">
+                                <h3 class="card-title">Assuntos Abordados</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            <div class="card-body">
+                                <div class="card-body table-responsive p-0">
+                                    <div id="divRowtopics_covered" class="row">
+                                        <input type="hidden" id="meeting_topics_covereds"
+                                            name="meeting_topics_covereds" value="{{ $meeting_topics_covereds }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-center">
+                                <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopics_covered"
+                                    href="javascript:">Adicionar Novo Item</a>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                     <div class="col-sm-12">
                         <a href="#" class="btn btn-secondary mb-2">Cancelar</a>
                         <button type="submit" class="btn btn-success float-right"><i

@@ -96,7 +96,7 @@ class MeetingService extends Service
     {
         DB::beginTransaction();
         $topics = explode(",", $data['topics'][0]);
-        $topics_covered = explode(",", $data['topics_covered'][0]);
+        //$topics_covered = explode(",", $data['topics_covered'][0]);
         $providence = explode(",", $data['providence'][0]);
         $users_registered = explode(",", $data['users_registered'][0]);
         $IdOccurrence = explode(",", $data['IdOccurrence'][0]);
@@ -156,16 +156,16 @@ class MeetingService extends Service
             }
         }
 
-        for ($i = 0; $i < count($topics_covered); $i++) {
-            $data = [
-                'meetings_id' => $insertID,
-                'subject_addressed' => $topics_covered[$i],
-                'providence' => $providence[$i],
-                'occurrences_id' => $IdOccurrence[$i],
-                'created_at' => date('Y-m-d H:i:s')
-            ];
-            meeting_topics_covered::insert($data);
-        }
+        // for ($i = 0; $i < count($topics_covered); $i++) {
+        //     $data = [
+        //         'meetings_id' => $insertID,
+        //         'subject_addressed' => $topics_covered[$i],
+        //         'providence' => $providence[$i],
+        //         'occurrences_id' => $IdOccurrence[$i],
+        //         'created_at' => date('Y-m-d H:i:s')
+        //     ];
+        //     meeting_topics_covered::insert($data);
+        // }
 
 
 
@@ -265,6 +265,7 @@ class MeetingService extends Service
             }
         }
 
+        meeting_topics_covered::where('meetings_id',$insertID)->delete();
         for ($i = 0; $i < count($topics_covered); $i++) {
             $data = [
                 'meetings_id' => $insertID,
@@ -273,17 +274,18 @@ class MeetingService extends Service
                 // 'occurrences_id' => ($IdOccurrence[$i] == 'null' ?  : $IdOccurrence[$i]),
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            meeting_topics_covered::where('id', $topics_covered_id[$i])->update($data);
+            meeting_topics_covered::insert($data);
         }
         //atualiza as obs das pautas
         $obs_subjects_ids = explode(',', request()->obs_subjects_ids);
         $obs_subjects_values = explode(',', request()->obs_subjects_values);
-        foreach ($obs_subjects_ids as $key => $id) {
-            $meeting_subjects = meeting_subjects::find($id);
-            $meeting_subjects->obs_subject = $obs_subjects_values[$key];
-            $meeting_subjects->save();
+        if (request()->obs_subjects_ids) {
+            foreach ($obs_subjects_ids as $key => $id) {
+                $meeting_subjects = meeting_subjects::find($id);
+                $meeting_subjects->obs_subject = $obs_subjects_values[$key];
+                $meeting_subjects->save();
+            }
         }
-
         //salva novos assuntos
         meeting_new_subjects::where('meetings_id', $insertID)->delete();
         if (request()->new_subjects) {
