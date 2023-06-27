@@ -271,7 +271,7 @@ class MeetingService extends Service
                 'meetings_id' => $insertID,
                 'subject_addressed' => $topics_covered[$i],
                 'providence' => $providence[$i],
-                // 'occurrences_id' => ($IdOccurrence[$i] == 'null' ?  : $IdOccurrence[$i]),
+                'occurrences_id' => ($IdOccurrence[$i] == 'null' ?  : $IdOccurrence[$i]),
                 'created_at' => date('Y-m-d H:i:s')
             ];
             meeting_topics_covered::insert($data);
