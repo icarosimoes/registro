@@ -5,7 +5,7 @@ var base_url = window.location.origin;
 export function addItemTopicsCovered() {
     //adicionar item ASSUNTOS ABORDADOS
 
-    var count = 0;
+    var count = 1000;
     $("#addItemTopics_covered").click(function () {
         var topics_covered = "<div class='col-sm-6'>" +
             "<div class='card card-secondary shadow-lg' style='transition: all 0.15s ease 0s; height: inherit; width: inherit;'> " +
@@ -44,43 +44,47 @@ export function addItemTopicsCovered() {
 }
 export function loadItemTopicsCovered() {
     var meeting_topics_covereds = $("#meeting_topics_covereds").val();
-    $.each(JSON.parse(meeting_topics_covereds), function (index, value) {
-        var count = 0;
-        var topics_covered = "<div class='col-sm-6'>" +
-                "<div class='card card-secondary shadow-lg' style='transition: all 0.15s ease 0s; height: inherit; width: inherit;'> " +
-                "<div class='card-header'>" +
-                "<h3 class='card-title'>Item</h3>" +
-                "<div class='card-tools'>" +
-                "<button type='button' class='btn btn-tool' data-card-widget='collapse'><i class='fas fa-minus'></i></button>" +
-                "<button type='button' class='btn btn-tool' data-card-widget='maximize'><i class='fas fa-expand'></i></button>" +
-                // "<button type='button' class='btn btn-tool' data-card-widget='remove'><i class='fas fa-times'></i></button>" +
-                "</div>" +
-                "</div>" +
-                "<div class='card-body'>" +
-                "<div class='form-group'>" +
-                "<label>Assuntos Abordados</label>" +
-                "<input type='text' class='form-control' value='"+ value.subject_addressed +"' name='topics_covered[]' id='topics_covered[]' placeholder='' required>" +
-                "<input type='hidden' name='topics_covered_id[]' id='topics_covered_id' value='"+value.id+"'>" +
-                "</div>" +
-                "<div class='form-group'>" +
-                "<label>Providências</label>" +
-                "<textarea class='form-control' name='providence[]' id='providence[]' cols='30' rows='5' required>"+value.providence+"</textarea>" +
-                "</div>" +
-                "<input type='hidden' class='IdOccurrence' value='"+value.occurrences_id+"' name='IdOccurrence[]' id='IdOccurrence-" + count + "' value=''>" +
-                "<ul class='nav nav-pills flex-column'>" +
-                "<li class='nav-item active'>" +
-                "<a href='#'>" +
-                //"<i class='fas fa-clipboard-check'></i>&nbsp;&nbsp;<a data-toggle='modal' id='selectOcurrence-" + count + "' class='selectOcurrence' data-target='#ModalSelectOcurrence' href='javascript:'>Selecionar Ocorrência</a><span class='badge bg-primary float-right' id='numberOccurrence-" + count + "'>"+value.occurrences_id+"</span>" +
-                "</a>" +
-                "</li>" +
-                "</ul>" +
-                "</div>" +
-                "</div>" +
-                "</div>";
-            $("#divRowtopics_covered").append(topics_covered);
-            modalSelectOccurrence();
-            count++;
-    });
+    
+    if(meeting_topics_covereds != undefined){
+        $.each(JSON.parse(meeting_topics_covereds), function (index, value) {
+            var count = 0;
+            var topics_covered = "<div class='col-sm-6'>" +
+                    "<div class='card card-secondary shadow-lg' style='transition: all 0.15s ease 0s; height: inherit; width: inherit;'> " +
+                    "<div class='card-header'>" +
+                    "<h3 class='card-title'>Item</h3>" +
+                    "<div class='card-tools'>" +
+                    "<button type='button' class='btn btn-tool' data-card-widget='collapse'><i class='fas fa-minus'></i></button>" +
+                    "<button type='button' class='btn btn-tool' data-card-widget='maximize'><i class='fas fa-expand'></i></button>" +
+                    // "<button type='button' class='btn btn-tool' data-card-widget='remove'><i class='fas fa-times'></i></button>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='card-body'>" +
+                    "<div class='form-group'>" +
+                    "<label>Assuntos Abordados</label>" +
+                    "<input type='text' class='form-control' value='"+ value.subject_addressed +"' name='topics_covered[]' id='topics_covered[]' placeholder='' required>" +
+                    "<input type='hidden' name='topics_covered_id[]' id='topics_covered_id' value='"+value.id+"'>" +
+                    "</div>" +
+                    "<div class='form-group'>" +
+                    "<label>Providências</label>" +
+                    "<textarea class='form-control' name='providence[]' id='providence[]' cols='30' rows='5' required>"+value.providence+"</textarea>" +
+                    "</div>" +
+                    "<input type='hidden' class='IdOccurrence' value='"+value.occurrences_id+"' name='IdOccurrence[]' id='IdOccurrence-" + count + "' value=''>" +
+                    "<ul class='nav nav-pills flex-column'>" +
+                    "<li class='nav-item active'>" +
+                    "<a href='#'>" +
+                    "<i class='fas fa-clipboard-check'></i>&nbsp;&nbsp;<a data-toggle='modal' id='selectOcurrence-" + count + "' class='selectOcurrence' data-target='#ModalSelectOcurrence' href='javascript:'>Selecionar Ocorrência</a><span class='badge bg-primary float-right' id='numberOccurrence-" + count + "'>"+value.occurrences_id+"</span>" +
+                    "</a>" +
+                    "</li>" +
+                    "</ul>" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>";
+                $("#divRowtopics_covered").append(topics_covered);
+                modalSelectOccurrence();
+                count++;
+        });
+    }
+    
 }
 /**
  * Adicionar itens a pauta
@@ -116,6 +120,7 @@ export function addItemTopic() {
 }
 export function loadItemTopic() {
     var meeting_subjects = $("#meeting_subjects").val();
+    
     var countItem = 0;
     $.each(JSON.parse(meeting_subjects), function (index, value) {
         var icoDownlaod = "";

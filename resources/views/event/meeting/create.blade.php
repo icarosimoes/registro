@@ -127,7 +127,7 @@
 
 
                         {{-- CARD ASSUNTOS ABORDADOS --}}
-                        <div class="col-sm-12">
+                        {{-- <div class="col-sm-12">
                             <div class="card card-secondary card-outline">
                                 <div class="card-header">
                                     <h3 class="card-title">Assuntos Abordados</h3>
@@ -144,7 +144,7 @@
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="col-sm-12">
                             <a href="#" class="btn btn-secondary mb-2">Cancelar</a>
