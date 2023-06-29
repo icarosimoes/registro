@@ -58,11 +58,14 @@ $(function () {
             $("#alertError").removeClass('d-none');
             $("#alertError").html("<strong>Opps!</strong> Todos os campos da 'PAUTA' são obrigatórios.");
         }
-        if (!$('input[name="topics_covered[]"]').length) {
-            valid = 1;
-            $("#alertError").removeClass('d-none');
-            $("#alertError").html("<strong>Opps!</strong> Todos os campos dos 'ASSUNTOS ABORDADOS' são obrigatórios.");
-        }
+
+        
+        // if (!$('input[name="topics_covered[]"]').length) {
+        //     valid = 1;
+        //     $("#alertError").removeClass('d-none');
+        //     $("#alertError").html("<strong>Opps!</strong> Todos os campos dos 'ASSUNTOS ABORDADOS' são obrigatórios.");
+        // }
+
         if (!$('input[name="idUserRegistered[]"]').length) {
             valid = 1;
             $("#alertError").removeClass('d-none');
@@ -72,8 +75,7 @@ $(function () {
         $('input[name="IdOccurrence[]"]').each(function () {
             if (this.value <= 0) {
                 valid = 1;
-                $("#alertError").removeClass('d-none');
-                $("#alertError").html("<strong>Opps!</strong> Ao criar um item 'ASSUNTOS ABORDADOS' torna se obrigatório selecionar uma ocorrência ao item.");
+                DefaultAlert('error',"<strong>Opps!</strong> Ao criar um item 'ASSUNTOS ABORDADOS' torna se obrigatório selecionar uma ocorrência ao item.")
             }
         });
 
@@ -202,7 +204,7 @@ $(function () {
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
               
-                    //window.location.replace(base_url + "/event/list/meeting");
+                    window.location.replace(base_url + "/event/list/meeting");
                     } else {
                         DefaultAlert("error", obj.message);
               

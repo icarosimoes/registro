@@ -169,14 +169,14 @@
                                         @foreach ($meeting_subjects as $subjects)
                                             <div class="row mt-3">
                                                 <div class="col">
-                                                    <label for="">Pauta</label>
+                                                    <label for="">ATA</label>
                                                     <input class="form-control" type="text" readonly
                                                         value="{{ $subjects->subject }}">
                                                 </div>
                                             </div>
                                             <div class="row mt-2">
                                                 <div class="col">
-                                                    <label for="">Observações</label>
+                                                    <label for="">DELIBERAÇÃO</label>
                                                     <textarea data-id="{{ $subjects->id }}" class="form-control obs_subject" name="" cols="30"
                                                         rows="5">{{ $subjects->obs_subject }}</textarea>
                                                 </div>
