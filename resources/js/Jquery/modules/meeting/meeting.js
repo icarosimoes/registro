@@ -132,7 +132,7 @@ $(function () {
 
         form_data.append('datetime', $('#datetime').val());        
         form_data.append('local', $('#local').val());        
-        form_data.append('approval', $('#approval').val());        
+        form_data.append('status', $('#status').val());        
 
 
         if (valid === 0) {

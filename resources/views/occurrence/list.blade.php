@@ -88,7 +88,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th width="42%">Title</th>
+                                <th >Title</th>
                                 <th>Status</th>
                                 <th>Local</th>
                                 <th>Departamento</th>
@@ -102,7 +102,7 @@
                                 <tr>
                                     {{-- @foreach ($roles as $role) --}}
                                     <td>{{ $item->id }}</td>
-                                    <td>{{ $item->title }}</td>
+                                    <td>{{ Str::substr($item->title, 0, 70) }}</td>
                                     <td>
                                         @if ($item->status == 1)
                                             <span class="badge bg-info">{{ 'Em Aberto' }}</span>

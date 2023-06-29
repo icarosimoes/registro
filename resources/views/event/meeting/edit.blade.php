@@ -47,12 +47,12 @@
                                             type="text" required>
                                     </div>
                                     <div class="col-3">
-                                        <label for="approval">Aprovação</label>
-                                        <select name="" id="approval" class="form-control"
-                                            data-value="{{ $meeting->approval }}">
-                                            <option value=""></option>
-                                            <option value="approved">Aprovado</option>
-                                            <option value="disapproved">Reprovado</option>
+                                        <label for="status">Status</label>
+                                        <select name="" id="status" class="form-control"
+                                            data-value="{{ $meeting->status }}">
+                                            <option value="1">Em Aberto</option>
+                                            <option value="2">Convocado</option>
+                                            <option value="3">Realizada</option>
                                         </select>
                                     </div>
 
@@ -86,10 +86,10 @@
                                     </table>
                                 </div>
                             </div>
-                            {{-- <div class="card-footer text-center">
+                            <div class="card-footer text-center">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
-                                </div> --}}
+                                </div> 
                         </div>
                     </div>
 
