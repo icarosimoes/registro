@@ -216,12 +216,13 @@ class MeetingService extends Service
         $insertID = $meeting->id;
 
 
-        meeting_subjects::where('meetings_id', $insertID)->delete();
+
+        //meeting_subjects::where('meetings_id', $insertID)->delete();
         for ($i = 0; $i < count($topics); $i++) {
             if ($files[$i]->getClientOriginalName() == "empty") {
                 $path = "";
             } else {
-                $path = $files[1]->store('files');
+                $path = $files[$i]->store('files');
             }
             if ($path == "") {
                 $data = [
@@ -237,7 +238,11 @@ class MeetingService extends Service
                     'created_at' => date('Y-m-d H:i:s')
                 ];
             }
-            meeting_subjects::insert($data);
+            if(isset($topics_id[$i])){
+                meeting_subjects::where('id', $topics_id[$i])->update($data);
+            }else{
+                meeting_subjects::insert($data);
+            }
         }
 
         meeting_registered_participants::where('meetings_id', $insertID)->delete();    

@@ -7,6 +7,7 @@ use App\Models\Meeting\meeting;
 use App\Models\Notification;
 use PDF;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MeetingController extends Controller
 {
@@ -92,8 +93,9 @@ class MeetingController extends Controller
     public function file_download($id)
     {
         $getMeetingSubject = $this->service->getMeetingSubjectID($id);
-        return response()->download('storage/' . $getMeetingSubject->url_archive);
+        return Storage::download($getMeetingSubject->url_archive);       
     }
+    
     /**
      * Show the form for editing the specified resource.
      *
