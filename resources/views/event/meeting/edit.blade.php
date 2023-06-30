@@ -136,12 +136,12 @@
                             </div>
 
                             <!-- /.card-body -->
-                            {{-- <div class="card-footer text-center">
+                            <div class="card-footer text-center">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a data-toggle="modal"
                                         data-target="#ModalAddParticipant" href="javascript:">Adicionar Novo
                                         Participantes</a>
 
-                                </div> --}}
+                                </div>
                             <!-- /.card-footer -->
                         </div>
                     </div>

@@ -269,7 +269,7 @@
                         @endif
                     </div>
                     <div class="col-sm-12">
-                        <a href="{{ route('meeting.list') }}" class="btn btn-secondary mb-2">Voltar</a>
+                        <a id='btn_back' href="{{ route('meeting.list') }}" class="btn btn-secondary mb-2">Voltar</a>
                         {{-- <button type="submit" class="btn btn-success float-right"><i --}}
                         {{-- class="far fa-save"></i>&nbsp;&nbsp;Salvar</button>  --}}
                     </div>

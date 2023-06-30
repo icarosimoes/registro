@@ -301,6 +301,7 @@ $(function () {
     $('#blocked a'). hide()
     $('#blocked button').attr('disabled','disabled')
     $('#blocked label').attr('disabled','disabled')
+    $('#blocked #btn_back').show()
 
     
     /**

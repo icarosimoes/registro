@@ -90,7 +90,7 @@ export function loadItemTopicsCovered() {
  * Adicionar itens a pauta
  */
 export function addItemTopic() {
-    var countItem = 0;
+    var countItem = 1000;
     $("#addItemTopic").click(function () {
         var topic = "<tr class='item_append_topic'>" +
             "<td><input type='text' name='topic[]' id='topic[]' class='form-control form-control-sm rounded-0 indentificator-" + countItem + "' required></td>" +
@@ -137,7 +137,7 @@ export function loadItemTopic() {
             icoDownlaod +
             "<label id='file-name-" + countItem + "'></label>&nbsp;&nbsp;" +
             "<input style='display:none' id='upload-file-topic-" + countItem + "' name='upload-file-topic-" + countItem + "[]' type='file'>" +
-            // "<a type='button' class='remove_item_topic' data-toggle='tooltip' data-placement='top' title='Excluir'><i class='far fa-trash-alt'></i></a>" +
+            "<a type='button' class='remove_item_topic' data-toggle='tooltip' data-placement='top' title='Excluir'><i class='far fa-trash-alt'></i></a>" +
             "</td>" +
             "</tr>";
         $("#tbodyItemTopic").append(topic);
@@ -184,7 +184,7 @@ export function loadItemRegisteredUSers() {
             "<img class='img-circle' src='/storage/" + value.users.image + "' alt='User Image'>" +
             "<span class='username'>" + value.users.name + "</span>" +
             "<input type='hidden' name='idUserRegistered[]' value='" + value.users.id + "'>" +
-            "<span class='description'>Sem função</span>" +
+            "<span class='description'>Sem função&nbsp;&nbsp;<a type='button' class='removeRegisteredUser' href='#'><i class='far fa-trash-alt'></i></a></span>" +
             "</div>" +
             "</div>";
         $("#registered_users").append(html);
@@ -238,7 +238,7 @@ export function loadItemInvitedUSers() {
             "<img class='img-circle' src='/" + value.participants.url_image + "' alt='User Image'>" +
             "<span class='username'>" + value.participants.name + "</span>" +
             "<input type='hidden' name='idInvitedUsers[]' value='" + value.participants.id + "'>" +
-            "<span class='description'>" + value.participants.profession + "</span>" +
+            "<span class='description'>" + value.participants.profession + "&nbsp;&nbsp;<a type='button' class='remove_invited_users' href='#'><i class='far fa-trash-alt'></i></a></span>" +
             "</div>" +
             "</div>";
         $("#invited_users").append(html);

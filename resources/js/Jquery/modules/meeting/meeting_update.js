@@ -204,7 +204,7 @@ $(function () {
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
               
-                    window.location.replace(base_url + "/event/list/meeting");
+              //      window.location.replace(base_url + "/event/list/meeting");
                     } else {
                         DefaultAlert("error", obj.message);
               

@@ -215,6 +215,8 @@ class MeetingService extends Service
         $meeting->save();
         $insertID = $meeting->id;
 
+
+        meeting_subjects::where('meetings_id', $insertID)->delete();
         for ($i = 0; $i < count($topics); $i++) {
             if ($files[$i]->getClientOriginalName() == "empty") {
                 $path = "";
@@ -235,16 +237,17 @@ class MeetingService extends Service
                     'created_at' => date('Y-m-d H:i:s')
                 ];
             }
-            meeting_subjects::where('id', $topics_id[$i])->update($data);
+            meeting_subjects::insert($data);
         }
 
+        meeting_registered_participants::where('meetings_id', $insertID)->delete();    
         for ($i = 0; $i < count($users_registered); $i++) {
             $data = [
                 'meetings_id' => $insertID,
                 'users_id' => $users_registered[$i],
                 'created_at' => date('Y-m-d H:i:s')
             ];
-            meeting_registered_participants::where('meetings_id', $insertID)->update($data);
+            meeting_registered_participants::insert($data);
 
             //enviar notificacao
             $notification = new Notification();
@@ -254,19 +257,20 @@ class MeetingService extends Service
             $notification->msg = 'Atualização de reunião';
             $notification->save();
         }
-
-        if (isset($data['invited_users'][0])) {
+        
+        meeting_invited_participants::where('meetings_id', $insertID)->delete();
+        
+        if (request()->invited_users[0]) {
             for ($i = 0; $i < count($invited_users); $i++) {
+                
                 $data = [
                     'meetings_id' => $insertID,
                     'participants_id' => $invited_users[$i],
                     'created_at' => date('Y-m-d H:i:s')
                 ];
-                meeting_invited_participants::where('meetings_id', $insertID)->update($data);
+                meeting_invited_participants::insert($data);
             }
         }
-
-
         meeting_topics_covered::where('meetings_id', $insertID)->delete();
         
         if (request()->topics_covered[0]) {
