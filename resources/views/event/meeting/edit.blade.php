@@ -47,12 +47,12 @@
                                             type="text" required>
                                     </div>
                                     <div class="col-3">
-                                        <label for="approval">Aprovação</label>
-                                        <select name="" id="approval" class="form-control"
-                                            data-value="{{ $meeting->approval }}">
-                                            <option value=""></option>
-                                            <option value="approved">Aprovado</option>
-                                            <option value="disapproved">Reprovado</option>
+                                        <label for="status">Status</label>
+                                        <select name="" id="status" class="form-control"
+                                            data-value="{{ $meeting->status }}">
+                                            <option value="1">Em Aberto</option>
+                                            <option value="2">Convocado</option>
+                                            <option value="3">Realizada</option>
                                         </select>
                                     </div>
 
@@ -86,10 +86,10 @@
                                     </table>
                                 </div>
                             </div>
-                            {{-- <div class="card-footer text-center">
+                            <div class="card-footer text-center">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
-                                </div> --}}
+                                </div> 
                         </div>
                     </div>
 
@@ -136,12 +136,12 @@
                             </div>
 
                             <!-- /.card-body -->
-                            {{-- <div class="card-footer text-center">
+                            <div class="card-footer text-center">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a data-toggle="modal"
                                         data-target="#ModalAddParticipant" href="javascript:">Adicionar Novo
                                         Participantes</a>
 
-                                </div> --}}
+                                </div>
                             <!-- /.card-footer -->
                         </div>
                     </div>
@@ -169,14 +169,14 @@
                                         @foreach ($meeting_subjects as $subjects)
                                             <div class="row mt-3">
                                                 <div class="col">
-                                                    <label for="">Pauta</label>
+                                                    <label for="">ATA</label>
                                                     <input class="form-control" type="text" readonly
                                                         value="{{ $subjects->subject }}">
                                                 </div>
                                             </div>
                                             <div class="row mt-2">
                                                 <div class="col">
-                                                    <label for="">Observações</label>
+                                                    <label for="">DELIBERAÇÃO</label>
                                                     <textarea data-id="{{ $subjects->id }}" class="form-control obs_subject" name="" cols="30"
                                                         rows="5">{{ $subjects->obs_subject }}</textarea>
                                                 </div>
@@ -259,7 +259,7 @@
                             </div>
                             <div class="card-footer text-center">
                                 <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopics_covered"
-                                    href="javascript:">Adicionar Novo Item</a>
+                                    href="javascript:">Adicionar Novos Assuntos</a>
                             </div>
                         </div>
                     </div>

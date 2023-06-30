@@ -43,9 +43,11 @@
                                             <td>{{ $item['users']->name }}</td>
                                             <td>
                                                 @if ($item->status == 1)
-                                                    {{ 'Em Aberto' }}
-                                                @elseif($item->status == 4)
-                                                    {{ 'Fechado' }}
+                                                <span class="badge badge-success">Em Aberto</span>
+                                                @elseif($item->status == 2)
+                                                <span class="badge badge-warning">Convocada</span>
+                                                @elseif($item->status == 3)
+                                                <span class="badge badge-danger">Realizado</span>
                                                 @endif
                                             </td>
                                             <td>{{ (new DateTime($item->created_at))->format('d/m/Y H:i:s') }}</td>
@@ -53,11 +55,11 @@
                                                 <div class="btn-group-sm">
                                                     {{-- @can('checkRouters', $route =
                                                     'view.client') --}}
-                                                    {{-- <a href="{{ route('meeting.list', ['id' => $item['id']]) }}"
+                                                    <a href="{{ route('meeting.view', ['id' => $item['id']]) }}"
                                                         data-toggle="tooltip" data-placement="top" title="Visualizar"
-                                                        class="btn btn-default"><i class="fas fa-eye"></i></a> --}}
-                                                    {{-- @endcan
-                                                    --}}
+                                                        class="btn btn-default"><i class="fas fa-eye"></i></a> 
+                                                    {{-- @endcan --}}
+                                                    {{-- --}} 
                                                     {{-- @can('checkRouters', $route =
                                                     'edit.client') --}}
                                                     <a href="{{ route('meeting.edit', ['id' => $item['id']]) }}"

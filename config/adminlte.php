@@ -720,6 +720,17 @@ return [
                 ],
             ],
         ],
+        [
+            'name' => 'scriptViewMeeting',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/meeting/meeting_view.js',
+                ],
+            ],
+        ],
         //CHECK SUITE
         [
             'name' => 'scriptListCheckSuite',

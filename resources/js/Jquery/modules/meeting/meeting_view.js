@@ -1,7 +1,11 @@
-import { addItemTopicsCovered } from './addItems.js';
-import { addItemTopic } from './addItems.js';
-import { addItemRegisteredUsers } from './addItems.js';
-import { addItemInvitedUsers } from './addItems.js';
+import { addItemTopicsCovered } from './addItemsUpdate.js';
+import { loadItemTopicsCovered } from './addItemsUpdate.js';
+import { addItemTopic } from './addItemsUpdate.js';
+import { loadItemTopic } from './addItemsUpdate.js';
+import { addItemRegisteredUsers } from './addItemsUpdate.js';
+import { loadItemRegisteredUSers } from './addItemsUpdate.js';
+import { addItemInvitedUsers } from './addItemsUpdate.js';
+import { loadItemInvitedUSers } from './addItemsUpdate.js';
 
 var base_url = window.location.origin;
 
@@ -14,15 +18,19 @@ $.ajaxSetup({
 $(function () {
     /**  addItemTopicsCovered() - Inserir itens aos assuntos abordados */
     addItemTopicsCovered();
+    loadItemTopicsCovered();
     /** addItemTopic() - Inserir itens a pauta */
     addItemTopic();
+    //carregar os topicos da pauta
+    loadItemTopic();
     /** addItemRegisteredUsers() - adicionar participante cadastrado */
     addItemRegisteredUsers();
+    loadItemRegisteredUSers();
     /** addItemInvitedUsers() - adicionar participante convidados */
     addItemInvitedUsers();
+    loadItemInvitedUSers();
     /** Alterar uma reunião */
-    //update();
-
+    
     //Inicialização Select2 Elemento
     $('.select2').select2({
         theme: 'bootstrap4',
@@ -36,7 +44,7 @@ $(function () {
         timer: 3000
     });
 
-    $('form[name="formMeeting"]').submit(function (event) {
+    $('form[name="formMeetingEdit"]').submit(function (event) {
 
         event.preventDefault();
         var count = 0;
@@ -50,24 +58,26 @@ $(function () {
             $("#alertError").removeClass('d-none');
             $("#alertError").html("<strong>Opps!</strong> Todos os campos da 'PAUTA' são obrigatórios.");
         }
+
+        
         // if (!$('input[name="topics_covered[]"]').length) {
         //     valid = 1;
         //     $("#alertError").removeClass('d-none');
         //     $("#alertError").html("<strong>Opps!</strong> Todos os campos dos 'ASSUNTOS ABORDADOS' são obrigatórios.");
         // }
+
         if (!$('input[name="idUserRegistered[]"]').length) {
             valid = 1;
             $("#alertError").removeClass('d-none');
             $("#alertError").html("<strong>Opps!</strong> Todos os campos dos 'USUÁRIOS' cadastrados são obrigatórios.");
         }
 
-        // $('input[name="IdOccurrence[]"]').each(function () {
-        //     if (this.value <= 0) {
-        //         valid = 1;
-        //         $("#alertError").removeClass('d-none');
-        //         $("#alertError").html("<strong>Opps!</strong> Ao criar um item 'ASSUNTOS ABORDADOS' torna se obrigatório selecionar uma ocorrência ao item.");
-        //     }
-        // });
+        $('input[name="IdOccurrence[]"]').each(function () {
+            if (this.value <= 0) {
+                valid = 1;
+                DefaultAlert('error',"<strong>Opps!</strong> Ao criar um item 'ASSUNTOS ABORDADOS' torna se obrigatório selecionar uma ocorrência ao item.")
+            }
+        });
 
 
         var topics = new Array();
@@ -130,15 +140,58 @@ $(function () {
         });
         form_data.append('IdOccurrence[]', IdOccurrence);
 
+        //ids
+        form_data.append('meeting_id', $("#meeting_id").val());
+
+        var topics_id = new Array();
+        $('input[name="topics_id[]"]').each(function () {
+            topics_id.push($(this).val());
+        });
+        form_data.append('topics_id[]', topics_id);
+
+        var topics_covered_id = new Array();
+        $('input[name="topics_covered_id[]"]').each(function () {
+            topics_covered_id.push($(this).val());
+        });
+        form_data.append('topics_covered_id[]', topics_covered_id);
+
+        let obs_subjects_ids = []
+        let obs_subjects_values = []
+        $(".obs_subject").each((index,item)=>{
+            const id = $(item).attr('data-id')
+            const value = $(item).val()
+            obs_subjects_ids.push(id) 
+            obs_subjects_values.push(value) 
+        })
+        form_data.append('obs_subjects_ids', obs_subjects_ids);        
+        form_data.append('obs_subjects_values', obs_subjects_values);        
+
+        //novas pautas
+        let obs_new_subjects = []
+        $(".obs_new_subject").each((index,item)=>{
+            const value = $(item).val()
+            obs_new_subjects.push(value) 
+            
+        })
+        form_data.append('obs_new_subjects', obs_new_subjects);        
+        
+        let new_subjects = []
+        $(".new_subject").each((index,item)=>{
+            const value = $(item).val()
+            new_subjects.push(value) 
+            
+        })
+        form_data.append('new_subjects', new_subjects);        
+
+        
+        
         form_data.append('datetime', $('#datetime').val());        
         form_data.append('local', $('#local').val());        
         form_data.append('status', $('#status').val());        
-
-
         if (valid === 0) {
             $('.overlay').removeClass('d-none');
             $.ajax({
-                url: base_url + "/event/meeting/store",
+                url: base_url + "/event/meeting/update",
                 type: "POST",
                 data: form_data,
                 dataType: 'text',
@@ -150,10 +203,11 @@ $(function () {
                     const obj = JSON.parse(response);
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
-                        window.location.replace(base_url + "/event/list/meeting");
+              
+                    window.location.replace(base_url + "/event/list/meeting");
                     } else {
                         DefaultAlert("error", obj.message);
-                        
+              
                     }
                 }
             }).catch()
@@ -162,6 +216,94 @@ $(function () {
             })
         }
     });
+
+    $('#status').val($('#status').attr('data-value'))
+
+
+    $('#btn_start_meeting').on('click',()=>{
+        $('.overlay').removeClass('d-none');
+        const id = $("#meeting_id").val()
+        const route = base_url+'/event/meeting/start_meeting/'+id
+        const data = {}
+        $.post(route,data,(response)=>{
+            DefaultAlert("success", 'Reunião Iniciada');  
+            $('#btn_start_meeting').text('Reunião iniciada: '+response)
+            $('#btn_start_meeting').attr('disabled','disabled')
+            window.location.reload();
+        }).catch()
+        .always(()=>{
+            $('.overlay').addClass('d-none');
+        })
+    })
+
+    let count_new_subject = 0
+    $('#add_new_subject').on('click',()=>{
+        count_new_subject++
+      let html = '<div id="a-'+count_new_subject+'">'+
+           '<div class="row mt-3">'+
+           '<div class="col">'+
+           '<label for="">Nova Pauta</label>'+
+           '<div class="input-group">'+
+           '<input class="form-control new_subject"  type="text" '+
+           'value="">'+
+           '<div class="input-group-append">'+
+           '<button data-id="a-'+count_new_subject+'" class="btn btn-secondary btn-sm trash_subject"'+
+               'type="button"><i class="fas fa-trash"></i></button>'+
+       '</div>'+
+       '</div>'+
+       '</div>'+
+   '</div>'+
+   '<div class="row mt-2">'+
+       '<div class="col">'+
+           '<label for="">Observações</label>'+
+           '<textarea data-id="" class="form-control obs_new_subject" name="" cols="30"'+
+               'rows="5"></textarea>'+
+       '</div>'+
+   '</div>'+
+   '</div>'
+   
+   $('#list_meeting').append(html)
+    })
+
+
+
+    //novas pautas 
+    $(document).on('click','.trash_subject',(e)=>{
+       const id =  $(e.currentTarget).attr('data-id')
+       $('#'+id).remove()
+    })
+
+    
+    
+    $("#btnNext").click(function () {
+        var name = $("#titleExport").val();
+        if (!name) {
+            name = "Indefinido";
+        }
+        const id =  $("#meeting_id").val()
+        $("#btnExport").prop('href', base_url + "/event/meeting/export_pdf/" + id +'?name='+name);
+        $("#btnNext").addClass('d-none');
+        $("#btnExport").removeClass('d-none');
+        $("#titleExport").attr('disabled', true);
+    });
+
+    $("#btnExport").on('click',()=>{
+        $("#titleExport").val('')
+        $("#titleExport").attr('disabled', false);
+        $("#btnNext").removeClass('d-none');
+        $("#btnExport").addClass('d-none');
+    })
+
+    //desabilita o componentes
+    $('#blocked input').attr('disabled','disabled')
+    $('#blocked select').attr('disabled','disabled')
+    $('#blocked textarea').attr('disabled','disabled')
+    $('#blocked a'). hide()
+    $('#blocked button').attr('disabled','disabled')
+    $('#blocked label').attr('disabled','disabled')
+    $('#blocked #btn_back').show()
+
+    
     /**
      * 
      * @param {string} type 

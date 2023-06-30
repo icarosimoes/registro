@@ -35,7 +35,6 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('get_occurrences', 'Helper\SelectController@getOccurrences')->name('helper.sectors');
     });
 
-
     Route::prefix('admin')->group(function () {
         //user
         Route::get('list/user', 'Admin\UserController@index')->name('list.users');
