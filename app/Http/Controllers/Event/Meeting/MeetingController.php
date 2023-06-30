@@ -60,7 +60,33 @@ class MeetingController extends Controller
      */
     public function show($id)
     {
-        //
+        //verifica se a origem é de notificaçoes
+        if (request()->notification) {
+            $notification = Notification::find(request()->notification);
+            $notification->checked = 'yes';
+            $notification->save();
+        }
+
+
+
+        $usersRegistered = $this->service->usersRegistered();
+        $occurrences = $this->service->getOcurrence();
+        $meeting = $this->service->show($id);
+        $meeting_new_subjects = $this->service->meeting_new_subjects($id);
+        $meeting_subjects = $this->service->meeting_subjects($id);
+        $meeting_topics_covereds = $this->service->meeting_topics_covereds($id);
+        $meeting_registered_participants = $this->service->meeting_registered_participants($id);
+        $meeting_invited_participants = $this->service->meeting_invited_participants($id);
+        return view('event/meeting/view')->with([
+            'usersRegistered' => $usersRegistered,
+            'ocurrences' => $occurrences,
+            'meeting' => $meeting,
+            'meeting_subjects' => $meeting_subjects,
+            'meeting_new_subjects' => $meeting_new_subjects,
+            'meeting_topics_covereds' => $meeting_topics_covereds,
+            'meeting_registered_participants' => $meeting_registered_participants,
+            'meeting_invited_participants' => $meeting_invited_participants
+        ]);
     }
 
     public function file_download($id)

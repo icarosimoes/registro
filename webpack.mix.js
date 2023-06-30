@@ -45,6 +45,7 @@ mix.react('resources/js/app.js', 'public/js')
     //meeting
     .js('resources/js/Jquery/modules/meeting/meeting.js', 'public/js/jquery/modules/meeting')
     .js('resources/js/Jquery/modules/meeting/meeting_update.js', 'public/js/jquery/modules/meeting')
+    .js('resources/js/Jquery/modules/meeting/meeting_view.js', 'public/js/jquery/modules/meeting')
     
     //check suite
     .js('resources/js/Jquery/modules/check_suite/check_suite_create.js', 'public/js/jquery/modules/check_suite')

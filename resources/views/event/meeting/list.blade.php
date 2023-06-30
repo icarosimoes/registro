@@ -55,11 +55,11 @@
                                                 <div class="btn-group-sm">
                                                     {{-- @can('checkRouters', $route =
                                                     'view.client') --}}
-                                                    {{-- <a href="{{ route('meeting.list', ['id' => $item['id']]) }}"
+                                                    <a href="{{ route('meeting.view', ['id' => $item['id']]) }}"
                                                         data-toggle="tooltip" data-placement="top" title="Visualizar"
-                                                        class="btn btn-default"><i class="fas fa-eye"></i></a> --}}
-                                                    {{-- @endcan
-                                                    --}}
+                                                        class="btn btn-default"><i class="fas fa-eye"></i></a> 
+                                                    {{-- @endcan --}}
+                                                    {{-- --}} 
                                                     {{-- @can('checkRouters', $route =
                                                     'edit.client') --}}
                                                     <a href="{{ route('meeting.edit', ['id' => $item['id']]) }}"
