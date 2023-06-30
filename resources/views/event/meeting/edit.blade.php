@@ -259,7 +259,7 @@
                             </div>
                             <div class="card-footer text-center">
                                 <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopics_covered"
-                                    href="javascript:">Adicionar Novo Item</a>
+                                    href="javascript:">Adicionar Novos Assuntos</a>
                             </div>
                         </div>
                     </div>
