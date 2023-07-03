@@ -108,8 +108,7 @@ class OccurrenceService extends Service
         if (request()->hasFile('file') && request()->file->isValid() ){
            $filePath = request()->file('file')->store('registers');
         }
- 
-         
+          
         DB::beginTransaction();
         $occurrence = new Occurrence();
         $occurrence->title = $data['title'];
@@ -146,11 +145,13 @@ class OccurrenceService extends Service
                 
             }
         }
-
-        if (!empty($data['description'])) {
+        
+        
+        if (!empty(request()->all()['description'])) {
+            
             $Occurrence_comments = [
                 'occurrences_id' => $insertID,
-                'comments' => $data['description'],
+                'comments' => request()->all()['description'],
                 'users_id' => Auth::user()->id,
                 'created_at' => Date("Y-m-d H:i:s"),
             ];
