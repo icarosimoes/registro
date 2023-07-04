@@ -21,12 +21,12 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0" style="height: 300px;">
-                                <table class="table table-head-fixed text-nowrap">
+                                <table class="table table-sm  ">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th>Nome</th>
-                                            <th>Módulo</th>
+                                            <th width='10'>#</th>
+                                            <th>Descrição</th>
+                                        
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -41,7 +41,7 @@
                                                         </div>
                                                     </td>
                                                     <td>{{ $item->name }}</td>
-                                                    {{-- <td>{{ $item->module['name'] }}</td> --}}
+                                                    
                                                 </tr>
                                             @endforeach
                                     </tbody>
@@ -70,13 +70,12 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0" style="height: 300px;">
-                                <table class="table table-head-fixed text-nowrap">
+                                <table class="table table-sm ">
                                     <thead>
                                         <tr>
-                                            <th>ID</th>
+                                            <th width=50>ID</th>
                                             <th>Nome</th>
-                                            <th>Módulo</th>
-                                            <th>Ações</th>
+                                            <th class="text-right">Ações</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -85,8 +84,7 @@
                                             @foreach ($permission as $item)
                                                 <td>{{ $item->id }}</td>
                                                 <td>{{ $item->name }}</td>
-                                                {{-- <td>{{ $acl->module['name'] }}</td> --}}
-                                                <td><a class="btn btn-danger btn-sm"
+                                                <td class="text-right"><a class="btn btn-danger btn-sm"
                                                         href="{{ route('permission.remove', ['id' => $item->id]) }}"><i
                                                             class="fas fa-trash"></i></a></td>
                                         </tr>

@@ -17,23 +17,17 @@ class PermissionController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    public function __construct()
-    {
-        // parent::__construct();
-        // $this->middleware('can:checkPermission');
-    }
+    // public function __construct()
+    // {
+    //     // parent::__construct();
+    //     // $this->middleware('can:checkPermission');
+    // }
     
     public function index($id)
     {
         $permissions = Role::find($id)->acl;
-        $acls = Acl::get(); //$this->service->getPermission($id);
-
-        // $novo = array();
-        // foreach($acls as $item){
-        //     $novo[$item['module']->name][] = $item->name;
-        // }
-        // dd($novo);
-
+        $acls = Acl::orderBy('controller')->get(); 
+                 
          return view('modules/admin/permission/permission')->with(['permission'=>$permissions,'acls' => $acls]);
     }
 

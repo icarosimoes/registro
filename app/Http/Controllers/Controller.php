@@ -20,6 +20,6 @@ class Controller extends BaseController
             $this->service = new $class();
         } catch (\Exception $e) {
             throw new \Exception('Internal Server Error', 500);
-        } 
+        }
     }
 }

@@ -28,10 +28,10 @@ class AddPermisionMeetingController extends Migration
     public function down()
     {
         Acl::where('controller', 'MeetingController')
-            ->where('action', 'update')
-            ->where('action', 'store')
-            ->where('action', 'view')
-            ->where('action', 'index')
+            ->orWhere('action', 'update')
+            ->orWhere('action', 'store')
+            ->orWhere('action', 'view')
+            ->orWhere('action', 'index')
             ->delete();
     }
 }
