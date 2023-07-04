@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Event\Meeting;
 
+use App\CheckSuite;
 use App\Http\Controllers\Controller;
 use App\Models\Meeting\meeting;
 use App\Models\Notification;
@@ -45,6 +46,7 @@ class MeetingController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('store',meeting::class);
         $meeting = $this->service->store($request->all());
         if ($meeting) {
             echo json_encode(['success' => true, 'message' => 'Registro inserido com sucesso!']);
@@ -142,6 +144,7 @@ class MeetingController extends Controller
      */
     public function update(Request $request)
     {
+        $this->authorize('update',meeting::class);
 
         $meeting = $this->service->update($request->all());
         if ($meeting) {

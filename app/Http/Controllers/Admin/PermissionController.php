@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Acl;
+use App\Models\Role;
 use App\Models\Routers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -24,8 +25,8 @@ class PermissionController extends Controller
     
     public function index($id)
     {
-        $routers = Routers::all();//$this->service->index();
-        $acls = Acl::where([['role_id', $id]])->get(); //$this->service->getPermission($id);
+        $permissions = Role::find($id)->acl;
+        $acls = Acl::get(); //$this->service->getPermission($id);
 
         // $novo = array();
         // foreach($acls as $item){
@@ -33,7 +34,7 @@ class PermissionController extends Controller
         // }
         // dd($novo);
 
-         return view('modules/admin/permission/permission')->with(['permission' => $routers, 'acls' => $acls]);
+         return view('modules/admin/permission/permission')->with(['permission'=>$permissions,'acls' => $acls]);
     }
 
     /**

@@ -28,10 +28,7 @@ $(document).ready(function() {
           DefaultAlert('info','Nova notificação !')
         }
 
-      
-      
-
-       $('#btn_notification_bag').text(response.length)
+        $('#btn_notification_bag').text(response.length)
        $('#menu_notification').text(response.length)
        
     })
