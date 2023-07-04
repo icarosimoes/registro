@@ -29,20 +29,27 @@ class PermissionService extends Service
 
     public function store(Array $data, $id)
     {
-        $comma_separated = implode(",", $data);
-        $pieces = explode(",", $comma_separated);
-        foreach ($pieces as $value) {
-            $findRouter = $this->getRouters($value);
-            $acl[] = array(
-                'name' => $findRouter->name,
-                'role_id' => $id,
-                'controller' => $findRouter->controller,
-                'action' => $findRouter->action,
-                'module_id' => $findRouter->module_id
-            );
-        }
-        $result = Acl::insert($acl);
-        return $result;
+        
+        DB::beginTransaction();
+        
+        $role = Role::find($id);
+        $acls = explode(",", $data['data']);
+        $role->acl()->sync($acls); 
+        
+        DB::commit();
+         // $pieces = explode(",", $comma_separated);
+        // foreach ($pieces as $value) {
+        //     $findRouter = $this->getRouters($value);
+        //     $acl[] = array(
+        //         'name' => $findRouter->name,
+        //         'role_id' => $id,
+        //         'controller' => $findRouter->controller,
+        //         'action' => $findRouter->action,
+        //         'module_id' => $findRouter->module_id
+        //     );
+        // }
+        // $result = Acl::insert($acl);
+        return true;
     }
     public function getRouters($id){
     $findRouter = Routers::findOrFail($id);

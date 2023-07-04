@@ -7,7 +7,7 @@ $.ajaxSetup({
 });
 
 $(function() {
-
+ 
     //Initialize Select2 Elements
     $('.select2').select2({
         theme: 'bootstrap4',
@@ -24,7 +24,6 @@ $(function() {
     $('form[name="formOccurrence"]').submit(function(event) {
 
         event.preventDefault();
-
         var form_data = new FormData();
 
         form_data.append('title', $("#title").val());

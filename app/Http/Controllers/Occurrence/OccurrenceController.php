@@ -47,7 +47,7 @@ class OccurrenceController extends Controller
      */
     public function store(Request $request)
     {
-
+        
 
         $occurrence = $this->service->store($request->all());
         if ($occurrence) {

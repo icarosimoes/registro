@@ -9,4 +9,11 @@ class Role extends Model
     protected $fillable = [
         'name'
     ];
+
+
+    public function acl(){
+        return $this->belongsToMany(Acl::class,'role_acl');
+    }
+
+
 }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Acl extends Model
 {
     protected $fillable = [
-        'controller', 'action', 'role_id', 'module_id'
+        'controller', 'action', 'name'
     ];
 
     public function module()

@@ -110,7 +110,7 @@
                                                 @elseif($data->status == 2)
                                                     <option selected value="1">Em Andamento</option>
                                                 @endif
-                                                <option value="1">Em Abeto</option>
+                                                <option value="1">Em Aberto</option>
                                                 <option value="2">Em Andamento</option>
                                                 <option value="3">Fechado</option>
                                             </select>
