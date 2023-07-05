@@ -20,6 +20,7 @@ class OccurrenceController extends Controller
      */
     public function index()
     {
+        $this->authorize('index',Occurrence::class);
         session()->forget('data');
         $data = $this->service->index();
         session()->put('data', $data);
@@ -34,6 +35,7 @@ class OccurrenceController extends Controller
      */
     public function create()
     {
+        $this->authorize('store',Occurrence::class);
         $getUser = $this->service->getUSer();
         $typeOccurrence = $this->service->getTypeOccurrence();
         return view('occurrence/create')->with(['users' => $getUser, 'types' => $typeOccurrence]);
@@ -48,7 +50,7 @@ class OccurrenceController extends Controller
     public function store(Request $request)
     {
         
-
+        $this->authorize('store',Occurrence::class);
         $occurrence = $this->service->store($request->all());
         if ($occurrence) {
             echo json_encode(['success' => true, 'message' => 'Registro Cadastrado com sucesso.']);
@@ -65,6 +67,7 @@ class OccurrenceController extends Controller
      */
     public function show($id)
     {
+        $this->authorize('show',Occurrence::class);
         $occurrence = $this->service->show($id);
         $validateUser = $this->service->validateUser($occurrence->users_id, $occurrence->receiver_user, $occurrence->id);
         if ($validateUser) {
@@ -94,6 +97,7 @@ class OccurrenceController extends Controller
      */
     public function edit($id)
     {
+        $this->authorize('show',Occurrence::class);
         DB::beginTransaction();
         //verifica se a origem do link é das notificacoes
         if (request()->notification){
@@ -133,6 +137,7 @@ class OccurrenceController extends Controller
      */
     public function update(Request $request)
     {
+        $this->authorize('update',Occurrence::class);
         $occurrence = $this->service->update($request->all());
         if ($occurrence) {
             echo json_encode(['success' => true, 'message' => 'Registro Alterado com sucesso.']);
@@ -169,6 +174,7 @@ class OccurrenceController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('delete',Occurrence::class);
         $occurrence = $this->service->destroy($id);
         if ($occurrence) {
             return redirect()->route('occurrence.list');

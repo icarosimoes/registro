@@ -56,6 +56,12 @@ $(function(){
         });
     });
 
+
+    $('#selec_all').on('click',()=>{
+        $('input').attr('checked','checked')
+        
+    })
+
 // exemplo: DefaultAlert("success","Cadastro efetuado com sucesso."); 
     function DefaultAlert(type, msg){
         Toast.fire({

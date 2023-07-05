@@ -8,11 +8,7 @@ use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
-    public function __construct()
-    {
-        // parent::__construct();
-        // $this->middleware('can:checkPermission');
-    }
+    
     /**
      * Display a listing of the resource.
      *

@@ -28,6 +28,7 @@ class ProfileService extends Service
     public function store(Array $data)
     {
         $this->validate($data);
+        
             $role = new Role();
             $role->name  = $data['name'];
             $role->save();

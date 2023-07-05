@@ -6,8 +6,10 @@ use App\CheckSuite;
 use App\Func;
 use App\Local;
 use App\Models\Meeting\meeting;
+use App\Models\Occurrence;
 use App\Policies\CheckSuites\CheckSuitesPolicy;
 use App\Policies\Meeting\MeetingPolicy;
+use App\Policies\Occurrence\OccurrencePolicy;
 use App\Policies\Register\FunctionPolicy;
 use App\Policies\Register\LocalPolicy;
 use App\Policies\Register\ProcedurePolicy;
@@ -33,6 +35,7 @@ class AuthServiceProvider extends ServiceProvider
         Local::class => LocalPolicy::class,
         Func::class => FunctionPolicy::class,
         Procedure::class => ProcedurePolicy::class,
+        Occurrence::class => OccurrencePolicy::class,
         
     ];
 

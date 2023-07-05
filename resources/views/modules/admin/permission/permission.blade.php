@@ -18,6 +18,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Permissões</h3>
+                                <button type="button" id='selec_all' class="btn btn-secondary btn-sm float-right" ><i class="fas fa-check"></i> Seleciona tudo</button>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body table-responsive p-0" style="height: 300px;">
