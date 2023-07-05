@@ -16,8 +16,9 @@ class AddPermisionMeetingController extends Migration
     {
         Acl::create(['controller' => 'MeetingController', 'action' => 'update', 'name' => 'Editar Reunião']);
         Acl::create(['controller' => 'MeetingController', 'action' => 'store', 'name' => 'Criar Nova Reunião']);
-        Acl::create(['controller' => 'MeetingController', 'action' => 'view', 'name' => 'Visualizar Reunião']);
+        Acl::create(['controller' => 'MeetingController', 'action' => 'show', 'name' => 'Visualizar Reunião']);
         Acl::create(['controller' => 'MeetingController', 'action' => 'index', 'name' => 'Lista de Reunião']);
+        Acl::create(['controller' => 'MeetingController', 'action' => 'delete', 'name' => 'Excluir de Reunião']);
     }
 
     /**

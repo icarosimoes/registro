@@ -44,9 +44,9 @@ class MeetingPolicy
      * @param  \App\Meeting  $meeting
      * @return mixed
      */
-    public function view(User $user )
+    public function show(User $user )
     {
-        if ($this->hasPermission('view')) {
+        if ($this->hasPermission('show')) {
             return true;
         }
         return false;
@@ -79,7 +79,7 @@ class MeetingPolicy
         if ($this->hasPermission('update')) {
             return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -94,7 +94,7 @@ class MeetingPolicy
         if ($this->hasPermission('delete')) {
             return true;
         }
-        return true;
+        return false;
     }
 
     

@@ -33,7 +33,7 @@
                                     <th>Criado Por</th>
                                     <th>Status</th>
                                     <th>Data</th>
-                                    <th class="w-20">Ações</th>
+                                    <th  class="text-right">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -50,8 +50,8 @@
                                                 <span class="badge badge-danger">Realizado</span>
                                                 @endif
                                             </td>
-                                            <td>{{ (new DateTime($item->created_at))->format('d/m/Y H:i:s') }}</td>
-                                            <td>
+                                            <td >{{ (new DateTime($item->created_at))->format('d/m/Y H:i:s') }}</td>
+                                            <td class="text-right">
                                                 <div class="btn-group-sm">
                                                     {{-- @can('checkRouters', $route =
                                                     'view.client') --}}

@@ -107,14 +107,6 @@ class PermissionController extends Controller
         DB::commit();
 
         return back();
-        // $module = $this->service->getModule($id);
-        // $acl = $this->service->destroy($id); 
-        // if($acl){
-        //     return redirect()->action(
-        //         'Admin\PermissionController@index', ['id' => $module->role_id]
-        //     );
-        //  }else{
-        //      echo json_encode(['success' => false, 'message' => 'Opps, aconteceu um erro ao tentar remover, contate um administrado do sistema.']);
-        //  }
+       
     }
 }
