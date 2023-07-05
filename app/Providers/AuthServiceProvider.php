@@ -6,6 +6,8 @@ use App\CheckSuite;
 use App\Models\Meeting\meeting;
 use App\Policies\CheckSuites\CheckSuitesPolicy;
 use App\Policies\Meeting\MeetingPolicy;
+use App\Policies\Register\SectorPolicy;
+use App\Sector;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +22,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         meeting::class => MeetingPolicy::class,
-        CheckSuite::class => CheckSuitesPolicy::class
+        CheckSuite::class => CheckSuitesPolicy::class,
+        Sector::class => SectorPolicy::class
         
     ];
 

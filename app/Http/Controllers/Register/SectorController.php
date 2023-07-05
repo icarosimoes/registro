@@ -11,11 +11,11 @@ class SectorController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        $this->authorize('index',Sector::class);
         $sectors = Sector::get();
         return view('register/sector/list')->with(['data' => $sectors]);
     }
@@ -27,6 +27,7 @@ class SectorController extends Controller
      */
     public function create()
     {
+        $this->authorize('store',Sector::class);
         return view('register/sector/create');
     }
 
@@ -38,7 +39,7 @@ class SectorController extends Controller
      */
     public function store(Request $request)
     {
-
+       $this->authorize('store',Sector::class);
         $sector = new Sector();
         $sector->name = $request->sector;
         $sector->save();
@@ -53,6 +54,7 @@ class SectorController extends Controller
      */
     public function show(Sector $sector)
     {
+        $this->authorize('show',Sector::class);
         return view('register/sector/view',compact('sector'));
     }
 
@@ -64,6 +66,7 @@ class SectorController extends Controller
      */
     public function edit(Sector $sector)
     {
+        $this->authorize('show',Sector::class);
         return view('register/sector/edit',compact('sector'));
     }
 
@@ -76,6 +79,7 @@ class SectorController extends Controller
      */
     public function update(Request $request, Sector $sector)
     {
+        $this->authorize('update',Sector::class);
         $sector->name = $request->sector;
         $sector->save();
         return $sector;
@@ -89,7 +93,7 @@ class SectorController extends Controller
      */
     public function destroy(Sector $sector)
     {
-        
+        $this->authorize('delete',Sector::class);        
         $sector->delete();
         return $sector;
     }
