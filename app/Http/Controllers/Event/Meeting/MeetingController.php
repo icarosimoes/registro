@@ -19,6 +19,7 @@ class MeetingController extends Controller
      */
     public function index()
     {
+        $this->authorize('index',meeting::class);
         $data = $this->service->index();
         return view('event/meeting/list')->with(['data' => $data]);
     }
@@ -30,6 +31,7 @@ class MeetingController extends Controller
      */
     public function create()
     {
+        $this->authorize('store',meeting::class);
         $usersRegistered = $this->service->usersRegistered();
         $occurrences = $this->service->getOcurrence();
         return view('event/meeting/create')->with([
@@ -63,6 +65,7 @@ class MeetingController extends Controller
      */
     public function show($id)
     {
+        $this->authorize('show',meeting::class);
         //verifica se a origem é de notificaçoes
         if (request()->notification) {
             $notification = Notification::find(request()->notification);
@@ -106,6 +109,7 @@ class MeetingController extends Controller
      */
     public function edit($id)
     {
+        $this->authorize('show',meeting::class);
         //verifica se a origem é de notificaçoes
         if (request()->notification) {
             $notification = Notification::find(request()->notification);
@@ -187,6 +191,7 @@ class MeetingController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('delete',meeting::class);
         $afectedRows = $this->service->destroy($id);
         if ($afectedRows) {
             return redirect()->route('meeting.list');

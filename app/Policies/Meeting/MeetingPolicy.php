@@ -29,9 +29,12 @@ class MeetingPolicy
      * @param  \App\Models\User  $user
      * @return mixed
      */
-    public function viewAny(User $user)
+    public function index(User $user)
     {
-        //
+        if ($this->hasPermission('index')) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -41,8 +44,12 @@ class MeetingPolicy
      * @param  \App\Meeting  $meeting
      * @return mixed
      */
-    public function view(User $user, Meeting $meeting)
+    public function show(User $user )
     {
+        if ($this->hasPermission('show')) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -69,8 +76,10 @@ class MeetingPolicy
      */
     public function update(User $user)
     {
-        $acl =  $user->role->acl()->where('controller', self::CONTROLLER)->where('action', 'store')->first();
-        return true;
+        if ($this->hasPermission('update')) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -80,34 +89,15 @@ class MeetingPolicy
      * @param  \App\Meeting  $meeting
      * @return mixed
      */
-    public function delete(User $user, Meeting $meeting)
+    public function delete(User $user )
     {
-        //
+        if ($this->hasPermission('delete')) {
+            return true;
+        }
+        return false;
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Meeting  $meeting
-     * @return mixed
-     */
-    public function restore(User $user, Meeting $meeting)
-    {
-        //
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\Models\User  $user
-     * @param  \App\Meeting  $meeting
-     * @return mixed
-     */
-    public function forceDelete(User $user, Meeting $meeting)
-    {
-        //
-    }
+    
 
     
 }

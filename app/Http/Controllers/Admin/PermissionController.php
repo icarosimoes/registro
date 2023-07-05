@@ -7,6 +7,7 @@ use App\Models\Acl;
 use App\Models\Role;
 use App\Models\Routers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
 class PermissionController extends Controller
@@ -25,10 +26,11 @@ class PermissionController extends Controller
     
     public function index($id)
     {
-        $permissions = Role::find($id)->acl;
+        $role = Role::find($id);
+        $permissions = $role->acl;
         $acls = Acl::orderBy('controller')->get(); 
                  
-         return view('modules/admin/permission/permission')->with(['permission'=>$permissions,'acls' => $acls]);
+        return view('modules/admin/permission/permission')->with(['role'=> $role ,'permission'=>$permissions,'acls' => $acls]);
     }
 
     /**
@@ -99,14 +101,12 @@ class PermissionController extends Controller
      */
     public function destroy($id)
     {
-        $module = $this->service->getModule($id);
-        $acl = $this->service->destroy($id); 
-        if($acl){
-            return redirect()->action(
-                'Admin\PermissionController@index', ['id' => $module->role_id]
-            );
-         }else{
-             echo json_encode(['success' => false, 'message' => 'Opps, aconteceu um erro ao tentar remover, contate um administrado do sistema.']);
-         }
+        DB::beginTransaction();
+        $role = Role::find(request()->role_id);
+        $role->acl()->detach($id);
+        DB::commit();
+
+        return back();
+       
     }
 }

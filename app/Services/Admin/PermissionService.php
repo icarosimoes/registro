@@ -34,10 +34,18 @@ class PermissionService extends Service
         
         $role = Role::find($id);
         $acls = explode(",", $data['data']);
-        $role->acl()->sync($acls); 
+        
+        foreach($acls as $acl){
+           $result = DB::table('role_acl')->where('role_id', $role->id )->where('acl_id', $acl)->first(); //verifica se ja existe essa associacao
+           if(!$result){
+               $role->acl()->attach($acl); 
+           }
+
+        }   
+        
         
         DB::commit();
-         // $pieces = explode(",", $comma_separated);
+        // $pieces = explode(",", $comma_separated);
         // foreach ($pieces as $value) {
         //     $findRouter = $this->getRouters($value);
         //     $acl[] = array(
@@ -51,9 +59,10 @@ class PermissionService extends Service
         // $result = Acl::insert($acl);
         return true;
     }
+
     public function getRouters($id){
-    $findRouter = Routers::findOrFail($id);
-    return $findRouter;
+        $findRouter = Routers::findOrFail($id);
+        return $findRouter;
     }
     public function getPermission($id)
     {

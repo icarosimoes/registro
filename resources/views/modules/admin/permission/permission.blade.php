@@ -85,7 +85,7 @@
                                                 <td>{{ $item->id }}</td>
                                                 <td>{{ $item->name }}</td>
                                                 <td class="text-right"><a class="btn btn-danger btn-sm"
-                                                        href="{{ route('permission.remove', ['id' => $item->id]) }}"><i
+                                                        href="{{ route('permission.remove', ['id' => $item->id])}}?role_id={{$role->id}}"><i
                                                             class="fas fa-trash"></i></a></td>
                                         </tr>
                                         @endforeach
