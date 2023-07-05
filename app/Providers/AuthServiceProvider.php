@@ -7,7 +7,9 @@ use App\Func;
 use App\Local;
 use App\Models\Meeting\meeting;
 use App\Models\Occurrence;
+use App\Models\ShiftReport\ShiftReport;
 use App\Policies\CheckSuites\CheckSuitesPolicy;
+use App\Policies\Event\ShifitReport\ShifitReportPolicy;
 use App\Policies\Meeting\MeetingPolicy;
 use App\Policies\Occurrence\OccurrencePolicy;
 use App\Policies\Register\FunctionPolicy;
@@ -36,6 +38,7 @@ class AuthServiceProvider extends ServiceProvider
         Func::class => FunctionPolicy::class,
         Procedure::class => ProcedurePolicy::class,
         Occurrence::class => OccurrencePolicy::class,
+        ShiftReport::class => ShifitReportPolicy::class,
         
     ];
 

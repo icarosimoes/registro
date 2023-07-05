@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Event\ShiftReport;
 
 use App\Http\Controllers\Controller;
+use App\Models\ShiftReport\ShiftReport;
 use Illuminate\Http\Request;
 
 class ShifitReportController extends Controller
@@ -14,6 +15,7 @@ class ShifitReportController extends Controller
      */
     public function index()
     {
+        $this->authorize('index',ShiftReport::class);
         $data = $this->service->index();
         return view('event/shiftReport/list')->with(['data' => $data]);
     }
@@ -25,6 +27,7 @@ class ShifitReportController extends Controller
      */
     public function create()
     {
+        $this->authorize('store',ShiftReport::class);
         $occurrences = $this->service->getOcurrence();
         return view('event/shiftReport/create')->with([
             'ocurrences' => $occurrences,
@@ -39,6 +42,7 @@ class ShifitReportController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('store',ShiftReport::class);
         $shiftReport = $this->service->store($request->all());
         if ($shiftReport) {
             echo json_encode(['success' => true, 'message' => "Cadastrado com sucesso"]);
@@ -55,6 +59,7 @@ class ShifitReportController extends Controller
      */
     public function show($id)
     {
+        $this->authorize('show',ShiftReport::class);
         $shiftReport = $this->service->index($id);
         $getShiftReport_frequency = $this->service->getShiftReport_frequency($id);
         $getShiftReport_extra = $this->service->getShiftReport_extra($id);
@@ -81,6 +86,7 @@ class ShifitReportController extends Controller
      */
     public function edit($id)
     {
+        $this->authorize('show',ShiftReport::class);
         $shiftReport = $this->service->index($id);
         $getShiftReport_frequency = $this->service->getShiftReport_frequency($id);
         $getShiftReport_extra = $this->service->getShiftReport_extra($id);
@@ -128,6 +134,7 @@ class ShifitReportController extends Controller
      */
     public function update(Request $request)
     {
+        $this->authorize('update',ShiftReport::class);
         $shiftReport = $this->service->update($request->all());
         if ($shiftReport) {
             echo json_encode(['success' => true, 'message' => "Alterado com sucesso"]);
@@ -144,6 +151,7 @@ class ShifitReportController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('delete',ShiftReport::class);
         $afectedRows = $this->service->destroy($id);
        if($afectedRows){
           return redirect()->route('shiftreport.list');
