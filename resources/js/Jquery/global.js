@@ -6,10 +6,11 @@ $(document).ready(function() {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });
-
+  console.log('inicio')
   refreshNotification()
   
   setInterval(()=>{
+    console.log('interval')
     refreshNotification()
   },10000)
 
