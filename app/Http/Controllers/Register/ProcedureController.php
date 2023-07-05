@@ -17,6 +17,7 @@ class ProcedureController extends Controller
      */
     public function index()
     {
+        $this->authorize('index',Procedure::class);
         $procedure = Procedure::get();
         return view('register/procedure/list')->with(['data' => $procedure]);
     }
@@ -28,6 +29,7 @@ class ProcedureController extends Controller
      */
     public function create()
     {
+        $this->authorize('store',Procedure::class);
         return view('register/procedure/create');
     }
 
@@ -39,6 +41,7 @@ class ProcedureController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('store',Procedure::class);
         DB::beginTransaction();
         
  
@@ -69,6 +72,7 @@ class ProcedureController extends Controller
      */
     public function show(Procedure $procedure)
     {
+        $this->authorize('show',Procedure::class);
         return view('register/procedure/view',compact('procedure'));
     }
 
@@ -80,6 +84,7 @@ class ProcedureController extends Controller
      */
     public function edit(Procedure $procedure)
     {
+        $this->authorize('show',Procedure::class);
         return view('register/procedure/edit',compact('procedure'));
     }
 
@@ -92,7 +97,7 @@ class ProcedureController extends Controller
      */
     public function update(Request $request, Procedure $procedure)
     {
-        
+        $this->authorize('update',Procedure::class);
         if($request->hasFile('file')){
             $path = $request->file->store('procedure');
             $procedure->file = $path;
@@ -114,6 +119,7 @@ class ProcedureController extends Controller
      */
     public function destroy(Procedure $procedure)
     {
+        $this->authorize('delete',Procedure::class);
         $procedure->delete();
         return $procedure;   
     }

@@ -15,6 +15,7 @@ class FunctionController extends Controller
      */
     public function index()
     {
+        $this->authorize('index',Func::class);
         $functions = Func::get();
         return view('register/func/list')->with(['data' => $functions]);
     }
@@ -26,6 +27,7 @@ class FunctionController extends Controller
      */
     public function create()
     {
+        $this->authorize('store',Func::class);
         return view('register/func/create');
     }
 
@@ -37,6 +39,7 @@ class FunctionController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('store',Func::class);
         $function = new Func();
         $function->name = $request->name;
         $function->save();
@@ -51,6 +54,7 @@ class FunctionController extends Controller
      */
     public function show(Func $function)
     {
+        $this->authorize('show',Func::class);
         return view('register/func/view',compact('function'));
     }
 
@@ -62,6 +66,7 @@ class FunctionController extends Controller
      */
     public function edit(Func $function)
     {
+        $this->authorize('show',Func::class);
         return view('register/func/edit',compact('function'));
     }
 
@@ -74,6 +79,7 @@ class FunctionController extends Controller
      */
     public function update(Request $request, Func $function )
     {
+        $this->authorize('update',Func::class);
         $function->name = $request->name;
         $function->save();
         return $function;
@@ -87,6 +93,7 @@ class FunctionController extends Controller
      */
     public function destroy(Func $function)
     {
+        $this->authorize('delete',Func::class);
         $function->delete();
         return $function;   
     }

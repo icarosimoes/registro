@@ -3,10 +3,16 @@
 namespace App\Providers;
 
 use App\CheckSuite;
+use App\Func;
+use App\Local;
 use App\Models\Meeting\meeting;
 use App\Policies\CheckSuites\CheckSuitesPolicy;
 use App\Policies\Meeting\MeetingPolicy;
+use App\Policies\Register\FunctionPolicy;
+use App\Policies\Register\LocalPolicy;
+use App\Policies\Register\ProcedurePolicy;
 use App\Policies\Register\SectorPolicy;
+use App\Procedure;
 use App\Sector;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -23,7 +29,10 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         meeting::class => MeetingPolicy::class,
         CheckSuite::class => CheckSuitesPolicy::class,
-        Sector::class => SectorPolicy::class
+        Sector::class => SectorPolicy::class,
+        Local::class => LocalPolicy::class,
+        Func::class => FunctionPolicy::class,
+        Procedure::class => ProcedurePolicy::class,
         
     ];
 
