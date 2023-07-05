@@ -19,6 +19,7 @@ class MeetingController extends Controller
      */
     public function index()
     {
+        $this->authorize('index',meeting::class);
         $data = $this->service->index();
         return view('event/meeting/list')->with(['data' => $data]);
     }
@@ -30,6 +31,7 @@ class MeetingController extends Controller
      */
     public function create()
     {
+        $this->authorize('store',meeting::class);
         $usersRegistered = $this->service->usersRegistered();
         $occurrences = $this->service->getOcurrence();
         return view('event/meeting/create')->with([
