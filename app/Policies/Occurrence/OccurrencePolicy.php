@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Policies\CheckSuites;
+namespace App\Policies\Occurrence;
 
-use App\CheckSuite;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Auth;
 
-class CheckSuitesPolicy
+class OccurrencePolicy
 {
     use HandlesAuthorization;
 
-    public const CONTROLLER = 'CheckSuitesController';
+    public const CONTROLLER = 'OccurrenceController';
     /**
     * Verifica se tem a permissao.
     */

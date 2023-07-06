@@ -6,9 +6,11 @@ use App\Local;
 use App\Sector;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 class Occurrence extends Model
 {
+    use SoftDeletes;
+
     public function type_occurrences()
     {
         return $this->belongsTo('App\Models\TypeOccurrence');

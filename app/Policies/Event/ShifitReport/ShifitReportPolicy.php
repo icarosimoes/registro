@@ -1,17 +1,17 @@
 <?php
 
-namespace App\Policies\CheckSuites;
+namespace App\Policies\Event\ShifitReport;
 
-use App\CheckSuite;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Auth;
 
-class CheckSuitesPolicy
+class ShifitReportPolicy
 {
     use HandlesAuthorization;
 
-    public const CONTROLLER = 'CheckSuitesController';
+    public const CONTROLLER = 'ShifitReportController';
+
     /**
     * Verifica se tem a permissao.
     */

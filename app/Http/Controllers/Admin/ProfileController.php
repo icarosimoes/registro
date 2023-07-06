@@ -8,11 +8,7 @@ use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
-    public function __construct()
-    {
-        // parent::__construct();
-        // $this->middleware('can:checkPermission');
-    }
+    
     /**
      * Display a listing of the resource.
      *
@@ -20,6 +16,7 @@ class ProfileController extends Controller
      */
     public function index()
     {
+         $this->authorize('index',Role::class);
         // $role = $this->service->index();
         $roles = Role::all();
         return view('modules/admin/profile/list')->with(['roles' => $roles]);
@@ -32,6 +29,7 @@ class ProfileController extends Controller
      */
     public function create()
     {
+         $this->authorize('store',Role::class);
         return view('modules/admin/profile/create');
     }
 
@@ -43,6 +41,7 @@ class ProfileController extends Controller
      */
     public function store(Request $request)
     {
+         $this->authorize('store',Role::class);
         $role = $this->service->store($request->all());
         if($role){
            echo json_encode(['success' => true,'message' => 'Dados cadastrados com sucesso.']);
@@ -70,6 +69,7 @@ class ProfileController extends Controller
      */
     public function edit($id)
     {
+         $this->authorize('show',Role::class);
         $role = Role::findOrFail($id);
         return view('modules/admin/profile/edit')->with(['role' => $role]);
     }
@@ -83,6 +83,7 @@ class ProfileController extends Controller
      */
     public function update(Request $request)
     {
+        $this->authorize('update',Role::class);
         $role = $this->service->update($request->all());
         if($role){
            echo json_encode(['success' => true,'message' => 'Dados cadastrados com sucesso.']);
@@ -99,6 +100,7 @@ class ProfileController extends Controller
      */
     public function destroy($id)
     {
+        $this->authorize('delete',Role::class);
         $role = $this->service->destroy($id);
         if ($role) {
            return redirect()->route('list.profile');

@@ -15,6 +15,8 @@ class LocalController extends Controller
      */
     public function index()
     {
+        
+        $this->authorize('index',Local::class);
         $locals = Local::get();
         return view('register/local/list')->with(['data' => $locals]);
     }
@@ -26,6 +28,7 @@ class LocalController extends Controller
      */
     public function create()
     {
+        $this->authorize('store',Local::class);
         return view('register/local/create');
     }
 
@@ -37,6 +40,7 @@ class LocalController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('store',Local::class);
         $local = new Local();
         $local->name = $request->name;
         $local->save();
@@ -51,6 +55,7 @@ class LocalController extends Controller
      */
     public function show(Local $local)
     {
+        $this->authorize('show',Local::class);
         return view('register/local/view',compact('local'));
     }
 
@@ -62,6 +67,7 @@ class LocalController extends Controller
      */
     public function edit(Local $local)
     {
+        $this->authorize('show',Local::class);
         return view('register/local/edit',compact('local'));
     }
 
@@ -74,6 +80,7 @@ class LocalController extends Controller
      */
     public function update(Request $request, Local $local)
     {
+        $this->authorize('update',Local::class);
         $local->name = $request->name;
         $local->save();
         return $local;
@@ -87,6 +94,7 @@ class LocalController extends Controller
      */
     public function destroy(Local $local)
     {
+        $this->authorize('delete',Local::class);
         $local->delete();
         return $local;   
     }

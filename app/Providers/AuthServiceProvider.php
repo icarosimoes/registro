@@ -3,9 +3,25 @@
 namespace App\Providers;
 
 use App\CheckSuite;
+use App\Func;
+use App\Local;
 use App\Models\Meeting\meeting;
+use App\Models\Occurrence;
+use App\Models\Role;
+use App\Models\ShiftReport\ShiftReport;
+use App\Models\User;
+use App\Policies\Admin\ProfilePolicy;
+use App\Policies\Admin\UserPolicy;
 use App\Policies\CheckSuites\CheckSuitesPolicy;
+use App\Policies\Event\ShifitReport\ShifitReportPolicy;
 use App\Policies\Meeting\MeetingPolicy;
+use App\Policies\Occurrence\OccurrencePolicy;
+use App\Policies\Register\FunctionPolicy;
+use App\Policies\Register\LocalPolicy;
+use App\Policies\Register\ProcedurePolicy;
+use App\Policies\Register\SectorPolicy;
+use App\Procedure;
+use App\Sector;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +36,16 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         meeting::class => MeetingPolicy::class,
-        CheckSuite::class => CheckSuitesPolicy::class
+        CheckSuite::class => CheckSuitesPolicy::class,
+        Sector::class => SectorPolicy::class,
+        Local::class => LocalPolicy::class,
+        Func::class => FunctionPolicy::class,
+        Procedure::class => ProcedurePolicy::class,
+        Occurrence::class => OccurrencePolicy::class,
+        ShiftReport::class => ShifitReportPolicy::class,
+        User::class => UserPolicy::class,
+        Role::class => ProfilePolicy::class,
+        
         
     ];
 

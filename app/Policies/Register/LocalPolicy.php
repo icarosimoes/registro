@@ -1,25 +1,27 @@
 <?php
 
-namespace App\Policies\CheckSuites;
+namespace App\Policies\Register;
 
-use App\CheckSuite;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Auth;
 
-class CheckSuitesPolicy
+class LocalPolicy
 {
     use HandlesAuthorization;
 
-    public const CONTROLLER = 'CheckSuitesController';
+    public const CONTROLLER = 'LocalController';
     /**
     * Verifica se tem a permissao.
     */
    private function hasPermission($action){
-       return  Auth::user()->role->acl()
+         $result = Auth::user()->role->acl()
          ->where('controller', self::CONTROLLER)
          ->where('action', $action)
          ->first();
+
+         
+         return $result;
      }
  
      /**
@@ -30,9 +32,11 @@ class CheckSuitesPolicy
       */
      public function index(User $user)
      {
+        
          if ($this->hasPermission('index')) {
              return true;
          }
+         
          return false;
      }
  

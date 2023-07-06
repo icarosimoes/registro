@@ -44,14 +44,17 @@ $(function(){
                 const obj = JSON.parse(response);
                 if(obj.success === true){
                     DefaultAlert("success", obj.message);
-                    $('.overlay').addClass('d-none');
-                    location.reload();
+                    window.location.replace( base_url + "/admin/list/user");        
                 }else{
                      DefaultAlert("error", obj.message);
-                    $('.overlay').addClass('d-none');
                 }
             }
-        });
+        }).catch(()=>{
+            DefaultAlert("error", 'Não foi possível salvar');
+        })
+        .always(()=>{
+            $('.overlay').addClass('d-none');
+        })
     });
 
 //alterar imagem
