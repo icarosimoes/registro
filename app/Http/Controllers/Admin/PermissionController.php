@@ -26,6 +26,7 @@ class PermissionController extends Controller
     
     public function index($id)
     {
+        $this->authorize('update', Role::class);
         $role = Role::find($id);
         $permissions = $role->acl;
         $acls = Acl::orderBy('controller')->get(); 

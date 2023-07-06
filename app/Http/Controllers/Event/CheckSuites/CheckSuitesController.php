@@ -20,6 +20,7 @@ class CheckSuitesController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('index',CheckSuite::class);
         $filter = $request->all();
 
         $checkSuites = CheckSuite::orderBy('id','DESC');
@@ -58,6 +59,7 @@ class CheckSuitesController extends Controller
      */
     public function create()
     {
+        $this->authorize('store',CheckSuite::class);
         return view('event/check_suites/create');
     }
 
@@ -69,6 +71,7 @@ class CheckSuitesController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('store',CheckSuite::class);
         DB::beginTransaction();
         
         //salva check suite
@@ -105,6 +108,7 @@ class CheckSuitesController extends Controller
      */
     public function show(CheckSuite $checkSuite)
     {
+        $this->authorize('show',CheckSuite::class);
         return view('event/check_suites/view',compact('checkSuite'));
     }
 
@@ -116,7 +120,7 @@ class CheckSuitesController extends Controller
      */
     public function edit(CheckSuite $checkSuite)
     {   
-        
+        $this->authorize('show',CheckSuite::class);
         return view('event/check_suites/edit',compact('checkSuite'));
     }
 
@@ -129,6 +133,7 @@ class CheckSuitesController extends Controller
      */
     public function update(Request $request, CheckSuite $check_suite)
     {
+        $this->authorize('update',CheckSuite::class);
         DB::beginTransaction();
 
         $check_suite->date = $request->date;
@@ -165,6 +170,7 @@ class CheckSuitesController extends Controller
      */
     public function destroy(CheckSuite $checkSuite)
     {
+        $this->authorize('delete',CheckSuite::class);
         $checkSuite->delete();
         return $checkSuite;   
     }

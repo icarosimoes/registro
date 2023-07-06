@@ -1,27 +1,24 @@
 <?php
 
-namespace App\Policies\Register;
+namespace App\Policies\Admin;
 
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Support\Facades\Auth;
 
-class LocalPolicy
+class UserPolicy
 {
     use HandlesAuthorization;
 
-    public const CONTROLLER = 'LocalController';
+    public const CONTROLLER = 'UserController';
     /**
     * Verifica se tem a permissao.
     */
    private function hasPermission($action){
-         $result = Auth::user()->role->acl()
+       return  Auth::user()->role->acl()
          ->where('controller', self::CONTROLLER)
          ->where('action', $action)
          ->first();
-
-         
-         return $result;
      }
  
      /**
@@ -32,11 +29,9 @@ class LocalPolicy
       */
      public function index(User $user)
      {
-        
          if ($this->hasPermission('index')) {
              return true;
          }
-         
          return false;
      }
  

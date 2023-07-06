@@ -37,7 +37,7 @@
                                                 <tr>
                                                     <td>
                                                         <div class="form-check">
-                                                            <input type="checkbox" name="permission[]" id="permission[]"
+                                                            <input  type="checkbox" name="permission[]" id="permission[]"
                                                                 class="form-check-input" value="{{ $item->id }}">
                                                         </div>
                                                     </td>
@@ -85,7 +85,7 @@
                                             @foreach ($permission as $item)
                                                 <td>{{ $item->id }}</td>
                                                 <td>{{ $item->name }}</td>
-                                                <td class="text-right"><a class="btn btn-danger btn-sm"
+                                                <td class="text-right"><a class="btn btn-danger btn-sm {{$role->id == 1 && $item->controller =='ProfileController' ?'disabled':''}}"
                                                         href="{{ route('permission.remove', ['id' => $item->id])}}?role_id={{$role->id}}"><i
                                                             class="fas fa-trash"></i></a></td>
                                         </tr>
