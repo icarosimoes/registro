@@ -44,14 +44,19 @@ $(function(){
                 const obj = JSON.parse(response);
                 if(obj.success === true){
                     DefaultAlert("success", obj.message);
-                    $('.overlay').addClass('d-none');
+                    window.location.replace( base_url + "/admin/list/user");        
                     clearForm();
                 }else{
                      DefaultAlert("error", obj.message);
-                    $('.overlay').addClass('d-none');
+                    
                 }
             }
-        });
+        }).catch(()=>{
+            DefaultAlert("error", 'Não foi possível salvar');
+        })
+        .always(()=>{
+            $('.overlay').addClass('d-none');
+        })
     });
 
 // exemplo: DefaultAlert("success","Cadastro efetuado com sucesso."); 

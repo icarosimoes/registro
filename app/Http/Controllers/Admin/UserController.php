@@ -51,7 +51,8 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
+        
         $user = $this->service->store($request->all());
         if($user){
            echo json_encode(['success' => true,'message' => 'Dados cadastrados com sucesso.']);

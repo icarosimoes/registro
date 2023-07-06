@@ -67,6 +67,7 @@ class UserService extends Service
 
     public function store(Array $data)
     {
+        
         $this->validate($data);
         if ($data['photo'] != 'undefined') {
             $path = $data['photo']->store('images');
