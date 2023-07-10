@@ -40,7 +40,6 @@ class PermissionService extends Service
            if(!$result){
                $role->acl()->attach($acl); 
            }
-
         }   
         
         

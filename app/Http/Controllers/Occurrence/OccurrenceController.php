@@ -107,6 +107,7 @@ class OccurrenceController extends Controller
         }
 
         $occurrence = $this->service->show($id);
+        // dd($occurrence);
         $validateUser = $this->service->validateUser($occurrence->users_id, $occurrence->receiver_user, $occurrence->id);
         if ($validateUser) {
             $receiver = $this->service->getUSer($occurrence->receiver_user);
