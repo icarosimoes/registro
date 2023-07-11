@@ -104,12 +104,12 @@
                                     <div class="col-sm">
                                         <div class="form-group">
                                             <label for="Name">Status</label>
-                                            <select class="form-control select2" name="status" id="status" required>
-                                                @if ($data->status == 1)
+                                            <select class="form-control " data-value="{{ $data->status }}" name="status" id="status" required>
+                                                {{-- @if ($data->status == 1)
                                                     <option selected value="1">Em Aberto</option>
                                                 @elseif($data->status == 2)
                                                     <option selected value="1">Em Andamento</option>
-                                                @endif
+                                                @endif --}}
                                                 <option value="1">Em Aberto</option>
                                                 <option value="2">Em Andamento</option>
                                                 <option value="3">Fechado</option>
