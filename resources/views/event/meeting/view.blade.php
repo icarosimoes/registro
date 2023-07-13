@@ -10,7 +10,7 @@
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
                 <li class="breadcrumb-item active"><a href="{{ route('meeting.list') }}">Lista de Reuniões</a>
                 </li>
-                <li class="breadcrumb-item active">Editar Reunião</li>
+                <li class="breadcrumb-item active">Visualizar Reunião</li>
             </ol>
         </div>
         <div class="col-sm-12">
@@ -27,7 +27,7 @@
                     <div class="col-sm-12">
                         <div class="card card-secondary card-outline">
                             <div class="card-header">
-                                <h3 class="card-title">Editar reunião</h3>
+                                <h3 class="card-title">Visualizar Reunião</h3>
                                 <a data-toggle="modal" data-target="#export-pdf"
                                     class="btn btn-warning btn-flat btn-sm float-right mb-0"><i
                                         class="fas fa-file-export"></i>
@@ -73,7 +73,7 @@
 
                                 <div class="card-body">
                                     <div class="card-body table-responsive p-0">
-                                        <table class="table table-sm table-striped table-valign-middle tablenotstyle">
+                                        <table class="table table-sm  table-valign-middle tablenotstyle">
                                             <thead>
                                                 <tr>
                                                     <th></th>

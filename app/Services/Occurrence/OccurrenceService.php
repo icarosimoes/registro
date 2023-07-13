@@ -244,7 +244,11 @@ class OccurrenceService extends Service
                     'created_at' => Date("Y-m-d H:i:s"),
                 ];
                 Occurrence_comments::insert($Occurrence_comments);
+                //atualiza e envia as notificacoes
+                $occurrence->updated_at = now();
+                $occurrence->save();
             }
+
             DB::commit();
             return $occurrence;
         } else {

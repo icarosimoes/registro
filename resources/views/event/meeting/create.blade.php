@@ -64,7 +64,7 @@
 
                                 <div class="card-body">
                                     <div class="card-body table-responsive p-0">
-                                        <table class="table table-sm table-striped table-valign-middle tablenotstyle">
+                                        <table class="table table-sm  table-valign-middle tablenotstyle">
                                             <thead>
                                                 <tr>
                                                     <th></th>
