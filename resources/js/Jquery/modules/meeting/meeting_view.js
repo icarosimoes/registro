@@ -16,6 +16,7 @@ $.ajaxSetup({
 });
 
 $(function () {
+    
     /**  addItemTopicsCovered() - Inserir itens aos assuntos abordados */
     addItemTopicsCovered();
     loadItemTopicsCovered();
@@ -23,6 +24,7 @@ $(function () {
     addItemTopic();
     //carregar os topicos da pauta
     loadItemTopic();
+    
     /** addItemRegisteredUsers() - adicionar participante cadastrado */
     addItemRegisteredUsers();
     loadItemRegisteredUSers();
@@ -289,9 +291,9 @@ $(function () {
 
     $("#btnExport").on('click',()=>{
         $("#titleExport").val('')
-        $("#titleExport").attr('disabled', false);
-        $("#btnNext").removeClass('d-none');
-        $("#btnExport").addClass('d-none');
+        $("#titleExport").attr('disabled', false)
+        $("#btnNext").removeClass('d-none')
+        $("#btnExport").addClass('d-none')
     })
 
     //desabilita o componentes
@@ -302,6 +304,8 @@ $(function () {
     $('#blocked button').attr('disabled','disabled')
     $('#blocked label').attr('disabled','disabled')
     $('#blocked #btn_back').show()
+    $('#blocked .no_block').show()
+    $('#blocked .block').hide()
 
     
     /**

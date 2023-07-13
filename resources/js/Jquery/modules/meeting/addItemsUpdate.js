@@ -120,12 +120,12 @@ export function addItemTopic() {
 }
 export function loadItemTopic() {
     var meeting_subjects = $("#meeting_subjects").val();
-    
+    console.log(JSON.parse(meeting_subjects))
     var countItem = 0;
     $.each(JSON.parse(meeting_subjects), function (index, value) {
         var icoDownlaod = "";
         if(!value.url_archive == ""){
-            icoDownlaod = "<label style='cursor: pointer;'><a href='"+base_url+"/event/meeting/downlaod/"+value.id+"'><i class='fas fa-download'></i></a></label>&nbsp;";
+            icoDownlaod = "<span style='cursor: pointer;'><a class='no_block' href='"+base_url+"/event/meeting/downlaod/"+value.id+"'><i class='fas fa-download'></i></a></span>&nbsp;";
         }
         var topic = "<tr class='item_append_topic'>" +
             "<td>" +
@@ -133,14 +133,16 @@ export function loadItemTopic() {
             "<input type='hidden' name='topics_id[]' id='topics_id' value='"+value.id+"'>" +
             "</td>" +
             "<td>" +
-            "<label class='click-upload-file-topic-" + countItem + "' style='cursor: pointer;' for='upload-file-topic-" + countItem + "'><i class='fas fa-paperclip'></i></label>&nbsp;" +
+            "<label class='block click-upload-file-topic-" + countItem + "' style='cursor: pointer;' for='upload-file-topic-" + countItem + "'><i class='fas fa-paperclip'></i></label>&nbsp;" +
             icoDownlaod +
             "<label id='file-name-" + countItem + "'></label>&nbsp;&nbsp;" +
             "<input style='display:none' id='upload-file-topic-" + countItem + "' name='upload-file-topic-" + countItem + "[]' type='file'>" +
             "<a type='button' class='remove_item_topic' data-toggle='tooltip' data-placement='top' title='Excluir'><i class='far fa-trash-alt'></i></a>" +
             "</td>" +
             "</tr>";
-        $("#tbodyItemTopic").append(topic);
+        
+            $("#tbodyItemTopic").append(topic);
+
         $(document).on('click', '.remove_item_topic', function () {
             $(this).closest('.item_append_topic').remove();
         });
