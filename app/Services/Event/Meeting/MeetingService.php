@@ -192,6 +192,7 @@ class MeetingService extends Service
     {
         DB::beginTransaction();
         $topics = explode(",", $data['topics'][0]);
+        $topics_obs =  json_decode(request()->obs_subjects); //explode(",", $data['obs_subjects_values']);
         $topics_id = explode(",", $data['topics_id'][0]);
         
         $topics_covered = explode(",", $data['topics_covered'][0]);
@@ -228,12 +229,14 @@ class MeetingService extends Service
                 $data = [
                     'meetings_id' => $insertID,
                     'subject' => $topics[$i],
+                    'obs_subject' => $topics_obs[$i]->obs,
                     'created_at' => date('Y-m-d H:i:s')
                 ];
             } else {
                 $data = [
                     'meetings_id' => $insertID,
                     'subject' => $topics[$i],
+                    'obs_subject' => $topics_obs[$i]->obs,
                     'url_archive' => $path,
                     'created_at' => date('Y-m-d H:i:s')
                 ];
@@ -304,9 +307,9 @@ class MeetingService extends Service
         //salva novos assuntos
         meeting_new_subjects::where('meetings_id', $insertID)->delete();
         if (request()->new_subjects) {
-            $new_subjects = explode(',', request()->new_subjects);
-            $obs_new_subjects = explode(',', request()->obs_new_subjects);
-
+            $new_subjects =  json_decode(request()->new_subjects);
+            $obs_new_subjects = json_decode(request()->obs_new_subjects);
+            
             foreach ($new_subjects as $key => $value) {
                 $new_subjects = new meeting_new_subjects();
                 $new_subjects->meetings_id = $insertID;
@@ -316,8 +319,7 @@ class MeetingService extends Service
                 $new_subjects->save();
             }
         }
-
-
+       
         DB::commit();
 
 

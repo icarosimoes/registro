@@ -47,6 +47,7 @@ $(function () {
     $('form[name="formMeetingEdit"]').submit(function (event) {
 
         event.preventDefault();
+        
         var count = 0;
         var selectNumberArray = new Array();
         var form_data = new FormData();
@@ -156,24 +157,29 @@ $(function () {
         form_data.append('topics_covered_id[]', topics_covered_id);
 
         let obs_subjects_ids = []
+        let obs_subjects = []
         let obs_subjects_values = []
         $(".obs_subject").each((index,item)=>{
             const id = $(item).attr('data-id')
             const value = $(item).val()
             obs_subjects_ids.push(id) 
             obs_subjects_values.push(value) 
+            obs_subjects.push({
+                id:id,
+                obs:value
+            })
         })
         form_data.append('obs_subjects_ids', obs_subjects_ids);        
         form_data.append('obs_subjects_values', obs_subjects_values);        
-
+        form_data.append('obs_subjects', JSON.stringify(obs_subjects));              
+        
         //novas pautas
         let obs_new_subjects = []
         $(".obs_new_subject").each((index,item)=>{
             const value = $(item).val()
             obs_new_subjects.push(value) 
-            
         })
-        form_data.append('obs_new_subjects', obs_new_subjects);        
+        form_data.append('obs_new_subjects', JSON.stringify(obs_new_subjects));        
         
         let new_subjects = []
         $(".new_subject").each((index,item)=>{
@@ -181,7 +187,7 @@ $(function () {
             new_subjects.push(value) 
             
         })
-        form_data.append('new_subjects', new_subjects);        
+        form_data.append('new_subjects',  JSON.stringify(new_subjects));        
 
         
         
@@ -203,8 +209,7 @@ $(function () {
                     const obj = JSON.parse(response);
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
-              
-                    window.location.replace(base_url + "/event/list/meeting");
+                        window.location.replace(base_url + "/event/list/meeting");
                     } else {
                         DefaultAlert("error", obj.message);
               
