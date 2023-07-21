@@ -60,7 +60,7 @@ $(function() {
                 if (obj.success === true) {
                     DefaultAlert("success", obj.message);
                     $('.overlay').addClass('d-none');
-                    // window.location.replace(base_url + "/occurrence/list/occurrence");
+                     window.location.replace(base_url + "/occurrence/list/occurrence");
                 } else {
                     DefaultAlert("error", obj.message);
                     $('.overlay').addClass('d-none');
