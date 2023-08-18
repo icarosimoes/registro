@@ -119,6 +119,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('shiftreport/tested/remove/{id}', 'Event\ShiftReport\ShifitReportController@testedRemove');
 
         Route::resource('check_suite','Event\CheckSuites\CheckSuitesController');    
+        Route::resource('inspection_suite','Event\InspectionSuites\InspectionSuiteController');    
 
 
     });

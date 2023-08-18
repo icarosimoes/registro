@@ -265,6 +265,11 @@ return [
                     'icon' => 'fas fa-fw fa fa-clipboard',
                     'url' => 'event/check_suite'
                 ],
+                [
+                    'text' => 'Vistorias das suítes',
+                    'icon' => 'fas fa-fw fa fa-clipboard',
+                    'url' => 'event/inspection_suite'
+                ],
             ],  
         ],
         [
@@ -762,6 +767,40 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/check_suite/check_suite_update.js',
+                ],
+            ],
+        ],
+        //INSPECTION SUITE
+        [
+            'name' => 'scriptListInspectionSuite',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/inspection_suite/inspection_suite_list.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptCreateInspectionSuite',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/inspection_suite/inspection_suite_create.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptUpdateInspectionSuite',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/inspection_suite/inspection_suite_update.js',
                 ],
             ],
         ],
