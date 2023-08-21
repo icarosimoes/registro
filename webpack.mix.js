@@ -52,6 +52,16 @@ mix.react('resources/js/app.js', 'public/js')
     .js('resources/js/Jquery/modules/check_suite/check_suite_update.js', 'public/js/jquery/modules/check_suite')
     .js('resources/js/Jquery/modules/check_suite/check_suite_list.js', 'public/js/jquery/modules/check_suite')
     
+    //inspection suite
+    .js('resources/js/Jquery/modules/inspection_suite/inspection_suite_create.js', 'public/js/jquery/modules/inspection_suite')
+    .js('resources/js/Jquery/modules/inspection_suite/inspection_suite_update.js', 'public/js/jquery/modules/inspection_suite')
+    .js('resources/js/Jquery/modules/inspection_suite/inspection_suite_list.js', 'public/js/jquery/modules/inspection_suite')
+    
+    //work diary
+    .js('resources/js/Jquery/modules/work_diary/work_diary_create.js', 'public/js/jquery/modules/work_diary')
+    .js('resources/js/Jquery/modules/work_diary/work_diary_update.js', 'public/js/jquery/modules/work_diary')
+    .js('resources/js/Jquery/modules/work_diary/work_diary_list.js', 'public/js/jquery/modules/work_diary')
+    
     //shiftReport
     .js('resources/js/Jquery/modules/shiftReport/shiftReport.js', 'public/js/jquery/modules/shiftReport')
     .js('resources/js/Jquery/modules/shiftReport/shiftReportUpdate.js', 'public/js/jquery/modules/shiftReport')
