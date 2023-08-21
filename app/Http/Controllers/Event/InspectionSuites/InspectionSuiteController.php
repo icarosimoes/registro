@@ -168,10 +168,10 @@ class InspectionSuiteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CheckSuite $checkSuite)
+    public function destroy(InspectionSuite $inspectionSuite)
     {
-        $this->authorize('delete',CheckSuite::class);
-        $checkSuite->delete();
-        return $checkSuite;   
+        //$this->authorize('delete',CheckSuite::class);
+        $inspectionSuite->delete();
+        return $inspectionSuite;   
     }
 }

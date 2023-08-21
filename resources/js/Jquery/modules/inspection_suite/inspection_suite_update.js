@@ -38,8 +38,8 @@ $(function() {
         const valuation = [] 
         $('select[name="item"]').each((index,element)=>{
             valuation.push($(element).val())
-            
         })  
+        
         const register = [] 
         $('input[name="register"]').each((index,element)=>{
             register.push($(element).val())
@@ -63,7 +63,7 @@ $(function() {
         let route  = '/event/inspection_suite/'+check_suite_id
         $.post(route,form_data,(response)=>{
             DefaultAlert("success", 'Salvo com sucesso !');   
-            //window.location.replace(base_url + "/event/inspection_suite");
+            window.location.replace(base_url + "/event/inspection_suite");
         }).catch(()=>{
             DefaultAlert("error", 'Não foi possivel salvar');   
         }).always(()=>{
@@ -126,12 +126,11 @@ $(function() {
 
     //carrega os items 
     const check_suite_items = JSON.parse($('#inspection_suite_items').val()) 
-    console.log(check_suite_items)
+    //console.log(check_suite_items)
 
     // carrega avaliacao
     $('select[name="item"]').each((index,element)=>{
         $(element).val(check_suite_items[index].valuation)
-        
     })  
     
     //carrega campo registro

@@ -4,9 +4,10 @@ namespace App\Models;
 
 use App\Local;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\SoftDeletes;    
 class InspectionSuite extends Model
 {
+    use SoftDeletes;
     public function local()
     {
         return $this->belongsTo(Local::class,'local_id');

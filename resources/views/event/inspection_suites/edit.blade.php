@@ -33,7 +33,7 @@
                                             <input type="datetime-local" class="form-control" id="date" placeholder="" value="{{$inspectionSuite->date}}"
                                                 required>
                                             <input type="hidden" id="check_suite_id" value="{{ $inspectionSuite->id }}">    
-                                            <input type="text" id="inspection_suite_items" value="{{ json_encode($inspectionSuite->inspection_suite_items) }}">    
+                                            <input type="hidden" id="inspection_suite_items" value="{{ json_encode($inspectionSuite->inspection_suite_items) }}">    
                                         </div>
                                     </div>
                                     <div class="col">
