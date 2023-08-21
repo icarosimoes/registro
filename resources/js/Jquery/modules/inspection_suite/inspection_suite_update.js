@@ -126,7 +126,7 @@ $(function() {
 
     //carrega os items 
     const check_suite_items = JSON.parse($('#inspection_suite_items').val()) 
-    //console.log(check_suite_items)
+    console.log(check_suite_items)
 
     // carrega avaliacao
     $('select[name="item"]').each((index,element)=>{

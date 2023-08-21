@@ -7,8 +7,8 @@
         <div class="col-sm-12">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                <li class="breadcrumb-item active"><a href="{{ route('check_suite.index') }}">Lista de Conferência </a></li>
-                <li class="breadcrumb-item active">Editar conferência das suites</li>
+                <li class="breadcrumb-item active"><a href="{{ route('check_suite.index') }}">Lista de Vistorias </a></li>
+                <li class="breadcrumb-item active">Editar Vistoria das suites</li>
             </ol>
         </div>
         <div class="col-md-12">
@@ -21,7 +21,7 @@
                     <div class="col-md-12">
                         <div class="card card-secondary card-outline">
                             <div class="card-header">
-                                <h3 class="card-title">Visualizar conferência das suites</h3>
+                                <h3 class="card-title">Visualizar vistorias das suites</h3>
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
@@ -30,17 +30,17 @@
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="Name">Data</label>
-                                            <input type="date" disabled class="form-control" id="date" placeholder="" value="{{$checkSuite->date}}"
+                                            <input type="date" disabled class="form-control" id="date" placeholder="" value="{{$inspectionSuite->date}}"
                                                 required>
-                                            <input type="hidden" id="check_suite_id" value="{{ $checkSuite->id }}">    
-                                            <input type="hidden" id="check_suite_items" value="{{ json_encode($checkSuite->check_suite_items) }}">    
+                                            <input type="hidden" id="check_suite_id" value="{{ $inspectionSuite->id }}">    
+                                            <input type="hidden" id="inspection_suite_items" value="{{ json_encode($inspectionSuite->inspection_suite_items) }}">    
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="Name">Suite</label>
                                             <select disabled class="form-control" name="" id="local" required >
-                                                <option value="{{ $checkSuite->local->id }}">{{ $checkSuite->local->id.' - '.$checkSuite->local->name }}</option>
+                                                <option value="{{ $inspectionSuite->local->id }}">{{ $inspectionSuite->local->id.' - '.$inspectionSuite->local->name }}</option>
                                             </select>
                                         </div>
                                     </div>
@@ -48,14 +48,14 @@
                                         <div class="form-group">
                                             <label for="Name">Inspecionado por</label>
                                             <select disabled class="form-control" name="" id="user" required >
-                                                <option value="{{$checkSuite->user->id }}">{{ $checkSuite->user->id.' - '.$checkSuite->user->name }}</option>
+                                                <option value="{{$inspectionSuite->user->id }}">{{ $inspectionSuite->user->id.' - '.$inspectionSuite->user->name }}</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="form-group">
                                             <label for="Name">Camareira</label>
-                                            <input disabled class="form-control" type="text" value="{{$checkSuite->maid}}" id="maid">
+                                            <input disabled class="form-control" type="text" value="{{$inspectionSuite->maid}}" id="maid">
                                             {{-- <input type="text" class="form-control" id="inspected_by" placeholder="" required value="{{$checkSuite->inspected_by}}"> --}}
                                         </div>
                                     </div>
@@ -75,7 +75,7 @@
                                         <tbody>
                                             <tr>
                                                 <td>1</td>
-                                                <td><p>PORTA DA ENTRADA, Nº DO QUARTO E ARCO DA PORTA ESTÃO LIMPOS?</p></td>
+                                                <td><p>LIGAR O AR CONDICIONADO NO INÍCIO DA VISTORIA. FUNCIONAMENTO PLENO ?</p></td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -93,7 +93,7 @@
                                             </tr>
                                             <tr>
                                                 <td>2</td>
-                                                <td>PAVIMENTO ASPIRADO, PISO SEM MANCHAS, AROMATIZADO E REJUNTE LIMPO?</td>
+                                                <td>FUNCIONAMENTO PLENO DAS FECHADURAS (PRINCIPALMENTE MAÇANETAS) ?</td>
                                                 <td>
                                                     <select disabled  required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -110,7 +110,7 @@
                                             </tr>
                                             <tr>
                                                 <td>3</td>
-                                                <td>AS ESCADAS E GARAGEM ESTÃO LIMPAS?	</td>
+                                                <td>FUNCIONAMENTO PLENO DAS PORTA (PRINCIPALMENTE NA PARTE INFERIOR) ?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -127,7 +127,7 @@
                                             </tr>
                                             <tr>
                                                 <td>4</td>
-                                                <td>BOM FUNCIONAMENTO DAS LUZES, INTERRUPTORES E TOMADAS?</td>
+                                                <td>FUNCIONAMENTO PLENO DAS DOBRADIÇAS ?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -144,7 +144,7 @@
                                             </tr>
                                             <tr>
                                                 <td>5</td>
-                                                <td>TEMPERATURA AMENA DO QUARTO? LIGAR AR CONDICIONADO.</td>
+                                                <td>OS PISOS E REJUNTE ESTÃO SEM PRESENÇA DE MANCHAS, RACHADURAS OU REJUNTE SOLTANDO?</td>
                                                 <td>
                                                     <select disabled  required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -161,7 +161,7 @@
                                             </tr>
                                             <tr>
                                                 <td>6</td>
-                                                <td>TELEFONE ESTÁ COM FUNCIONAMENTO PLENO E LIMPO?</td>
+                                                <td>PINTURA DAS PAREDES, PORTAS, AO REDOR DE TOMADAS E INTERRUPTORES  ESTÃO SEM MANCHAS, BURACOS, INFILTRAÇÃO ?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -178,7 +178,7 @@
                                             </tr>
                                             <tr>
                                                 <td>7</td>
-                                                <td>SOFÁS, CAMAS E CABECEIRAS LIMPAS?</td>
+                                                <td>FUNCIONAMENTO PLENO DE TODA ILUMINAÇÃO (TROCA DAS LÂMPADAS E REATORES) ?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -195,7 +195,7 @@
                                             </tr>
                                             <tr>
                                                 <td>8</td>
-                                                <td>TELEVISÃO LIMPA E FUNCIONANDO?</td>
+                                                <td>FUNCIONAMENTO PLENO E LIMPEZA DOS INTERRUPTORES E TOMADAS ?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -212,7 +212,7 @@
                                             </tr>
                                             <tr>
                                                 <td>9</td>
-                                                <td>MINI BAR LIMPO POR FORA E POR DENTRO?</td>
+                                                <td>FUNCIONAMENTO PLENO DA TELEVISÃO E DOS CANAIS ?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -229,7 +229,7 @@
                                             </tr>
                                             <tr>
                                                 <td>10</td>
-                                                <td>MATERIAL DE INFORMAÇÃO (CARDÁPIOS) COMPLETOS E EM BOM ESTADO?</td>
+                                                <td>FUNCIONAMENTO PLENO DO PAINEL DE CONTROLE ( MANUTENÇÃO, TROCA DE BOTÕES OU MANUTENÇÃO NA INSTALAÇÃO ELÉTRICA) ?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -246,7 +246,7 @@
                                             </tr>
                                             <tr>
                                                 <td>11</td>
-                                                <td>CONFERIU OS ITENS DO FRIGOBAR? </td>
+                                                <td>FUNCIONAMENTO PLENO E LIMPEZA DO TELEFONE ?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -263,7 +263,7 @@
                                             </tr>
                                             <tr>
                                                 <td>12</td>
-                                                <td>CONFERIU OS ITENS DO MINIBAR? </td>
+                                                <td>FUNCIONAMENTO PLENO DA CAMPAINHA?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -280,7 +280,7 @@
                                             </tr>
                                             <tr>
                                                 <td>13</td>
-                                                <td>CONFERIU OS ITENS DO SEX SHOP? </td>
+                                                <td>BOM ESTADO DE CONSERVAÇÃO E ASPECTO VISUAL DA ROUPA DE CAMA ? </td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -297,7 +297,7 @@
                                             </tr>
                                             <tr>
                                                 <td>14</td>
-                                                <td>CONFERIU OS UTENSÍLIOS QUE PRECISAM ESTAR NA SUÍTE?</td>
+                                                <td>BOM ESTADO DE  CONSERVAÇÃO E ASPECTO VISUAL DOS MOBILIÁRIOS?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -314,7 +314,7 @@
                                             </tr>
                                             <tr>
                                                 <td>15</td>
-                                                <td>02 TRAVESSEIROS COM FRONHAS E 02 LENÇÓIS? LIMPOS E EM BOM ESTADO?  </td>
+                                                <td>BOM ESTADO  DE CONSERVAÇÃO DO PAPEL DE PAREDE ? ( INDICAR QUANDO HOUVER NECESSIDADE DA TROCA)  </td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -331,7 +331,7 @@
                                             </tr>
                                             <tr>
                                                 <td>16</td>
-                                                <td>PRESENÇA DE SUJEIRAS, MANCHAS, DESBOTAMENTOS, BURACOS, INFILTRAÇÃO OU MUDANÇA NA COR DAS PINTURAS? </td>
+                                                <td>BOM ESTADO DE CONSERVAÇÃO E  USO DAS CORTINAS ? </td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -348,7 +348,7 @@
                                             </tr>
                                             <tr>
                                                 <td>17</td>
-                                                <td>CONFERIU AS AUTOMATIZAÇÕES (PAINEL DE COMANDO)?	</td>
+                                                <td>BOM ESTADO DE CONSERVAÇÃO E  USO DO ESPELHO ?	</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -365,7 +365,7 @@
                                             </tr>
                                             <tr>
                                                 <td>18</td>
-                                                <td>OS MOBILIÁRIOS LIMPOS E EM BOM ESTADO DE USO? </td>
+                                                <td>ESTÁ OCORRENDO INFILTRAÇÃO OU CONDENSAÇÃO DO AR CONDICIONADO ?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -382,7 +382,7 @@
                                             </tr>
                                             <tr>
                                                 <td>19</td>
-                                                <td>O PAPEL DE PAREDE ESTÁ LIMPO E EM BOM ESTADO?</td>
+                                                <td>APÓS TODAS AS CONFERÊNCIAS, DESLIGAR O AR CONDICIONADO E ANALISAR SEU DESEMPENHO.  FUNCIONAMENTO PLENO ?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -399,7 +399,7 @@
                                             </tr>
                                             <tr>
                                                 <td>20</td>
-                                                <td>OS VIDROS ESTÃO LIMPOS E SEM DANOS?	</td>
+                                                <td>FUNCIONAMENTO PLENO DO AQUECIMENTO DA ÁGUA DO CHUVEIRO E DA HIDROMASSAGEM?	</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -416,7 +416,7 @@
                                             </tr>
                                             <tr>
                                                 <td>21</td>
-                                                <td>OS UTENSÍLIOS COMO BANDEJAS, COPOS, ESTÃO DEVIDAMENTE LIMPOS?</td>
+                                                <td>FEITA LIMPEZA DOS CHUVEIROS?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -433,7 +433,7 @@
                                             </tr>
                                             <tr>
                                                 <td>22</td>
-                                                <td>AS EMBALAGENS DOS COMESTÍVEIS ESTÃO LIMPAS, SEM POEIRA?	</td>
+                                                <td>ACABAMENTO DO FORRO SEM PROBLEMAS (PRINCIPALMENTE ONDE TEM UMIDADE)?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -450,7 +450,7 @@
                                             </tr>
                                             <tr>
                                                 <td>23</td>
-                                                <td>LACRE DE HIGIENIZAÇÃO DO VASO SANITÁRIO CONFORME TREINAMENTO DA ABmoteis?	</td>
+                                                <td>BOM ESTADO DE CONSERVAÇÃO DAS SABONETEIRAS, LIXEIRA, REGISTROS, TORNEIRAS E DOS DEMAIS METAIS DO BANHEIRO?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -467,7 +467,7 @@
                                             </tr>
                                             <tr>
                                                 <td>24</td>
-                                                <td>ESPELHO LIMPO E EM BOM ESTADO?	</td>
+                                                <td>CORRETO FUNCIONAMENTO DOS RALOS?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -484,7 +484,7 @@
                                             </tr>
                                             <tr>
                                                 <td>25</td>
-                                                <td>CONFERIR TEMPERATURA DA ÁGUA DOS CHUVEIROS E HIDROMASSAGEM?	</td>
+                                                <td>CORRETO FUNCIONAMENTO DA DESCARGA DOS VASOS SANITÁRIOS?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -501,7 +501,7 @@
                                             </tr>
                                             <tr>
                                                 <td>26</td>
-                                                <td>CONFERIU OS ITENS DE CONSUMO DO BANHEIRO?</td>
+                                                <td>VEDAÇÃO AO REDOR DOS VASOS SANITÁRIOS?</td>
                                                 <td>
                                                     <select disabled required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -518,7 +518,7 @@
                                             </tr>
                                             <tr>
                                                 <td>27</td>
-                                                <td>2 TOALHAS DE BANHO E 1 TAPETE? LIMPOS E EM BOM ESTADO?	</td>
+                                                <td>INFILTRAÇÃO OU MANCHAS DE MOFO NOS BANHEIROS ?</td>
                                                 <td>
                                                     <select disabled  required class="form-control form-control-sm" name="item" id="">
                                                         <option value=""></option>
@@ -533,7 +533,7 @@
                                                     <a class="btn btn-sm btn-success d-none show_occurence_id "><i class="far fa-registered">0</i></a>
                                                 </td>
                                             </tr>
-                                            <tr>
+                                            {{-- <tr>
                                                 <td>28</td>
                                                 <td>SECADOR FUNCIONANDO?	</td>
                                                 <td>
@@ -583,7 +583,7 @@
                                                     <input disabled type="hidden" name="occurrences_id" id="item-30">
                                                     <a class="btn btn-sm btn-success d-none show_occurence_id "><i class="far fa-registered">0</i></a>
                                                 </td>
-                                            </tr>
+                                            </tr> --}}
                                             
                                         </tbody>
                                     </table>
@@ -594,7 +594,7 @@
                                         <label for="Name">Observaçôes</label>
                                         <div class="form-group">
                                             
-                                            <textarea class="form-control " disabled name="" id="obs"  rows="5" >{{$checkSuite->obs}}</textarea>
+                                            <textarea class="form-control " disabled name="" id="obs"  rows="5" >{{$inspectionSuite->obs}}</textarea>
                                         </div>  
                                     </div>
                                 </div>
@@ -603,9 +603,9 @@
                                         <label for="Name">Status da Conferência</label>
                                         <div class="form-group">
                                             
-                                            <input type="radio" disabled {{$checkSuite->status=='liberado'?'checked':''}} required name="status_conf" id="status1" value="liberado">    
+                                            <input type="radio" disabled {{$inspectionSuite->status=='liberado'?'checked':''}} required name="status_conf" id="status1" value="liberado">    
                                             <label for="status1">CONFERIDA E LIBERADA</label>
-                                            <input type="radio" disabled {{$checkSuite->status=='liberado'?'':'checked'}} required class="ml-5" name="status_conf" id="status2" value="bloqueado">                                            
+                                            <input type="radio" disabled {{$inspectionSuite->status=='liberado'?'':'checked'}} required class="ml-5" name="status_conf" id="status2" value="bloqueado">                                            
                                             <label for="status2" >CONFERIDA E BLOQUEADA</label>                                        
                                         </div>  
                                     </div>
@@ -668,5 +668,5 @@ aria-labelledby="exampleModalLabel" aria-hidden="true">
 </div>
 </div> <!-- / Modal selecionar ocorrência -->
 
-@section('plugins.scriptUpdateCheckSuite', true)
+@section('plugins.scriptUpdateInspectionSuite', true)
 @endsection

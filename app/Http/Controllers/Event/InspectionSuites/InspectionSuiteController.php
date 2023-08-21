@@ -46,7 +46,6 @@ class InspectionSuiteController extends Controller
         if(isset($request->maid)){
             $checkSuites->where('maid','like',"%$request->maid%" );    
         }
-                      
 
         $checkSuites= $checkSuites->get();
         return view('event/inspection_suites/list')->with(['data' => $checkSuites,"filter"=>$filter]);
@@ -106,10 +105,10 @@ class InspectionSuiteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(CheckSuite $checkSuite)
+    public function show(InspectionSuite $inspectionSuite)
     {
         // $this->authorize('show',CheckSuite::class);
-        return view('event/check_suites/view',compact('checkSuite'));
+        return view('event/inspection_suites/view',compact('inspectionSuite'));
     }
 
     /**
