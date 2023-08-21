@@ -270,6 +270,11 @@ return [
                     'icon' => 'fas fa-fw fa fa-clipboard',
                     'url' => 'event/inspection_suite'
                 ],
+                [
+                    'text' => 'Diário de Obras',
+                    'icon' => 'fas fa-fw fa fa-clipboard',
+                    'url' => 'event/work_diary'
+                ],
             ],  
         ],
         [
@@ -801,6 +806,40 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/inspection_suite/inspection_suite_update.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptListWorkDiary',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/work_diary/work_diary_list.js',
+                ],
+            ],
+        ],
+        //DIARIO DE OBRAS
+        [
+            'name' => 'scriptCreateWorkDiary',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/work_diary/work_diary_create.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptUpdateWorkDiary',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/work_diary/work_diary_update.js',
                 ],
             ],
         ],
