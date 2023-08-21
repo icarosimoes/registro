@@ -20,7 +20,7 @@ class InspectionSuiteController extends Controller
     public function index(Request $request)
     {
         //dd('asd');
-        //$this->authorize('index',CheckSuite::class);
+        $this->authorize('index',InspectionSuite::class);
         $filter = $request->all();
 
         $checkSuites = InspectionSuite::orderBy('id','DESC');
@@ -58,7 +58,7 @@ class InspectionSuiteController extends Controller
      */
     public function create()
     {
-        // $this->authorize('store',CheckSuite::class);
+        $this->authorize('store',InspectionSuite::class);
         return view('event/inspection_suites/create');
     }
 
@@ -70,7 +70,7 @@ class InspectionSuiteController extends Controller
      */
     public function store(Request $request)
     {
-        // $this->authorize('store',CheckSuite::class);
+        $this->authorize('store',InspectionSuite::class);
         DB::beginTransaction();
         
         //salva check suite
@@ -107,7 +107,7 @@ class InspectionSuiteController extends Controller
      */
     public function show(InspectionSuite $inspectionSuite)
     {
-        // $this->authorize('show',CheckSuite::class);
+        $this->authorize('show',InspectionSuite::class);
         return view('event/inspection_suites/view',compact('inspectionSuite'));
     }
 
@@ -119,7 +119,7 @@ class InspectionSuiteController extends Controller
      */
     public function edit(InspectionSuite $inspectionSuite)
     {   
-        // $this->authorize('show',CheckSuite::class);
+        $this->authorize('show',InspectionSuite::class);
         return view('event/inspection_suites/edit',compact('inspectionSuite'));
     }
 
@@ -132,7 +132,7 @@ class InspectionSuiteController extends Controller
      */
     public function update(Request $request, InspectionSuite $inspection_suite)
     {
-        //$this->authorize('update',CheckSuite::class);
+        $this->authorize('update',InspectionSuite::class);
         DB::beginTransaction();
 
         $inspection_suite->date = $request->date;
@@ -169,7 +169,7 @@ class InspectionSuiteController extends Controller
      */
     public function destroy(InspectionSuite $inspectionSuite)
     {
-        //$this->authorize('delete',CheckSuite::class);
+        $this->authorize('delete',InspectionSuite::class);
         $inspectionSuite->delete();
         return $inspectionSuite;   
     }

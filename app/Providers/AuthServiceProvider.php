@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\CheckSuite;
 use App\Func;
 use App\Local;
+use App\Models\InspectionSuite;
 use App\Models\Meeting\meeting;
 use App\Models\Occurrence;
 use App\Models\Role;
@@ -13,6 +14,7 @@ use App\Models\User;
 use App\Policies\Admin\ProfilePolicy;
 use App\Policies\Admin\UserPolicy;
 use App\Policies\CheckSuites\CheckSuitesPolicy;
+use App\Policies\Event\InspectionSuites\InspectionSuitesPolicy;
 use App\Policies\Event\ShifitReport\ShifitReportPolicy;
 use App\Policies\Meeting\MeetingPolicy;
 use App\Policies\Occurrence\OccurrencePolicy;
@@ -45,6 +47,7 @@ class AuthServiceProvider extends ServiceProvider
         ShiftReport::class => ShifitReportPolicy::class,
         User::class => UserPolicy::class,
         Role::class => ProfilePolicy::class,
+        InspectionSuite::class => InspectionSuitesPolicy::class,
         
         
     ];
