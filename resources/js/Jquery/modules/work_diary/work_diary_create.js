@@ -72,14 +72,15 @@ $(function() {
     $('#btn_add_frequency').on('click',()=>{
      let html = `<tr>
                     
-                    <td><input type="text" class="form-control form-control-sm freq_adm_role"></td>
-                    <td><input type="text" class="form-control form-control-sm freq_adm_total"></td>
-                    <td><input type="text" class="form-control form-control-sm freq_adm_absent"></td>
-                    <td><input type="text" class="form-control form-control-sm freq_adm_effective"></td>
+                    <td><input type="text"  class="form-control form-control-sm freq_adm_role"></td>
+                    <td><input type="text"   class="form-control form-control-sm mask freq_adm_total"></td>
+                    <td><input type="text" class="form-control form-control-sm mask freq_adm_absent"></td>
+                    <td><input type="text" class="form-control form-control-sm mask freq_adm_effective"></td>
                     <td><input type="text" class="form-control form-control-sm freq_adm_obs"></td>
                 </tr>`; 
      
       $('#body_frequency_adm').append(html)
+      $(".mask").mask("999999999999");
     })
 
     $('#btn_add_frequency_prod').on('click',()=>{
@@ -87,13 +88,14 @@ $(function() {
       let html = `<tr>
                      
                      <td><input type="text" class="form-control form-control-sm freq_prod_role"></td>
-                     <td><input type="text" class="form-control form-control-sm freq_prod_total"></td>
-                     <td><input type="text" class="form-control form-control-sm freq_prod_absent"></td>
-                     <td><input type="text" class="form-control form-control-sm freq_prod_effective"></td>
+                     <td><input type="text" class="form-control form-control-sm  mask freq_prod_total"></td>
+                     <td><input type="text" class="form-control form-control-sm mask freq_prod_absent"></td>
+                     <td><input type="text" class="form-control form-control-sm mask freq_prod_effective"></td>
                      <td><input type="text" class="form-control form-control-sm freq_prod_obs"></td>
                  </tr>`; 
       
        $('#body_frequency_prod').append(html)
+       $(".mask").mask("999999999999");
      })
      
      $('#btn_add_sub').on('click',()=>{
@@ -101,13 +103,14 @@ $(function() {
       let html = `<tr>
                      <td><input type="text" class="form-control form-control-sm sub_company"></td>
                      <td><input type="text" class="form-control form-control-sm sub_role"></td>
-                     <td><input type="text" class="form-control form-control-sm sub_total"></td>
-                     <td><input type="text" class="form-control form-control-sm sub_absent"></td>
-                     <td><input type="text" class="form-control form-control-sm sub_effective"></td>
+                     <td><input type="text" class="form-control form-control-sm mask sub_total"></td>
+                     <td><input type="text" class="form-control form-control-sm mask sub_absent"></td>
+                     <td><input type="text" class="form-control form-control-sm mask sub_effective"></td>
                      <td><input type="text" class="form-control form-control-sm sub_obs"></td>
                  </tr>`; 
       
        $('#body_sub').append(html)
+       $(".mask").mask("999999999999");
      })
      
      $('#btn_add_equipament').on('click',()=>{
