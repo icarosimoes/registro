@@ -20,5 +20,17 @@ class WorkDiary extends Model
     public function work_diary_sub(){
         return $this->hasMany(WorkDiarySub::class);
     }
-    //
+    
+    public function work_diary_equipament(){
+        return $this->hasMany(WorkDiaryEquipament::class);
+    }
+    
+    public function work_diary_activity(){
+        return $this->hasMany(WorkDiaryActivity::class);
+    }
+    
+    public function work_diary_obs(){
+        return $this->hasMany(WorkDiaryObs::class);
+    }
+    
 }

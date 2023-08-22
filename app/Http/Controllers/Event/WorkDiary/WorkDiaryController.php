@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Event\WorkDiary;
 use App\Http\Controllers\Controller;
 use App\WorkDiary;
 use App\WorkDiaryFrequencyAdm;
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class WorkDiaryController extends Controller
 {
@@ -29,6 +31,9 @@ class WorkDiaryController extends Controller
         $frequency_adm = json_decode($request->frequency_adm, true);
         $frequency_prod = json_decode($request->frequency_prod, true);
         $sub = json_decode($request->sub, true);
+        $equipament = json_decode($request->equipament, true);
+        $activity = json_decode($request->activity, true);
+        $obs = json_decode($request->obs, true);
 
         DB::beginTransaction();
 
@@ -51,9 +56,26 @@ class WorkDiaryController extends Controller
             $workDiary->work_diary_sub()->create($item);
         }
 
+        //salvar equipamentos 
+        foreach ($equipament as $item) {
+            $workDiary->work_diary_equipament()->create($item);
+        }
 
+        //salvar atividades
+        foreach ($activity as $key => $item) {
 
+            //salva o arquivo anexado
+            if ($request['activity_attachment-'.$key] != 'undefined'){
+                $item['attachment']=  Storage::put('files_work_diary',$request['activity_attachment-'.$key]);
+            }
 
+            $workDiary->work_diary_activity()->create($item);
+        }
+
+        //salvar obs
+        foreach ($obs as $item) {
+            $workDiary->work_diary_obs()->create($item);
+        }
 
         DB::commit();
     }

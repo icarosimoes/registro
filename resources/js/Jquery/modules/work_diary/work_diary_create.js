@@ -29,28 +29,43 @@ $(function() {
          
 
 
-        $('.overlay').removeClass('d-none');
+        //$('.overlay').removeClass('d-none');
         let status =null 
-      
-        
-        form_data = {
-            frequency_adm: JSON.stringify(frequencyAdm) ,
-            frequency_prod: JSON.stringify(frequencyProd),
-            sub:JSON.stringify(sub),
-            equipament:JSON.stringify(equipament),
-            activity :JSON.stringify(activity),
-            obs:JSON.stringify(obs),
-        };
+              
+         let form_data = new FormData()
+         form_data.append('frequency_adm',JSON.stringify(frequencyAdm));
+         form_data.append('frequency_prod',JSON.stringify(frequencyProd));
+         form_data.append('sub',JSON.stringify(sub));
+         form_data.append('equipament',JSON.stringify(equipament));
+         form_data.append('activity',JSON.stringify(activity));
+         form_data.append('obs',JSON.stringify(obs));
+            
+         //carrega os anexos atividades
+         let count = 0
+         $('.activity_attachment').each((index,element)=>{
+           form_data.append('activity_attachment-'+count, $(element).prop('files')[0]); 
+           count++
+         })
+               
+         let route  = '/event/work_diary'
 
-        let route  = '/event/work_diary'
-        $.post(route,form_data,(response)=>{
-            DefaultAlert("success", 'Salvo com sucesso !');   
-          //  window.location.replace(base_url + "/event/check_suite");
+        $.ajax({
+            url: route, // Url do lado server que vai receber o arquivo
+            data: form_data,
+            processData: false,
+            contentType: false,
+            type: 'POST',
+            success: function (data) {
+              DefaultAlert("success", 'Salvo com sucesso !');   
+              //window.location.replace(base_url + "/event/check_suite");
+            }
         }).catch(()=>{
-            DefaultAlert("error", 'Não foi possivel salvar');   
+             DefaultAlert("error", 'Não foi possivel salvar');   
         }).always(()=>{
-            $('.overlay').addClass('d-none');
+             $('.overlay').addClass('d-none');
         })
+
+        
     });
 
     //adicionar frequecia deto adm
@@ -159,6 +174,7 @@ $(function() {
          });
          return frequency_adm
      }
+
      function getFrequencyProd (){
          const freq_prod_roles =  $('.freq_prod_role') 
          const freq_prod_totals =  $('.freq_prod_total')
@@ -240,7 +256,7 @@ $(function() {
     const activity_teams =  $('.activity_team') 
     const activity_registers =  $('.activity_register')
     const activity_descriptions =  $('.activity_description')
-    const activity_attachments =  $('.activity_attachment')
+    //const activity_attachments =  $('.activity_attachment')
     
     let activities = []
     activity_sectors.each((index,element) => {
@@ -250,7 +266,7 @@ $(function() {
        description: $(activity_teams[index]).val(),
        register: $(activity_registers[index]).val(),
        description:$(activity_descriptions[index]).val(),
-       attachment:'$(activity_attachments[index]).val()',
+      // attachment:'$(activity_attachments[index]).val()',
       }  
 
       activities.push(item)

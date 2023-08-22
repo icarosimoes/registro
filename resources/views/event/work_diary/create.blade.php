@@ -273,8 +273,7 @@
                                                         <th>DESCRIÇÃO</th>
                                                         <th width="100">REGISTRO</th>
                                                         <th>OBSERVAÇÕES</th>
-                                                        
-                                                        
+                                                                                                  
                                                     </tr>
                                                 </thead>
                                                 <tbody id='body_obs'>
