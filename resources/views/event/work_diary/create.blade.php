@@ -17,7 +17,6 @@
                 <div class="row">
                     <form name="form" id="form" class="col-12" enctype="multipart/form-data" method="POST">
                         <div class="col-md-2">
-
                             @csrf
                         </div> <!-- col-md3 -->
                         <div class="col-md-12">
@@ -33,7 +32,7 @@
                                             <table class="table table-sm">
                                                 <thead>
                                                     <tr>
-                                                        <th>SETOR</th>
+                                                        <th width="100">SETOR</th>
                                                         <th>FUNÇÃO</th>
                                                         <th width="100">TOTAL</th>
                                                         <th width="100">AUSENTE</th>
@@ -59,24 +58,22 @@
                                             <table class="table table-sm mt-2">
                                                 <thead>
                                                     <tr>
-                                                        <th>SETOR</th>
+                                                        <th width="100">SETOR</th>
                                                         <th>FUNÇÃO</th>
-                                                        <th>TOTAL</th>
-                                                        <th>AUSENTE</th>
-                                                        <th>EFETIVO</th>
+                                                        <th width="100">TOTAL</th>
+                                                        <th width="100">AUSENTE</th>
+                                                        <th width="100">EFETIVO</th>
                                                         <th>OBSERVAÇÕES</th>
                                                     </tr>
 
                                                 </thead>
-                                                <tbody>
-                                                   
-
+                                                <tbody id="body_frequency_prod">
+                                                                                                       
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="6">
-                                                            <button type="button"
-                                                                class="btn btn-default col-12  ">Adicionar</button>
+                                                            <button id="btn_add_frequency_prod" type="button" class="btn btn-default col-12" >Adicionar</button>
                                                         </td>
                                                     </tr>
                                                 </tfoot>
@@ -115,25 +112,15 @@
                                                     <tr>
                                                         <th>EMPRESA</th>
                                                         <th>FUNÇÃO</th>
-                                                        <th>TOTAL</th>
-                                                        <th>AUSENTE</th>
-                                                        <th>EFETIVO</th>
+                                                        <th width='100'>TOTAL</th>
+                                                        <th width='100'>AUSENTE</th>
+                                                        <th width='100'>EFETIVO</th>
                                                         <th>OBSERVAÇÕES</th>
                                                     </tr>
 
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>
-                                                            A
-                                                        </td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                    </tr>
-
+                                                <tbody id="body_sub" >
+                                                    
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
@@ -155,7 +142,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-center">
+                                <div class="card-footer text-center" id="btn_add_sub">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
@@ -189,16 +176,8 @@
                                                         
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>A</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        
-                                                    </tr>
-
+                                                <tbody id="body_equipament">
+                                                    
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
@@ -220,7 +199,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-center">
+                                <div class="card-footer text-center" id="btn_add_equipament">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
@@ -242,22 +221,13 @@
                                                     <tr>
                                                         <th>SETOR</th>
                                                         <th>EQUIPE</th>
-                                                        <th>REGISTRO</th>
+                                                        <th width="100">REGISTRO</th>
                                                         <th>DESCRIÇÃO</th>
-                                                        <th>ANEXO</th>
-                                                        
+                                                        <th width="200" >ANEXO</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>A</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        
-                                                    </tr>
-
+                                                <tbody id="body_activity">
+                                   
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
@@ -279,7 +249,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-center">
+                                <div class="card-footer text-center" id="btn_add_activity">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
@@ -301,22 +271,14 @@
                                                     <tr>
                                                         <th>SETOR</th>
                                                         <th>DESCRIÇÃO</th>
-                                                        <th>REGISTRO</th>
+                                                        <th width="100">REGISTRO</th>
                                                         <th>OBSERVAÇÕES</th>
                                                         
                                                         
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td>A</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        <td>a</td>
-                                                        
-                                                    </tr>
-
+                                                <tbody id='body_obs'>
+                                                    
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
@@ -338,7 +300,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-center">
+                                <div class="card-footer text-center" id="btn_add_obs">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
