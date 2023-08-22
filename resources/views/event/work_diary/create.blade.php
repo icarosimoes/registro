@@ -22,7 +22,7 @@
                         <div class="col-md-12">
                             <div class="card card-secondary card-outline">
                                 <div class="card-header">
-                                    <h3 class="card-title">FREQUÊNCIA</h3>
+                                    <h3 class="card-title">FREQUÊNCIA ADMINISTRAÇÃO</h3>
                                 </div>
                                 <!-- /.card-header -->
                                 <!-- form start -->
@@ -32,7 +32,6 @@
                                             <table class="table table-sm">
                                                 <thead>
                                                     <tr>
-                                                        <th width="100">SETOR</th>
                                                         <th>FUNÇÃO</th>
                                                         <th width="100">TOTAL</th>
                                                         <th width="100">AUSENTE</th>
@@ -48,17 +47,47 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="6">
-                                                            <button type="button"
-                                                                class="btn btn-default col-12  " id="btn_add_frequency">Adicionar</button>
+                                                            {{-- <button type="button"
+                                                                class="btn btn-default col-12  " >Adicionar</button> --}}
                                                         </td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
 
+                                            
+                                        </div>
+                                    </div>
+
+                                    <div class="overlay-wrapper">
+                                        <div class="d-none overlay">
+                                            <i class="fas fa-3x fa-sync-alt fa-spin"></i>
+                                            <div class="text-bold pt-2">Carregando...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.card-body -->
+                                <div class="card-footer text-center" style="cursor: pointer" id="btn_add_frequency">
+                                    <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
+                                        href="javascript:">Adicionar Novo Item</a>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="card card-secondary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">FREQUÊNCIA PRODUÇÃO </h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <!-- form start -->
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            
                                             <table class="table table-sm mt-2">
                                                 <thead>
                                                     <tr>
-                                                        <th width="100">SETOR</th>
+                                                        
                                                         <th>FUNÇÃO</th>
                                                         <th width="100">TOTAL</th>
                                                         <th width="100">AUSENTE</th>
@@ -73,7 +102,7 @@
                                                 <tfoot>
                                                     <tr>
                                                         <td colspan="6">
-                                                            <button id="btn_add_frequency_prod" type="button" class="btn btn-default col-12" >Adicionar</button>
+                                                            {{-- <button  type="button" class="btn btn-default col-12" >Adicionar</button> --}}
                                                         </td>
                                                     </tr>
                                                 </tfoot>
@@ -89,11 +118,12 @@
                                     </div>
                                 </div>
                                 <!-- /.card-body -->
+                                <div class="card-footer text-center" style="cursor: pointer" id="btn_add_frequency_prod">
+                                    <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
+                                        href="javascript:">Adicionar Novo Item</a>
+                                </div>
 
-                                {{-- <div class="card-footer">
-                                <button type="submit" id="submit" name="submit"
-                                    class="btn btn-secondary float-lg-right"><i class="fas fa-save"></i> Salvar</button>
-                            </div> --}}
+                                
 
                             </div>
                         </div>
@@ -142,7 +172,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-center" id="btn_add_sub">
+                                <div class="card-footer text-center" style="cursor: pointer" id="btn_add_sub">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
@@ -199,7 +229,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-center" id="btn_add_equipament">
+                                <div class="card-footer text-center" style="cursor: pointer" id="btn_add_equipament">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
@@ -249,7 +279,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-center" id="btn_add_activity">
+                                <div class="card-footer text-center" style="cursor: pointer" id="btn_add_activity">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
@@ -299,7 +329,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="card-footer text-center" id="btn_add_obs">
+                                <div class="card-footer text-center" style="cursor: pointer" id="btn_add_obs">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>

@@ -71,7 +71,7 @@ $(function() {
     //adicionar frequecia deto adm
     $('#btn_add_frequency').on('click',()=>{
      let html = `<tr>
-                    <td>ADM</td>
+                    
                     <td><input type="text" class="form-control form-control-sm freq_adm_role"></td>
                     <td><input type="text" class="form-control form-control-sm freq_adm_total"></td>
                     <td><input type="text" class="form-control form-control-sm freq_adm_absent"></td>
@@ -85,7 +85,7 @@ $(function() {
     $('#btn_add_frequency_prod').on('click',()=>{
       
       let html = `<tr>
-                     <td>PRODUÇÃO</td>
+                     
                      <td><input type="text" class="form-control form-control-sm freq_prod_role"></td>
                      <td><input type="text" class="form-control form-control-sm freq_prod_total"></td>
                      <td><input type="text" class="form-control form-control-sm freq_prod_absent"></td>
