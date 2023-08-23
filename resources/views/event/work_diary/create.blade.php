@@ -37,6 +37,7 @@
                                                         <th width="100">AUSENTE</th>
                                                         <th width="100">EFETIVO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th width="70"></th>
                                                     </tr>
 
                                                 </thead>
@@ -93,6 +94,7 @@
                                                         <th width="100">AUSENTE</th>
                                                         <th width="100">EFETIVO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th width="70"></th>
                                                     </tr>
 
                                                 </thead>
@@ -146,6 +148,7 @@
                                                         <th width='100'>AUSENTE</th>
                                                         <th width='100'>EFETIVO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th width='70' ></th>
                                                     </tr>
 
                                                 </thead>
@@ -203,7 +206,7 @@
                                                         <th>INÍCIO</th>
                                                         <th>DEVOLUÇÃO</th>
                                                         <th>SERVIÇO</th>
-                                                        
+                                                        <th width='70' ></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="body_equipament">
@@ -254,6 +257,7 @@
                                                         <th width="100">REGISTRO</th>
                                                         <th>DESCRIÇÃO</th>
                                                         <th width="200" >ANEXO</th>
+                                                        <th width='70'></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="body_activity">
@@ -303,6 +307,7 @@
                                                         <th>DESCRIÇÃO</th>
                                                         <th width="100">REGISTRO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th width="70" ></th>
                                                                                                   
                                                     </tr>
                                                 </thead>
