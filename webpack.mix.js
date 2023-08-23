@@ -60,6 +60,7 @@ mix.react('resources/js/app.js', 'public/js')
     //work diary
     .js('resources/js/Jquery/modules/work_diary/work_diary_create.js', 'public/js/jquery/modules/work_diary')
     .js('resources/js/Jquery/modules/work_diary/work_diary_update.js', 'public/js/jquery/modules/work_diary')
+    .js('resources/js/Jquery/modules/work_diary/work_diary_view.js', 'public/js/jquery/modules/work_diary')
     .js('resources/js/Jquery/modules/work_diary/work_diary_list.js', 'public/js/jquery/modules/work_diary')
     
     //shiftReport

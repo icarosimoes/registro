@@ -15,6 +15,7 @@ $(function() {
         timer: 3000
     });
 
+    
     //carregar os dados 
 
     const load_frequency_adm =  JSON.parse($('#load_frequency_adm').val())
@@ -87,7 +88,9 @@ $(function() {
                      <td><input type="text" class="form-control form-control-sm activity_team" value="${element.team}"></td>
                      <td><input type="text" class="form-control form-control-sm activity_register" value="${element.register}"></td>
                      <td><input type="text" class="form-control form-control-sm activity_description" value="${element.description}"></td>
-                     <td><input type="file" class="form-control form-control-sm activity_attachment" ></td>
+                     <td class="text-right">
+                        <a target="_blank" href="${base_url+'/event/work_diary/download_activity/'+element.id}" class="btn btn-secondary ${(element.attachment ==null?'disabled':'' )}"><i class="fas fa-download"></i></a>
+                     </td>
                     </tr>`; 
       
        $('#body_activity').append(html)
@@ -265,7 +268,11 @@ $(function() {
        $('#body_obs').append(html)
      })
  
-     
+     //BLOQUEIA INPUTS
+     $('input').attr('readonly',true)
+     $('.card-footer').hide()
+
+
     function getFrequencyAdm (){
       const freq_adm_roles =  $('.freq_adm_role') 
          const freq_adm_totals =  $('.freq_adm_total')

@@ -809,6 +809,7 @@ return [
                 ],
             ],
         ],
+        //DIARIO DE OBRAS
         [
             'name' => 'scriptListWorkDiary',
             'active' => false,
@@ -820,7 +821,7 @@ return [
                 ],
             ],
         ],
-        //DIARIO DE OBRAS
+        
         [
             'name' => 'scriptCreateWorkDiary',
             'active' => false,
@@ -840,6 +841,17 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/work_diary/work_diary_update.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptViewWorkDiary',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/work_diary/work_diary_view.js',
                 ],
             ],
         ],
