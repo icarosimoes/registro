@@ -51,7 +51,7 @@ class WorkDiaryController extends Controller
         foreach ($frequency_prod as $item) {
             $workDiary->work_diary_frequency_prod()->create($item);
         }
-        
+
         //salva as sub- empreiteiras
         foreach ($sub as $item) {
             $workDiary->work_diary_sub()->create($item);
@@ -66,8 +66,8 @@ class WorkDiaryController extends Controller
         foreach ($activity as $key => $item) {
 
             //salva o arquivo anexado
-            if ($request['activity_attachment-'.$key] != 'undefined'){
-                $item['attachment']=  Storage::put('files_work_diary',$request['activity_attachment-'.$key]);
+            if ($request['activity_attachment-' . $key] != 'undefined') {
+                $item['attachment'] =  Storage::put('files_work_diary', $request['activity_attachment-' . $key]);
             }
 
             $workDiary->work_diary_activity()->create($item);
@@ -83,12 +83,12 @@ class WorkDiaryController extends Controller
 
     public function show(WorkDiary $workDiary)
     {
-        return view('event/work_diary/view',compact('workDiary')); 
+        return view('event/work_diary/view', compact('workDiary'));
     }
 
     public function edit(WorkDiary $workDiary)
     {
-        return view('event/work_diary/edit',compact('workDiary')); 
+        return view('event/work_diary/edit', compact('workDiary'));
     }
 
     public function update(Request $request, WorkDiary $workDiary)
@@ -112,13 +112,13 @@ class WorkDiaryController extends Controller
             $workDiary->work_diary_frequency_adm()->create($item);
         }
 
-        
+
         //salva as frequencia prod
         $workDiary->work_diary_frequency_prod()->delete();
         foreach ($frequency_prod as $item) {
             $workDiary->work_diary_frequency_prod()->create($item);
         }
-        
+
         //salva as sub- empreiteiras
         $workDiary->work_diary_sub()->delete();
         foreach ($sub as $item) {
@@ -133,12 +133,42 @@ class WorkDiaryController extends Controller
 
         //salvar atividades
         foreach ($activity as $key => $item) {
-            //salva o arquivo anexado
-            if ($request['activity_attachment-'.$key] != 'undefined'){
-                $item['attachment']=  Storage::put('files_work_diary',$request['activity_attachment-'.$key]);
+
+            if ($item['id'] != '') { //update
+
+                //salva o arquivo anexado
+                if ($request['activity_attachment-' . $key] != 'undefined') {
+                    $item['attachment'] =  Storage::put('files_work_diary', $request['activity_attachment-' . $key]);
+                } else {
+                    $item['attachment'] = null;
+                }
+
+                $workDiaryActivity = WorkDiaryActivity::find($item['id']);
+                $workDiaryActivity->sector = $item['sector']; 
+                $workDiaryActivity->team = $item['team']; 
+                $workDiaryActivity->description = $item['description']; 
+                $workDiaryActivity->register = $item['register']; 
+
+                if($item['attachment']){
+                    $workDiaryActivity->attachment = $item['attachment']; 
+                }
+                $workDiaryActivity->save();
+
+            } else { //store
+
+                //salva o arquivo anexado
+                if ($request['activity_attachment-' . $key] != 'undefined') {
+                    $item['attachment'] =  Storage::put('files_work_diary', $request['activity_attachment-' . $key]);
+                } 
+
+                $workDiary->work_diary_activity()->create($item);
+
             }
 
-            $workDiary->work_diary_activity()->create($item);
+
+            
+
+            
         }
 
         //salvar obs
@@ -152,12 +182,11 @@ class WorkDiaryController extends Controller
 
     public function destroy(WorkDiary $workDiary)
     {
-        $workDiary->delete();  
+        $workDiary->delete();
     }
-    
+
     public function downloadActivity(WorkDiaryActivity $id)
     {
-       return Storage::download($id->attachment);
+        return Storage::download($id->attachment);
     }
-    
 }

@@ -13,7 +13,7 @@
                 <li class="breadcrumb-item active">Editar Diário de Obras</li>
             </ol>
         </div>
-
+                
         <input id="id" type="hidden" value="{{$workDiary->id}}">
         <input id="load_frequency_adm" type="hidden" value="{{$workDiary->work_diary_frequency_adm}}">
         <input id="load_frequency_prod" type="hidden" value="{{$workDiary->work_diary_frequency_prod}}">
@@ -48,6 +48,7 @@
                                                         <th width="100">AUSENTE</th>
                                                         <th width="100">EFETIVO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th></th>
                                                     </tr>
 
                                                 </thead>
@@ -104,6 +105,7 @@
                                                         <th width="100">AUSENTE</th>
                                                         <th width="100">EFETIVO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th></th>
                                                     </tr>
 
                                                 </thead>
@@ -157,6 +159,7 @@
                                                         <th width='100'>AUSENTE</th>
                                                         <th width='100'>EFETIVO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th></th>
                                                     </tr>
 
                                                 </thead>
@@ -214,6 +217,7 @@
                                                         <th>INÍCIO</th>
                                                         <th>DEVOLUÇÃO</th>
                                                         <th>SERVIÇO</th>
+                                                        <th></th>
                                                         
                                                     </tr>
                                                 </thead>
@@ -265,6 +269,7 @@
                                                         <th width="100">REGISTRO</th>
                                                         <th>DESCRIÇÃO</th>
                                                         <th width="200" >ANEXO</th>
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="body_activity">
@@ -314,6 +319,7 @@
                                                         <th>DESCRIÇÃO</th>
                                                         <th width="100">REGISTRO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th></th>
                                                                                                   
                                                     </tr>
                                                 </thead>

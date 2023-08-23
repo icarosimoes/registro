@@ -24,82 +24,123 @@ $(function() {
     const load_activity =  JSON.parse($('#load_activity').val())
     const load_obs =  JSON.parse($('#load_obs').val())
     
-    console.log(load_obs)
-    
-    load_frequency_adm.forEach(element => {
-        let html = `<tr>
+        
+    load_frequency_adm.forEach((element,index) => {
+      index =  'A'+index  
+      let html = `<tr id="row-${index}">
                         <td><input type="text" class="form-control form-control-sm freq_adm_role" value="${element.role}"></td>
                         <td><input type="text" class="form-control form-control-sm mask freq_adm_total" value="${element.total}"></td>
                         <td><input type="text" class="form-control form-control-sm mask freq_adm_absent" value="${element.absent}"></td>
                         <td><input type="text" class="form-control form-control-sm mask freq_adm_effective" value="${element.effective}"></td>
                         <td><input type="text" class="form-control form-control-sm freq_adm_obs" value="${element.obs}"></td>
+                        <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                     </tr>`; 
      
       $('#body_frequency_adm').append(html)
-      $(".mask").mask("999999999999");
+      $(".mask").maskMoney({
+        allowNegative: false,
+        allowZero: true,
+        thousands: '',
+        decimal: ',',
+        affixesStay: false,
+        precision:0
+      });
     
     });
     
-    load_frequency_prod.forEach(element => {
-        let html = `<tr>
+    load_frequency_prod.forEach((element,index) => {
+        index =  'P'+index
+        let html = `<tr id="row-${index}">
                      <td><input type="text" class="form-control form-control-sm freq_prod_role" value="${element.role}" ></td>
                      <td><input type="text" class="form-control form-control-sm  mask freq_prod_total" value="${element.total}"></td>
                      <td><input type="text" class="form-control form-control-sm mask freq_prod_absent" value="${element.absent}"></td>
                      <td><input type="text" class="form-control form-control-sm mask freq_prod_effective" value="${element.effective}"></td>
                      <td><input type="text" class="form-control form-control-sm freq_prod_obs" value="${element.obs}"></td>
+                     <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                  </tr>`; 
       
        $('#body_frequency_prod').append(html)
-       $(".mask").mask("999999999999");
+       $(".mask").maskMoney({
+        allowNegative: false,
+        allowZero: true,
+        thousands: '',
+        decimal: ',',
+        affixesStay: false,
+        precision:0
+      });
     })
 
-    load_sub.forEach(element => {
-        
-       let html = `<tr>
+    load_sub.forEach((element,index) => {
+       index =  'S'+index
+       let html = `<tr id="row-${index}">
                      <td><input type="text" class="form-control form-control-sm sub_company" value="${element.company}"></td>
                      <td><input type="text" class="form-control form-control-sm sub_role" value="${element.role}"></td>
                      <td><input type="text" class="form-control form-control-sm mask sub_total" value="${element.total}"></td>
                      <td><input type="text" class="form-control form-control-sm mask sub_absent" value="${element.absent}"></td>
                      <td><input type="text" class="form-control form-control-sm mask sub_effective" value="${element.effective}"></td>
                      <td><input type="text" class="form-control form-control-sm sub_obs" value="${element.obs}"></td>
+                     <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                    </tr>`; 
       
        $('#body_sub').append(html)
-       $(".mask").mask("999999999999");
+       $(".mask").maskMoney({
+        allowNegative: false,
+        allowZero: true,
+        thousands: '',
+        decimal: ',',
+        affixesStay: false,
+        precision:0
+      });
     })
 
-    load_equipament.forEach(element => {
-    let html = `<tr>
+    
+    load_equipament.forEach((element,index) => {
+      index =  'E'+index
+      let html = `<tr id="row-${index}" >
                      <td><input type="text" class="form-control form-control-sm equipament_supply" value="${element.supply}"></td>
                      <td><input type="text" class="form-control form-control-sm equipament_description" value="${element.description}"></td>
                      <td><input type="date" class="form-control form-control-sm equipament_start" value="${element.start}"></td>
                      <td><input type="date" class="form-control form-control-sm equipament_end" value="${element.end}"></td>
                      <td><input type="text" class="form-control form-control-sm equipament_service" value="${element.service}"></td>
-                     
+                     <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                  </tr>`; 
       
        $('#body_equipament').append(html)
     })
     
-    load_activity.forEach(element => {
-        let html = `<tr>
-                     <td><input type="text" class="form-control form-control-sm activity_sector" value="${element.sector}"></td>
+    load_activity.forEach((element,index) => {
+        index = 'Q'+index  
+      let html = `<tr id="row-${index}">
+                     <td>
+                        <input type="hidden" class="form-control form-control-sm activity_id" value="${element.id}">
+                        <input type="text" class="form-control form-control-sm activity_sector" value="${element.sector}">
+                     </td>
                      <td><input type="text" class="form-control form-control-sm activity_team" value="${element.team}"></td>
                      <td><input type="text" class="form-control form-control-sm activity_register" value="${element.register}"></td>
                      <td><input type="text" class="form-control form-control-sm activity_description" value="${element.description}"></td>
-                     <td><input type="file" class="form-control form-control-sm activity_attachment" ></td>
+                     <td>
+                        <div class="input-group mb-3">
+                        <input type="file" id="file" class="form-control form-control-sm activity_attachment">
+                        <div class="input-group-append">
+                            <a target="_blank" href="${base_url+'/event/work_diary/download_activity/'+element.id}" class="btn btn-secondary form-control-sm ${(element.attachment ==null?'disabled':'' )}"><i class="fas fa-download"></i></a>
+                        </div>
+                        </div>
+                    </td>
+                    <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                     </tr>`; 
       
        $('#body_activity').append(html)
     })
 
-    load_obs.forEach(element => {
-    let html = `<tr>
+    load_obs.forEach((element,index) => {
+    
+    index = 'O'+index  
+    let html = `<tr id="row-${index}">
                      <td><input type="text" class="form-control form-control-sm obs_sector" value="${element.sector}"></td>
                      <td><input type="text" class="form-control form-control-sm obs_description" value="${element.description}"></td>
                      <td><input type="text" class="form-control form-control-sm obs_register" value="${element.register}"></td>
                      <td><input type="text" class="form-control form-control-sm obs_obs" value="${element.obs}"></td>
-                     
+                     <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                   </tr>`; 
       
        $('#body_obs').append(html)
@@ -148,7 +189,7 @@ $(function() {
             type: 'POST',
             success: function (data) {
               DefaultAlert("success", 'Salvo com sucesso !');   
-              window.location.replace(base_url + "/event/work_diary");
+              //window.location.replace(base_url + "/event/work_diary");
             }
         }).catch(()=>{
              DefaultAlert("error", 'Não foi possivel salvar');   
@@ -161,12 +202,14 @@ $(function() {
 
     //adicionar frequecia deto adm
     $('#btn_add_frequency').on('click',()=>{
-    let html = `<tr>
+      const timestamp = new Date().getTime();
+      let html = `<tr id="row-${timestamp}">
                     <td><input type="text"  class="form-control form-control-sm freq_adm_role"></td>
                     <td><input type="text" value="0" class="form-control form-control-sm mask freq_adm_total"></td>
                     <td><input type="text" value="0" class="form-control form-control-sm mask freq_adm_absent"></td>
                     <td><input type="text" value="0" class="form-control form-control-sm mask freq_adm_effective"></td>
                     <td><input type="text" class="form-control form-control-sm freq_adm_obs"></td>
+                    <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                 </tr>`; 
      
       $('#body_frequency_adm').append(html)
@@ -181,14 +224,14 @@ $(function() {
     })
 
     $('#btn_add_frequency_prod').on('click',()=>{
-      
-      let html = `<tr>
-                     
+      const timestamp = new Date().getTime();
+      let html = `<tr id="row-${timestamp}">
                      <td><input type="text" class="form-control form-control-sm freq_prod_role"></td>
                      <td><input type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
                      <td><input type="text" value="0" class="form-control form-control-sm mask freq_prod_absent"></td>
                      <td><input type="text" value="0" class="form-control form-control-sm mask freq_prod_effective"></td>
                      <td><input type="text" class="form-control form-control-sm freq_prod_obs"></td>
+                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                  </tr>`; 
       
        $('#body_frequency_prod').append(html)
@@ -204,14 +247,15 @@ $(function() {
      })
      
      $('#btn_add_sub').on('click',()=>{
-      
-      let html = `<tr>
+      const timestamp = new Date().getTime();
+      let html = `<tr id="row-${timestamp}">
                      <td><input type="text" class="form-control form-control-sm sub_company"></td>
                      <td><input type="text" class="form-control form-control-sm sub_role"></td>
                      <td><input type="text" value="0" class="form-control form-control-sm mask sub_total"></td>
                      <td><input type="text" value="0" class="form-control form-control-sm mask sub_absent"></td>
                      <td><input type="text" value="0" class="form-control form-control-sm mask sub_effective"></td>
                      <td><input type="text" class="form-control form-control-sm sub_obs"></td>
+                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                  </tr>`; 
       
        $('#body_sub').append(html)
@@ -226,40 +270,57 @@ $(function() {
      })
      
      $('#btn_add_equipament').on('click',()=>{
-      
-      let html = `<tr>
+      const timestamp = new Date().getTime();
+      let html = `<tr id="row-${timestamp}">
                      <td><input type="text" class="form-control form-control-sm equipament_supply"></td>
                      <td><input  type="text"  class="form-control form-control-sm equipament_description"></td>
                      <td><input required type="date" class="form-control form-control-sm equipament_start"></td>
                      <td><input required type="date" class="form-control form-control-sm equipament_end"></td>
                      <td><input type="text" class="form-control form-control-sm equipament_service"></td>
-                     
+                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                  </tr>`; 
       
        $('#body_equipament').append(html)
      })
+
+     //REMOVE LINHA EQUIPAMENT
+    $(document).on('click','.remove_equipament',(e)=>{
+      const count = $(e.currentTarget).attr('data-count')
+      $('#row-'+count).remove()
+    }) 
  
      $('#btn_add_activity').on('click',()=>{
-      
-      let html = `<tr>
-                     <td><input type="text" class="form-control form-control-sm activity_sector"></td>
+      const timestamp = new Date().getTime();
+      let html = `<tr id="row-${timestamp}">
+                     <td>
+                     <input type="hidden" class="form-control form-control-sm activity_id" value="">
+                     <input type="text" class="form-control form-control-sm activity_sector">
+                     </td>
                      <td><input type="text" class="form-control form-control-sm activity_team"></td>
                      <td><input type="text" class="form-control form-control-sm activity_register"></td>
                      <td><input type="text" class="form-control form-control-sm activity_description"></td>
-                     <td><input type="file" class="form-control form-control-sm activity_attachment"></td>
+                     <td>
+                        <div class="input-group mb-3">
+                          <input type="file" id="file" class="form-control form-control-sm activity_attachment">
+                          <div class="input-group-append">
+                              <a target="_blank" href="" class="btn btn-secondary form-control-sm disabled"><i class="fas fa-download"></i></a>
+                          </div>
+                        </div>
+                     </td>
+                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                   </tr>`; 
       
        $('#body_activity').append(html)
      })
      
      $('#btn_add_obs').on('click',()=>{
-      
-      let html = `<tr>
+      const timestamp = new Date().getTime();
+      let html = `<tr id="row-${timestamp}" >
                      <td><input type="text" class="form-control form-control-sm obs_sector"></td>
                      <td><input type="text" class="form-control form-control-sm obs_description"></td>
                      <td><input type="text" class="form-control form-control-sm obs_register"></td>
                      <td><input type="text" class="form-control form-control-sm obs_obs"></td>
-                     
+                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                   </tr>`; 
       
        $('#body_obs').append(html)
@@ -367,6 +428,7 @@ $(function() {
 
   function getActivity(){
     
+    const activity_ids =  $('.activity_id') 
     const activity_sectors =  $('.activity_sector') 
     const activity_teams =  $('.activity_team') 
     const activity_registers =  $('.activity_register')
@@ -377,6 +439,7 @@ $(function() {
     activity_sectors.each((index,element) => {
      
      const item = {
+       id: $(activity_ids[index]).val(),
        sector: $(element).val(), 
        team: $(activity_teams[index]).val(),
        register: $(activity_registers[index]).val(),
