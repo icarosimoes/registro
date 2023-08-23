@@ -13,13 +13,13 @@
             </ol>
         </div>
 
-        <input id="id" type="text" value="{{$workDiary->id}}">
-        <input id="load_frequency_adm" type="text" value="{{$workDiary->work_diary_frequency_adm}}">
-        <input id="load_frequency_prod" type="text" value="{{$workDiary->work_diary_frequency_prod}}">
-        <input id="load_sub" type="text" value="{{$workDiary->work_diary_sub}}">
-        <input id="load_equipament" type="text" value="{{$workDiary->work_diary_equipament}}">
-        <input id="load_activity" type="text" value="{{$workDiary->work_diary_activity}}">
-        <input id="load_obs" type="text" value="{{$workDiary->work_diary_obs}}">
+        <input id="id" type="hidden" value="{{$workDiary->id}}">
+        <input id="load_frequency_adm" type="hidden" value="{{$workDiary->work_diary_frequency_adm}}">
+        <input id="load_frequency_prod" type="hidden" value="{{$workDiary->work_diary_frequency_prod}}">
+        <input id="load_sub" type="hidden" value="{{$workDiary->work_diary_sub}}">
+        <input id="load_equipament" type="hidden" value="{{$workDiary->work_diary_equipament}}">
+        <input id="load_activity" type="hidden" value="{{$workDiary->work_diary_activity}}">
+        <input id="load_obs" type="hidden" value="{{$workDiary->work_diary_obs}}">
 
 
         <div class="col-md-12">

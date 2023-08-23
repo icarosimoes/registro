@@ -137,7 +137,7 @@ $(function() {
            form_data.append('activity_attachment-'+count, $(element).prop('files')[0]); 
            count++
          })
-          const id = $('#id').val()    
+         const id = $('#id').val()    
          let route  = '/event/work_diary/'+id
          form_data.append('_method','PUT');
         $.ajax({
@@ -357,7 +357,7 @@ $(function() {
      
      const item = {
        sector: $(element).val(), 
-       description: $(activity_teams[index]).val(),
+       team: $(activity_teams[index]).val(),
        register: $(activity_registers[index]).val(),
        description:$(activity_descriptions[index]).val(),
       // attachment:'$(activity_attachments[index]).val()',
