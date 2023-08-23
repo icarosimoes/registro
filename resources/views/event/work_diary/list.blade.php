@@ -92,33 +92,27 @@
                                 <tr>
                                     <th>Id</th>
                                     <th>Data</th>
-                                    <th>Suite</th>
-                                    <th>Inspecionado por</th>
-                                    <th>Camareira</th>
                                     <th class="text-right">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($data as $item)
+                                @foreach ($workDiary as $item)
                                     <tr >
                                         {{-- @foreach ($roles as $role) --}}
                                             <td width="50">{{ $item->id }}</td>
                                             <td >{{ date("d/m/Y",strtotime($item->date)) }}</td>
-                                            <td >{{ @$item->local->name }}</td>
-                                            <td >{{ @$item->user->name }}</td>
-                                            <td >{{ @$item->maid }}</td>
                                             <td class="text-right">
                                                 <div class="btn-group-sm">
                                                     {{-- @can('checkRouters', $route =
                                                     'view.client') --}}
-                                                    <a href="{{ route('check_suite.show', [$item->id]) }}"
+                                                    <a href="{{ route('work_diary.show', [$item->id]) }}"
                                                         data-toggle="tooltip" data-placement="top" title="Visualizar"
                                                         class="btn btn-default"><i class="fas fa-eye"></i></a> 
                                                     {{-- @endcan
                                                     --}}
                                                     {{-- @can('checkRouters', $route =
                                                     'edit.client') --}}
-                                                    <a href="{{ route('check_suite.edit', [$item->id]) }}"
+                                                    <a href="{{ route('work_diary.edit', [$item->id]) }}"
                                                         data-toggle="tooltip" data-placement="top" title="Editar"
                                                         class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a>
                                                     {{-- @endcan
@@ -170,5 +164,5 @@
       </div>
       
 
-      @section('plugins.scriptListCheckSuite', true)
+      @section('plugins.scriptListWorkDiary', true)
 @endsection

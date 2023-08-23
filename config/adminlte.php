@@ -809,6 +809,7 @@ return [
                 ],
             ],
         ],
+        //DIARIO DE OBRAS
         [
             'name' => 'scriptListWorkDiary',
             'active' => false,
@@ -820,7 +821,7 @@ return [
                 ],
             ],
         ],
-        //DIARIO DE OBRAS
+        
         [
             'name' => 'scriptCreateWorkDiary',
             'active' => false,

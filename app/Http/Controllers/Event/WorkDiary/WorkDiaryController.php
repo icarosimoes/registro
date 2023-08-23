@@ -14,8 +14,8 @@ class WorkDiaryController extends Controller
 {
     public function index()
     {
-        $data = [];
-        return view('event/work_diary/list', compact('data'));
+        $workDiary = WorkDiary::get();
+        return view('event/work_diary/list', compact('workDiary'));
     }
 
     public function create()
@@ -84,8 +84,9 @@ class WorkDiaryController extends Controller
     {
     }
 
-    public function edit()
+    public function edit(WorkDiary $workDiary)
     {
+        return view('event/work_diary/edit',compact('workDiary')); 
     }
 
     public function update()

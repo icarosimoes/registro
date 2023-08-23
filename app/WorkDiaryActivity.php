@@ -10,6 +10,7 @@ class WorkDiaryActivity extends Model
         'sector',
         'description',
         'register',
-        'attachment'
+        'attachment',
+        'team'
     ];
 }
