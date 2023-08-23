@@ -76,16 +76,25 @@ $(function() {
      let html = `<tr id="row-${timestamp}">
            
                     <td><input type="text"  class="form-control form-control-sm freq_adm_role"></td>
-                    <td><input type="text"   class="form-control form-control-sm mask freq_adm_total"></td>
-                    <td><input type="text" class="form-control form-control-sm mask freq_adm_absent"></td>
-                    <td><input type="text" class="form-control form-control-sm mask freq_adm_effective"></td>
+                    <td><input type="text"  value="0"  class="form-control form-control-sm mask freq_adm_total"></td>
+                    <td><input type="text"  value="0"class="form-control form-control-sm mask freq_adm_absent"></td>
+                    <td><input type="text"  value="0"class="form-control form-control-sm mask freq_adm_effective"></td>
                     <td><input type="text" class="form-control form-control-sm freq_adm_obs"></td>
                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_freq_adm "><i class="fas fa-trash "></i></button></td>
 
                 </tr>`; 
      
       $('#body_frequency_adm').append(html)
-      $(".mask").mask("999999999999");
+      
+      $(".mask").maskMoney({
+        allowNegative: false,
+        allowZero: true,
+        thousands: '',
+        decimal: ',',
+        affixesStay: false,
+        precision:0
+    });
+      // $(".mask").mask("999999999999");
     })
     
     //REMOVE LINHA FREQ ADM
@@ -102,15 +111,22 @@ $(function() {
       let html = `<tr id="row-${timestamp}">
                      
                      <td><input type="text" class="form-control form-control-sm freq_prod_role"></td>
-                     <td><input type="text" class="form-control form-control-sm  mask freq_prod_total"></td>
-                     <td><input type="text" class="form-control form-control-sm mask freq_prod_absent"></td>
-                     <td><input type="text" class="form-control form-control-sm mask freq_prod_effective"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm mask freq_prod_absent"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm mask freq_prod_effective"></td>
                      <td><input type="text" class="form-control form-control-sm freq_prod_obs"></td>
                      <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_freq_prod "><i class="fas fa-trash "></i></button></td>
                  </tr>`; 
       
        $('#body_frequency_prod').append(html)
-       $(".mask").mask("999999999999");
+       $(".mask").maskMoney({
+        allowNegative: false,
+        allowZero: true,
+        thousands: '',
+        decimal: ',',
+        affixesStay: false,
+        precision:0
+    });
      })
      
      //REMOVE LINHA FREQ ADM
@@ -126,15 +142,22 @@ $(function() {
       let html = `<tr id="row-${timestamp}">
                      <td><input type="text" class="form-control form-control-sm sub_company"></td>
                      <td><input type="text" class="form-control form-control-sm sub_role"></td>
-                     <td><input type="text" class="form-control form-control-sm mask sub_total"></td>
-                     <td><input type="text" class="form-control form-control-sm mask sub_absent"></td>
-                     <td><input type="text" class="form-control form-control-sm mask sub_effective"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_total"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_absent"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_effective"></td>
                      <td><input type="text" class="form-control form-control-sm sub_obs"></td>
                      <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_sub "><i class="fas fa-trash "></i></button></td>
                  </tr>`; 
       
        $('#body_sub').append(html)
-       $(".mask").mask("999999999999");
+       $(".mask").maskMoney({
+        allowNegative: false,
+        allowZero: true,
+        thousands: '',
+        decimal: ',',
+        affixesStay: false,
+        precision:0
+    });
      })
 
      //REMOVE LINHA SUB
@@ -148,8 +171,8 @@ $(function() {
       let html = `<tr id="row-${timestamp}">
                      <td><input type="text" class="form-control form-control-sm equipament_supply"></td>
                      <td><input type="text" class="form-control form-control-sm equipament_description"></td>
-                     <td><input type="date" class="form-control form-control-sm equipament_start"></td>
-                     <td><input type="date" class="form-control form-control-sm equipament_end"></td>
+                     <td><input type="date" required class="form-control form-control-sm equipament_start"></td>
+                     <td><input type="date" required class="form-control form-control-sm equipament_end"></td>
                      <td><input type="text" class="form-control form-control-sm equipament_service"></td>
                      <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td>
                  </tr>`; 

@@ -1,6 +1,7 @@
 @extends('adminlte::page')
 @section('content')
 @section('plugins.Select2', true)
+@section('plugins.JqueryMaskMoney', true)
 @section('plugins.JqueryMask', true)
 <div class="container">
     <div class="row justify-content-center">
