@@ -121,6 +121,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('check_suite','Event\CheckSuites\CheckSuitesController');    
         Route::resource('inspection_suite','Event\InspectionSuites\InspectionSuiteController');    
         Route::resource('work_diary','Event\WorkDiary\WorkDiaryController');    
+        Route::get('work_diary/download_activity/{id}','Event\WorkDiary\WorkDiaryController@downloadActivity');    
 
     });
 });

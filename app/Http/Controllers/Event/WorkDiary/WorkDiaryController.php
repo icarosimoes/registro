@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Event\WorkDiary;
 
 use App\Http\Controllers\Controller;
 use App\WorkDiary;
+use App\WorkDiaryActivity;
 use App\WorkDiaryFrequencyAdm;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
@@ -80,8 +81,9 @@ class WorkDiaryController extends Controller
         DB::commit();
     }
 
-    public function show()
+    public function show(WorkDiary $workDiary)
     {
+        return view('event/work_diary/view',compact('workDiary')); 
     }
 
     public function edit(WorkDiary $workDiary)
@@ -148,7 +150,14 @@ class WorkDiaryController extends Controller
         DB::commit();
     }
 
-    public function destroy()
+    public function destroy(WorkDiary $workDiary)
     {
+        $workDiary->delete();  
     }
+    
+    public function downloadActivity(WorkDiaryActivity $id)
+    {
+       return Storage::download($id->attachment);
+    }
+    
 }

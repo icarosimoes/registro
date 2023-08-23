@@ -845,6 +845,17 @@ return [
             ],
         ],
         [
+            'name' => 'scriptViewWorkDiary',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/work_diary/work_diary_view.js',
+                ],
+            ],
+        ],
+        [
             'name' => 'scriptCreateProfile',
             'active' => false,
             'files' => [
