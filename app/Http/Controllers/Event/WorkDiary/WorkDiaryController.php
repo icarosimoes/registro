@@ -131,9 +131,11 @@ class WorkDiaryController extends Controller
             $workDiary->work_diary_equipament()->create($item);
         }
 
+        
         //salvar atividades
+        $delete_ids = [];
         foreach ($activity as $key => $item) {
-
+            array_push($delete_ids,$item['id']);
             if ($item['id'] != '') { //update
 
                 //salva o arquivo anexado
@@ -164,12 +166,10 @@ class WorkDiaryController extends Controller
                 $workDiary->work_diary_activity()->create($item);
 
             }
-
-
-            
-
             
         }
+        $workDiary->work_diary_activity()->whereNotIn('id',$delete_ids)->delete();
+        
 
         //salvar obs
         $workDiary->work_diary_obs()->delete();
