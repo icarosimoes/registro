@@ -26,10 +26,7 @@ $(function() {
         const activity = getActivity()
         const obs = getObs()
         
-         
-
-
-        //$('.overlay').removeClass('d-none');
+        $('.overlay').removeClass('d-none');
         let status =null 
               
          let form_data = new FormData()

@@ -141,14 +141,14 @@ $(function() {
          let route  = '/event/work_diary/'+id
          form_data.append('_method','PUT');
         $.ajax({
-            url: route, // Url do lado server que vai receber o arquivo
+            url: route, 
             data: form_data,
             processData: false,
             contentType: false,
             type: 'POST',
             success: function (data) {
               DefaultAlert("success", 'Salvo com sucesso !');   
-              //window.location.replace(base_url + "/event/check_suite");
+              window.location.replace(base_url + "/event/work_diary");
             }
         }).catch(()=>{
              DefaultAlert("error", 'Não foi possivel salvar');   
@@ -162,16 +162,22 @@ $(function() {
     //adicionar frequecia deto adm
     $('#btn_add_frequency').on('click',()=>{
     let html = `<tr>
-                    
                     <td><input type="text"  class="form-control form-control-sm freq_adm_role"></td>
-                    <td><input type="text"   class="form-control form-control-sm mask freq_adm_total"></td>
-                    <td><input type="text" class="form-control form-control-sm mask freq_adm_absent"></td>
-                    <td><input type="text" class="form-control form-control-sm mask freq_adm_effective"></td>
+                    <td><input type="text" value="0" class="form-control form-control-sm mask freq_adm_total"></td>
+                    <td><input type="text" value="0" class="form-control form-control-sm mask freq_adm_absent"></td>
+                    <td><input type="text" value="0" class="form-control form-control-sm mask freq_adm_effective"></td>
                     <td><input type="text" class="form-control form-control-sm freq_adm_obs"></td>
                 </tr>`; 
      
       $('#body_frequency_adm').append(html)
-      $(".mask").mask("999999999999");
+      $(".mask").maskMoney({
+        allowNegative: false,
+        allowZero: true,
+        thousands: '',
+        decimal: ',',
+        affixesStay: false,
+        precision:0
+      });
     })
 
     $('#btn_add_frequency_prod').on('click',()=>{
@@ -179,14 +185,22 @@ $(function() {
       let html = `<tr>
                      
                      <td><input type="text" class="form-control form-control-sm freq_prod_role"></td>
-                     <td><input type="text" class="form-control form-control-sm  mask freq_prod_total"></td>
-                     <td><input type="text" class="form-control form-control-sm mask freq_prod_absent"></td>
-                     <td><input type="text" class="form-control form-control-sm mask freq_prod_effective"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm mask freq_prod_absent"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm mask freq_prod_effective"></td>
                      <td><input type="text" class="form-control form-control-sm freq_prod_obs"></td>
                  </tr>`; 
       
        $('#body_frequency_prod').append(html)
-       $(".mask").mask("999999999999");
+       
+       $(".mask").maskMoney({
+        allowNegative: false,
+        allowZero: true,
+        thousands: '',
+        decimal: ',',
+        affixesStay: false,
+        precision:0
+    });
      })
      
      $('#btn_add_sub').on('click',()=>{
@@ -194,23 +208,30 @@ $(function() {
       let html = `<tr>
                      <td><input type="text" class="form-control form-control-sm sub_company"></td>
                      <td><input type="text" class="form-control form-control-sm sub_role"></td>
-                     <td><input type="text" class="form-control form-control-sm mask sub_total"></td>
-                     <td><input type="text" class="form-control form-control-sm mask sub_absent"></td>
-                     <td><input type="text" class="form-control form-control-sm mask sub_effective"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_total"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_absent"></td>
+                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_effective"></td>
                      <td><input type="text" class="form-control form-control-sm sub_obs"></td>
                  </tr>`; 
       
        $('#body_sub').append(html)
-       $(".mask").mask("999999999999");
+       $(".mask").maskMoney({
+        allowNegative: false,
+        allowZero: true,
+        thousands: '',
+        decimal: ',',
+        affixesStay: false,
+        precision:0
+    });
      })
      
      $('#btn_add_equipament').on('click',()=>{
       
       let html = `<tr>
                      <td><input type="text" class="form-control form-control-sm equipament_supply"></td>
-                     <td><input type="text" class="form-control form-control-sm equipament_description"></td>
-                     <td><input type="date" class="form-control form-control-sm equipament_start"></td>
-                     <td><input type="date" class="form-control form-control-sm equipament_end"></td>
+                     <td><input  type="text"  class="form-control form-control-sm equipament_description"></td>
+                     <td><input required type="date" class="form-control form-control-sm equipament_start"></td>
+                     <td><input required type="date" class="form-control form-control-sm equipament_end"></td>
                      <td><input type="text" class="form-control form-control-sm equipament_service"></td>
                      
                  </tr>`; 
