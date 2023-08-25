@@ -192,7 +192,7 @@ $(function() {
       const absent =  $('#absent-'+idRow).val() // ausente
       const effective =  $('#effective-'+idRow).val() // efetivo
       const total = effective - absent
-      console.log()
+      
       if(Math.sign(total) == -1){ //verifica o total é um numero negativo 
         DefaultAlert('error','O campo AUSENTE deve ser menor ou igual ao campo EFETIVO')
         $('#absent-'+idRow).addClass('is-invalid')
@@ -202,11 +202,79 @@ $(function() {
         $('#absent-'+idRow).removeClass('is-invalid')  
         $('#btn_submit').attr('disabled',false)
         $('#total-'+idRow).val(effective - absent)
+        calcTotalAmountAdm();//calc totai adm
+        calcTotalAmountProd()// calc totais de producao
+        calcTotalAmountSub() //calc totais sub
       } 
-      
-      // return effective - absent
+   
     }
 
+    function calcTotalAmountAdm(){
+      sumTotal = 0
+      sumAbsent =0
+      sumEffective = 0 
+      
+      $('.freq_adm_total').each((index,item)=>{
+        sumTotal += parseInt($(item).val())
+      })
+      
+      $('.freq_adm_absent').each((index,item)=>{
+        sumAbsent += parseInt($(item).val())
+      })
+
+      $('.freq_adm_effective').each((index,item)=>{
+        sumEffective += parseInt($(item).val())
+      })
+
+      $('#sumTotalAdm').text(sumTotal)
+      $('#sumAbsentAdm').text(sumAbsent)
+      $('#sumEffectiveAdm').text(sumEffective)
+    }
+
+    function calcTotalAmountProd(){
+      sumTotal = 0
+      sumAbsent =0
+      sumEffective = 0 
+      
+      $('.freq_prod_total').each((index,item)=>{
+        sumTotal += parseInt($(item).val())
+      })
+      
+      $('.freq_prod_absent').each((index,item)=>{
+        sumAbsent += parseInt($(item).val())
+      })
+
+      $('.freq_prod_effective').each((index,item)=>{
+        sumEffective += parseInt($(item).val())
+      })
+
+      $('#sumTotalProd').text(sumTotal)
+      $('#sumAbsentProd').text(sumAbsent)
+      $('#sumEffectiveProd').text(sumEffective)
+    }
+
+
+    function calcTotalAmountSub(){
+      sumTotal = 0
+      sumAbsent =0
+      sumEffective = 0 
+      
+      $('.sub_total').each((index,item)=>{
+        sumTotal += parseInt($(item).val())
+      })
+      
+      $('.sub_absent').each((index,item)=>{
+        sumAbsent += parseInt($(item).val())
+      })
+
+      $('.sub_effective').each((index,item)=>{
+        sumEffective += parseInt($(item).val())
+      })
+
+      $('#sumTotalSub').text(sumTotal)
+      $('#sumAbsentSub').text(sumAbsent)
+      $('#sumEffectiveSub').text(sumEffective)
+    }
 
     // carregamento padra producao
     
