@@ -65,17 +65,149 @@ $(function() {
         
     });
 
+
+    //quantidade select
+      const options_qtd =`
+        <option>0</option>
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+        <option>9</option>
+        <option>10</option>
+        <option>11</option>
+        <option>12</option>
+        <option>13</option>
+        <option>14</option>
+        <option>15</option>
+        <option>16</option>
+        <option>17</option>
+        <option>18</option>
+        <option>19</option>
+        <option>20</option>
+        <option>21</option>
+        <option>22</option>
+        <option>23</option>
+        <option>24</option>
+        <option>25</option>
+        <option>26</option>
+        <option>27</option>
+        <option>28</option>
+        <option>29</option>
+        <option>30</option>
+        <option>31</option>
+        <option>32</option>
+        <option>33</option>
+        <option>34</option>
+        <option>35</option>
+        <option>36</option>
+        <option>37</option>
+        <option>38</option>
+        <option>39</option>
+        <option>40</option>
+        <option>41</option>
+        <option>42</option>
+        <option>43</option>
+        <option>44</option>
+        <option>45</option>
+        <option>46</option>
+        <option>47</option>
+        <option>48</option>
+        <option>49</option>
+        <option>50</option>
+      `
+
+    //carregamento padrão 
+
+    admDafault = [
+      'Engenheiro  Civil',
+      'Téc. de Edificações',
+      'Estagiário de Engenharia',
+      'Tec. de Segurança ',
+      'Aux. de Almoxarifado',
+      'Encarregado Administrativo Financeiro',
+      'Cabo de Turma Carpintaria',
+      'Vigia',
+      'Auxiliar de Ferramentaria',
+      'Estagiário de Tec de Seg.'
+    ];
+
+    admDafault.forEach((item,index) => {
+      index = 'AD'+index
+      let html = `<tr id="row-${index}">
+     
+                    <td><input value="${item}" type="text"  class="form-control form-control-sm freq_adm_role"></td>
+                    <td><input type="text" readonly  value="0"  class="form-control form-control-sm  freq_adm_total"></td>
+                    <td><select class="form-control form-control-sm freq_adm_absent">${options_qtd}</select></td>
+                    <td><select class="form-control form-control-sm freq_adm_effective">${options_qtd}</select></td>
+                    <td><input type="text" class="form-control form-control-sm freq_adm_obs"></td>
+                    <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_freq_adm "><i class="fas fa-trash "></i></button></td>
+
+                </tr>`; 
+     
+      $('#body_frequency_adm').append(html)
+    })
+    
+    // carregamento padra producao
+    
+    prodDafault = [
+    'Carpinteiro',
+    'Eletricista',	
+    'Encanador',	
+    'Pedreiro',	
+    'Ajudante Prático Eletricista',
+    'Ajudante Prático Carpintaria',
+    'Ajudante Prático Pedreiro',
+    'Ajudante Comum',
+    'Operador de Guincho',
+    'Operador de Grua',
+    'Sinaleiro',
+    ];
+    
+    
+    prodDafault.forEach((item,index) => {
+      index = 'PD'+index
+      let html = `<tr id="row-${index}">
+                  <td><input value="${item}" type="text" class="form-control form-control-sm freq_prod_role"></td>
+                  <td><input readonly type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
+                  <td><select class="form-control form-control-sm freq_prod_absent">${options_qtd}</select></td>
+                  <td><select class="form-control form-control-sm freq_prod_effective">${options_qtd}</select></td>
+                  <td><input type="text" class="form-control form-control-sm freq_prod_obs"></td>
+                  <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_freq_prod "><i class="fas fa-trash "></i></button></td>
+                </tr>`; 
+     
+                $('#body_frequency_prod').append(html)
+    })
+    
+
+
+      
+    //   $(".mask").maskMoney({
+    //     allowNegative: false,
+    //     allowZero: true,
+    //     thousands: '',
+    //     decimal: ',',
+    //     affixesStay: false,
+    //     precision:0
+    // });
+
+
+
     //adicionar frequecia deto adm
     $('#btn_add_frequency').on('click',()=>{
       
      const timestamp = new Date().getTime();
 
      let html = `<tr id="row-${timestamp}">
-           
+     
                     <td><input type="text"  class="form-control form-control-sm freq_adm_role"></td>
-                    <td><input type="text"  value="0"  class="form-control form-control-sm mask freq_adm_total"></td>
-                    <td><input type="text"  value="0"class="form-control form-control-sm mask freq_adm_absent"></td>
-                    <td><input type="text"  value="0"class="form-control form-control-sm mask freq_adm_effective"></td>
+                    <td><input  readonly type="text"  value="0"  class="form-control form-control-sm mask freq_adm_total"></td>
+                    <td><select class="form-control form-control-sm freq_adm_absent">${options_qtd}</select></td>
+                    <td><select class="form-control form-control-sm freq_adm_effective">${options_qtd}</select></td>
                     <td><input type="text" class="form-control form-control-sm freq_adm_obs"></td>
                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_freq_adm "><i class="fas fa-trash "></i></button></td>
 
@@ -108,9 +240,9 @@ $(function() {
       let html = `<tr id="row-${timestamp}">
                      
                      <td><input type="text" class="form-control form-control-sm freq_prod_role"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm mask freq_prod_absent"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm mask freq_prod_effective"></td>
+                     <td><input readonly type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
+                     <td><select class="form-control form-control-sm freq_prod_absent">${options_qtd}</select></td>
+                    <td><select class="form-control form-control-sm freq_prod_effective">${options_qtd}</select></td>
                      <td><input type="text" class="form-control form-control-sm freq_prod_obs"></td>
                      <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_freq_prod "><i class="fas fa-trash "></i></button></td>
                  </tr>`; 
@@ -139,22 +271,22 @@ $(function() {
       let html = `<tr id="row-${timestamp}">
                      <td><input type="text" class="form-control form-control-sm sub_company"></td>
                      <td><input type="text" class="form-control form-control-sm sub_role"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_total"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_absent"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_effective"></td>
+                     <td><input readonly type="text" value="0" class="form-control form-control-sm  sub_total"></td>
+                     <td><select class="form-control form-control-sm sub_absent">${options_qtd}</select></td>
+                     <td><select class="form-control form-control-sm sub_effective">${options_qtd}</select></td>
                      <td><input type="text" class="form-control form-control-sm sub_obs"></td>
                      <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_sub "><i class="fas fa-trash "></i></button></td>
                  </tr>`; 
       
        $('#body_sub').append(html)
-       $(".mask").maskMoney({
-        allowNegative: false,
-        allowZero: true,
-        thousands: '',
-        decimal: ',',
-        affixesStay: false,
-        precision:0
-    });
+    //    $(".mask").maskMoney({
+    //     allowNegative: false,
+    //     allowZero: true,
+    //     thousands: '',
+    //     decimal: ',',
+    //     affixesStay: false,
+    //     precision:0
+    // });
      })
 
      //REMOVE LINHA SUB
@@ -189,7 +321,7 @@ $(function() {
     $('#btn_add_activity').on('click',()=>{
       const timestamp = new Date().getTime();
       let html = `<tr id="row-${timestamp}">
-                     <td><input type="text" class="form-control form-control-sm activity_sector"></td>
+                     <td><input value="Produção" type="text" class="form-control form-control-sm activity_sector"></td>
                      <td><input type="text" class="form-control form-control-sm activity_team"></td>
                      <td><input type="text" class="form-control form-control-sm activity_register"></td>
                      <td><input type="text" class="form-control form-control-sm activity_description"></td>
@@ -209,7 +341,7 @@ $(function() {
      $('#btn_add_obs').on('click',()=>{
       const timestamp = new Date().getTime();
       let html = `<tr id="row-${timestamp}">
-                     <td><input type="text" class="form-control form-control-sm obs_sector"></td>
+                     <td><input value="Operacional" type="text" class="form-control form-control-sm obs_sector"></td>
                      <td><input type="text" class="form-control form-control-sm obs_description"></td>
                      <td><input type="text" class="form-control form-control-sm obs_register"></td>
                      <td><input type="text" class="form-control form-control-sm obs_obs"></td>
