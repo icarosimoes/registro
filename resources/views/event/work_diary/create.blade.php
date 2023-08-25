@@ -343,8 +343,8 @@
                             </div>
                         </div>
                         <div class="col-sm-12">
-                            <a href="#" class="btn btn-secondary mb-2">Cancelar</a>
-                            <button type="submit" class="btn btn-success float-right"><i
+                            <a href="{{route('work_diary.index')}}" class="btn btn-secondary mb-2">Voltar</a> 
+                            <button  id='btn_submit' type="submit" class="btn btn-success float-right"><i
                                     class="far fa-save"></i>&nbsp;&nbsp;Salvar</button>
                         </div>
                     </form>

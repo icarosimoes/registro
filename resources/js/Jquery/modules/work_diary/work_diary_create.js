@@ -141,9 +141,9 @@ $(function() {
       let html = `<tr id="row-${index}">
      
                     <td><input value="${item}" type="text"  class="form-control form-control-sm freq_adm_role"></td>
-                    <td><input type="text" readonly  value="0"  class="form-control form-control-sm  freq_adm_total"></td>
-                    <td><select class="form-control form-control-sm freq_adm_absent">${options_qtd}</select></td>
-                    <td><select class="form-control form-control-sm freq_adm_effective">${options_qtd}</select></td>
+                    <td><input  id="total-${index}" type="text" readonly  value="0"  class="form-control form-control-sm  freq_adm_total"></td>
+                    <td><select id="absent-${index}" class="form-control form-control-sm freq_adm_absent">${options_qtd}</select></td>
+                    <td><select id="effective-${index}" class="form-control form-control-sm freq_adm_effective">${options_qtd}</select></td>
                     <td><input type="text" class="form-control form-control-sm freq_adm_obs"></td>
                     <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_freq_adm "><i class="fas fa-trash "></i></button></td>
 
@@ -152,6 +152,62 @@ $(function() {
       $('#body_frequency_adm').append(html)
     })
     
+    $(document).on('change','.freq_adm_absent',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.freq_adm_effective',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.freq_prod_absent',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.freq_prod_effective',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.sub_absent',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.sub_effective',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    function calcTotal(idRow){
+      const absent =  $('#absent-'+idRow).val() // ausente
+      const effective =  $('#effective-'+idRow).val() // efetivo
+      const total = effective - absent
+      console.log()
+      if(Math.sign(total) == -1){ //verifica o total é um numero negativo 
+        DefaultAlert('error','O campo AUSENTE deve ser menor ou igual ao campo EFETIVO')
+        $('#absent-'+idRow).addClass('is-invalid')
+        $('#btn_submit').attr('disabled',true)
+        return false
+      }else{
+        $('#absent-'+idRow).removeClass('is-invalid')  
+        $('#btn_submit').attr('disabled',false)
+        $('#total-'+idRow).val(effective - absent)
+      } 
+      
+      // return effective - absent
+    }
+
+
     // carregamento padra producao
     
     prodDafault = [
@@ -173,9 +229,9 @@ $(function() {
       index = 'PD'+index
       let html = `<tr id="row-${index}">
                   <td><input value="${item}" type="text" class="form-control form-control-sm freq_prod_role"></td>
-                  <td><input readonly type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
-                  <td><select class="form-control form-control-sm freq_prod_absent">${options_qtd}</select></td>
-                  <td><select class="form-control form-control-sm freq_prod_effective">${options_qtd}</select></td>
+                  <td><input id="total-${index}" readonly type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
+                  <td><select id="absent-${index}" class="form-control form-control-sm freq_prod_absent">${options_qtd}</select></td>
+                  <td><select id="effective-${index}" class="form-control form-control-sm freq_prod_effective">${options_qtd}</select></td>
                   <td><input type="text" class="form-control form-control-sm freq_prod_obs"></td>
                   <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_freq_prod "><i class="fas fa-trash "></i></button></td>
                 </tr>`; 
@@ -183,20 +239,7 @@ $(function() {
                 $('#body_frequency_prod').append(html)
     })
     
-
-
-      
-    //   $(".mask").maskMoney({
-    //     allowNegative: false,
-    //     allowZero: true,
-    //     thousands: '',
-    //     decimal: ',',
-    //     affixesStay: false,
-    //     precision:0
-    // });
-
-
-
+    
     //adicionar frequecia deto adm
     $('#btn_add_frequency').on('click',()=>{
       
@@ -205,9 +248,9 @@ $(function() {
      let html = `<tr id="row-${timestamp}">
      
                     <td><input type="text"  class="form-control form-control-sm freq_adm_role"></td>
-                    <td><input  readonly type="text"  value="0"  class="form-control form-control-sm mask freq_adm_total"></td>
-                    <td><select class="form-control form-control-sm freq_adm_absent">${options_qtd}</select></td>
-                    <td><select class="form-control form-control-sm freq_adm_effective">${options_qtd}</select></td>
+                    <td><input  id="total-${timestamp}" readonly type="text"  value="0"  class="form-control form-control-sm mask freq_adm_total"></td>
+                    <td><select id="absent-${timestamp}" class="form-control form-control-sm freq_adm_absent">${options_qtd}</select></td>
+                    <td><select id="effective-${timestamp}" class="form-control form-control-sm freq_adm_effective">${options_qtd}</select></td>
                     <td><input type="text" class="form-control form-control-sm freq_adm_obs"></td>
                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_freq_adm "><i class="fas fa-trash "></i></button></td>
 
@@ -240,9 +283,9 @@ $(function() {
       let html = `<tr id="row-${timestamp}">
                      
                      <td><input type="text" class="form-control form-control-sm freq_prod_role"></td>
-                     <td><input readonly type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
-                     <td><select class="form-control form-control-sm freq_prod_absent">${options_qtd}</select></td>
-                    <td><select class="form-control form-control-sm freq_prod_effective">${options_qtd}</select></td>
+                     <td><input id="total-${timestamp}" readonly type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
+                     <td><select id="absent-${timestamp}" class="form-control form-control-sm freq_prod_absent">${options_qtd}</select></td>
+                    <td><select  id="effective-${timestamp}" class="form-control form-control-sm freq_prod_effective">${options_qtd}</select></td>
                      <td><input type="text" class="form-control form-control-sm freq_prod_obs"></td>
                      <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_freq_prod "><i class="fas fa-trash "></i></button></td>
                  </tr>`; 
@@ -271,9 +314,9 @@ $(function() {
       let html = `<tr id="row-${timestamp}">
                      <td><input type="text" class="form-control form-control-sm sub_company"></td>
                      <td><input type="text" class="form-control form-control-sm sub_role"></td>
-                     <td><input readonly type="text" value="0" class="form-control form-control-sm  sub_total"></td>
-                     <td><select class="form-control form-control-sm sub_absent">${options_qtd}</select></td>
-                     <td><select class="form-control form-control-sm sub_effective">${options_qtd}</select></td>
+                     <td><input id="total-${timestamp}" readonly type="text" value="0" class="form-control form-control-sm  sub_total"></td>
+                     <td><select id="absent-${timestamp}" class="form-control form-control-sm sub_absent">${options_qtd}</select></td>
+                     <td><select id="effective-${timestamp}" class="form-control form-control-sm sub_effective">${options_qtd}</select></td>
                      <td><input type="text" class="form-control form-control-sm sub_obs"></td>
                      <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_sub "><i class="fas fa-trash "></i></button></td>
                  </tr>`; 
