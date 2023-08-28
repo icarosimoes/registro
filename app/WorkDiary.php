@@ -2,12 +2,17 @@
 
 namespace App;
 
+use App\Models\WorkDiaryShiftTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 class WorkDiary extends Model
 {
     use SoftDeletes;
+
+    public function work_diary_shift_time(){
+        return $this->hasMany(WorkDiaryShiftTime::class);
+    }
 
     public function work_diary_frequency_adm(){
         return $this->hasMany(WorkDiaryFrequencyAdm::class);

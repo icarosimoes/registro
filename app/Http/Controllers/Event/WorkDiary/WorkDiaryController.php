@@ -15,7 +15,7 @@ class WorkDiaryController extends Controller
 {
     public function index()
     {
-        $workDiary = WorkDiary::get();
+        $workDiary = WorkDiary::orderBy('id','DESC')->get();
         return view('event/work_diary/list', compact('workDiary'));
     }
 
@@ -29,6 +29,7 @@ class WorkDiaryController extends Controller
     public function store(Request $request)
     {
 
+        $shift_time = json_decode($request->shift_time, true);
         $frequency_adm = json_decode($request->frequency_adm, true);
         $frequency_prod = json_decode($request->frequency_prod, true);
         $sub = json_decode($request->sub, true);
@@ -41,6 +42,12 @@ class WorkDiaryController extends Controller
         $workDiary  = new WorkDiary();
         $workDiary->date = now();
         $workDiary->save();
+
+
+        //salva as turno
+        foreach ($shift_time as $item) {
+            $workDiary->work_diary_shift_time()->create($item);
+        }
 
         //salva as frequencia adm
         foreach ($frequency_adm as $item) {

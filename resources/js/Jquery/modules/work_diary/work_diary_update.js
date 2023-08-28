@@ -17,6 +17,7 @@ $(function() {
 
     //carregar os dados 
 
+    const load_shift_time =  JSON.parse($('#load_shift_time').val())
     const load_frequency_adm =  JSON.parse($('#load_frequency_adm').val())
     const load_frequency_prod =  JSON.parse($('#load_frequency_prod').val())
     const load_sub =  JSON.parse($('#load_sub').val())
@@ -24,7 +25,21 @@ $(function() {
     const load_activity =  JSON.parse($('#load_activity').val())
     const load_obs =  JSON.parse($('#load_obs').val())
     
-        
+      
+
+
+    // carrega Turno/Tempo 
+     load_shift_time.forEach((item,index) => {
+      const shift  = $('.'+item.shift)
+      
+      $(shift[0]).val(item.clear)
+      $(shift[1]).val(item.cloudy)
+      $(shift[2]).val(item.rain)
+      $(shift[3]).val(item.impractical)
+      
+     })
+     
+
     load_frequency_adm.forEach((element,index) => {
       index =  'A'+index  
       let html = `<tr id="row-${index}">
@@ -189,7 +204,7 @@ $(function() {
             type: 'POST',
             success: function (data) {
               DefaultAlert("success", 'Salvo com sucesso !');   
-              //window.location.replace(base_url + "/event/work_diary");
+              window.location.replace(base_url + "/event/work_diary");
             }
         }).catch(()=>{
              DefaultAlert("error", 'Não foi possivel salvar');   

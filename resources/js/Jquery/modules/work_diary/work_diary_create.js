@@ -19,6 +19,7 @@ $(function() {
 
         event.preventDefault();
         
+        const shiftTime = getShiftTime()
         const frequencyAdm = getFrequencyAdm() 
         const frequencyProd =  getFrequencyProd()
         const sub =  getSub()
@@ -30,6 +31,7 @@ $(function() {
         let status =null 
               
          let form_data = new FormData()
+         form_data.append('shift_time',JSON.stringify(shiftTime));
          form_data.append('frequency_adm',JSON.stringify(frequencyAdm));
          form_data.append('frequency_prod',JSON.stringify(frequencyProd));
          form_data.append('sub',JSON.stringify(sub));
@@ -152,129 +154,7 @@ $(function() {
       $('#body_frequency_adm').append(html)
     })
     
-    $(document).on('change','.freq_adm_absent',(e)=>{
-      let id = $(e.currentTarget).attr('id')
-      let idRow = id.split('-')[1]
-      calcTotal(idRow)  
-
-    })
-    $(document).on('change','.freq_adm_effective',(e)=>{
-      let id = $(e.currentTarget).attr('id')
-      let idRow = id.split('-')[1]
-      calcTotal(idRow)  
-
-    })
-    $(document).on('change','.freq_prod_absent',(e)=>{
-      let id = $(e.currentTarget).attr('id')
-      let idRow = id.split('-')[1]
-      calcTotal(idRow)  
-
-    })
-    $(document).on('change','.freq_prod_effective',(e)=>{
-      let id = $(e.currentTarget).attr('id')
-      let idRow = id.split('-')[1]
-      calcTotal(idRow)  
-
-    })
-    $(document).on('change','.sub_absent',(e)=>{
-      let id = $(e.currentTarget).attr('id')
-      let idRow = id.split('-')[1]
-      calcTotal(idRow)  
-
-    })
-    $(document).on('change','.sub_effective',(e)=>{
-      let id = $(e.currentTarget).attr('id')
-      let idRow = id.split('-')[1]
-      calcTotal(idRow)  
-
-    })
-    function calcTotal(idRow){
-      const absent =  $('#absent-'+idRow).val() // ausente
-      const effective =  $('#effective-'+idRow).val() // efetivo
-      const total = effective - absent
-      
-      if(Math.sign(total) == -1){ //verifica o total é um numero negativo 
-        DefaultAlert('error','O campo AUSENTE deve ser menor ou igual ao campo EFETIVO')
-        $('#absent-'+idRow).addClass('is-invalid')
-        $('#btn_submit').attr('disabled',true)
-        return false
-      }else{
-        $('#absent-'+idRow).removeClass('is-invalid')  
-        $('#btn_submit').attr('disabled',false)
-        $('#total-'+idRow).val(effective - absent)
-        calcTotalAmountAdm();//calc totai adm
-        calcTotalAmountProd()// calc totais de producao
-        calcTotalAmountSub() //calc totais sub
-      } 
-   
-    }
-
-    function calcTotalAmountAdm(){
-      sumTotal = 0
-      sumAbsent =0
-      sumEffective = 0 
-      
-      $('.freq_adm_total').each((index,item)=>{
-        sumTotal += parseInt($(item).val())
-      })
-      
-      $('.freq_adm_absent').each((index,item)=>{
-        sumAbsent += parseInt($(item).val())
-      })
-
-      $('.freq_adm_effective').each((index,item)=>{
-        sumEffective += parseInt($(item).val())
-      })
-
-      $('#sumTotalAdm').text(sumTotal)
-      $('#sumAbsentAdm').text(sumAbsent)
-      $('#sumEffectiveAdm').text(sumEffective)
-    }
-
-    function calcTotalAmountProd(){
-      sumTotal = 0
-      sumAbsent =0
-      sumEffective = 0 
-      
-      $('.freq_prod_total').each((index,item)=>{
-        sumTotal += parseInt($(item).val())
-      })
-      
-      $('.freq_prod_absent').each((index,item)=>{
-        sumAbsent += parseInt($(item).val())
-      })
-
-      $('.freq_prod_effective').each((index,item)=>{
-        sumEffective += parseInt($(item).val())
-      })
-
-      $('#sumTotalProd').text(sumTotal)
-      $('#sumAbsentProd').text(sumAbsent)
-      $('#sumEffectiveProd').text(sumEffective)
-    }
-
-
-    function calcTotalAmountSub(){
-      sumTotal = 0
-      sumAbsent =0
-      sumEffective = 0 
-      
-      $('.sub_total').each((index,item)=>{
-        sumTotal += parseInt($(item).val())
-      })
-      
-      $('.sub_absent').each((index,item)=>{
-        sumAbsent += parseInt($(item).val())
-      })
-
-      $('.sub_effective').each((index,item)=>{
-        sumEffective += parseInt($(item).val())
-      })
-
-      $('#sumTotalSub').text(sumTotal)
-      $('#sumAbsentSub').text(sumAbsent)
-      $('#sumEffectiveSub').text(sumEffective)
-    }
+    
 
     // carregamento padra producao
     
@@ -468,7 +348,166 @@ $(function() {
       $('#row-'+count).remove()
     })
 
-    function getFrequencyAdm (){
+
+    $(document).on('change','.freq_adm_absent',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.freq_adm_effective',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.freq_prod_absent',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.freq_prod_effective',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.sub_absent',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.sub_effective',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    function calcTotal(idRow){
+      const absent =  $('#absent-'+idRow).val() // ausente
+      const effective =  $('#effective-'+idRow).val() // efetivo
+      const total = effective - absent
+      
+      if(Math.sign(total) == -1){ //verifica o total é um numero negativo 
+        DefaultAlert('error','O campo AUSENTE deve ser menor ou igual ao campo EFETIVO')
+        $('#absent-'+idRow).addClass('is-invalid')
+        $('#btn_submit').attr('disabled',true)
+        return false
+      }else{
+        $('#absent-'+idRow).removeClass('is-invalid')  
+        $('#btn_submit').attr('disabled',false)
+        $('#total-'+idRow).val(effective - absent)
+        calcTotalAmountAdm();//calc totai adm
+        calcTotalAmountProd()// calc totais de producao
+        calcTotalAmountSub() //calc totais sub
+      } 
+   
+    }
+
+    function calcTotalAmountAdm(){
+      sumTotal = 0
+      sumAbsent =0
+      sumEffective = 0 
+      
+      $('.freq_adm_total').each((index,item)=>{
+        sumTotal += parseInt($(item).val())
+      })
+      
+      $('.freq_adm_absent').each((index,item)=>{
+        sumAbsent += parseInt($(item).val())
+      })
+
+      $('.freq_adm_effective').each((index,item)=>{
+        sumEffective += parseInt($(item).val())
+      })
+
+      $('#sumTotalAdm').text(sumTotal)
+      $('#sumAbsentAdm').text(sumAbsent)
+      $('#sumEffectiveAdm').text(sumEffective)
+    }
+
+    function calcTotalAmountProd(){
+      sumTotal = 0
+      sumAbsent =0
+      sumEffective = 0 
+      
+      $('.freq_prod_total').each((index,item)=>{
+        sumTotal += parseInt($(item).val())
+      })
+      
+      $('.freq_prod_absent').each((index,item)=>{
+        sumAbsent += parseInt($(item).val())
+      })
+
+      $('.freq_prod_effective').each((index,item)=>{
+        sumEffective += parseInt($(item).val())
+      })
+
+      $('#sumTotalProd').text(sumTotal)
+      $('#sumAbsentProd').text(sumAbsent)
+      $('#sumEffectiveProd').text(sumEffective)
+    }
+
+
+    function calcTotalAmountSub(){
+      sumTotal = 0
+      sumAbsent =0
+      sumEffective = 0 
+      
+      $('.sub_total').each((index,item)=>{
+        sumTotal += parseInt($(item).val())
+      })
+      
+      $('.sub_absent').each((index,item)=>{
+        sumAbsent += parseInt($(item).val())
+      })
+
+      $('.sub_effective').each((index,item)=>{
+        sumEffective += parseInt($(item).val())
+      })
+
+      $('#sumTotalSub').text(sumTotal)
+      $('#sumAbsentSub').text(sumAbsent)
+      $('#sumEffectiveSub').text(sumEffective)
+    }
+
+    function getShiftTime (){
+         const morning =  $('.morning') 
+         const afternoon =  $('.afternoon')
+         const night =  $('.night')
+         
+
+         let shiftTime = [
+          {
+            shift:'morning',
+            clear:$(morning[0]).val(),
+            cloudy:$(morning[1]).val(),
+            rain:$(morning[2]).val(),
+            impractical:$(morning[3]).val()
+          },
+          {
+            shift:'afternoon',
+            clear:$(afternoon[0]).val(),
+            cloudy:$(afternoon[1]).val(),
+            rain:$(afternoon[2]).val(),
+            impractical:$(afternoon[3]).val()
+          },
+          {
+            shift:'night',
+            clear:$(night[0]).val(),
+            cloudy:$(night[1]).val(),
+            rain:$(night[2]).val(),
+            impractical:$(night[3]).val()
+          }
+
+         ]
+         
+       
+         return shiftTime
+     }
+function getFrequencyAdm (){
       const freq_adm_roles =  $('.freq_adm_role') 
          const freq_adm_totals =  $('.freq_adm_total')
          const freq_adm_absents =  $('.freq_adm_absent')
