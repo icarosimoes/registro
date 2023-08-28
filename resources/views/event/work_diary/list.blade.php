@@ -11,6 +11,8 @@
                     <li class="breadcrumb-item active">Lista de Conferências de suítes</li>
                 </ol>
             </div>
+
+            
             <div class="col-md-12">
                 <div class="card card-secondary card-outline">
                     <div class="card-header">
@@ -48,34 +50,7 @@
                                             <input class="form-control" type="date" name="date_end" value="{{ @$filter['date_end'] }}">
                                         </div>   
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="Name">Local</label>
-                                            <select class="form-control" name="local" id="local">
-                                                @if (isset($filter['local']))
-                                                <option value="{{$filter['local']->id}}">{{$filter['local']->id.' - '.$filter['local']->name}}</option>
-                                                    
-                                                @endif
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="Name">Inspecionado Por</label>
-                                            <select class="form-control" name="user" id="user">
-                                                @if (isset($filter['user']))
-                                                <option value="{{ $filter['user']->id }}">{{ $filter['user']->id.' - '.$filter['user']->name }}</option>
-                                                    
-                                                @endif
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label for="Name">Camareira</label>
-                                            <input class="form-control" type="text" name="maid" value="{{ @$filter['maid'] }}">
-                                        </div>   
-                                    </div>
+                                    
     
                                 </div>
                                 <div class="row">
@@ -105,6 +80,10 @@
                                                 <div class="btn-group-sm">
                                                     {{-- @can('checkRouters', $route =
                                                     'view.client') --}}
+                                                    <a href="{{ route('work_diary.create').'?copy='.$item->id }}"
+                                                        data-toggle="tooltip" data-placement="top" title="Copiar"
+                                                        class="btn btn-default"><i class="fas fa-copy"></i></a> 
+                                                    
                                                     <a href="{{ route('work_diary.show', [$item->id]) }}"
                                                         data-toggle="tooltip" data-placement="top" title="Visualizar"
                                                         class="btn btn-default"><i class="fas fa-eye"></i></a> 

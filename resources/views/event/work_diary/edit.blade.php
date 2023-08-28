@@ -13,8 +13,9 @@
                 <li class="breadcrumb-item active">Editar Diário de Obras</li>
             </ol>
         </div>
-
+                
         <input id="id" type="hidden" value="{{$workDiary->id}}">
+        <input id="load_shift_time" type="hidden" value="{{$workDiary->work_diary_shift_time}}">
         <input id="load_frequency_adm" type="hidden" value="{{$workDiary->work_diary_frequency_adm}}">
         <input id="load_frequency_prod" type="hidden" value="{{$workDiary->work_diary_frequency_prod}}">
         <input id="load_sub" type="hidden" value="{{$workDiary->work_diary_sub}}">
@@ -30,6 +31,159 @@
                         <div class="col-md-2">
                             @csrf
                         </div> <!-- col-md3 -->
+                        
+                        <div class="col-md-12">
+                            <div class="card card-secondary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title">TURNO/TEMPO</h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <!-- form start -->
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th width='200'></th>
+                                                        <th width='200'>CÉU LIMPO</th>
+                                                        <th width='200'>NUBLADO</th>
+                                                        <th width='200'>CHUVA</th>
+                                                        <th width='200'>IMPRATICÁVEL</th>
+                                                       <tr>
+                                                </thead>
+                                                <tbody >
+                                                    <tr>
+                                                        <td>MANHÃ</td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm morning ">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm morning">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm morning">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm morning">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>TARDE</td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm afternoon">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm afternoon">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm afternoon">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm afternoon">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+
+                                                    </tr>
+                                                    <tr>
+                                                        <td>NOITE</td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm night">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm night">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm night">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control form-control-sm night">
+                                                            <option value="0">0%</option>
+                                                            <option value="50">50%</option>
+                                                            <option value="100">100%</option>
+                                                            <option value="N">N.A</option>
+                                                            </select>
+                                                        </td>
+                                                    </tr>
+
+                                                </tbody>
+                                                
+                                            </table>
+
+                                            
+                                        </div>
+                                    </div>
+
+                                    <div class="overlay-wrapper">
+                                        <div class="d-none overlay">
+                                            <i class="fas fa-3x fa-sync-alt fa-spin"></i>
+                                            <div class="text-bold pt-2">Carregando...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.card-body -->
+                                {{-- <div class="card-footer text-center" style="cursor: pointer" id="btn_add_frequency">
+                                    <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
+                                        href="javascript:">Adicionar Novo Item</a>
+                                </div> --}}
+
+                            </div>
+                        </div>
+
                         <div class="col-md-12">
                             <div class="card card-secondary card-outline">
                                 <div class="card-header">
@@ -48,6 +202,7 @@
                                                         <th width="100">AUSENTE</th>
                                                         <th width="100">EFETIVO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th></th>
                                                     </tr>
 
                                                 </thead>
@@ -56,12 +211,15 @@
 
                                                 </tbody>
                                                 <tfoot>
-                                                    <tr>
-                                                        <td colspan="6">
-                                                            {{-- <button type="button"
-                                                                class="btn btn-default col-12  " >Adicionar</button> --}}
-                                                        </td>
-                                                    </tr>
+                                                    
+                                                        <tr>
+                                                            <td></td>
+                                                            <th id="sumTotalAdm">0</th>
+                                                            <th id="sumAbsentAdm">0</th>
+                                                            <th id="sumEffectiveAdm">0</th>
+                                                            <td></td>
+                                                        </tr>
+                                                    
                                                 </tfoot>
                                             </table>
 
@@ -104,6 +262,7 @@
                                                         <th width="100">AUSENTE</th>
                                                         <th width="100">EFETIVO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th></th>
                                                     </tr>
 
                                                 </thead>
@@ -112,10 +271,15 @@
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <td colspan="6">
-                                                            {{-- <button  type="button" class="btn btn-default col-12" >Adicionar</button> --}}
-                                                        </td>
+                                                        <td></td>
+                                                        <th id="sumTotalProd">0</th>
+                                                        <th id="sumAbsentProd">0</th>
+                                                        <th id="sumEffectiveProd">0</th>
+                                                        <td></td>
                                                     </tr>
+                                                       
+                                                       
+                                                   
                                                 </tfoot>
                                             </table>
                                         </div>
@@ -157,6 +321,7 @@
                                                         <th width='100'>AUSENTE</th>
                                                         <th width='100'>EFETIVO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th></th>
                                                     </tr>
 
                                                 </thead>
@@ -164,10 +329,14 @@
                                                     
                                                 </tbody>
                                                 <tfoot>
+                                                    
                                                     <tr>
-                                                        <td >
-                                                            
-                                                        </td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <th id="sumTotalSub">0</th>
+                                                        <th id="sumAbsentSub">0</th>
+                                                        <th id="sumEffectiveSub">0</th>
+                                                        <td></td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
@@ -214,6 +383,7 @@
                                                         <th>INÍCIO</th>
                                                         <th>DEVOLUÇÃO</th>
                                                         <th>SERVIÇO</th>
+                                                        <th></th>
                                                         
                                                     </tr>
                                                 </thead>
@@ -265,6 +435,7 @@
                                                         <th width="100">REGISTRO</th>
                                                         <th>DESCRIÇÃO</th>
                                                         <th width="200" >ANEXO</th>
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="body_activity">
@@ -314,6 +485,7 @@
                                                         <th>DESCRIÇÃO</th>
                                                         <th width="100">REGISTRO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th></th>
                                                                                                   
                                                     </tr>
                                                 </thead>
@@ -360,8 +532,6 @@
 </div>
 </div>
 </div>
-
-
 
 
 @section('plugins.scriptUpdateWorkDiary', true)
