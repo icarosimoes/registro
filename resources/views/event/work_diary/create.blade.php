@@ -13,6 +13,16 @@
                 <li class="breadcrumb-item active">Nova Conferência</li>
             </ol>
         </div>
+        @if($workDiary)
+        <input id="id" type="hidden" value="{{$workDiary->id}}">
+        <input id="load_shift_time" type="hidden" value="{{$workDiary->work_diary_shift_time}}">
+        <input id="load_frequency_adm" type="hidden" value="{{$workDiary->work_diary_frequency_adm}}">
+        <input id="load_frequency_prod" type="hidden" value="{{$workDiary->work_diary_frequency_prod}}">
+        <input id="load_sub" type="hidden" value="{{$workDiary->work_diary_sub}}">
+        <input id="load_equipament" type="hidden" value="{{$workDiary->work_diary_equipament}}">
+        <input id="load_activity" type="hidden" value="{{$workDiary->work_diary_activity}}">
+        <input id="load_obs" type="hidden" value="{{$workDiary->work_diary_obs}}">
+        @endif    
         <div class="col-md-12">
             <div class="container-fluid">
                 <div class="row">

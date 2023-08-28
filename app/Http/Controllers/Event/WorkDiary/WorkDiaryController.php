@@ -15,15 +15,25 @@ class WorkDiaryController extends Controller
 {
     public function index()
     {
-        $workDiary = WorkDiary::orderBy('id','DESC')->get();
+        $workDiary = WorkDiary::orderBy('id','DESC');
+        
+        if(request()->date_start  && request()->date_end){
+            $workDiary->whereBetween('date',[request()->date_start,request()->date_end]);
+        }
+        $workDiary = $workDiary->get();
+        
         return view('event/work_diary/list', compact('workDiary'));
     }
 
     public function create()
     {
+        $workDiary = false;
 
-        $data = [];
-        return view('event/work_diary/create', compact('data'));
+        if (request()->copy){
+            $workDiary = WorkDiary::find(request()->copy);
+        }
+        ;
+        return view('event/work_diary/create', compact('workDiary'));
     }
 
     public function store(Request $request)
@@ -141,8 +151,9 @@ class WorkDiaryController extends Controller
         
         //salvar atividades
         $delete_ids = [];
+        
         foreach ($activity as $key => $item) {
-            array_push($delete_ids,$item['id']);
+            
             if ($item['id'] != '') { //update
 
                 //salva o arquivo anexado
@@ -161,19 +172,20 @@ class WorkDiaryController extends Controller
                 if($item['attachment']){
                     $workDiaryActivity->attachment = $item['attachment']; 
                 }
+                
                 $workDiaryActivity->save();
+                array_push($delete_ids,$workDiaryActivity->id);
 
             } else { //store
-
+                
                 //salva o arquivo anexado
                 if ($request['activity_attachment-' . $key] != 'undefined') {
                     $item['attachment'] =  Storage::put('files_work_diary', $request['activity_attachment-' . $key]);
                 } 
-
-                $workDiary->work_diary_activity()->create($item);
-
+                //dd($item);
+               $workDiaryActivity = $workDiary->work_diary_activity()->create($item);
+               array_push($delete_ids,$workDiaryActivity->id);
             }
-            
         }
         $workDiary->work_diary_activity()->whereNotIn('id',$delete_ids)->delete();
         

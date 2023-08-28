@@ -68,7 +68,7 @@ $(function() {
     });
 
 
-    //quantidade select
+   //quantidade select
       const options_qtd =`
         <option>0</option>
         <option>1</option>
@@ -206,15 +206,7 @@ $(function() {
      
       $('#body_frequency_adm').append(html)
       
-      $(".mask").maskMoney({
-        allowNegative: false,
-        allowZero: true,
-        thousands: '',
-        decimal: ',',
-        affixesStay: false,
-        precision:0
-    });
-      // $(".mask").mask("999999999999");
+            
     })
     
     //REMOVE LINHA FREQ ADM
@@ -239,14 +231,7 @@ $(function() {
                  </tr>`; 
       
        $('#body_frequency_prod').append(html)
-       $(".mask").maskMoney({
-        allowNegative: false,
-        allowZero: true,
-        thousands: '',
-        decimal: ',',
-        affixesStay: false,
-        precision:0
-    });
+       
      })
      
      //REMOVE LINHA FREQ ADM
@@ -385,6 +370,159 @@ $(function() {
       calcTotal(idRow)  
 
     })
+
+
+
+
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var copy = url.searchParams.get("copy")
+    
+    if (copy){
+      load_data()
+    }
+    
+    //carregar os dados 
+    function load_data(){
+            const load_shift_time =  JSON.parse($('#load_shift_time').val()||'')
+            const load_frequency_adm =  JSON.parse($('#load_frequency_adm').val())
+            const load_frequency_prod =  JSON.parse($('#load_frequency_prod').val())
+            const load_sub =  JSON.parse($('#load_sub').val())
+            const load_equipament =  JSON.parse($('#load_equipament').val())
+            const load_activity =  JSON.parse($('#load_activity').val())
+            const load_obs =  JSON.parse($('#load_obs').val())
+            
+              
+
+
+            // carrega Turno/Tempo 
+            load_shift_time.forEach((item,index) => {
+              const shift  = $('.'+item.shift)
+              
+              $(shift[0]).val(item.clear)
+              $(shift[1]).val(item.cloudy)
+              $(shift[2]).val(item.rain)
+              $(shift[3]).val(item.impractical)
+              
+            })
+            
+                  //<td><input type="text" class="form-control form-control-sm mask freq_adm_total" ></td>
+                                // <td><input type="text" class="form-control form-control-sm mask freq_adm_absent" value="${element.absent}"></td>
+                                // <td><input type="text" class="form-control form-control-sm mask freq_adm_effective" value="${element.effective}"></td>
+            $('#body_frequency_adm').html('')
+            load_frequency_adm.forEach((element,index) => {
+              index =  'A'+index  
+              let html = `<tr id="row-${index}">
+                                <td><input type="text" class="form-control form-control-sm freq_adm_role" value="${element.role}"></td>
+                                <td><input  id="total-${index}" readonly type="text"  value="${element.total}"  class="form-control form-control-sm mask freq_adm_total"></td>
+                                <td><select id="absent-${index}"   class="form-control   form-control-sm freq_adm_absent">${options_qtd}</select></td>
+                                <td><select id="effective-${index}" value="${element.effective}" class="form-control form-control-sm freq_adm_effective">${options_qtd}</select></td>
+                                <td><input type="text" class="form-control form-control-sm freq_adm_obs" value="${element.obs}"></td>
+                                <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                            </tr>`; 
+            
+                            
+              $('#body_frequency_adm').append(html)
+              $('#absent-'+index).val(element.absent)              
+              $('#effective-'+index).val(element.effective)              
+              
+            });
+            $('#body_frequency_prod').html('')
+            load_frequency_prod.forEach((element,index) => {
+                index =  'P'+index
+                let html = `<tr id="row-${index}">
+                            <td><input type="text" class="form-control form-control-sm freq_prod_role" value="${element.role}" ></td>
+                            <td><input id="total-${index}" readonly type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
+                            <td><select id="absent-${index}" class="form-control form-control-sm freq_prod_absent">${options_qtd}</select></td>
+                            <td><select  id="effective-${index}" class="form-control form-control-sm freq_prod_effective">${options_qtd}</select></td>
+                            <td><input type="text" class="form-control form-control-sm freq_prod_obs" value="${element.obs}"></td>
+                            <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                        </tr>`; 
+              
+              $('#body_frequency_prod').append(html)
+              $('#absent-'+index).val(element.absent)              
+              $('#effective-'+index).val(element.effective)
+              
+            })
+            
+            
+            load_sub.forEach((element,index) => {
+              index =  'S'+index
+              let html = `<tr id="row-${index}">
+                            <td><input type="text" class="form-control form-control-sm sub_company" value="${element.company}"></td>
+                            <td><input type="text" class="form-control form-control-sm sub_role" value="${element.role}"></td>
+                            <td><input id="total-${index}" readonly type="text" value="${element.total}" class="form-control form-control-sm  mask sub_total"></td>
+                            <td><select id="absent-${index}" class="form-control form-control-sm sub_absent">${options_qtd}</select></td>
+                            <td><select  id="effective-${index}" class="form-control form-control-sm sub_effective">${options_qtd}</select></td>
+                            <td><input type="text" class="form-control form-control-sm sub_obs" value="${element.obs}"></td>
+                            <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                          </tr>`; 
+              
+              $('#body_sub').append(html)
+              
+              $('#absent-'+index).val(element.absent)              
+              $('#effective-'+index).val(element.effective)        
+
+              
+            })
+
+            
+            load_equipament.forEach((element,index) => {
+              index =  'E'+index
+              let html = `<tr id="row-${index}" >
+                            <td><input type="text" class="form-control form-control-sm equipament_supply" value="${element.supply}"></td>
+                            <td><input type="text" class="form-control form-control-sm equipament_description" value="${element.description}"></td>
+                            <td><input type="date" class="form-control form-control-sm equipament_start" value="${element.start}"></td>
+                            <td><input type="date" class="form-control form-control-sm equipament_end" value="${element.end}"></td>
+                            <td><input type="text" class="form-control form-control-sm equipament_service" value="${element.service}"></td>
+                            <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                        </tr>`; 
+              
+              $('#body_equipament').append(html)
+            })
+            
+            load_activity.forEach((element,index) => {
+                index = 'Q'+index  
+              let html = `<tr id="row-${index}">
+                            <td>
+                                <input type="hidden" class="form-control form-control-sm activity_id" value="${element.id}">
+                                <input type="text" class="form-control form-control-sm activity_sector" value="${element.sector}">
+                            </td>
+                            <td><input type="text" class="form-control form-control-sm activity_team" value="${element.team}"></td>
+                            <td><input type="text" class="form-control form-control-sm activity_register" value="${element.register}"></td>
+                            <td><input type="text" class="form-control form-control-sm activity_description" value="${element.description}"></td>
+                            <td>
+                                <div class="input-group ">
+                                <input type="file" id="file" class="form-control form-control-sm activity_attachment">
+                                
+                                </div>
+                            </td>
+                            <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                            </tr>`; 
+              
+              $('#body_activity').append(html)
+            })
+
+            load_obs.forEach((element,index) => {
+            
+            index = 'O'+index  
+            let html = `<tr id="row-${index}">
+                            <td><input type="text" class="form-control form-control-sm obs_sector" value="${element.sector}"></td>
+                            <td><input type="text" class="form-control form-control-sm obs_description" value="${element.description}"></td>
+                            <td><input type="text" class="form-control form-control-sm obs_register" value="${element.register}"></td>
+                            <td><input type="text" class="form-control form-control-sm obs_obs" value="${element.obs}"></td>
+                            <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                          </tr>`; 
+              
+              $('#body_obs').append(html)
+            })
+            ///////////////////////////////////
+
+  }
+
+
+
+
     function calcTotal(idRow){
       const absent =  $('#absent-'+idRow).val() // ausente
       const effective =  $('#effective-'+idRow).val() // efetivo

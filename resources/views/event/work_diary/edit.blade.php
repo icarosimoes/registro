@@ -211,12 +211,15 @@
 
                                                 </tbody>
                                                 <tfoot>
-                                                    <tr>
-                                                        <td colspan="6">
-                                                            {{-- <button type="button"
-                                                                class="btn btn-default col-12  " >Adicionar</button> --}}
-                                                        </td>
-                                                    </tr>
+                                                    
+                                                        <tr>
+                                                            <td></td>
+                                                            <th id="sumTotalAdm">0</th>
+                                                            <th id="sumAbsentAdm">0</th>
+                                                            <th id="sumEffectiveAdm">0</th>
+                                                            <td></td>
+                                                        </tr>
+                                                    
                                                 </tfoot>
                                             </table>
 
@@ -268,10 +271,15 @@
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <td colspan="6">
-                                                            {{-- <button  type="button" class="btn btn-default col-12" >Adicionar</button> --}}
-                                                        </td>
+                                                        <td></td>
+                                                        <th id="sumTotalProd">0</th>
+                                                        <th id="sumAbsentProd">0</th>
+                                                        <th id="sumEffectiveProd">0</th>
+                                                        <td></td>
                                                     </tr>
+                                                       
+                                                       
+                                                   
                                                 </tfoot>
                                             </table>
                                         </div>
@@ -321,10 +329,14 @@
                                                     
                                                 </tbody>
                                                 <tfoot>
+                                                    
                                                     <tr>
-                                                        <td >
-                                                            
-                                                        </td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <th id="sumTotalSub">0</th>
+                                                        <th id="sumAbsentSub">0</th>
+                                                        <th id="sumEffectiveSub">0</th>
+                                                        <td></td>
                                                     </tr>
                                                 </tfoot>
                                             </table>

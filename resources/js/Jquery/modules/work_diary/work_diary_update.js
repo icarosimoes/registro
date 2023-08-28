@@ -15,6 +15,61 @@ $(function() {
         timer: 3000
     });
 
+//quantidade select
+const options_qtd =`
+<option>0</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+<option>9</option>
+<option>10</option>
+<option>11</option>
+<option>12</option>
+<option>13</option>
+<option>14</option>
+<option>15</option>
+<option>16</option>
+<option>17</option>
+<option>18</option>
+<option>19</option>
+<option>20</option>
+<option>21</option>
+<option>22</option>
+<option>23</option>
+<option>24</option>
+<option>25</option>
+<option>26</option>
+<option>27</option>
+<option>28</option>
+<option>29</option>
+<option>30</option>
+<option>31</option>
+<option>32</option>
+<option>33</option>
+<option>34</option>
+<option>35</option>
+<option>36</option>
+<option>37</option>
+<option>38</option>
+<option>39</option>
+<option>40</option>
+<option>41</option>
+<option>42</option>
+<option>43</option>
+<option>44</option>
+<option>45</option>
+<option>46</option>
+<option>47</option>
+<option>48</option>
+<option>49</option>
+<option>50</option>
+`
+
     //carregar os dados 
 
     const load_shift_time =  JSON.parse($('#load_shift_time').val())
@@ -39,75 +94,67 @@ $(function() {
       
      })
      
-
+          //<td><input type="text" class="form-control form-control-sm mask freq_adm_total" ></td>
+                        // <td><input type="text" class="form-control form-control-sm mask freq_adm_absent" value="${element.absent}"></td>
+                        // <td><input type="text" class="form-control form-control-sm mask freq_adm_effective" value="${element.effective}"></td>
     load_frequency_adm.forEach((element,index) => {
       index =  'A'+index  
       let html = `<tr id="row-${index}">
                         <td><input type="text" class="form-control form-control-sm freq_adm_role" value="${element.role}"></td>
-                        <td><input type="text" class="form-control form-control-sm mask freq_adm_total" value="${element.total}"></td>
-                        <td><input type="text" class="form-control form-control-sm mask freq_adm_absent" value="${element.absent}"></td>
-                        <td><input type="text" class="form-control form-control-sm mask freq_adm_effective" value="${element.effective}"></td>
+                        <td><input  id="total-${index}" readonly type="text"  value="${element.total}"  class="form-control form-control-sm mask freq_adm_total"></td>
+                        <td><select id="absent-${index}"   class="form-control   form-control-sm freq_adm_absent">${options_qtd}</select></td>
+                        <td><select id="effective-${index}" value="${element.effective}" class="form-control form-control-sm freq_adm_effective">${options_qtd}</select></td>
                         <td><input type="text" class="form-control form-control-sm freq_adm_obs" value="${element.obs}"></td>
                         <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                     </tr>`; 
      
+                    
       $('#body_frequency_adm').append(html)
-      $(".mask").maskMoney({
-        allowNegative: false,
-        allowZero: true,
-        thousands: '',
-        decimal: ',',
-        affixesStay: false,
-        precision:0
-      });
-    
+      $('#absent-'+index).val(element.absent)              
+      $('#effective-'+index).val(element.effective)              
+      
     });
+    calcTotalAmountAdm();//calc totai adm
     
+
     load_frequency_prod.forEach((element,index) => {
         index =  'P'+index
         let html = `<tr id="row-${index}">
                      <td><input type="text" class="form-control form-control-sm freq_prod_role" value="${element.role}" ></td>
-                     <td><input type="text" class="form-control form-control-sm  mask freq_prod_total" value="${element.total}"></td>
-                     <td><input type="text" class="form-control form-control-sm mask freq_prod_absent" value="${element.absent}"></td>
-                     <td><input type="text" class="form-control form-control-sm mask freq_prod_effective" value="${element.effective}"></td>
+                     <td><input id="total-${index}" readonly type="text" value="${element.total}" class="form-control form-control-sm  mask freq_prod_total"></td>
+                     <td><select id="absent-${index}" class="form-control form-control-sm freq_prod_absent">${options_qtd}</select></td>
+                    <td><select  id="effective-${index}" class="form-control form-control-sm freq_prod_effective">${options_qtd}</select></td>
                      <td><input type="text" class="form-control form-control-sm freq_prod_obs" value="${element.obs}"></td>
                      <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                  </tr>`; 
       
        $('#body_frequency_prod').append(html)
-       $(".mask").maskMoney({
-        allowNegative: false,
-        allowZero: true,
-        thousands: '',
-        decimal: ',',
-        affixesStay: false,
-        precision:0
-      });
+       $('#absent-'+index).val(element.absent)              
+       $('#effective-'+index).val(element.effective)
+       
     })
-
+   calcTotalAmountProd()// calc totais de producao
+   
     load_sub.forEach((element,index) => {
        index =  'S'+index
        let html = `<tr id="row-${index}">
                      <td><input type="text" class="form-control form-control-sm sub_company" value="${element.company}"></td>
                      <td><input type="text" class="form-control form-control-sm sub_role" value="${element.role}"></td>
-                     <td><input type="text" class="form-control form-control-sm mask sub_total" value="${element.total}"></td>
-                     <td><input type="text" class="form-control form-control-sm mask sub_absent" value="${element.absent}"></td>
-                     <td><input type="text" class="form-control form-control-sm mask sub_effective" value="${element.effective}"></td>
+                     <td><input id="total-${index}" readonly type="text" value="${element.total}" class="form-control form-control-sm  mask sub_total"></td>
+                     <td><select id="absent-${index}" class="form-control form-control-sm sub_absent">${options_qtd}</select></td>
+                    <td><select  id="effective-${index}" class="form-control form-control-sm sub_effective">${options_qtd}</select></td>
                      <td><input type="text" class="form-control form-control-sm sub_obs" value="${element.obs}"></td>
                      <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                    </tr>`; 
       
        $('#body_sub').append(html)
-       $(".mask").maskMoney({
-        allowNegative: false,
-        allowZero: true,
-        thousands: '',
-        decimal: ',',
-        affixesStay: false,
-        precision:0
-      });
-    })
+       
+      $('#absent-'+index).val(element.absent)              
+      $('#effective-'+index).val(element.effective)        
 
+       
+    })
+    calcTotalAmountSub() //calc totais sub 
     
     load_equipament.forEach((element,index) => {
       index =  'E'+index
@@ -134,7 +181,7 @@ $(function() {
                      <td><input type="text" class="form-control form-control-sm activity_register" value="${element.register}"></td>
                      <td><input type="text" class="form-control form-control-sm activity_description" value="${element.description}"></td>
                      <td>
-                        <div class="input-group mb-3">
+                        <div class="input-group ">
                         <input type="file" id="file" class="form-control form-control-sm activity_attachment">
                         <div class="input-group-append">
                             <a target="_blank" href="${base_url+'/event/work_diary/download_activity/'+element.id}" class="btn btn-secondary form-control-sm ${(element.attachment ==null?'disabled':'' )}"><i class="fas fa-download"></i></a>
@@ -173,6 +220,7 @@ $(function() {
         const activity = getActivity()
         const obs = getObs()
         
+        console.log(JSON.stringify(activity));
          
 
 
@@ -218,81 +266,62 @@ $(function() {
     //adicionar frequecia deto adm
     $('#btn_add_frequency').on('click',()=>{
       const timestamp = new Date().getTime();
-      let html = `<tr id="row-${timestamp}">
+
+     let html = `<tr id="row-${timestamp}">
+     
                     <td><input type="text"  class="form-control form-control-sm freq_adm_role"></td>
-                    <td><input type="text" value="0" class="form-control form-control-sm mask freq_adm_total"></td>
-                    <td><input type="text" value="0" class="form-control form-control-sm mask freq_adm_absent"></td>
-                    <td><input type="text" value="0" class="form-control form-control-sm mask freq_adm_effective"></td>
+                    <td><input  id="total-${timestamp}" readonly type="text"  value="0"  class="form-control form-control-sm mask freq_adm_total"></td>
+                    <td><select id="absent-${timestamp}" class="form-control form-control-sm freq_adm_absent">${options_qtd}</select></td>
+                    <td><select id="effective-${timestamp}" class="form-control form-control-sm freq_adm_effective">${options_qtd}</select></td>
                     <td><input type="text" class="form-control form-control-sm freq_adm_obs"></td>
-                    <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                    <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_freq_adm "><i class="fas fa-trash "></i></button></td>
+
                 </tr>`; 
      
       $('#body_frequency_adm').append(html)
-      $(".mask").maskMoney({
-        allowNegative: false,
-        allowZero: true,
-        thousands: '',
-        decimal: ',',
-        affixesStay: false,
-        precision:0
-      });
+     
+     
     })
 
     $('#btn_add_frequency_prod').on('click',()=>{
       const timestamp = new Date().getTime();
       let html = `<tr id="row-${timestamp}">
+                     
                      <td><input type="text" class="form-control form-control-sm freq_prod_role"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm mask freq_prod_absent"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm mask freq_prod_effective"></td>
+                     <td><input id="total-${timestamp}" readonly type="text" value="0" class="form-control form-control-sm  mask freq_prod_total"></td>
+                     <td><select id="absent-${timestamp}" class="form-control form-control-sm freq_prod_absent">${options_qtd}</select></td>
+                    <td><select  id="effective-${timestamp}" class="form-control form-control-sm freq_prod_effective">${options_qtd}</select></td>
                      <td><input type="text" class="form-control form-control-sm freq_prod_obs"></td>
-                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_freq_prod "><i class="fas fa-trash "></i></button></td>
                  </tr>`; 
       
        $('#body_frequency_prod').append(html)
-       
-       $(".mask").maskMoney({
-        allowNegative: false,
-        allowZero: true,
-        thousands: '',
-        decimal: ',',
-        affixesStay: false,
-        precision:0
-    });
-     })
+    })
      
      $('#btn_add_sub').on('click',()=>{
       const timestamp = new Date().getTime();
       let html = `<tr id="row-${timestamp}">
                      <td><input type="text" class="form-control form-control-sm sub_company"></td>
                      <td><input type="text" class="form-control form-control-sm sub_role"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_total"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_absent"></td>
-                     <td><input type="text" value="0" class="form-control form-control-sm mask sub_effective"></td>
+                     <td><input id="total-${timestamp}" readonly type="text" value="0" class="form-control form-control-sm  sub_total"></td>
+                     <td><select id="absent-${timestamp}" class="form-control form-control-sm sub_absent">${options_qtd}</select></td>
+                     <td><select id="effective-${timestamp}" class="form-control form-control-sm sub_effective">${options_qtd}</select></td>
                      <td><input type="text" class="form-control form-control-sm sub_obs"></td>
-                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_sub "><i class="fas fa-trash "></i></button></td>
                  </tr>`; 
       
        $('#body_sub').append(html)
-       $(".mask").maskMoney({
-        allowNegative: false,
-        allowZero: true,
-        thousands: '',
-        decimal: ',',
-        affixesStay: false,
-        precision:0
-    });
      })
      
      $('#btn_add_equipament').on('click',()=>{
       const timestamp = new Date().getTime();
       let html = `<tr id="row-${timestamp}">
-                     <td><input type="text" class="form-control form-control-sm equipament_supply"></td>
-                     <td><input  type="text"  class="form-control form-control-sm equipament_description"></td>
-                     <td><input required type="date" class="form-control form-control-sm equipament_start"></td>
-                     <td><input required type="date" class="form-control form-control-sm equipament_end"></td>
+                     <td><input  type="text" class="form-control form-control-sm equipament_supply"></td>
+                     <td><input type="text" class="form-control form-control-sm equipament_description"></td>
+                     <td><input type="date" required class="form-control form-control-sm equipament_start"></td>
+                     <td><input type="date" required class="form-control form-control-sm equipament_end"></td>
                      <td><input type="text" class="form-control form-control-sm equipament_service"></td>
-                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                     <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td>
                  </tr>`; 
       
        $('#body_equipament').append(html)
@@ -309,13 +338,13 @@ $(function() {
       let html = `<tr id="row-${timestamp}">
                      <td>
                      <input type="hidden" class="form-control form-control-sm activity_id" value="">
-                     <input type="text" class="form-control form-control-sm activity_sector">
+                     <input type="text" value="Produção" class="form-control form-control-sm activity_sector">
                      </td>
                      <td><input type="text" class="form-control form-control-sm activity_team"></td>
                      <td><input type="text" class="form-control form-control-sm activity_register"></td>
                      <td><input type="text" class="form-control form-control-sm activity_description"></td>
                      <td>
-                        <div class="input-group mb-3">
+                        <div class="input-group ">
                           <input type="file" id="file" class="form-control form-control-sm activity_attachment">
                           <div class="input-group-append">
                               <a target="_blank" href="" class="btn btn-secondary form-control-sm disabled"><i class="fas fa-download"></i></a>
@@ -331,7 +360,7 @@ $(function() {
      $('#btn_add_obs').on('click',()=>{
       const timestamp = new Date().getTime();
       let html = `<tr id="row-${timestamp}" >
-                     <td><input type="text" class="form-control form-control-sm obs_sector"></td>
+                     <td><input type="text" value="Operacional" class="form-control form-control-sm obs_sector"></td>
                      <td><input type="text" class="form-control form-control-sm obs_description"></td>
                      <td><input type="text" class="form-control form-control-sm obs_register"></td>
                      <td><input type="text" class="form-control form-control-sm obs_obs"></td>
@@ -341,6 +370,132 @@ $(function() {
        $('#body_obs').append(html)
      })
  
+
+     
+    $(document).on('change','.freq_adm_absent',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.freq_adm_effective',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.freq_prod_absent',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.freq_prod_effective',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.sub_absent',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    $(document).on('change','.sub_effective',(e)=>{
+      let id = $(e.currentTarget).attr('id')
+      let idRow = id.split('-')[1]
+      calcTotal(idRow)  
+
+    })
+    function calcTotal(idRow){
+      const absent =  $('#absent-'+idRow).val() // ausente
+      const effective =  $('#effective-'+idRow).val() // efetivo
+      const total = effective - absent
+      
+      if(Math.sign(total) == -1){ //verifica o total é um numero negativo 
+        DefaultAlert('error','O campo AUSENTE deve ser menor ou igual ao campo EFETIVO')
+        $('#absent-'+idRow).addClass('is-invalid')
+        $('#btn_submit').attr('disabled',true)
+        return false
+      }else{
+        $('#absent-'+idRow).removeClass('is-invalid')  
+        $('#btn_submit').attr('disabled',false)
+        $('#total-'+idRow).val(effective - absent)
+        calcTotalAmountAdm();//calc totai adm
+        calcTotalAmountProd()// calc totais de producao
+        calcTotalAmountSub() //calc totais sub
+      } 
+   
+    }
+
+    function calcTotalAmountAdm(){
+      sumTotal = 0
+      sumAbsent =0
+      sumEffective = 0 
+      
+      $('.freq_adm_total').each((index,item)=>{
+        sumTotal += parseInt($(item).val())
+      })
+      
+      $('.freq_adm_absent').each((index,item)=>{
+        sumAbsent += parseInt($(item).val())
+      })
+
+      $('.freq_adm_effective').each((index,item)=>{
+        sumEffective += parseInt($(item).val())
+      })
+
+      $('#sumTotalAdm').text(sumTotal)
+      $('#sumAbsentAdm').text(sumAbsent)
+      $('#sumEffectiveAdm').text(sumEffective)
+    }
+
+    function calcTotalAmountProd(){
+      sumTotal = 0
+      sumAbsent =0
+      sumEffective = 0 
+      
+      $('.freq_prod_total').each((index,item)=>{
+        sumTotal += parseInt($(item).val())
+      })
+      
+      $('.freq_prod_absent').each((index,item)=>{
+        sumAbsent += parseInt($(item).val())
+      })
+
+      $('.freq_prod_effective').each((index,item)=>{
+        sumEffective += parseInt($(item).val())
+      })
+
+      $('#sumTotalProd').text(sumTotal)
+      $('#sumAbsentProd').text(sumAbsent)
+      $('#sumEffectiveProd').text(sumEffective)
+    }
+
+
+    function calcTotalAmountSub(){
+      sumTotal = 0
+      sumAbsent =0
+      sumEffective = 0 
+      
+      $('.sub_total').each((index,item)=>{
+        sumTotal += parseInt($(item).val())
+      })
+      
+      $('.sub_absent').each((index,item)=>{
+        sumAbsent += parseInt($(item).val())
+      })
+
+      $('.sub_effective').each((index,item)=>{
+        sumEffective += parseInt($(item).val())
+      })
+
+      $('#sumTotalSub').text(sumTotal)
+      $('#sumAbsentSub').text(sumAbsent)
+      $('#sumEffectiveSub').text(sumEffective)
+    }
+
      
     function getFrequencyAdm (){
       const freq_adm_roles =  $('.freq_adm_role') 
