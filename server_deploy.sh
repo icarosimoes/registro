@@ -10,7 +10,7 @@ echo "Deploying application ..."
     git reset --hard origin/deploy
 
     # Install dependencies based on lock file
-    composer install --no-interaction --prefer-dist --optimize-autoloader
+    /usr/local/bin/composer install --no-interaction --prefer-dist --optimize-autoloader
 
     # Migrate database
     php artisan migrate --force
@@ -27,7 +27,7 @@ echo "Deploying application ..."
 
     # Reload PHP to update opcache
     echo "" | sudo -S service php7.4-fpm reload
-    php composer.phar dumpautoload
+    /usr/local/bin/composer dumpautoload -n
 # Exit maintenance mode
 php artisan up
 
