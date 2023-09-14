@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Event\WorkDiary;
 
+use App\Exports\WorkDiaryExport;
 use App\Http\Controllers\Controller;
 use App\WorkDiary;
 use App\WorkDiaryActivity;
@@ -10,6 +11,7 @@ use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Excel;
 
 class WorkDiaryController extends Controller
 {
@@ -207,5 +209,23 @@ class WorkDiaryController extends Controller
     public function downloadActivity(WorkDiaryActivity $id)
     {
         return Storage::download($id->attachment);
+    }
+
+    public function exportPdf($id,$name){
+        
+        if(!$name){
+            $name = "Indefinido";
+        }
+        $workDiary = WorkDiary::find($id);       
+        return Excel::download(new WorkDiaryExport($workDiary, $name), 'relatorio.xlsx');
+        // $data = session()->get('data');
+        // if (session()->get('params')) {
+        //     $params = session()->get('params');
+        // }else{
+        //     $params = false;
+        // }
+
+        // $pdf = PDF::loadView('occurrence/export_pdf',compact(['data', 'name']))->setPaper('a4', 'landscape');
+        // return $pdf->stream('relatorio.pdf'); 
     }
 }

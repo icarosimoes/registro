@@ -429,6 +429,26 @@ const options_qtd =`
    
     }
 
+    $("#btnNext").click(function () {
+      var name = $("#titleExport").val();
+      const id = $("#id").val();
+      if (!name) {
+          name = "Indefinido";
+      }
+      $("#btnExport").prop('href', base_url + "/event/work_diary/export_pdf/"+id+"/" + name);
+      $("#btnNext").addClass('d-none');
+      $("#btnExport").removeClass('d-none');
+      $("#titleExport").attr('disabled', true);
+  });
+
+  $("#btnExport").on('click',()=>{
+      $("#titleExport").val('')
+      $("#titleExport").attr('disabled', false);
+      $("#btnNext").removeClass('d-none');
+      $("#btnExport").addClass('d-none');
+  })
+
+
     function calcTotalAmountAdm(){
       sumTotal = 0
       sumAbsent =0
