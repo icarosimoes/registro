@@ -36,6 +36,9 @@
                             <div class="card card-secondary card-outline">
                                 <div class="card-header">
                                     <h3 class="card-title">TURNO/TEMPO</h3>
+                                    <a data-toggle="modal" data-target="#export-pdf" class="btn btn-warning btn-flat btn-sm float-right mb-0"><i class="fas fa-file-export"></i>
+                                        Exportar</a>
+                                        
                                 </div>
                                 <!-- /.card-header -->
                                 <!-- form start -->
@@ -532,6 +535,36 @@
 </div>
 </div>
 </div>
+
+<!-- Modal export pdf-->
+<div class="modal fade" id="export-pdf" tabindex="-1" role="dialog" aria-labelledby="export-pdf"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="export-pdf">Por favor, insira uma descrição ao arquivo.</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="inputName" class="form-group">
+                    <label for="titleExport">Nome</label>
+                    <input type="text" class="form-control" name="titleExport" id="titleExport">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i
+                        class="far fa-times-circle"></i> Sair</button>
+                <button type="button" id="btnNext" target="_blank" class="btn btn-primary">Continuar <i
+                        class="fas fa-forward"></i></button>
+                <a type="button" href="" id="btnExport" target="_blank" class="btn btn-primary d-none"><i
+                        class="fas fa-file-export"></i> Exportar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 @section('plugins.scriptUpdateWorkDiary', true)

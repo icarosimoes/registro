@@ -122,6 +122,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('inspection_suite','Event\InspectionSuites\InspectionSuiteController');    
         Route::resource('work_diary','Event\WorkDiary\WorkDiaryController');    
         Route::get('work_diary/download_activity/{id}','Event\WorkDiary\WorkDiaryController@downloadActivity');    
+        Route::get('work_diary/export_pdf/{id}/{name}', 'Event\WorkDiary\WorkDiaryController@exportPdf')->name('work_diary_export_pdf');
 
     });
 });
