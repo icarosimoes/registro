@@ -1,14 +1,51 @@
+@php
+    $semana = array(
+        'Sun' => 'Domingo', 
+        'Mon' => '2ª FEIRA',
+        'Tue' => '3ª FEIRA',
+        'Wed' => '4ª FEIRA',
+        'Thu' => '5ª FEIRA',
+        'Fri' => '6ª FEIRA',
+        'Sat' => 'Sábado'
+    );
+@endphp
 <table>
-    <tbody>
+    <thead>
         <tr>
-            <td style="text-align: center ; background:lightgray ;font-size:10px" colspan="16"><b>TURNO / TEMPO</b></td>
+            <td style="text-align: center ; background:#404040 ;font-size:15px;color:white;border: 1px solid black" colspan="16"><b>DIÁRIO DE OBRA</b></td>
         </tr>
         <tr>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="4"></td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px ;font-weight: bold " colspan="3">CÉU LIMPO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="3">NUBLADO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="3">CHUVA</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="3">IMPRATICÁVEL</td>
+            <td style="border: 1px solid black" rowspan="6" colspan="8">
+                
+            </td>
+            <td colspan="8" style="text-align: center ;border: 1px solid black ;font-weight: bold">{{@$company->name}}</td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid black ;font-weight: bold">DATA:</td>
+            <td style="border: 1px solid black ;font-weight: bold" colspan="3">{{ date('d/m/Y',strtotime($work_diary->date)) }} - {{ $semana[date('D',strtotime($work_diary->date))]}}</td>
+            <td style="border: 1px solid black" colspan="4"></td>
+        </tr>
+        <tr>
+            <td style="text-align: center; justify-content: center;align-items: center;border-right:1px solid black" rowspan="2" colspan="8">{{ @$company->address }}</td>
+        </tr>
+        <tr></tr>
+        <tr>
+            <td rowspan="2" colspan="8" style="border-right:1px solid black;border-bottom:1px solid black"></td>
+        </tr>
+        <tr></tr>
+        <tr></tr>
+        
+    </thead>
+    <tbody>
+        <tr>
+            <td style="text-align: center ; background:#BFBFBF ;font-size:10px;border: 1px solid black" colspan="16"><b>TURNO / TEMPO</b></td>
+        </tr>
+        <tr>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="4"></td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px ;font-weight: bold " colspan="3">CÉU LIMPO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="3">NUBLADO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="3">CHUVA</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="3">IMPRATICÁVEL</td>
             
             
         </tr>
@@ -61,16 +98,16 @@
             <td colspan="16"></td>
         </tr>
         <tr>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black;font-size:10px" colspan="16">
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black;font-size:10px" colspan="16">
                 <b>FREQUÊNCIA</b></td>
         </tr>
         <tr>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="3">SETOR</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold " colspan="4">FUNÇÃO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">TOTAL</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">AUSENTE</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">EFETIVO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="6">OBSERVAÇÕES
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="3">SETOR</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold " colspan="4">FUNÇÃO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">TOTAL</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">AUSENTE</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">EFETIVO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="6">OBSERVAÇÕES
             </td>
         </tr>
         @php
@@ -140,21 +177,24 @@
             <td style="border: 1px solid black" colspan="6"></td>
         </tr>
         <tr>
+            <td style="background:#BFBFBF ;border: 1px solid black" colspan="16"></td>
+        </tr>
+        <tr>
             <td colspan="16"></td>
         </tr>
 
         {{--  SUB-EMPREITEIROS  --}}
         <tr>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:10px" colspan="16">
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:10px" colspan="16">
                 <b>SUB-EMPREITEIROS</b></td>
         </tr>
         <tr>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="3">EMPRESA</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="4">FUNÇÃO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="1">TOTAL</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="1">AUSENTE</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="1">EFETIVO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="6">OBSERVAÇÕES
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="3">EMPRESA</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="4">FUNÇÃO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="1">TOTAL</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="1">AUSENTE</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="1">EFETIVO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px ;font-weight: bold" colspan="6">OBSERVAÇÕES
             </td>
         </tr>
         @php
@@ -188,21 +228,24 @@
             <td style="border: 1px solid black" colspan="6"></td>
         </tr>
         <tr>
+            <td style="background:#BFBFBF ;border: 1px solid black " colspan="16"></td>
+        </tr>
+        <tr>
             <td colspan="16"></td>
         </tr>
         
         {{--  EQUIPAMENTE  --}}
         <tr>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:10px;font-weight: bold" colspan="16">
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:10px;font-weight: bold" colspan="16">
                 <b>EQUIPAMENTOS</b></td>
         </tr>
 
         <tr>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="7">FORNECEDOR</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold " colspan="3">DESCRIÇÃO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">INÍCIO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">DEVOLUÇÃO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="4">SERVIÇO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="7">FORNECEDOR</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold " colspan="3">DESCRIÇÃO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">INÍCIO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">DEVOLUÇÃO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="4">SERVIÇO</td>
             
         </tr>
         
@@ -218,21 +261,24 @@
         @endforeach
         
         <tr>
+            <td style="background:#BFBFBF ;border: 1px solid black" colspan="16"></td>
+        </tr>
+        <tr>
             <td colspan="16"></td>
         </tr>
 
         {{--  ATIVIDADES  --}}
         <tr>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:10px" colspan="16">
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:10px" colspan="16">
                 <b>ATIVIDADES</b></td>
         </tr>
 
         <tr>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="4">SETOR</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold " colspan="3">EQUIPE</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">ANEXO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">REGISTRO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="7">DESCRIÇÃO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="4">SETOR</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold " colspan="3">EQUIPE</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">ANEXO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">REGISTRO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="7">DESCRIÇÃO</td>
             
         </tr>
         
@@ -249,21 +295,24 @@
         @endforeach
         
         <tr>
+            <td style="background:#BFBFBF ;border: 1px solid black" colspan="16"></td>
+        </tr>
+        <tr>
             <td colspan="16"></td>
         </tr>
 
         
         {{--  OBSERVACOES  --}}
         <tr>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:10px" colspan="16">
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:10px" colspan="16">
                 <b>OBSERVAÇÕES</b></td>
         </tr>
 
-        <tr>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="4">SETOR</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold " colspan="5">DESCRIÇÃO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">REGISTRO</td>
-            <td style="text-align: center ; background:lightgray ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="6">OBSERVAÇÕES</td>
+        <tr >
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="4">SETOR</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold " colspan="5">DESCRIÇÃO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="1">REGISTRO</td>
+            <td style="text-align: center ; background:#BFBFBF ;border: 1px solid black ;font-size:8px;font-weight: bold" colspan="6">OBSERVAÇÕES</td>
         </tr>
         
         @foreach ($work_diary->work_diary_obs as $item)
@@ -277,6 +326,9 @@
             </tr>
         @endforeach
         
+        <tr>
+            <td style="background:#BFBFBF ;border: 1px solid black " colspan="16"></td>
+        </tr>
         <tr>
             <td colspan="16"></td>
         </tr>
