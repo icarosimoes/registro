@@ -440,11 +440,11 @@
                                                     <tr>
                                                         <th>SETOR</th>
                                                         <th>EQUIPE</th>
-                                                        <th width="100">REGISTRO</th>
+                                                        {{-- <th width="100">REGISTRO</th> --}}
                                                         <th>DESCRIÇÃO</th>
                                                         <th width="200">ANEXO</th>
                                                         <th width='50'></th>
-                                                        <th width='50'></th>
+                                                        <th width='100'>REGISTRO</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="body_activity">
@@ -541,6 +541,41 @@
 </div>
 </div>
 </div>
+
+<!-- Modal selecionar ocorrência-->
+<div class="modal fade" id="ModalSelectOcurrence" tabindex="-1" role="dialog"
+aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Selecione um Registro</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Registros</label>
+                <select class="form-control  isdfdOccurence" id="idOccurence"
+                    name="userRegistered" style="width: 100%;">
+                    {{-- @foreach ($ocurrences as $ocurrence)
+                        <option value="{{ $ocurrence->id }}">{{ "Código: ".$ocurrence->id." - ".$ocurrence->title }}
+                        </option>
+                    @endforeach --}}
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" onclick="javascript:window.open('{{ route('occurrence.create') }}', '_blank');" class="btn btn-info float-left"
+                data-dismiss="modal"><i class="fas fa-plus"></i> Novo Registro</button>
+            {{-- <button type="button" data-toggle='modal' data-target='#ModalNewOcurrence' class="btn btn-info float-left"
+                data-dismiss="modal"><i class="fas fa-plus"></i> Novo Registro</button> --}}
+            <button type="button" id="buttonOccurrence" name="buttonOccurrence"
+                class="btn btn-primary float-md-right buttonOccurrence"><i class="fas fa-hand-pointer"></i> Selecionar</button>
+        </div>
+    </div>
+</div>
+</div> <!-- / Modal selecionar ocorrência -->
 
 
 

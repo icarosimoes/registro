@@ -29,12 +29,12 @@ class WorkDiaryController extends Controller
 
     public function create()
     {
+
         $workDiary = false;
 
         if (request()->copy){
             $workDiary = WorkDiary::find(request()->copy);
-        }
-        ;
+        };
         return view('event/work_diary/create', compact('workDiary'));
     }
 

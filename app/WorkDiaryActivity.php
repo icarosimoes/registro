@@ -9,8 +9,8 @@ class WorkDiaryActivity extends Model
     protected $fillable = [
         'sector',
         'description',
-        'register',
         'attachment',
-        'team'
+        'team',
+        'occurrence_id'
     ];
 }
