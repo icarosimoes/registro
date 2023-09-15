@@ -443,7 +443,8 @@
                                                         <th width="100">REGISTRO</th>
                                                         <th>DESCRIÇÃO</th>
                                                         <th width="200">ANEXO</th>
-                                                        <th width='70'></th>
+                                                        <th width='50'></th>
+                                                        <th width='50'></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="body_activity">
