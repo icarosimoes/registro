@@ -169,7 +169,7 @@ class WorkDiaryController extends Controller
                 $workDiaryActivity->sector = $item['sector']; 
                 $workDiaryActivity->team = $item['team']; 
                 $workDiaryActivity->description = $item['description']; 
-                $workDiaryActivity->register = $item['register']; 
+                $workDiaryActivity->occurrence_id = $item['occurrence_id']; 
 
                 if($item['attachment']){
                     $workDiaryActivity->attachment = $item['attachment']; 
