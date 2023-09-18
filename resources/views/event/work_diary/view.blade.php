@@ -416,9 +416,9 @@
                                                     <tr>
                                                         <th>SETOR</th>
                                                         <th>EQUIPE</th>
-                                                        <th width="100">REGISTRO</th>
                                                         <th>DESCRIÇÃO</th>
-                                                        <th width="200" >ANEXO</th>
+                                                        <th class="text-center" width="" >ANEXO</th>
+                                                        <th width="70" ></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="body_activity">

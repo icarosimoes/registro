@@ -45,8 +45,7 @@
                                 <!-- /.card-header -->
 
                                 @php
-                                    $percentages = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-                                    
+                                    $percentages = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];                                    
                                 @endphp
                                 <!-- form start -->
                                 <div class="card-body">
