@@ -464,7 +464,6 @@ const options_qtd =`
 
 
   $(document).on('click','.filter',(e)=>{
-    console.log('xzczx')
      const item = $(e.currentTarget).attr('data-count')
      $('#buttonOccurrence').attr('data-count',item)
      $('#ModalSelectOcurrence').modal('show')
