@@ -40,7 +40,7 @@ class WorkDiaryController extends Controller
 
     public function store(Request $request)
     {
-
+        
         $shift_time = json_decode($request->shift_time, true);
         $frequency_adm = json_decode($request->frequency_adm, true);
         $frequency_prod = json_decode($request->frequency_prod, true);
@@ -52,7 +52,7 @@ class WorkDiaryController extends Controller
         DB::beginTransaction();
 
         $workDiary  = new WorkDiary();
-        $workDiary->date = now();
+        $workDiary->date = $request->date;
         $workDiary->save();
 
 
@@ -122,9 +122,8 @@ class WorkDiaryController extends Controller
 
         DB::beginTransaction();
 
-        //$workDiary  = new WorkDiary();
-        //$workDiary->date = now();
-        //$workDiary->save();
+         $workDiary->date = $request->date;
+         $workDiary->save();
 
         //salva as turno\tempo
         $workDiary->work_diary_shift_time()->delete();

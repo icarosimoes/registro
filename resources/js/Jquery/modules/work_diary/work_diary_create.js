@@ -31,6 +31,7 @@ $(function() {
         let status =null 
               
          let form_data = new FormData()
+         form_data.append('date',$('#date').val());
          form_data.append('shift_time',JSON.stringify(shiftTime));
          form_data.append('frequency_adm',JSON.stringify(frequencyAdm));
          form_data.append('frequency_prod',JSON.stringify(frequencyProd));
@@ -397,7 +398,8 @@ $(function() {
             const load_activity =  JSON.parse($('#load_activity').val())
             const load_obs =  JSON.parse($('#load_obs').val())
             
-              
+            //carrega data
+              $('#date').val($('#work_diary_date').val())   
 
 
             // carrega Turno/Tempo 

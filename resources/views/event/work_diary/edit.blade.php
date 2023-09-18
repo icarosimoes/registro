@@ -31,7 +31,38 @@
                         <div class="col-md-2">
                             @csrf
                         </div> <!-- col-md3 -->
+                        <div class="col-md-12">
+                            <div class="card card-secondary card-outline">
+                                <div class="card-header">
+                                    <h3 class="card-title"> DIARIO DE OBRAS</h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <!-- form start -->
+                                
 
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-3">
+                                            <label for="">Data</label>
+                                            <input id="date" type="date" value="{{ $workDiary->date }}" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="overlay-wrapper">
+                                        <div class="d-none overlay">
+                                            <i class="fas fa-3x fa-sync-alt fa-spin"></i>
+                                            <div class="text-bold pt-2">Carregando...</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.card-body -->
+                                {{-- <div class="card-footer text-center" style="cursor: pointer" id="btn_add_frequency">
+                                    <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
+                                        href="javascript:">Adicionar Novo Item</a>
+                                </div> --}}
+
+                            </div>
+                        </div>
                         <div class="col-md-12">
                             <div class="card card-secondary card-outline">
                                 <div class="card-header">

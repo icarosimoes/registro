@@ -225,7 +225,7 @@ const options_qtd =`
         const activity = getActivity()
         const obs = getObs()
         
-        console.log(JSON.stringify(activity));
+        
          
 
 
@@ -233,6 +233,7 @@ const options_qtd =`
         let status =null 
               
          let form_data = new FormData()
+         form_data.append('date',$('#date').val());
          form_data.append('shift_time',JSON.stringify(shiftTime));
          form_data.append('frequency_adm',JSON.stringify(frequencyAdm));
          form_data.append('frequency_prod',JSON.stringify(frequencyProd));

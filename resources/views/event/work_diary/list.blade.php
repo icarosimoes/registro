@@ -8,7 +8,7 @@
             <div class="col-sm-12">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Lista de Conferências de suítes</li>
+                    <li class="breadcrumb-item active">Lista Diário Obras </li>
                 </ol>
             </div>
 
@@ -82,11 +82,11 @@
                                                     'view.client') --}}
                                                     <a href="{{ route('work_diary.create').'?copy='.$item->id }}"
                                                         data-toggle="tooltip" data-placement="top" title="Copiar"
-                                                        class="btn btn-default"><i class="fas fa-copy"></i></a> 
+                                                        class="btn btn-success"><i class="fas fa-copy"></i></a> 
                                                     
                                                     <a href="{{ route('work_diary.show', [$item->id]) }}"
                                                         data-toggle="tooltip" data-placement="top" title="Visualizar"
-                                                        class="btn btn-default"><i class="fas fa-eye"></i></a> 
+                                                        class="btn  btn-secondary"><i class="fas fa-eye"></i></a> 
                                                     {{-- @endcan
                                                     --}}
                                                     {{-- @can('checkRouters', $route =
