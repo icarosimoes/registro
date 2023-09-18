@@ -44,7 +44,7 @@
                                     <div class="row">
                                         <div class="col-3">
                                             <label for="">Data</label>
-                                            <input id="date" type="date" value="{{ $workDiary->date }}" class="form-control">
+                                            <input id="date" required type="date" value="{{ $workDiary->date }}" class="form-control">
                                         </div>
                                     </div>
 
@@ -536,9 +536,9 @@
                                                     <tr>
                                                         <th>SETOR</th>
                                                         <th>DESCRIÇÃO</th>
-                                                        <th width="100">REGISTRO</th>
                                                         <th>OBSERVAÇÕES</th>
                                                         <th></th>
+                                                        <th width="100">REGISTRO</th>
 
                                                     </tr>
                                                 </thead>

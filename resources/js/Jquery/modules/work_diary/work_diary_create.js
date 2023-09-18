@@ -325,9 +325,13 @@ $(function() {
       let html = `<tr id="row-${timestamp}">
                      <td><input value="Operacional" type="text" class="form-control form-control-sm obs_sector"></td>
                      <td><input type="text" class="form-control form-control-sm obs_description"></td>
-                     <td><input type="text" class="form-control form-control-sm obs_register"></td>
                      <td><input type="text" class="form-control form-control-sm obs_obs"></td>
                      <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_obs "><i class="fas fa-trash "></i></button></td>
+                     <td class="">
+                         <button data-count="${timestamp}" type='button' class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                         <input type="hidden" class="obs_occurrences_id" id="item-${timestamp}" value="">
+                         <a class="btn btn-sm btn-success d-none show_occurence_id"><i class="far fa-registered"></i></a>
+                     </td>
                   </tr>`; 
       
        $('#body_obs').append(html)
@@ -520,9 +524,13 @@ $(function() {
             let html = `<tr id="row-${index}">
                             <td><input type="text" class="form-control form-control-sm obs_sector" value="${element.sector}"></td>
                             <td><input type="text" class="form-control form-control-sm obs_description" value="${element.description}"></td>
-                            <td><input type="text" class="form-control form-control-sm obs_register" value="${element.register}"></td>
                             <td><input type="text" class="form-control form-control-sm obs_obs" value="${element.obs}"></td>
                             <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                            <td class="">
+                              <button data-count="${index}" type='button' class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" class="activity_occurrences_id" id="item-${index}" value="${element.occurrence_id}">
+                              <a class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'}show_occurence_id"><i class="far fa-registered">${element.occurrence_id}</i></a>
+                            </td>
                           </tr>`; 
               
               $('#body_obs').append(html)
@@ -839,7 +847,7 @@ function getFrequencyAdm (){
     
     const obs_sectors =  $('.obs_sector') 
     const obs_descriptions =  $('.obs_description') 
-    const obs_registers =  $('.obs_register')
+    const obs_occurrences_ids =  $('.obs_occurrences_id')
     const obs_obs =  $('.obs_obs')
     
     
@@ -849,7 +857,7 @@ function getFrequencyAdm (){
      const item = {
        sector: $(element).val(), 
        description: $(obs_descriptions[index]).val(),
-       register: $(obs_registers[index]).val(),
+       occurrence_id: $(obs_occurrences_ids[index]).val(),
        obs:$(obs_obs[index]).val(),
        
       }  

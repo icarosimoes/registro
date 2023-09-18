@@ -34,7 +34,7 @@
                         <div class="col-md-12">
                             <div class="card card-secondary card-outline">
                                 <div class="card-header">
-                                    <h3 class="card-title"> DIARIO DE OBRAS</h3>
+                                    <h3 class="card-title"> DIÁRIO DE OBRAS</h3>
                                 </div>
                                 <!-- /.card-header -->
                                 <!-- form start -->
@@ -44,7 +44,7 @@
                                     <div class="row">
                                         <div class="col-3">
                                             <label for="">Data</label>
-                                            <input id="date" type="date" class="form-control">
+                                            <input id="date" required type="date" class="form-control">
                                         </div>
                                     </div>
 
@@ -525,9 +525,9 @@
                                                     <tr>
                                                         <th>SETOR</th>
                                                         <th>DESCRIÇÃO</th>
-                                                        <th width="100">REGISTRO</th>
                                                         <th>OBSERVAÇÕES</th>
                                                         <th width="70"></th>
+                                                        <th width="100">REGISTRO</th>
 
                                                     </tr>
                                                 </thead>
