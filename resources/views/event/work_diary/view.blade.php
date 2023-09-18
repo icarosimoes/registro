@@ -37,6 +37,10 @@
                             <div class="card card-secondary card-outline">
                                 <div class="card-header">
                                     <h3 class="card-title"> DIARIO DE OBRAS</h3>
+                                    <a data-toggle="modal" data-target="#export-pdf"
+                                        class="btn btn-warning btn-flat btn-sm float-right mb-0"><i
+                                            class="fas fa-file-export"></i>
+                                        Exportar</a>
                                 </div>
                                 <!-- /.card-header -->
                                 <!-- form start -->
@@ -69,10 +73,7 @@
                             <div class="card card-secondary card-outline">
                                 <div class="card-header">
                                     <h3 class="card-title">TURNO/TEMPO</h3>
-                                    <a data-toggle="modal" data-target="#export-pdf"
-                                        class="btn btn-warning btn-flat btn-sm float-right mb-0"><i
-                                            class="fas fa-file-export"></i>
-                                        Exportar</a>
+                                    
                                 </div>
                                 <!-- /.card-header -->
                                 @php
