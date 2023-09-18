@@ -112,6 +112,7 @@ class WorkDiaryController extends Controller
 
     public function update(Request $request, WorkDiary $workDiary)
     {
+        $shift_time = json_decode($request->shift_time, true);
         $frequency_adm = json_decode($request->frequency_adm, true);
         $frequency_prod = json_decode($request->frequency_prod, true);
         $sub = json_decode($request->sub, true);
@@ -124,6 +125,12 @@ class WorkDiaryController extends Controller
         //$workDiary  = new WorkDiary();
         //$workDiary->date = now();
         //$workDiary->save();
+
+        //salva as turno\tempo
+        $workDiary->work_diary_shift_time()->delete();
+        foreach ($shift_time as $item) {
+            $workDiary->work_diary_shift_time()->create($item);
+        }
 
         //salva as frequencia adm
         $workDiary->work_diary_frequency_adm()->delete();

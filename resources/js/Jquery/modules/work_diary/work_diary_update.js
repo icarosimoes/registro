@@ -217,6 +217,7 @@ const options_qtd =`
 
         event.preventDefault();
         
+        const shiftTime = getShiftTime()
         const frequencyAdm = getFrequencyAdm() 
         const frequencyProd =  getFrequencyProd()
         const sub =  getSub()
@@ -232,6 +233,7 @@ const options_qtd =`
         let status =null 
               
          let form_data = new FormData()
+         form_data.append('shift_time',JSON.stringify(shiftTime));
          form_data.append('frequency_adm',JSON.stringify(frequencyAdm));
          form_data.append('frequency_prod',JSON.stringify(frequencyProd));
          form_data.append('sub',JSON.stringify(sub));
@@ -515,6 +517,42 @@ const options_qtd =`
        }
     }
 });
+
+    function getShiftTime (){
+      const morning =  $('.morning') 
+      const afternoon =  $('.afternoon')
+      const night =  $('.night')
+      
+
+      let shiftTime = [
+      {
+        shift:'morning',
+        clear:$(morning[0]).val(),
+        cloudy:$(morning[1]).val(),
+        rain:$(morning[2]).val(),
+        impractical:$(morning[3]).val()
+      },
+      {
+        shift:'afternoon',
+        clear:$(afternoon[0]).val(),
+        cloudy:$(afternoon[1]).val(),
+        rain:$(afternoon[2]).val(),
+        impractical:$(afternoon[3]).val()
+      },
+      {
+        shift:'night',
+        clear:$(night[0]).val(),
+        cloudy:$(night[1]).val(),
+        rain:$(night[2]).val(),
+        impractical:$(night[3]).val()
+      }
+
+      ]
+      
+
+      return shiftTime
+    }
+
 
     function calcTotalAmountAdm(){
       sumTotal = 0

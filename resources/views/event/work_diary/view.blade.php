@@ -9,20 +9,21 @@
         <div class="col-sm-12">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-                <li class="breadcrumb-item active"><a href="{{ route('work_diary.index') }}">Visualizar Diário de Obras</a>
+                <li class="breadcrumb-item active"><a href="{{ route('work_diary.index') }}">Visualizar Diário de
+                        Obras</a>
                 </li>
                 <li class="breadcrumb-item active">Visualizar Diário de Obras</li>
             </ol>
         </div>
 
-        <input id="id" type="hidden" value="{{$workDiary->id}}">
-        <input id="load_shift_time" type="hidden" value="{{$workDiary->work_diary_shift_time}}">
-        <input id="load_frequency_adm" type="hidden" value="{{$workDiary->work_diary_frequency_adm}}">
-        <input id="load_frequency_prod" type="hidden" value="{{$workDiary->work_diary_frequency_prod}}">
-        <input id="load_sub" type="hidden" value="{{$workDiary->work_diary_sub}}">
-        <input id="load_equipament" type="hidden" value="{{$workDiary->work_diary_equipament}}">
-        <input id="load_activity" type="hidden" value="{{$workDiary->work_diary_activity}}">
-        <input id="load_obs" type="hidden" value="{{$workDiary->work_diary_obs}}">
+        <input id="id" type="hidden" value="{{ $workDiary->id }}">
+        <input id="load_shift_time" type="hidden" value="{{ $workDiary->work_diary_shift_time }}">
+        <input id="load_frequency_adm" type="hidden" value="{{ $workDiary->work_diary_frequency_adm }}">
+        <input id="load_frequency_prod" type="hidden" value="{{ $workDiary->work_diary_frequency_prod }}">
+        <input id="load_sub" type="hidden" value="{{ $workDiary->work_diary_sub }}">
+        <input id="load_equipament" type="hidden" value="{{ $workDiary->work_diary_equipament }}">
+        <input id="load_activity" type="hidden" value="{{ $workDiary->work_diary_activity }}">
+        <input id="load_obs" type="hidden" value="{{ $workDiary->work_diary_obs }}">
 
 
         <div class="col-md-12">
@@ -38,6 +39,9 @@
                                     <h3 class="card-title">TURNO/TEMPO</h3>
                                 </div>
                                 <!-- /.card-header -->
+                                @php
+                                    $percentages = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+                                @endphp
                                 <!-- form start -->
                                 <div class="card-body">
                                     <div class="row">
@@ -50,76 +54,92 @@
                                                         <th width='200'>NUBLADO</th>
                                                         <th width='200'>CHUVA</th>
                                                         <th width='200'>IMPRATICÁVEL</th>
-                                                       <tr>
+                                                    <tr>
                                                 </thead>
-                                                <tbody >
+                                                <tbody>
                                                     <tr>
                                                         <td>MANHÃ</td>
                                                         <td>
-                                                            <select disabled class="form-control form-control-sm morning ">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                            <select disabled
+                                                                class="form-control form-control-sm morning ">
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <select disabled class="form-control form-control-sm morning">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                            <select disabled
+                                                                class="form-control form-control-sm morning">
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <select disabled class="form-control form-control-sm morning">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                            <select disabled
+                                                                class="form-control form-control-sm morning">
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <select disabled class="form-control form-control-sm morning">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                            <select disabled
+                                                                class="form-control form-control-sm morning">
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
                                                     </tr>
                                                     <tr>
                                                         <td>TARDE</td>
                                                         <td>
-                                                            <select disabled class="form-control form-control-sm afternoon">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                            <select disabled
+                                                                class="form-control form-control-sm afternoon">
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <select disabled class="form-control form-control-sm afternoon">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                            <select disabled
+                                                                class="form-control form-control-sm afternoon">
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <select disabled class="form-control form-control-sm afternoon">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                            <select disabled
+                                                                class="form-control form-control-sm afternoon">
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <select disabled class="form-control form-control-sm afternoon">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                            <select disabled
+                                                                class="form-control form-control-sm afternoon">
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
 
@@ -128,43 +148,50 @@
                                                         <td>NOITE</td>
                                                         <td>
                                                             <select disabled class="form-control form-control-sm night">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <select disabled class="form-control form-control-sm night">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                            <select disabled
+                                                                class="form-control form-control-sm night">
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <select disabled class="form-control form-control-sm night">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                            <select disabled
+                                                                class="form-control form-control-sm night">
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
                                                         <td>
-                                                            <select disabled class="form-control form-control-sm night">
-                                                            <option value="0">0%</option>
-                                                            <option value="50">50%</option>
-                                                            <option value="100">100%</option>
-                                                            <option value="N">N.A</option>
+                                                            <select disabled
+                                                                class="form-control form-control-sm night">
+                                                                @foreach ($percentages as $percentege)
+                                                                    <option value="{{ $percentege }}">
+                                                                        {{ $percentege }}%</option>
+                                                                @endforeach
+                                                                <option value="N">N.A</option>
                                                             </select>
                                                         </td>
                                                     </tr>
 
                                                 </tbody>
-                                                
+
                                             </table>
 
-                                            
+
                                         </div>
                                     </div>
 
@@ -206,7 +233,7 @@
 
                                                 </thead>
                                                 <tbody id="body_frequency_adm">
-                                                    
+
 
                                                 </tbody>
                                                 <tfoot>
@@ -219,7 +246,7 @@
                                                 </tfoot>
                                             </table>
 
-                                            
+
                                         </div>
                                     </div>
 
@@ -248,11 +275,11 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col">
-                                            
+
                                             <table class="table table-sm mt-2">
                                                 <thead>
                                                     <tr>
-                                                        
+
                                                         <th>FUNÇÃO</th>
                                                         <th width="100">TOTAL</th>
                                                         <th width="100">AUSENTE</th>
@@ -262,7 +289,7 @@
 
                                                 </thead>
                                                 <tbody id="body_frequency_prod">
-                                                                                                       
+
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
@@ -283,12 +310,13 @@
                                     </div>
                                 </div>
                                 <!-- /.card-body -->
-                                <div class="card-footer text-center" style="cursor: pointer" id="btn_add_frequency_prod">
+                                <div class="card-footer text-center" style="cursor: pointer"
+                                    id="btn_add_frequency_prod">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
 
-                                
+
 
                             </div>
                         </div>
@@ -314,19 +342,19 @@
                                                     </tr>
 
                                                 </thead>
-                                                <tbody id="body_sub" >
-                                                    
+                                                <tbody id="body_sub">
+
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <td >
-                                                            
+                                                        <td>
+
                                                         </td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
 
-                                           
+
                                         </div>
                                     </div>
 
@@ -368,22 +396,22 @@
                                                         <th>INÍCIO</th>
                                                         <th>DEVOLUÇÃO</th>
                                                         <th>SERVIÇO</th>
-                                                        
+
                                                     </tr>
                                                 </thead>
                                                 <tbody id="body_equipament">
-                                                    
+
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <td >
-                                                            
+                                                        <td>
+
                                                         </td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
 
-                                           
+
                                         </div>
                                     </div>
 
@@ -398,7 +426,7 @@
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
-                              
+
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -417,23 +445,23 @@
                                                         <th>SETOR</th>
                                                         <th>EQUIPE</th>
                                                         <th>DESCRIÇÃO</th>
-                                                        <th class="text-center" width="" >ANEXO</th>
-                                                        <th width="70" ></th>
+                                                        <th class="text-center" width="">ANEXO</th>
+                                                        <th width="70"></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="body_activity">
-                                   
+
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <td >
-                                                            
+                                                        <td>
+
                                                         </td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
 
-                                           
+
                                         </div>
                                     </div>
 
@@ -448,7 +476,7 @@
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
-                              
+
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -468,22 +496,22 @@
                                                         <th>DESCRIÇÃO</th>
                                                         <th width="100">REGISTRO</th>
                                                         <th>OBSERVAÇÕES</th>
-                                                                                                  
+
                                                     </tr>
                                                 </thead>
                                                 <tbody id='body_obs'>
-                                                    
+
                                                 </tbody>
                                                 <tfoot>
                                                     <tr>
-                                                        <td >
-                                                            
+                                                        <td>
+
                                                         </td>
                                                     </tr>
                                                 </tfoot>
                                             </table>
 
-                                           
+
                                         </div>
                                     </div>
 
@@ -498,7 +526,7 @@
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addItemTopic"
                                         href="javascript:">Adicionar Novo Item</a>
                                 </div>
-                              
+
                             </div>
                         </div>
                         {{-- <div class="col-sm-12">

@@ -457,7 +457,7 @@
                                                         <th>DESCRIÇÃO</th>
                                                         <th width="200">ANEXO</th>
                                                         <th width="50"></th>
-                                                        <th width="100"></th>
+                                                        <th width="100">REGISTRO</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="body_activity">

@@ -387,7 +387,7 @@ $(function() {
       load_data()
     }
     
-    //carregar os dados 
+    //carregar os dados copia de outro registro
     function load_data(){
             const load_shift_time =  JSON.parse($('#load_shift_time').val()||'')
             const load_frequency_adm =  JSON.parse($('#load_frequency_adm').val())
@@ -494,15 +494,19 @@ $(function() {
                                 <input type="text" class="form-control form-control-sm activity_sector" value="${element.sector}">
                             </td>
                             <td><input type="text" class="form-control form-control-sm activity_team" value="${element.team}"></td>
-                            <td><input type="text" class="form-control form-control-sm activity_register" value="${element.register}"></td>
+                            
                             <td><input type="text" class="form-control form-control-sm activity_description" value="${element.description}"></td>
                             <td>
                                 <div class="input-group ">
                                 <input type="file" id="file" class="form-control form-control-sm activity_attachment">
-                                
                                 </div>
                             </td>
                             <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                            <td class="">
+                              <button data-count="${index}" type='button' class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" class="activity_occurrences_id" id="item-${index}" value="${element.occurrence_id}">
+                              <a class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'}show_occurence_id"><i class="far fa-registered">${element.occurrence_id}</i></a>
+                            </td>
                             </tr>`; 
               
               $('#body_activity').append(html)
@@ -528,7 +532,6 @@ $(function() {
 
 
   $(document).on('click','.filter',(e)=>{
-    console.log('xzczx')
      const item = $(e.currentTarget).attr('data-count')
      $('#buttonOccurrence').attr('data-count',item)
      $('#ModalSelectOcurrence').modal('show')

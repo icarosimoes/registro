@@ -23,7 +23,7 @@
         <tr>
             <td style="border: 1px solid black ;font-weight: bold">DATA:</td>
             <td style="border: 1px solid black ;font-weight: bold" colspan="3">{{ date('d/m/Y',strtotime($work_diary->date)) }} - {{ $semana[date('D',strtotime($work_diary->date))]}}</td>
-            <td style="border: 1px solid black" colspan="4"></td>
+            <td style="border: 1px solid black ;text-align: center" colspan="4">{{$name}}</td>
         </tr>
         <tr>
             <td style="text-align: center; justify-content: center;align-items: center;border-right:1px solid black" rowspan="2" colspan="8">{{ @$company->address }}</td>
