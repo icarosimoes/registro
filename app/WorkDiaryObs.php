@@ -9,7 +9,7 @@ class WorkDiaryObs extends Model
     protected $fillable =[
         'sector',
         'description',
-        'register',
+        'occurrence_id',
         'obs',
     ];
 }

@@ -31,6 +31,7 @@ $(function() {
         let status =null 
               
          let form_data = new FormData()
+         form_data.append('date',$('#date').val());
          form_data.append('shift_time',JSON.stringify(shiftTime));
          form_data.append('frequency_adm',JSON.stringify(frequencyAdm));
          form_data.append('frequency_prod',JSON.stringify(frequencyProd));
@@ -292,17 +293,22 @@ $(function() {
     })
      
 
-
+  
 
     $('#btn_add_activity').on('click',()=>{
+      
       const timestamp = new Date().getTime();
       let html = `<tr id="row-${timestamp}">
                      <td><input value="Produção" type="text" class="form-control form-control-sm activity_sector"></td>
                      <td><input type="text" class="form-control form-control-sm activity_team"></td>
-                     <td><input type="text" class="form-control form-control-sm activity_register"></td>
                      <td><input type="text" class="form-control form-control-sm activity_description"></td>
                      <td><input type="file" class="form-control form-control-sm activity_attachment"></td>
                      <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_activity "><i class="fas fa-trash "></i></button></td>
+                     <td class="">
+                      <button data-count="${timestamp}" type='button' class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                      <input type="hidden" class="activity_occurrences_id" id="item-${timestamp}">
+                      <a class="btn btn-sm btn-success d-none show_occurence_id"><i class="far fa-registered">4</i></a>
+                     </td>
                   </tr>`; 
       
        $('#body_activity').append(html)
@@ -319,9 +325,13 @@ $(function() {
       let html = `<tr id="row-${timestamp}">
                      <td><input value="Operacional" type="text" class="form-control form-control-sm obs_sector"></td>
                      <td><input type="text" class="form-control form-control-sm obs_description"></td>
-                     <td><input type="text" class="form-control form-control-sm obs_register"></td>
                      <td><input type="text" class="form-control form-control-sm obs_obs"></td>
                      <td class="text-right"><button data-count="${timestamp}" type='button' class="btn btn-danger btn-sm remove_obs "><i class="fas fa-trash "></i></button></td>
+                     <td class="">
+                         <button data-count="${timestamp}" type='button' class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                         <input type="hidden" class="obs_occurrences_id" id="item-${timestamp}" value="">
+                         <a class="btn btn-sm btn-success d-none show_occurence_id"><i class="far fa-registered"></i></a>
+                     </td>
                   </tr>`; 
       
        $('#body_obs').append(html)
@@ -382,7 +392,7 @@ $(function() {
       load_data()
     }
     
-    //carregar os dados 
+    //carregar os dados copia de outro registro
     function load_data(){
             const load_shift_time =  JSON.parse($('#load_shift_time').val()||'')
             const load_frequency_adm =  JSON.parse($('#load_frequency_adm').val())
@@ -392,7 +402,8 @@ $(function() {
             const load_activity =  JSON.parse($('#load_activity').val())
             const load_obs =  JSON.parse($('#load_obs').val())
             
-              
+            //carrega data
+              $('#date').val($('#work_diary_date').val())   
 
 
             // carrega Turno/Tempo 
@@ -489,15 +500,19 @@ $(function() {
                                 <input type="text" class="form-control form-control-sm activity_sector" value="${element.sector}">
                             </td>
                             <td><input type="text" class="form-control form-control-sm activity_team" value="${element.team}"></td>
-                            <td><input type="text" class="form-control form-control-sm activity_register" value="${element.register}"></td>
+                            
                             <td><input type="text" class="form-control form-control-sm activity_description" value="${element.description}"></td>
                             <td>
                                 <div class="input-group ">
                                 <input type="file" id="file" class="form-control form-control-sm activity_attachment">
-                                
                                 </div>
                             </td>
                             <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                            <td class="">
+                              <button data-count="${index}" type='button' class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" class="activity_occurrences_id" id="item-${index}" value="${element.occurrence_id||''}">
+                              <a class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'} show_occurence_id"><i class="far fa-registered">${element.occurrence_id}</i></a>
+                            </td>
                             </tr>`; 
               
               $('#body_activity').append(html)
@@ -509,16 +524,72 @@ $(function() {
             let html = `<tr id="row-${index}">
                             <td><input type="text" class="form-control form-control-sm obs_sector" value="${element.sector}"></td>
                             <td><input type="text" class="form-control form-control-sm obs_description" value="${element.description}"></td>
-                            <td><input type="text" class="form-control form-control-sm obs_register" value="${element.register}"></td>
                             <td><input type="text" class="form-control form-control-sm obs_obs" value="${element.obs}"></td>
                             <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
+                            <td class="">
+                              <button data-count="${index}" type='button' class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" class="obs_occurrences_id" id="item-${index}" value="${element.occurrence_id||''}">
+                              <a class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'} show_occurence_id"><i class="far fa-registered">${element.occurrence_id}</i></a>
+                            </td>
                           </tr>`; 
               
               $('#body_obs').append(html)
             })
             ///////////////////////////////////
-
   }
+
+  $(document).on('click','.filter',(e)=>{
+     const item = $(e.currentTarget).attr('data-count')
+     $('#buttonOccurrence').attr('data-count',item)
+     $('#ModalSelectOcurrence').modal('show')
+  })
+
+  $('#buttonOccurrence').on('click',()=>{
+    const item = $('#buttonOccurrence').attr('data-count')
+    
+    if($('#idOccurence').val()){
+        $('#item-'+item).val($('#idOccurence').val())    
+        const but_occurrence = $('#item-'+item).siblings('.show_occurence_id')[0]
+        $(but_occurrence).removeClass('d-none')
+        $(but_occurrence).children('i').html($('#idOccurence').val())
+    }
+    $('#ModalSelectOcurrence').modal('hide')
+
+})
+
+  $('#idOccurence').select2({
+    theme: 'bootstrap4',
+    ajax: {
+      url: base_url+'/helper/get_occurrences',
+      dataType: 'json',
+
+        data: function (params) {
+        var query = {
+          term: params.term,
+          page: params.page || 1
+        }
+
+        // Query parameters will be ?search=[term]&page=[page]
+        return query;
+      },
+      processResults: function (response) {
+        //se a primeira paginacao
+        if (response.current_page == 1){ data_select = response.data }
+        else{ data_select = data_select.concat(response.data) }
+
+        // Transforms the top-level key of the response object from 'items' to 'results'
+         let more_pagination = true;
+         //se não tem mais paginas
+         if (response.next_page_url == null){ more_pagination = false }
+         return {
+             results:response.data,
+             pagination: {
+                "more": more_pagination
+              }
+            }
+       }
+    }
+});
 
 
 
@@ -748,7 +819,7 @@ function getFrequencyAdm (){
     
     const activity_sectors =  $('.activity_sector') 
     const activity_teams =  $('.activity_team') 
-    const activity_registers =  $('.activity_register')
+    const activity_occurrences_ids =  $('.activity_occurrences_id')
     const activity_descriptions =  $('.activity_description')
     //const activity_attachments =  $('.activity_attachment')
     
@@ -758,7 +829,7 @@ function getFrequencyAdm (){
      const item = {
        sector: $(element).val(), 
        team: $(activity_teams[index]).val(),
-       register: $(activity_registers[index]).val(),
+       occurrence_id: $(activity_occurrences_ids[index]).val()==''?null:$(activity_occurrences_ids[index]).val(),
        description:$(activity_descriptions[index]).val(),
       // attachment:'$(activity_attachments[index]).val()',
       }  
@@ -772,7 +843,7 @@ function getFrequencyAdm (){
     
     const obs_sectors =  $('.obs_sector') 
     const obs_descriptions =  $('.obs_description') 
-    const obs_registers =  $('.obs_register')
+    const obs_occurrences_ids =  $('.obs_occurrences_id')
     const obs_obs =  $('.obs_obs')
     
     
@@ -782,7 +853,7 @@ function getFrequencyAdm (){
      const item = {
        sector: $(element).val(), 
        description: $(obs_descriptions[index]).val(),
-       register: $(obs_registers[index]).val(),
+       occurrence_id: $(obs_occurrences_ids[index]).val()==''?null:$(obs_occurrences_ids[index]).val(),
        obs:$(obs_obs[index]).val(),
        
       }  

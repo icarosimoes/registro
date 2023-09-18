@@ -14,7 +14,6 @@ $(function() {
         showConfirmButton: false,
         timer: 3000
     });
-
     
     //carregar os dados 
     const load_shift_time =  JSON.parse($('#load_shift_time').val())
@@ -95,10 +94,13 @@ $(function() {
         let html = `<tr>
                      <td><input type="text" class="form-control form-control-sm activity_sector" value="${element.sector}"></td>
                      <td><input type="text" class="form-control form-control-sm activity_team" value="${element.team}"></td>
-                     <td><input type="text" class="form-control form-control-sm activity_register" value="${element.register}"></td>
+                     
                      <td><input type="text" class="form-control form-control-sm activity_description" value="${element.description}"></td>
                      <td class="text-right">
-                        <a target="_blank" href="${base_url+'/event/work_diary/download_activity/'+element.id}" class="btn btn-secondary ${(element.attachment ==null?'disabled':'' )}"><i class="fas fa-download"></i></a>
+                        <a target="_blank" href="${base_url+'/event/work_diary/download_activity/'+element.id}" class="btn btn-sm btn-secondary ${(element.attachment ==null?'disabled':'' )}"><i class="fas fa-download"></i></a>
+                     </td>
+                     <td class="">
+                      <a href="${base_url}/occurrence/list/edit/${element.occurrence_id}" class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'}  show_occurence_id" style="width:50px"> <i class="far fa-registered">${element.occurrence_id}</i></a>
                      </td>
                     </tr>`; 
       
@@ -109,9 +111,10 @@ $(function() {
     let html = `<tr>
                      <td><input type="text" class="form-control form-control-sm obs_sector" value="${element.sector}"></td>
                      <td><input type="text" class="form-control form-control-sm obs_description" value="${element.description}"></td>
-                     <td><input type="text" class="form-control form-control-sm obs_register" value="${element.register}"></td>
                      <td><input type="text" class="form-control form-control-sm obs_obs" value="${element.obs}"></td>
-                     
+                     <td class="">
+                        <a href="${base_url}/occurrence/list/edit/${element.occurrence_id}" class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'}  show_occurence_id"><i class="far fa-registered">${element.occurrence_id}</i></a>
+                              </td>
                   </tr>`; 
       
        $('#body_obs').append(html)
@@ -280,6 +283,27 @@ $(function() {
      //BLOQUEIA INPUTS
      $('input').attr('readonly',true)
      $('.card-footer').hide()
+
+
+     $("#titleExport").attr('readonly',false)
+     $("#btnNext").click(function () {
+      var name = $("#titleExport").val();
+      const id = $("#id").val();
+      if (!name) {
+          name = "Indefinido";
+      }
+      $("#btnExport").prop('href', base_url + "/event/work_diary/export_pdf/"+id+"/" + name);
+      $("#btnNext").addClass('d-none');
+      $("#btnExport").removeClass('d-none');
+      $("#titleExport").attr('disabled', true);
+  });
+
+  $("#btnExport").on('click',()=>{
+      $("#titleExport").val('')
+      $("#titleExport").attr('disabled', false);
+      $("#btnNext").removeClass('d-none');
+      $("#btnExport").addClass('d-none');
+  })
 
 
     function getFrequencyAdm (){
