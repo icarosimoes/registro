@@ -530,8 +530,8 @@
                                                     <tr>
                                                         <th>SETOR</th>
                                                         <th>DESCRIÇÃO</th>
-                                                        <th width="100">REGISTRO</th>
                                                         <th>OBSERVAÇÕES</th>
+                                                        <th width="100">REGISTRO</th>
 
                                                     </tr>
                                                 </thead>

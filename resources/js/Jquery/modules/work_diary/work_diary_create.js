@@ -510,8 +510,8 @@ $(function() {
                             <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                             <td class="">
                               <button data-count="${index}" type='button' class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
-                              <input type="hidden" class="activity_occurrences_id" id="item-${index}" value="${element.occurrence_id}">
-                              <a class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'}show_occurence_id"><i class="far fa-registered">${element.occurrence_id}</i></a>
+                              <input type="hidden" class="activity_occurrences_id" id="item-${index}" value="${element.occurrence_id||''}">
+                              <a class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'} show_occurence_id"><i class="far fa-registered">${element.occurrence_id}</i></a>
                             </td>
                             </tr>`; 
               
@@ -528,18 +528,15 @@ $(function() {
                             <td class="text-right"><button data-count="${index}" type='button' class="btn btn-danger btn-sm remove_equipament "><i class="fas fa-trash "></i></button></td> 
                             <td class="">
                               <button data-count="${index}" type='button' class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
-                              <input type="hidden" class="activity_occurrences_id" id="item-${index}" value="${element.occurrence_id}">
-                              <a class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'}show_occurence_id"><i class="far fa-registered">${element.occurrence_id}</i></a>
+                              <input type="hidden" class="obs_occurrences_id" id="item-${index}" value="${element.occurrence_id||''}">
+                              <a class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'} show_occurence_id"><i class="far fa-registered">${element.occurrence_id}</i></a>
                             </td>
                           </tr>`; 
               
               $('#body_obs').append(html)
             })
             ///////////////////////////////////
-
   }
-
-
 
   $(document).on('click','.filter',(e)=>{
      const item = $(e.currentTarget).attr('data-count')
@@ -559,7 +556,6 @@ $(function() {
     $('#ModalSelectOcurrence').modal('hide')
 
 })
-
 
   $('#idOccurence').select2({
     theme: 'bootstrap4',
@@ -833,7 +829,7 @@ function getFrequencyAdm (){
      const item = {
        sector: $(element).val(), 
        team: $(activity_teams[index]).val(),
-       occurrence_id: $(activity_occurrences_ids[index]).val(),
+       occurrence_id: $(activity_occurrences_ids[index]).val()==''?null:$(activity_occurrences_ids[index]).val(),
        description:$(activity_descriptions[index]).val(),
       // attachment:'$(activity_attachments[index]).val()',
       }  
@@ -857,7 +853,7 @@ function getFrequencyAdm (){
      const item = {
        sector: $(element).val(), 
        description: $(obs_descriptions[index]).val(),
-       occurrence_id: $(obs_occurrences_ids[index]).val(),
+       occurrence_id: $(obs_occurrences_ids[index]).val()==''?null:$(obs_occurrences_ids[index]).val(),
        obs:$(obs_obs[index]).val(),
        
       }  

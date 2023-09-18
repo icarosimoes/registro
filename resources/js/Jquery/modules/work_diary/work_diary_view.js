@@ -100,7 +100,7 @@ $(function() {
                         <a target="_blank" href="${base_url+'/event/work_diary/download_activity/'+element.id}" class="btn btn-sm btn-secondary ${(element.attachment ==null?'disabled':'' )}"><i class="fas fa-download"></i></a>
                      </td>
                      <td class="">
-                      <a href="${base_url}/occurrence/list/edit/${element.occurrence_id}" class="btn btn-sm btn-success  show_occurence_id" style="width:50px"> <i class="far fa-registered">${element.occurrence_id}</i></a>
+                      <a href="${base_url}/occurrence/list/edit/${element.occurrence_id}" class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'}  show_occurence_id" style="width:50px"> <i class="far fa-registered">${element.occurrence_id}</i></a>
                      </td>
                     </tr>`; 
       
@@ -111,9 +111,10 @@ $(function() {
     let html = `<tr>
                      <td><input type="text" class="form-control form-control-sm obs_sector" value="${element.sector}"></td>
                      <td><input type="text" class="form-control form-control-sm obs_description" value="${element.description}"></td>
-                     <td><input type="text" class="form-control form-control-sm obs_register" value="${element.register}"></td>
                      <td><input type="text" class="form-control form-control-sm obs_obs" value="${element.obs}"></td>
-                     
+                     <td class="">
+                        <a href="${base_url}/occurrence/list/edit/${element.occurrence_id}" class="btn btn-sm btn-success ${element.occurrence_id?'':'d-none'}  show_occurence_id"><i class="far fa-registered">${element.occurrence_id}</i></a>
+                              </td>
                   </tr>`; 
       
        $('#body_obs').append(html)
