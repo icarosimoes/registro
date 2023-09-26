@@ -342,6 +342,9 @@ const options_qtd =`
     $(document).on('click','.remove_equipament',(e)=>{
       const count = $(e.currentTarget).attr('data-count')
       $('#row-'+count).remove()
+      calcTotalAmountAdm();//calc totai adm
+      calcTotalAmountProd()// calc totais de producao
+      calcTotalAmountSub() //calc totais sub
     }) 
  
      $('#btn_add_activity').on('click',()=>{
@@ -467,10 +470,6 @@ const options_qtd =`
       $("#btnNext").removeClass('d-none');
       $("#btnExport").addClass('d-none');
   })
-
-
-
-
 
 
   $(document).on('click','.filter',(e)=>{
