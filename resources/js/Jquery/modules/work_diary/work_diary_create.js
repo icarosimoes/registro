@@ -214,6 +214,9 @@ $(function() {
     $(document).on('click','.remove_freq_adm',(e)=>{
       const count = $(e.currentTarget).attr('data-count')
       $('#row-'+count).remove()
+      calcTotalAmountAdm();//calc totai adm
+      calcTotalAmountProd()// calc totais de producao
+      calcTotalAmountSub() //calc totais sub
     }) 
 
 
@@ -239,6 +242,9 @@ $(function() {
     $(document).on('click','.remove_freq_prod',(e)=>{
       const count = $(e.currentTarget).attr('data-count')
       $('#row-'+count).remove()
+      calcTotalAmountAdm();//calc totai adm
+      calcTotalAmountProd()// calc totais de producao
+      calcTotalAmountSub() //calc totais sub
     })
 
 
@@ -270,6 +276,9 @@ $(function() {
     $(document).on('click','.remove_sub',(e)=>{
       const count = $(e.currentTarget).attr('data-count')
       $('#row-'+count).remove()
+      calcTotalAmountAdm();//calc totai adm
+      calcTotalAmountProd()// calc totais de producao
+      calcTotalAmountSub() //calc totais sub
     })
      
      $('#btn_add_equipament').on('click',()=>{
@@ -288,8 +297,11 @@ $(function() {
  
     //REMOVE LINHA SUB
     $(document).on('click','.remove_equipament',(e)=>{
+      
       const count = $(e.currentTarget).attr('data-count')
       $('#row-'+count).remove()
+      
+
     })
      
 
