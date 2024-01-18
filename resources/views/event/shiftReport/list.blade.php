@@ -49,7 +49,7 @@
                                 @foreach ($data as $item)
                                     <tr>
                                         {{-- @foreach ($roles as $role) --}}
-                                        <td>{{ $item['users']->name }}</td>
+                                        <td>{{ @$item['users']->name }}</td>
                                         {{-- <td>
                                             @if ($item->status == 1)
                                                 {{ 'Aberto' }}
