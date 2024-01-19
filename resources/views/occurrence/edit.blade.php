@@ -145,8 +145,10 @@
                                             multiple="multiple" data-placeholder="Selecione 1 ou mais participantes"
                                             data-dropdown-css-class="select2-purple" style="width: 100%;">
                                             @foreach ($participants as $participant)
+                                                @if($participant['users'])
                                                 <option selected value="{{ $participant['users']->id }}">
                                                     {{ $participant['users']->name }}</option>
+                                                @endif    
                                             @endforeach
                                             @foreach ($users as $user)
                                                 <option value="{{ $user->id }}">{{ $user->name }}</option>
