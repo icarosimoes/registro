@@ -20,12 +20,11 @@ use Illuminate\Support\Facades\Validator;
 
 class MeetingService extends Service
 {
-
     const STATUS = ["TODOS" => 0, "EM ABERTO" => 1, "EM ANDAMENTO" => 2, "ENCERRADO" => 3, "FECHADO" => 4];
 
     public function index()
     {
-        $meeting = meeting::all();
+        $meeting = meeting::orderBy('created_at','DESC')->get();
         return $meeting;
     }
 
