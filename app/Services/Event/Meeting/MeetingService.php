@@ -20,12 +20,11 @@ use Illuminate\Support\Facades\Validator;
 
 class MeetingService extends Service
 {
-
     const STATUS = ["TODOS" => 0, "EM ABERTO" => 1, "EM ANDAMENTO" => 2, "ENCERRADO" => 3, "FECHADO" => 4];
 
     public function index()
     {
-        $meeting = meeting::all();
+        $meeting = meeting::orderBy('created_at','DESC')->get();
         return $meeting;
     }
 
@@ -229,14 +228,14 @@ class MeetingService extends Service
                 $data = [
                     'meetings_id' => $insertID,
                     'subject' => $topics[$i],
-                    'obs_subject' => $topics_obs[$i]->obs,
+                    'obs_subject' => @$topics_obs[$i]->obs,
                     'created_at' => date('Y-m-d H:i:s')
                 ];
             } else {
                 $data = [
                     'meetings_id' => $insertID,
                     'subject' => $topics[$i],
-                    'obs_subject' => $topics_obs[$i]->obs,
+                    'obs_subject' => @$topics_obs[$i]->obs,
                     'url_archive' => $path,
                     'created_at' => date('Y-m-d H:i:s')
                 ];
