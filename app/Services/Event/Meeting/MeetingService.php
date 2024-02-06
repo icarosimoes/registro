@@ -229,14 +229,14 @@ class MeetingService extends Service
                 $data = [
                     'meetings_id' => $insertID,
                     'subject' => $topics[$i],
-                    'obs_subject' => $topics_obs[$i]->obs,
+                    'obs_subject' => @$topics_obs[$i]->obs,
                     'created_at' => date('Y-m-d H:i:s')
                 ];
             } else {
                 $data = [
                     'meetings_id' => $insertID,
                     'subject' => $topics[$i],
-                    'obs_subject' => $topics_obs[$i]->obs,
+                    'obs_subject' => @$topics_obs[$i]->obs,
                     'url_archive' => $path,
                     'created_at' => date('Y-m-d H:i:s')
                 ];
