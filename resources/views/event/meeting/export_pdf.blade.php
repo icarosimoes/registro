@@ -175,13 +175,15 @@
             <table>
                 <tbody>
                     <tr>
-                        <td style="text-align: left; vertical-align: middle;"><b>Pauta:</b></td>
-                        <td style="text-align: left; vertical-align: middle;">{{ $item->subject }}</td>
+                        <td style="text-align: left; vertical-align: middle;width:100px"><b>Pauta:</b></td>
+                        <td style="text-align: left; vertical-align: middle;"><b>{{ $item->subject }}</b></td>
                     </tr>
                     <tr>
-                        <td style="text-align: left; vertical-align: middle;"><b>Obsevações:</b></td>
-                        <td style="text-align: left; vertical-align: middle;">
-                            <p>{{ $item->obs_subject }}</p>
+                        <td style="text-align: left; "><b>Obsevações:</b></td>
+                        <td >
+                            
+                            {{ $item->obs_subject }}
+                            
                         </td>
                     </tr>
 
