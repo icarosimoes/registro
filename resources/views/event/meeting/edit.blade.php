@@ -38,6 +38,7 @@
                                 <div class="row">
                                     <div class="col-3">
                                         <label for="datetime">Data e Hora</label>
+                                        <input type="hidden" id="start_meeting" value="{{ $meeting->start_meeting }}">
                                         <input {{$meeting->start_meeting == null?'':'readonly'}} value="{{ $meeting->datetime }}" id="datetime" class="form-control"
                                             type="datetime-local" required>
                                     </div>
@@ -89,7 +90,7 @@
                             <div class="card-footer text-center">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<button class="btn btn-text " {{$meeting->start_meeting == null?'':'disabled'}} id="addItemTopic"
                                         >Adicionar Novo Item</button>
-                                </div> 
+                            </div> 
                         </div>
                     </div>
 

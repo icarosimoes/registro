@@ -43,6 +43,14 @@ $(function () {
         showConfirmButton: false,
         timer: 3000
     });
+    
+    const start_meeting = $('#start_meeting').val();
+    if(start_meeting){
+        $('#tbodyItemTopic input').attr('disabled','disabled')
+        $('#tbodyItemTopic i').addClass('d-none')
+        $('#tbodyItemTopic a').addClass('d-none')
+    }
+    
 
     $('form[name="formMeetingEdit"]').submit(function (event) {
 
