@@ -38,6 +38,7 @@
                                 <div class="row">
                                     <div class="col-3">
                                         <label for="datetime">Data e Hora</label>
+                                        <input type="hidden" id="start_meeting" value="{{ $meeting->start_meeting }}">
                                         <input {{$meeting->start_meeting == null?'':'readonly'}} value="{{ $meeting->datetime }}" id="datetime" class="form-control"
                                             type="datetime-local" required>
                                     </div>
@@ -89,7 +90,7 @@
                             <div class="card-footer text-center">
                                     <i class="far fa-plus-square"></i>&nbsp;&nbsp;<button class="btn btn-text " {{$meeting->start_meeting == null?'':'disabled'}} id="addItemTopic"
                                         >Adicionar Novo Item</button>
-                                </div> 
+                            </div> 
                         </div>
                     </div>
 
@@ -220,27 +221,28 @@
 
 
                                 </div>
-                                <div>
-
-
-                                </div>
-                                <div class="row mt-2">
+                                
+                                {{-- <div class="row mt-2">
                                     <div class="col">
-                                        <div class="card-footer text-center" style="cursor: pointer"
-                                            id="add_new_subject">
+                                        <div class="card-footer text-center" style="cursor: pointer" id="add_new_subject">
                                             <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a>Adicionar Novos
                                                 Assuntos</a>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                                 @endif
 
+                            </div>
+
+                            <div class="card-footer text-center" id="add_new_subject" style="cursor: pointer">
+                                <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a 
+                                    href="javascript:">Adicionar Novos Assuntos</a>
                             </div>
 
                         </div>
                     </div>
 
-                    {{-- CARD ASSUNTOS ABORDADOS --}}
+                    {{-- CARD ASSUNTOS ABORDADOS
                     @if ($meeting->start_meeting)
                     <div class="col-sm-12">
                         <div class="card card-secondary card-outline">
@@ -277,7 +279,7 @@
                     <div class="text-bold pt-2">Carregando...</div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Modal adicionar participante-->
         <div class="modal fade" id="ModalAddParticipant" tabindex="-1" role="dialog"

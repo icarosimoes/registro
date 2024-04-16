@@ -101,13 +101,13 @@
     <table>
         <thead>
             <tr>
-                <th style="text-align: left; vertical-align: middle;">Pauta</th>
+                <th style="text-align: left;">Pauta</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($meeting_subjects as $item)
                 <tr>
-                    <td style="text-align: left; vertical-align: middle;"> - {{ $item->subject }}</td>
+                    <td style="text-align: left"> - {{ $item->subject }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -146,7 +146,28 @@
     </table>
     <h3 class="sub_title">Assuntos Abordados</h3>
     {{-- <hr style="margin: 0px"> --}}
-    @foreach ($meeting_topics_covereds as $item)
+    @foreach ($meeting_new_subjects as $item)
+                <table>
+                    <tbody>
+
+                        <tr>
+                            <td style="text-align: left;width:100px"><b>Pauta:</b></td>
+                            <td style="text-align: left;width:100px"><b>{{ $item->subject }}</b></td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left"><b>Obsevações:</b></td>
+                            <td style="text-align: left">
+                                <p>
+                                    {{ $item->obs_subject }}
+                                </p>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <hr style="border:1px dotted black">
+            @endforeach
+    {{-- @foreach ($meeting_topics_covereds as $item)
         <table>
 
             <tbody>
@@ -164,7 +185,7 @@
             </tbody>
         </table>
         <hr style="border:1px dotted black">
-    @endforeach
+    @endforeach --}}
     @if ($meeting->start_meeting)
         <h3 style="color:red; text-align:center;margin-top:40px">Reunião iniciada em
             {{ date('d/m/Y  H:i ', strtotime($meeting->start_meeting)) }}</h3>
@@ -172,24 +193,25 @@
 
 
         @foreach ($meeting_subjects as $item)
-            <table>
+            
+        <table>
                 <tbody>
                     <tr>
-                        <td style="text-align: left; vertical-align: middle;"><b>Pauta:</b></td>
-                        <td style="text-align: left; vertical-align: middle;">{{ $item->subject }}</td>
+                        <td style="text-align: left;width:100px "><b>Pauta:</b></td>
+                        <td style="text-align: left; " ><b>{{ $item->subject }}</b></td>
                     </tr>
                     <tr>
-                        <td style="text-align: left; vertical-align: middle;"><b>Obsevações:</b></td>
-                        <td style="text-align: left; vertical-align: middle;">
-                            <p>{{ $item->obs_subject }}</p>
+                        <td style="text-align: left;width:100px "><b>Obsevações:</b></td>
+                        <td style="text-align: left; " >
+                            {{ $item->obs_subject }}
                         </td>
                     </tr>
-
                 </tbody>
             </table>
             <hr style="border:1px dotted black">
         @endforeach
-        @if (count($meeting_new_subjects) > 0)
+        @endif
+        {{-- @if (count($meeting_new_subjects) > 0)
 
 
             <h3 class="sub_title">Novas Pautas</h3>
@@ -218,7 +240,7 @@
             @endforeach
         @endif
 
-    @endif
+    @endif --}}
 
 </body>
 
