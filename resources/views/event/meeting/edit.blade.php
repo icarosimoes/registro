@@ -265,7 +265,7 @@
                             </div>
                         </div>
                     </div>
-                    @endif
+                    @endif --}}
                     <div class="col-sm-12">
                         <a href="#" class="btn btn-secondary mb-2">Cancelar</a>
                         <button type="submit" class="btn btn-success float-right"><i
@@ -279,7 +279,7 @@
                     <div class="text-bold pt-2">Carregando...</div>
                 </div>
             </div>
-        </div> --}}
+        </div>
 
         <!-- Modal adicionar participante-->
         <div class="modal fade" id="ModalAddParticipant" tabindex="-1" role="dialog"
