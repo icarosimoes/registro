@@ -233,7 +233,7 @@ class MeetingController extends Controller
             'meeting_invited_participants',
             'name',
 
-        ]))->setPaper('a4', 'landscape');
+        ]))->setPaper('a4');
         return $pdf->stream('relatorio.pdf');
        
     }

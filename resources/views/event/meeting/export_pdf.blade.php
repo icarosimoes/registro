@@ -61,20 +61,20 @@
 
         <tbody>
             <tr>
-                <td class="top1">
-                    <b>AERO</b><br />
-                    <p>Relatório de Registros</p>
-                    <p><b>Descrição:</b> {{ $name }}</p>
+                <td class="top41" style="width:500px">
+                    <b>AERO</b>                 
                 </td>
-                <td class="top2">
-                    {{-- @if ($params)
-                        <b>Período: </b> {{ $params }}<br />
-                        @else
-                        <b>Período: </b> Indefinido<br />
-                    @endif --}}
-
-                    <p><b>Exportação:</b> {{ (new DateTime())->format('d-m-Y H:i:s') }}</p>
+                <td class="top2d">
+                    <b>Exportação:</b> {{ (new DateTime())->format('d/m/Y H:i:s') }}
                 </td>
+            </tr>
+            <tr>
+                <td>Relatório de Registros</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><b>Descrição:</b> {{ $name }}</td>
+                <td></td>
             </tr>
         </tbody>
     </table>
@@ -90,7 +90,7 @@
         </thead>
         <tbody>
             <tr>
-                <td style="text-align: center; vertical-align: middle;">{{ $meeting->datetime }}</td>
+                <td style="text-align: center; vertical-align: middle;">{{ (new DateTime($meeting->datetime))->format('d/m/Y H:i:s') }}</td>
                 <td>{{ $meeting->local }}</td>
                 <td>{{ $meeting->approval == 'approved' ? 'Aprovado' : 'Reprovado' }}</td>
             </tr>
@@ -152,13 +152,13 @@
 
                         <tr>
                             <td style="text-align: left;width:100px"><b>Pauta:</b></td>
-                            <td style="text-align: left;width:100px"><b>{{ $item->subject }}</b></td>
+                            <td style="text-align: left;"><b>{{ $item->subject }}</b></td>
                         </tr>
                         <tr>
                             <td style="text-align: left"><b>Obsevações:</b></td>
                             <td style="text-align: left">
-                                <p>
-                                    {{ $item->obs_subject }}
+                                <p >
+                                    {{ trim($item->obs_subject) }}
                                 </p>
                             </td>
                         </tr>
@@ -194,20 +194,40 @@
 
         @foreach ($meeting_subjects as $item)
             
-        <table>
+        {{-- <div style="width: 700px;height:50px;background:#474744">
+            <div style="width:100px; height:50px;background:pink;float:left">
+            <div>Pauta:</div>
+            <div>Observacao:</div>
+            </div>
+            <div style="width:600px; height:50px;background:green;float:left">
+            <div>
+                {{ $item->subject }}
+            </div>
+            <div>
+                <p>
+                    {{ $item->obs_subject }}
+                </p>
+            </div>
+            </div>
+        
+        </div> --}}
+            <table> 
                 <tbody>
                     <tr>
                         <td style="text-align: left;width:100px "><b>Pauta:</b></td>
-                        <td style="text-align: left; " ><b>{{ $item->subject }}</b></td>
+                        <td style="text-align: left; " >
+                            <div><b>{{ $item->subject }}</b></div>
+                        </td>
                     </tr>
                     <tr>
                         <td style="text-align: left;width:100px "><b>Obsevações:</b></td>
-                        <td style="text-align: left; " >
+                        <td style="text-align: left">
                             {{ $item->obs_subject }}
+                            
                         </td>
                     </tr>
                 </tbody>
-            </table>
+            </table> 
             <hr style="border:1px dotted black">
         @endforeach
         @endif
