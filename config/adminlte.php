@@ -77,7 +77,8 @@ return [
     |
     | Here we change the layout of your admin panel.
     |
-    | For more detailed instructions you can look here:
+    | For more detailed instructions you can look
+     here:
     | https://github.com/jeroennoten/Laravel-AdminLTE/#65-layout
     |
      */
@@ -283,12 +284,16 @@ return [
             'icon' => 'fas fa-fw fa-users-cog',
             'submenu' => [
                 [
-                    'text' => 'User',
+                    'text' => 'Usuários',
                     'url' => 'admin/list/user',
                 ],
                 [
-                    'text' => 'profile',
+                    'text' => 'Perfis',
                     'url' => 'admin/list/profile',
+                ],
+                [
+                    'text' => 'Configurações',
+                    'url' => 'admin/config',
                 ],
             ],
         ],
@@ -878,6 +883,17 @@ return [
             ],
         ],
         [
+            'name' => 'scriptCreateConfig',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/admin/config/config.js',
+                ],
+            ],
+        ],
+        [
             'name' => 'scriptDashboard',
             'active' => false,
             'files' => [
@@ -888,6 +904,7 @@ return [
                 ],
             ],
         ],
+        
         [
             'name' => 'scriptNotification',
             'active' => false,
