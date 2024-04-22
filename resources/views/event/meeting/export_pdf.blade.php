@@ -145,9 +145,17 @@
         </tbody>
     </table>
     <h3 class="sub_title">Assuntos Abordados</h3>
-    {{-- <hr style="margin: 0px"> --}}
     @foreach ($meeting_new_subjects as $item)
-                <table>
+                
+    <div><b>Pauta:</b></div>
+    <div >
+        <pre style="font-size:10px;font-family: sans-serif">{{ $item->subject }}</pre></div>
+    <div><b>Obsevações:</b></div>
+    <div>
+        <pre style="font-size:10px;font-family: sans-serif">{{ $item->obs_subject }}</pre>
+    </div> 
+    
+    {{-- <table>
                     <tbody>
 
                         <tr>
@@ -155,7 +163,7 @@
                             <td style="text-align: left;"><b>{{ $item->subject }}</b></td>
                         </tr>
                         <tr>
-                            <td style="text-align: left"><b>Obsevações:</b></td>
+                            <td style="text-align: left"><b>Observações:</b></td>
                             <td style="text-align: left">
                                 <p >
                                     {{ trim($item->obs_subject) }}
@@ -164,28 +172,10 @@
                         </tr>
 
                     </tbody>
-                </table>
+                </table> --}}
                 <hr style="border:1px dotted black">
             @endforeach
-    {{-- @foreach ($meeting_topics_covereds as $item)
-        <table>
-
-            <tbody>
-                <tr>
-                    <td width="100" style="text-align: left; vertical-align: middle;"><b>Assuntos Abordados:</b></td>
-                    <td style="text-align: left; vertical-align: middle;">{{ $item->subject_addressed }}</td>
-                </tr>
-                <tr>
-                    <td width="100" style="text-align: left; vertical-align: middle;"><b>Providências:</b>
-                    </td>
-                    <td style="text-align: left; vertical-align: middle;">
-                        <p>{{ $item->providence }}</p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <hr style="border:1px dotted black">
-    @endforeach --}}
+    
     @if ($meeting->start_meeting)
         <h3 style="color:red; text-align:center;margin-top:40px">Reunião iniciada em
             {{ date('d/m/Y  H:i ', strtotime($meeting->start_meeting)) }}</h3>
@@ -193,41 +183,14 @@
 
 
         @foreach ($meeting_subjects as $item)
-            
-        {{-- <div style="width: 700px;height:50px;background:#474744">
-            <div style="width:100px; height:50px;background:pink;float:left">
-            <div>Pauta:</div>
-            <div>Observacao:</div>
-            </div>
-            <div style="width:600px; height:50px;background:green;float:left">
+            <div><b>Pauta:</b></div>
+            <div >
+                <pre style="font-size:10px;font-family: sans-serif">{{ $item->subject }}</pre></div>
+            <div><b>Obsevações:</b></div>
             <div>
-                {{ $item->subject }}
-            </div>
-            <div>
-                <p>
-                    {{ $item->obs_subject }}
-                </p>
-            </div>
-            </div>
+                <pre style="font-size:10px;font-family: sans-serif">{{ $item->obs_subject }}</pre>
+            </div>   
         
-        </div> --}}
-            <table> 
-                <tbody>
-                    <tr>
-                        <td style="text-align: left;width:100px "><b>Pauta:</b></td>
-                        <td style="text-align: left; " >
-                            <div><b>{{ $item->subject }}</b></div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: left;width:100px "><b>Obsevações:</b></td>
-                        <td style="text-align: left">
-                            {{ $item->obs_subject }}
-                            
-                        </td>
-                    </tr>
-                </tbody>
-            </table> 
             <hr style="border:1px dotted black">
         @endforeach
         @endif

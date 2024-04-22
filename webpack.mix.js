@@ -37,6 +37,8 @@ mix.react('resources/js/app.js', 'public/js')
     .js('resources/js/Jquery/modules/admin/edit_user_profile.js', 'public/js/jquery/modules/admin')
     .js('resources/js/Jquery/modules/admin/create_profile.js', 'public/js/jquery/modules/admin')
     .js('resources/js/Jquery/modules/admin/create_permission.js', 'public/js/jquery/modules/admin')
+    .js('resources/js/Jquery/modules/admin/config/config.js', 'public/js/jquery/modules/admin/config')
+
     //occurrence
     .js('resources/js/Jquery/modules/occurrence/occurrence_create.js', 'public/js/jquery/modules/occurrence')
     .js('resources/js/Jquery/modules/occurrence/occurrence_show.js', 'public/js/jquery/modules/occurrence')

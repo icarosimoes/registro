@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // Route::get('solter/live', function(){
-//     return "aqui aqui";
+//     return "aqui aadmin/list/configqui";
 // });
 
 //Route::get('inactive/user', 'Auth\InsactiveUserController@index')->name('inactive.user');
@@ -36,6 +36,7 @@ Route::group(['middleware' => ['auth']], function () {
     });
 
     Route::prefix('admin')->group(function () {
+        
         //user
         Route::get('list/user', 'Admin\UserController@index')->name('list.users');
         Route::get('new/user', 'Admin\UserController@create')->name('new.users');
@@ -50,6 +51,7 @@ Route::group(['middleware' => ['auth']], function () {
 
         Route::get('user/delete/{id}', 'Admin\UserController@destroy')->name('delete.users');
         Route::get('view/profile', 'Admin\UserController@profile')->name('view.profile');
+        
         //profile
         Route::get('list/profile', 'Admin\ProfileController@index')->name('list.profile');
         Route::get('new/profile', 'Admin\ProfileController@create')->name('new.profile');
@@ -62,6 +64,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('list/permission/{id}', 'Admin\PermissionController@index')->name('list.permission');
         Route::post('permission/create/{id}', 'Admin\PermissionController@create')->name('new.permission');
         Route::get('permission/remove/{id}', 'Admin\PermissionController@destroy')->name('permission.remove');
+        
+        //configuracoes
+        Route::get('config', 'Admin\ConfigController@index')->name('config');
+        Route::post('config/forms/{ConfigForm}', 'Admin\ConfigController@updateConfigForm')->name('config.save');
+        
+    
     });
 
     Route::prefix('register')->group(function () {
