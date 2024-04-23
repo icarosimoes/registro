@@ -147,10 +147,10 @@
     <h3 class="sub_title">Assuntos Abordados</h3>
     @foreach ($meeting_new_subjects as $item)
                 
-    <div><b>Pauta:</b></div>
+    <div><b>PAUTA:</b></div>
     <div >
         <pre style="font-size:10px;font-family: sans-serif">{{ $item->subject }}</pre></div>
-    <div><b>Obsevações:</b></div>
+    <div><b>DELIBERAÇÕES:</b></div>
     <div>
         <pre style="font-size:10px;font-family: sans-serif">{{ $item->obs_subject }}</pre>
     </div> 
@@ -183,10 +183,10 @@
 
 
         @foreach ($meeting_subjects as $item)
-            <div><b>Pauta:</b></div>
+            <div><b>PAUTA:</b></div>
             <div >
                 <pre style="font-size:10px;font-family: sans-serif">{{ $item->subject }}</pre></div>
-            <div><b>Obsevações:</b></div>
+            <div><b>DELIBERAÇÕES:</b></div>
             <div>
                 <pre style="font-size:10px;font-family: sans-serif">{{ $item->obs_subject }}</pre>
             </div>   

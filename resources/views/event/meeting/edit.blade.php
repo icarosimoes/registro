@@ -170,14 +170,14 @@
                                         @foreach ($meeting_subjects as $subjects)
                                             <div class="row mt-3">
                                                 <div class="col">
-                                                    <label for="">ATA</label>
+                                                    <label for="">PAUTA</label>
                                                     <input class="form-control" type="text" readonly
                                                         value="{{ $subjects->subject }}">
                                                 </div>
                                             </div>
                                             <div class="row mt-2">
                                                 <div class="col">
-                                                    <label for="">DELIBERAÇÃO</label>
+                                                    <label for="">DELIBERAÇÕES</label>
                                                     <textarea data-id="{{ $subjects->id }}" class="form-control obs_subject" name="" cols="30"
                                                         rows="5">{{ $subjects->obs_subject }}</textarea>
                                                 </div>
@@ -190,7 +190,7 @@
                                                 <div class="row mt-3">
                                                     <div class="col">
                                                         <label for="">
-                                                            Nova Pauta</label>
+                                                            PAUTA</label>
                                                         <div class="input-group">
 
                                                             <input class="form-control new_subject" type="text"
@@ -210,7 +210,7 @@
                                                 </div>
                                                 <div class="row mt-2">
                                                     <div class="col">
-                                                        <label for="">Observações</label>
+                                                        <label for="">DELIBERAÇÕES</label>
                                                         <textarea data-id="{{ $subjects->id }}" class="form-control obs_new_subject" name="" cols="30"
                                                             rows="5">{{ $subjects->obs_subject }}</textarea>
                                                     </div>
@@ -233,11 +233,12 @@
                                 @endif
 
                             </div>
-
-                            <div class="card-footer text-center" id="add_new_subject" style="cursor: pointer">
-                                <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a 
+                            @if ($meeting->start_meeting)    
+                                <div class="card-footer text-center" id="add_new_subject" style="cursor: pointer">
+                                    <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a 
                                     href="javascript:">Adicionar Novos Assuntos</a>
-                            </div>
+                                </div>
+                            @endif
 
                         </div>
                     </div>

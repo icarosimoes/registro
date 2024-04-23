@@ -255,7 +255,7 @@ $(function () {
       let html = '<div id="a-'+count_new_subject+'">'+
            '<div class="row mt-3">'+
            '<div class="col">'+
-           '<label for="">Nova Pauta</label>'+
+           '<label for="">PAUTA</label>'+
            '<div class="input-group">'+
            '<input class="form-control new_subject"  type="text" '+
            'value="">'+
@@ -268,7 +268,7 @@ $(function () {
    '</div>'+
    '<div class="row mt-2">'+
        '<div class="col">'+
-           '<label for="">Observações</label>'+
+           '<label for="">DELIBERAÇÕES</label>'+
            '<textarea data-id="" class="form-control obs_new_subject" name="" cols="30"'+
                'rows="5"></textarea>'+
        '</div>'+
