@@ -27,15 +27,15 @@ $(function(){
         }else{
             value = 'not'
         }
-
-        
-        
+               
         id = $(e.currentTarget).attr('data-id')
         route = base_url+'/admin/config/forms/'+ id   
         data = {
             active:value
         }    
         $.post(route,data).done((response)=>{
+            location.reload(); 
+            
             DefaultAlert('success','Salvo com sucesso.')
         })      
     })

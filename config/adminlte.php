@@ -219,6 +219,7 @@ return [
                 [
                     'text' => 'Departamento',
                     'url' => 'register/sector',
+
                 ],
                 [
                     'text' => 'Local',
@@ -254,27 +255,35 @@ return [
                 [
                     'text' => 'Reunião',
                     'icon' => 'fas fa-fw fa fa-clipboard',
-                    'url' => 'event/list/meeting'
+                    'url' => 'event/list/meeting',
+                    'address'=>'formulario.reuniao'
                 ],
                 [
                     'text' => 'Relatório de Turno',
                     'icon' => 'fas fa-fw fa fa-clipboard',
-                    'url' => 'event/list/shiftreport'
+                    'url' => 'event/list/shiftreport',
+                    'address' => 'formulario.rel_turno'
+
                 ],
                 [
                     'text' => 'Conferências das suítes',
                     'icon' => 'fas fa-fw fa fa-clipboard',
-                    'url' => 'event/check_suite'
+                    'url' => 'event/check_suite',
+                    'address' => 'formulario.conf_suites'
                 ],
                 [
                     'text' => 'Vistorias das suítes',
                     'icon' => 'fas fa-fw fa fa-clipboard',
-                    'url' => 'event/inspection_suite'
+                    'url' => 'event/inspection_suite',
+                    'address' => 'formulario.vist_suites'
+                    
                 ],
                 [
                     'text' => 'Diário de Obras',
                     'icon' => 'fas fa-fw fa fa-clipboard',
-                    'url' => 'event/work_diary'
+                    'url' => 'event/work_diary',
+                    'address' => 'formulario.diario_obras'
+                    
                 ],
             ],  
         ],
