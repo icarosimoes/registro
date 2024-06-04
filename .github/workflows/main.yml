@@ -44,3 +44,4 @@ jobs:
             cd /var/www/viewmais_chess/aero && sh ./server_deploy.sh
             cd /var/www/house_default/aero && sh ./server_deploy.sh
             cd /var/www/praiadoflamengo/aero && sh ./server_deploy.sh
+            cd /var/www/costaatlantica/aero && sh ./server_deploy.sh
