@@ -25,30 +25,54 @@ class CheckSuitesController extends Controller
 
         $checkSuites = CheckSuite::orderBy('id','DESC');
 
-        if(isset($request->local)){
-            $checkSuites->where('local_id',$request->local);    
-            $filter['local']= Local::find($request->local);
+        $local = session()->get('filter_local');
+        $user = session()->get('filter_user');
+        $date_start = session()->get('filter_date_start');
+        $date_end = session()->get('filter_date_end');
+        $maid = session()->get('filter_maid');
+        
+            if(!isset(request()->page)){
+                    // salva o filtro na sessao pra manter o filtro durante a paginacao
+                    session()->put('filter_local',request()->local);
+                    session()->put('filter_user',request()->user);
+                    session()->put('filter_date_start',request()->date_start);
+                    session()->put('filter_date_end',request()->date_end);
+                    session()->put('filter_maid',request()->maid);
+
+                    $local = request()->local;
+                    $user = request()->user;
+                    $date_start = request()->date_start;
+                    $date_end = request()->date_end;
+                    $maid = request()->maid;
+            }
+
+        if(isset($local)){
+            $checkSuites->where('local_id',$local);    
+            $filter['local']= Local::find($local);
         }
 
-        if(isset($request->user)){
-            $checkSuites->where('user_id',$request->user); 
-            $filter['user']= User::find($request->user);   
+        if(isset($user)){
+            $checkSuites->where('user_id',$user); 
+            $filter['user']= User::find($user);   
         }
         
-        if(isset($request->date_start ) && $request->date_start != null){
-            $checkSuites->where('date','>=',$request->date_start);    
+        if(isset($date_start ) && $date_start != null){
+            $checkSuites->where('date','>=',$date_start);    
+            $filter['date_start']= $date_start; 
+            
         }
 
-        if(isset($request->date_end) && $request->date_end != null ){
-            $checkSuites->where('date','<=',$request->date_end .' 23:59:59');    
+        if(isset($date_end) && $date_end != null ){
+            $checkSuites->where('date','<=',$date_end .' 23:59:59');    
+            $filter['date_end']= $date_end; 
         }
         
-        if(isset($request->maid)){
-            $checkSuites->where('maid','like',"%$request->maid%" );    
+        if(isset($maid)){
+            $checkSuites->where('maid','like',"%$maid%" );    
+            $filter['maid']= $maid; 
         }
-                      
-
-        $checkSuites= $checkSuites->get();
+                
+        $checkSuites= $checkSuites->paginate(20);
         return view('event/check_suites/list')->with(['data' => $checkSuites,"filter"=>$filter]);
     }
 

@@ -1,8 +1,7 @@
 @extends('adminlte::page')
 @section('content')
 @section('plugins.Select2', true)
-
-@section('plugins.Datatables', true)
+<!-- @section('plugins.Datatables', true) -->
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-sm-12">
@@ -87,7 +86,7 @@
                             </div>
     
                         </form>
-                        <table name="DataTableUser" id="DataTableUser" class="table table-striped table-sm table-hover">
+                        <table name="" id="" class="table table-striped table-sm table-hover">
                             <thead>
                                 <tr>
                                     <th>Id</th>
@@ -140,6 +139,11 @@
                             </tbody>
 
                         </table>
+                        <div class="row mt-4">
+                            <div class="col">Mostrado 20 de {{ $data->total() }} </div>
+                            <div class="col"></div>
+                            <div class="col">{{$data->links()}}</div>
+                        </div>
                     </div>
                     <!-- /.card-body -->
                 </div>

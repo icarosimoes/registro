@@ -587,7 +587,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <label for="Name">Observaçôes</label>
+                                        <label for="Name">Observações</label>
                                         <div class="form-group">
                                             
                                             <textarea class="form-control " name="" id="obs"  rows="5"></textarea>
