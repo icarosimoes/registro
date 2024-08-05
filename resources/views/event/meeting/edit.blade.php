@@ -39,7 +39,8 @@
                                     <div class="col-3">
                                         <label for="datetime">Data e Hora</label>
                                         <input type="hidden" id="start_meeting" value="{{ $meeting->start_meeting }}">
-                                        <input {{$meeting->start_meeting == null?'':'readonly'}} value="{{ $meeting->datetime }}" id="datetime" class="form-control"
+                                        <input {{ $meeting->start_meeting == null ? '' : 'readonly' }}
+                                            value="{{ $meeting->datetime }}" id="datetime" class="form-control"
                                             type="datetime-local" required>
                                     </div>
                                     <div class="col-3">
@@ -88,9 +89,10 @@
                                 </div>
                             </div>
                             <div class="card-footer text-center">
-                                    <i class="far fa-plus-square"></i>&nbsp;&nbsp;<button class="btn btn-text " {{$meeting->start_meeting == null?'':'disabled'}} id="addItemTopic"
-                                        >Adicionar Novo Item</button>
-                            </div> 
+                                <i class="far fa-plus-square"></i>&nbsp;&nbsp;<button class="btn btn-text "
+                                    {{ $meeting->start_meeting == null ? '' : 'disabled' }} id="addItemTopic">Adicionar Novo
+                                    Item</button>
+                            </div>
                         </div>
                     </div>
 
@@ -138,11 +140,11 @@
 
                             <!-- /.card-body -->
                             <div class="card-footer text-center">
-                                    <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a data-toggle="modal"
-                                        data-target="#ModalAddParticipant" href="javascript:">Adicionar Novo
-                                        Participantes</a>
+                                <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a data-toggle="modal"
+                                    data-target="#ModalAddParticipant" href="javascript:">Adicionar Novo
+                                    Participantes</a>
 
-                                </div>
+                            </div>
                             <!-- /.card-footer -->
                         </div>
                     </div>
@@ -171,9 +173,18 @@
                                             <div class="row mt-3">
                                                 <div class="col">
                                                     <label for="">PAUTA</label>
+                                                   <div class="input-group">
                                                     <input class="form-control" type="text" readonly
                                                         value="{{ $subjects->subject }}">
+                                                    <div class="input-group-append">
+                                                       <button type="button" data-id="{{ $subjects->id }}" class="btn btn-sm btn-secondary btn_attach_subject">
+                                                        <i class="fas fa-paperclip"></i>
+                                                    </button>
+                                                    </div>
+                                                    </div>
+
                                                 </div>
+                                              
                                             </div>
                                             <div class="row mt-2">
                                                 <div class="col">
@@ -221,7 +232,7 @@
 
 
                                 </div>
-                                
+
                                 {{-- <div class="row mt-2">
                                     <div class="col">
                                         <div class="card-footer text-center" style="cursor: pointer" id="add_new_subject">
@@ -233,10 +244,10 @@
                                 @endif
 
                             </div>
-                            @if ($meeting->start_meeting)    
+                            @if ($meeting->start_meeting)
                                 <div class="card-footer text-center" id="add_new_subject" style="cursor: pointer">
-                                    <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a 
-                                    href="javascript:">Adicionar Novos Assuntos</a>
+                                    <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a href="javascript:">Adicionar
+                                        Novos Assuntos</a>
                                 </div>
                             @endif
 
@@ -445,6 +456,54 @@
         </div>
     </div>
 </div>
+
+{{-- modal anexo pautas --}}
+<div class="modal fade" id="attach_subject" tabindex="-1" role="dialog" aria-labelledby="export-pdf"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="export-pdf">Anexo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="attach_subject_id">
+                <div class="form-group">
+                    <label for="titleExport">Descrição</label>
+                    <input type="text" class="form-control"  id="attach_description">
+                </div>
+                <div class="form-group">
+                    <label for="titleExport">Arquivo</label>
+                    <input type="file" class="form-control"  id="attach_file">
+                </div>
+                <hr>
+                <table width="100%" class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Anexos</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="table_attach">
+                        
+                    </tbody>
+
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i
+                        class="far fa-times-circle"></i> Sair</button>
+                <button type="button" id="btnAttachSave" target="_blank" class="btn btn-primary"><i
+                        class="fas fa-save"></i> Salvar </button>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 @section('plugins.scriptUpdateMeeting', true)
 @endsection

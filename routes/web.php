@@ -101,7 +101,11 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('list/meeting', 'Event\Meeting\MeetingController@index')->name('meeting.list');
         Route::get('meeting/create', 'Event\Meeting\MeetingController@create')->name('meeting.create');
         Route::post('meeting/store', 'Event\Meeting\MeetingController@store');
+        Route::post('meeting/attach_subject', 'Event\Meeting\MeetingController@attachSubject');
+        Route::get('meeting/load_attach_subject/{subject_id}', 'Event\Meeting\MeetingController@loadAttachSubject');
+        Route::get('meeting/donwload_attach_subject/{meeting_subject_attach_id}', 'Event\Meeting\MeetingController@downloadAttachSubject');
         Route::get('meeting/edit/{id}', 'Event\Meeting\MeetingController@edit')->name('meeting.edit');
+        
         Route::post('meeting/update', 'Event\Meeting\MeetingController@update');
         Route::get('meeting/view/{id}', 'Event\Meeting\MeetingController@show')->name('meeting.view');
         Route::get('meeting/destroy/{id}', 'Event\Meeting\MeetingController@destroy')->name('meeting.delete');

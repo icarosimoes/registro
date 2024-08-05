@@ -308,7 +308,84 @@ $(function () {
     })
 
     
+    $(document).on('click','.btn_attach_subject',(e)=>{
+        const subject_id = $(e.currentTarget).attr('data-id')
+        $('#attach_subject_id').val(subject_id)
+        loadAttachSubject(subject_id)
+        clearDataAttachSubject()
+        $('#attach_subject').modal('show');
+
+    })
     
+    //SALVAR ANEXO
+    
+    $('#btnAttachSave').on('click',(e)=>{
+        let form_data = new FormData()
+
+        form_data.append('subject_id',$('#attach_subject_id').val())
+        form_data.append('description',$('#attach_description').val())
+        form_data.append('file', $('#attach_file').prop('files')[0])
+        
+        $.ajax({
+            url: base_url + "/event/meeting/attach_subject",
+            type: "POST",
+            data: form_data,
+            dataType: 'text',
+            cache: false,
+            contentType: false,
+            processData: false,
+            enctype: 'multipart/form-data',
+            success: function (response) {
+                DefaultAlert("success", 'Anexo salvo.');
+                //limpa os inpusts de anexo
+                clearDataAttachSubject()
+                //carrega a tebela de anexos 
+                refreshTableAttachSubject(JSON.parse(response))   
+            }
+        }).fail(()=>{
+            DefaultAlert("error", 'Não foi possível salvar anexo.');  
+        })
+        .always(()=>{
+            // $('.overlay').addClass('d-none');
+        })
+    })
+
+
+    function loadAttachSubject(subject_id){
+    
+        const route = base_url + "/event/meeting/load_attach_subject/" + subject_id
+        $.get(route,(response)=>{
+            refreshTableAttachSubject(response)    
+        })
+    }
+
+    function refreshTableAttachSubject(attaches){
+        let html = ''
+        attaches.forEach((item)=>{
+            let url_download = base_url + "/event/meeting/donwload_attach_subject/"+item.id
+            html += `
+            <tr>
+                <td>${item.description}</td>
+                <td class="text-right">
+                    <a target="_blank" href="${url_download}" ><button class="btn btn-sm btn-secondary">
+                    <i class="fas fa-download"></i>
+                    </button></a>
+                </td>
+            </tr>
+            `
+        })
+        
+        $('#table_attach').html(html)
+
+    }
+
+    function clearDataAttachSubject(){
+
+        
+        $('#attach_description').val('')
+        $('#attach_file').val(null) 
+    }
+
     
     /**
      * 

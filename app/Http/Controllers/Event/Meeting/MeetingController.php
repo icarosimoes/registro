@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Event\Meeting;
 
 use App\CheckSuite;
 use App\Http\Controllers\Controller;
+use App\MeetingSubjectAttach;
 use App\Models\Meeting\meeting;
 use App\Models\Notification;
 use PDF;
@@ -56,6 +57,9 @@ class MeetingController extends Controller
             echo json_encode(['success' => false, 'message' => 'Erro ao tentar cadastrar']);
         }
     }
+
+
+
 
     /**
      * Display the specified resource.
@@ -117,8 +121,6 @@ class MeetingController extends Controller
             $notification->save();
         }
 
-
-
         $usersRegistered = $this->service->usersRegistered();
         $occurrences = $this->service->getOcurrence();
         $meeting = $this->service->show($id);
@@ -157,6 +159,42 @@ class MeetingController extends Controller
             echo json_encode(['success' => false, 'message' => 'Erro ao Alterar registro']);
         }
     }
+
+    /**
+     * salva aanexos de pauta
+     */
+    public function attachSubject(Request $request){
+        
+        $dir = Storage::put('/meeting_subject_attaches',$request->file);
+        
+        $attach = new MeetingSubjectAttach();
+        $attach->meeting_subject_id = $request->subject_id;
+        $attach->description = $request->description;
+        $attach->dir = $dir;
+        $attach->save();
+        
+        $attaches = MeetingSubjectAttach::where('meeting_subject_id',$request->subject_id)->get();
+        return response()->json($attaches);
+
+
+    }
+
+    /**
+     * carreag todos anexos de uma pauta
+     */
+    public function loadAttachSubject($subject_id){
+
+        $attaches = MeetingSubjectAttach::where('meeting_subject_id',$subject_id)->get();
+        return response()->json($attaches);
+
+
+    }
+
+    public function downloadAttachSubject($meeting_subject_attach_id){
+        $attach =  MeetingSubjectAttach::find($meeting_subject_attach_id);
+        return Storage::download($attach->dir);
+    }
+
 
     public function getUserRegistered($id)
     {
