@@ -308,7 +308,137 @@ $(function () {
     })
 
     
+
+    //anexa arquivo na nova pauta
+    $(document).on('click','.btn_attach_new_subject',(e)=>{
+        const subject_id = $(e.currentTarget).attr('data-id')
+        $('#attach_subject_id').val(subject_id)
+        $('#origin_attach_subject_id').val('meeting_new_subjects')
+        loadAttachSubject(subject_id,'meeting_new_subjects')
+        clearDataAttachSubject()
+        $('#attach_subject').modal('show');    
+    })   
+
+    //anexa arquivo na pauta 
+    $(document).on('click','.btn_attach_subject',(e)=>{
+        const subject_id = $(e.currentTarget).attr('data-id')
+        $('#attach_subject_id').val(subject_id)
+        $('#origin_attach_subject_id').val('meeting_subjects')
+        loadAttachSubject(subject_id,'meeting_subjects')
+        clearDataAttachSubject()
+        $('#attach_subject').modal('show');
+
+    })
     
+    //SALVAR ANEXO
+    
+    $('#btnAttachSave').on('click',(e)=>{
+
+        const description = $('#attach_description').val()
+        const file =  $('#attach_file').prop('files')[0]
+        if( description == '' || description == null ){
+            DefaultAlert('error','Descrição é um campo obrigatório')
+            return false
+        }
+
+        if( file == '' || file == null ){
+            DefaultAlert('error','Arquivo é um campo obrigatório')
+            return false
+        }
+
+        let form_data = new FormData()
+
+        form_data.append('subject_id',$('#attach_subject_id').val())
+        form_data.append('origin',$('#origin_attach_subject_id').val())
+        form_data.append('description',$('#attach_description').val())
+        form_data.append('file', $('#attach_file').prop('files')[0])
+        
+        $.ajax({
+            url: base_url + "/event/meeting/attach_subject",
+            type: "POST",
+            data: form_data,
+            dataType: 'text',
+            cache: false,
+            contentType: false,
+            processData: false,
+            enctype: 'multipart/form-data',
+            success: function (response) {
+                DefaultAlert("success", 'Anexo salvo.');
+                //limpa os inpusts de anexo
+                clearDataAttachSubject()
+                //carrega a tebela de anexos 
+                refreshTableAttachSubject(JSON.parse(response))   
+            }
+        }).fail(()=>{
+            DefaultAlert("error", 'Não foi possível salvar anexo.');  
+        })
+        .always(()=>{
+            // $('.overlay').addClass('d-none');
+        })
+    })
+
+
+    function loadAttachSubject(subject_id,origin){
+    
+        const route = base_url + "/event/meeting/load_attach_subject/" + subject_id +'/'+ origin
+        $.get(route,(response)=>{
+            refreshTableAttachSubject(response)    
+        })
+    }
+
+    function refreshTableAttachSubject(attaches){
+        let html = ''
+        attaches.forEach((item)=>{
+            let url_download = base_url + "/event/meeting/donwload_attach_subject/"+item.id
+            html += `
+            <tr>
+                <td>${item.description}</td>
+                <td class="text-right">
+                    <a target="_blank" href="${url_download}" ><button class="btn btn-sm btn-secondary">
+                    <i class="fas fa-download"></i>
+                    </button></a>
+                    <button data-id="${item.id}" class="btn btn-sm btn-danger delete_attach">
+                    <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            `
+        })
+        
+        $('#table_attach').html(html)
+
+    }
+
+    function clearDataAttachSubject(){
+
+        
+        $('#attach_description').val('')
+        $('#attach_file').val(null) 
+    }
+    //modal confirm excluir attach 
+    $(document).on('click','.delete_attach',(e)=>{
+        $(delete_attach_id).val($(e.currentTarget).attr('data-id'))
+        $('#attach_subject').modal('hide');
+        $('#confirm_delete_attach').modal('show');        
+    })
+
+    $('#btnAttachDelete').on('click',()=>{
+        const id = $('#delete_attach_id').val();
+        const route = base_url + "/event/meeting/delete_attach_subject/"+id
+        const data = {
+            _method:"DELETE"
+        }
+        $.post(route,data,(response)=>{
+            DefaultAlert('success','Anexo deletado.')    
+            $('#confirm_delete_attach').modal('hide'); 
+            $('#attach_subject').modal('show');
+            //atualiza a tabela       
+            refreshTableAttachSubject(response)   
+
+        }).fail(()=>{
+            DefaultAlert('error','Não foi possivel apagar o anexo.')
+        })
+    })
     
     /**
      * 
