@@ -308,10 +308,23 @@ $(function () {
     })
 
     
+
+    //anexa arquivo na nova pauta
+    $(document).on('click','.btn_attach_new_subject',(e)=>{
+        const subject_id = $(e.currentTarget).attr('data-id')
+        $('#attach_subject_id').val(subject_id)
+        $('#origin_attach_subject_id').val('meeting_new_subjects')
+        loadAttachSubject(subject_id,'meeting_new_subjects')
+        clearDataAttachSubject()
+        $('#attach_subject').modal('show');    
+    })   
+
+    //anexa arquivo na pauta 
     $(document).on('click','.btn_attach_subject',(e)=>{
         const subject_id = $(e.currentTarget).attr('data-id')
         $('#attach_subject_id').val(subject_id)
-        loadAttachSubject(subject_id)
+        $('#origin_attach_subject_id').val('meeting_subjects')
+        loadAttachSubject(subject_id,'meeting_subjects')
         clearDataAttachSubject()
         $('#attach_subject').modal('show');
 
@@ -336,6 +349,7 @@ $(function () {
         let form_data = new FormData()
 
         form_data.append('subject_id',$('#attach_subject_id').val())
+        form_data.append('origin',$('#origin_attach_subject_id').val())
         form_data.append('description',$('#attach_description').val())
         form_data.append('file', $('#attach_file').prop('files')[0])
         
@@ -364,9 +378,9 @@ $(function () {
     })
 
 
-    function loadAttachSubject(subject_id){
+    function loadAttachSubject(subject_id,origin){
     
-        const route = base_url + "/event/meeting/load_attach_subject/" + subject_id
+        const route = base_url + "/event/meeting/load_attach_subject/" + subject_id +'/'+ origin
         $.get(route,(response)=>{
             refreshTableAttachSubject(response)    
         })
