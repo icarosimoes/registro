@@ -6,9 +6,11 @@ use App\CheckSuite;
 use App\Http\Controllers\Controller;
 use App\MeetingSubjectAttach;
 use App\Models\Meeting\meeting;
+use App\Models\Meeting\meeting_subjects;
 use App\Models\Notification;
 use PDF;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class MeetingController extends Controller
@@ -195,6 +197,20 @@ class MeetingController extends Controller
         return Storage::download($attach->dir);
     }
 
+    public function deleteAttachSubject($attach_id){
+        DB::beginTransaction();
+                       
+            $attach = MeetingSubjectAttach::find($attach_id);
+            $meeting_subject_id = $attach->meeting_subject_id;
+            Storage::delete($attach->dir);    
+            $attach->delete();
+            
+            
+            $attachs = MeetingSubjectAttach::where('meeting_subject_id',$meeting_subject_id)->get(); 
+
+        DB::commit();
+        return response()->json($attachs);
+    }
 
     public function getUserRegistered($id)
     {

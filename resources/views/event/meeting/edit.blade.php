@@ -503,6 +503,31 @@
     </div>
 </div>
 
+<div class="modal" id="confirm_delete_attach" tabindex="-1" role="dialog" aria-labelledby="export-pdf"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="export-pdf">Deletar Anexo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="delete_attach_id" >
+                <h2>Deseja realmente excluir? </h2>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id=""><i
+                        class="far fa-times-circle"></i> Sair</button>
+                <button type="button" id="btnAttachDelete" target="_blank" class="btn btn-danger"><i
+                        class="fas fa-save"></i> Deletar </button>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 @section('plugins.scriptUpdateMeeting', true)

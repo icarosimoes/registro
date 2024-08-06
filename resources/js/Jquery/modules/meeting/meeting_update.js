@@ -320,6 +320,19 @@ $(function () {
     //SALVAR ANEXO
     
     $('#btnAttachSave').on('click',(e)=>{
+
+        const description = $('#attach_description').val()
+        const file =  $('#attach_file').prop('files')[0]
+        if( description == '' || description == null ){
+            DefaultAlert('error','Descrição é um campo obrigatório')
+            return false
+        }
+
+        if( file == '' || file == null ){
+            DefaultAlert('error','Arquivo é um campo obrigatório')
+            return false
+        }
+
         let form_data = new FormData()
 
         form_data.append('subject_id',$('#attach_subject_id').val())
@@ -370,6 +383,9 @@ $(function () {
                     <a target="_blank" href="${url_download}" ><button class="btn btn-sm btn-secondary">
                     <i class="fas fa-download"></i>
                     </button></a>
+                    <button data-id="${item.id}" class="btn btn-sm btn-danger delete_attach">
+                    <i class="fas fa-trash"></i>
+                    </button>
                 </td>
             </tr>
             `
@@ -385,7 +401,30 @@ $(function () {
         $('#attach_description').val('')
         $('#attach_file').val(null) 
     }
+    //modal confirm excluir attach 
+    $(document).on('click','.delete_attach',(e)=>{
+        $(delete_attach_id).val($(e.currentTarget).attr('data-id'))
+        $('#attach_subject').modal('hide');
+        $('#confirm_delete_attach').modal('show');        
+    })
 
+    $('#btnAttachDelete').on('click',()=>{
+        const id = $('#delete_attach_id').val();
+        const route = base_url + "/event/meeting/delete_attach_subject/"+id
+        const data = {
+            _method:"DELETE"
+        }
+        $.post(route,data,(response)=>{
+            DefaultAlert('success','Anexo deletado.')    
+            $('#confirm_delete_attach').modal('hide'); 
+            $('#attach_subject').modal('show');
+            //atualiza a tabela       
+            refreshTableAttachSubject(response)   
+
+        }).fail(()=>{
+            DefaultAlert('error','Não foi possivel apagar o anexo.')
+        })
+    })
     
     /**
      * 
