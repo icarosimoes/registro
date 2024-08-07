@@ -489,6 +489,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/admin/create_user.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -499,6 +504,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/admin/edit_user.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -511,6 +521,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/admin/edit_user_profile.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -521,6 +536,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/sector/sector_create.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -533,6 +553,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/sector/sector_update.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],  
         [
@@ -543,6 +568,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/sector/sector_list.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -555,6 +585,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/function/function_create.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -565,6 +600,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/function/function_update.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],  
@@ -577,6 +617,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/function/function_list.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -587,6 +632,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/procedure/procedure_create.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -599,6 +649,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/procedure/procedure_update.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],  
         [
@@ -609,6 +664,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/procedure/procedure_list.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -621,6 +681,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/local/local_create.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -631,6 +696,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/local/local_update.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],  
@@ -643,6 +713,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/register/local/local_list.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -653,6 +728,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/occurrence/occurrence_create.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -665,6 +745,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/occurrence/occurrence_show.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -675,6 +760,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/occurrence/occurrence_update.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -687,6 +777,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/occurrence/occurrence_list.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -697,6 +792,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/meeting/meeting.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -709,6 +809,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/shiftReport/shiftReport_list.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -719,6 +824,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/shiftReport/shiftReport.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -731,6 +841,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/shiftReport/shiftReportUpdate.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -742,6 +857,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/meeting/meeting_update.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -752,6 +872,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/meeting/meeting_view.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -765,6 +890,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/check_suite/check_suite_list.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -776,6 +906,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/check_suite/check_suite_create.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -786,6 +921,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/check_suite/check_suite_update.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -799,6 +939,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/inspection_suite/inspection_suite_list.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -810,6 +955,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/inspection_suite/inspection_suite_create.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -820,6 +970,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/inspection_suite/inspection_suite_update.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -833,6 +988,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/work_diary/work_diary_list.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         
@@ -845,6 +1005,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/work_diary/work_diary_create.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -855,6 +1020,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/work_diary/work_diary_update.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -867,6 +1037,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/work_diary/work_diary_view.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -877,6 +1052,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/admin/create_profile.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -889,6 +1069,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/modules/admin/create_permission.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         [
@@ -899,6 +1084,11 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/admin/config/config.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
@@ -911,6 +1101,11 @@ return [
                     'asset' => true,
                     'location' => 'js/jquery/dashboard.js',
                 ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
             ],
         ],
         
@@ -921,7 +1116,12 @@ return [
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => 'js/jquery/notification.js',
+                    'location' => 'js/jquery/modules/admin/create_profile.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
                 ],
             ],
         ],
