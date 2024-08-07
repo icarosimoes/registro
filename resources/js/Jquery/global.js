@@ -6,37 +6,37 @@ $(document).ready(function() {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
 });
-  console.log('inicio')
-  refreshNotification()
+  // console.log('inicio')
+  // refreshNotification()
   
-  setInterval(()=>{
-    console.log('interval')
-    refreshNotification()
-  },10000)
+  // setInterval(()=>{
+  //   console.log('interval')
+  //   refreshNotification()
+  // },10000)
 
-  function refreshNotification(){
-    let data = {
-    //  user_id:$('#btn_notification').data('user') 
-    }
-    let route = base_url+'/notification'  
+  // function refreshNotification(){
+  //   let data = {
+  //   //  user_id:$('#btn_notification').data('user') 
+  //   }
+  //   let route = base_url+'/notification'  
     
-    $.post(route,data,(response)=>{
-      if( window.notification_lenght == 0){
-        window.notification_lenght = response.length
-      }
-        if(window.notification_lenght < response.length){
-          window.notification_lenght = response.length
-          DefaultAlert('info','Nova notificação !')
-        }
+  //   $.post(route,data,(response)=>{
+  //     if( window.notification_lenght == 0){
+  //       window.notification_lenght = response.length
+  //     }
+  //       if(window.notification_lenght < response.length){
+  //         window.notification_lenght = response.length
+  //         DefaultAlert('info','Nova notificação !')
+  //       }
 
-        $('#btn_notification_bag').text(response.length)
-       $('#menu_notification').text(response.length)
+  //       $('#btn_notification_bag').text(response.length)
+  //      $('#menu_notification').text(response.length)
        
-    })
-  }
+  //   })
+  // }
 
-  const menu_notification = $('.bags_notification').siblings()
-  $(menu_notification[0]).append('<i class="badge badge-danger" id="menu_notification">0</i>')
+  // const menu_notification = $('.bags_notification').siblings()
+  // $(menu_notification[0]).append('<i class="badge badge-danger" id="menu_notification">0</i>')
 
 
   const Toast = Swal.mixin({
