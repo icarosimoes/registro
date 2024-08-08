@@ -15,6 +15,7 @@ mix.react('resources/js/app.js', 'public/js')
     .sass('resources/sass/app.scss', 'public/css')
     .js('resources/js/Jquery/global.js', 'public/js/jquery')
     .js('resources/js/Jquery/modules/admin/list.js', 'public/js/jquery/modules/admin')
+    .js('resources/js/Jquery/modules/admin/notification_active.js', 'public/js/jquery')
     
     //register
     .js('resources/js/Jquery/modules/register/sector/sector_create.js', 'public/js/jquery/modules/register/sector')

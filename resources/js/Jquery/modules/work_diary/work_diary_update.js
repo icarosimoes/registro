@@ -15,6 +15,7 @@ $(function() {
         timer: 3000
     });
 
+ 
 //quantidade select
 const options_qtd =`
 <option>0</option>
@@ -135,7 +136,13 @@ const options_qtd =`
     })
    calcTotalAmountProd()// calc totais de producao
    
-    load_sub.forEach((element,index) => {
+
+   //ordenamento por empresa sub empreitriro
+   const order_load_sub = load_sub.sort((a,b)=>{
+    return  a.company.localeCompare(b.company);
+   })
+   
+   order_load_sub.forEach((element,index) => {
        index =  'S'+index
        let html = `<tr id="row-${index}">
                      <td><input type="text" class="form-control form-control-sm sub_company" value="${element.company}"></td>
