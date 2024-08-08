@@ -45,3 +45,4 @@ jobs:
             cd /var/www/house_default/aero && sh ./server_deploy.sh
             cd /var/www/praiadoflamengo/aero && sh ./server_deploy.sh
             cd /var/www/costaatlantica/aero && sh ./server_deploy.sh
+            cd /var/www/sonoma/aero && sh ./server_deploy.sh
