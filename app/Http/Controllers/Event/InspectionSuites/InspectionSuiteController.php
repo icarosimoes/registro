@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Event\InspectionSuites;
 
+use App\Exports\InspectionSuiteExcelExport;
 use App\Http\Controllers\Controller;
 use App\Local;
 use App\Models\InspectionSuite;
@@ -9,6 +10,7 @@ use App\Models\InspectionSuiteItem;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class InspectionSuiteController extends Controller
 {
@@ -48,6 +50,7 @@ class InspectionSuiteController extends Controller
         }
 
         $checkSuites= $checkSuites->get();
+        session()->put('check_suites',$checkSuites);
         return view('event/inspection_suites/list')->with(['data' => $checkSuites,"filter"=>$filter]);
     }
 
@@ -173,4 +176,19 @@ class InspectionSuiteController extends Controller
         $inspectionSuite->delete();
         return $inspectionSuite;   
     }
+
+
+    /**
+     * export excel
+     */
+    public function exportExcel(){
+        
+
+       $inspection_suite = session()->get('check_suites');
+       //dd($inspection_suite);
+       $name = 'teste';
+       return Excel::download(new InspectionSuiteExcelExport($inspection_suite, $name), 'relatorio.xlsx');
+        
+    }
+
 }

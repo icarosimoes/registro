@@ -15,6 +15,11 @@
                 <div class="card card-secondary card-outline">
                     <div class="card-header">
                         <h3 class="card-title">Lista de Vistorias de Suites</h3>
+                        <div class="text-right">
+                            <a href="{{route('inspection_suite.export.excel')}}" target="_blank" class="btn-sm btn btn-warning"><i class="fas fa-file-excel"></i> EXCEL</a>
+                            <a target="_blank" class="btn-sm btn btn-warning"><i class="fas fa-file-pdf"></i> PDF</a>
+                        </div>
+                        
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">
