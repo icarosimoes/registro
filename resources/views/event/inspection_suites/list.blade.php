@@ -220,5 +220,5 @@
       </div>
       
 
-      @section('plugins.scriptListCheckSuite', true)
+      @section('plugins.scriptListInspectionSuite', true)
 @endsection

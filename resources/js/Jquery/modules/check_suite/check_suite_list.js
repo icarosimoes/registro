@@ -124,7 +124,7 @@ $(function() {
         }
 
     })
-
+    
     //Exportar Excel
     $('#btnExportExcel').on('click',()=>{
         $('#exportExcel').modal('show')
