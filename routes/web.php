@@ -134,6 +134,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::resource('check_suite','Event\CheckSuites\CheckSuitesController');    
         Route::resource('inspection_suite','Event\InspectionSuites\InspectionSuiteController');    
         Route::get('inspection_suite/export/excel','Event\InspectionSuites\InspectionSuiteController@exportExcel')->name('inspection_suite.export.excel');    
+        Route::get('inspection_suite/export/pdf','Event\InspectionSuites\InspectionSuiteController@exportPdf')->name('inspection_suite.export.pdf');    
         Route::resource('work_diary','Event\WorkDiary\WorkDiaryController');    
         Route::get('work_diary/download_activity/{id}','Event\WorkDiary\WorkDiaryController@downloadActivity');    
         Route::get('work_diary/export_pdf/{id}/{name}', 'Event\WorkDiary\WorkDiaryController@exportPdf')->name('work_diary_export_pdf');

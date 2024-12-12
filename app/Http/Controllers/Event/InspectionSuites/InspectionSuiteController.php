@@ -8,6 +8,7 @@ use App\Local;
 use App\Models\InspectionSuite;
 use App\Models\InspectionSuiteItem;
 use App\Models\User;
+use PDF;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -185,5 +186,15 @@ class InspectionSuiteController extends Controller
     $inspection_suite = session()->get('check_suites');
     $name = request()->description;
     return Excel::download(new InspectionSuiteExcelExport($inspection_suite, $name), 'relatorio.xlsx');
+  }
+
+  public function exportPdf(){
+
+      $inspection_suite = session()->get('check_suites');
+      $description = request()->description;  
+      $pdf = PDF::loadView('event/inspection_suites/export_pdf', compact('description','inspection_suite'))
+      ->setPaper('a4');
+    
+      return $pdf->stream('relatorio.pdf');
   }
 }

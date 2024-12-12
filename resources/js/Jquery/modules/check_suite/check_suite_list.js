@@ -125,6 +125,7 @@ $(function() {
 
     })
 
+    //Exportar Excel
     $('#btnExportExcel').on('click',()=>{
         $('#exportExcel').modal('show')
     })
@@ -139,6 +140,23 @@ $(function() {
     $('#btnExportExcelModal').on('click',()=>{
         $('#descriptionExportExcel').val('')
         $('#exportExcel').modal('hide')
+    })
+
+    //exportasr PDF
+    $('#btnExportPdf').on('click',()=>{
+        $('#exportPdf').modal('show')
+    })
+
+    $('#descriptionExportPdf').on('keyup',()=>{
+       let description =  $('#descriptionExportPdf').val()
+       let route = $('#btnExportPdfModal').attr('data-href')
+       let href = route+'?description='+description
+       $('#btnExportPdfModal').attr('href',href)
+    })
+
+    $('#btnExportPdfModal').on('click',()=>{
+        $('#descriptionExportPdf').val('')
+        $('#exportPdf').modal('hide')
     })
 
 
