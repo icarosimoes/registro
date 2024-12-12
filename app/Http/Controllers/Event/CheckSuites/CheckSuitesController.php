@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Event\CheckSuites;
 
 use App\CheckSuite;
 use App\CheckSuiteItem;
+use App\Exports\CheckSuitesExcelExport;
 use App\Http\Controllers\Controller;
 use App\Local;
 use App\Models\User;
@@ -209,9 +210,9 @@ class CheckSuitesController extends Controller
    */
   public function exportExcel()
   {
-    $inspection_suite = session()->get('check_suites');
+    $check_suites = session()->get('check_suites');
     $name = request()->description;
-    // return Excel::download(new InspectionSuiteExcelExport($inspection_suite, $name), 'relatorio.xlsx');
+    return Excel::download(new CheckSuitesExcelExport($check_suites, $name), 'relatorio.xlsx');
   }
 
   /**

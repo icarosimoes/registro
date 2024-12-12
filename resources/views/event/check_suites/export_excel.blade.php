@@ -5,7 +5,7 @@
       </tr>
 
       <tr>
-          <th colspan="3" ><b>Relatório Vistorias de Suites</b></th>
+          <th colspan="3" ><b>Relatório Conferências de Suites</b></th>
       </tr>
 
       <tr>
@@ -28,7 +28,7 @@
     </tr>
   </thead>
   <tbody>
-    @foreach ($inspectionSuite as $item)
+    @foreach ($checkSuites as $item)
       <tr>
         {{-- @foreach ($roles as $role) --}}
         <td width="10" style="text-align: left">{{ $item->id }}</td>
