@@ -169,7 +169,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-              <a id="btnExportPdfModal" data-href="{{route('inspection_suite.export.pdf')}}" target="_blank"  class="btn btn-primary">Exportar</a>
+              <a id="btnExportPdfModal" data-href="{{route('inspection_suite.export.pdf')}}" target="_blank" href="{{route('inspection_suite.export.pdf')}}" class="btn btn-primary">Exportar</a>
             </div>
           </div>
         </div>
@@ -191,7 +191,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-              <a id="btnExportExcelModal" data-href="{{route('inspection_suite.export.excel')}}" target="_blank"  class="btn btn-primary">Exportar</a>
+              <a id="btnExportExcelModal" data-href="{{route('inspection_suite.export.excel')}}" target="_blank"  href="{{route('inspection_suite.export.excel')}}" class="btn btn-primary">Exportar</a>
             </div>
           </div>
         </div>

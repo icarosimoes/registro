@@ -9,7 +9,7 @@
       </tr>
 
       <tr>
-          <th colspan="3" ><b>Descrição: {{$name}}</b></th>
+          <th colspan="3" ><b>Descrição: {{@$name}}</b></th>
           <th colspan="2" ><b>Exportação:{{ date('d/m/Y H:i:s') }}</b></th>
       </tr>
 

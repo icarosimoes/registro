@@ -73,7 +73,7 @@
         <td></td>
       </tr>
       <tr>
-        <td><b>Descrição:</b> {{ $description }}</td>
+        <td><b>Descrição:</b> {{ @$description }}</td>
         <td></td>
       </tr>
     </tbody>
@@ -83,11 +83,11 @@
   <table border="1" width="100%">
     <thead>
       <tr>
-        <th width='30' style="text-align: center; vertical-align: middle;">ID</th>
-        <th width='50' style="text-align: center; vertical-align: middle;">DATA</th>
-        <th width='50' style="text-align: center; vertical-align: middle;">SUITE</th>
-        <th width='100' style="text-align: center; vertical-align: middle;">INSPECIONADO POR</th>
-        <th width='15' style="text-align: center; vertical-align: middle;">CAMAREIRA</th>
+        <th width='30' style="text-align: center; vertical-align: middle;background:lightgray">ID</th>
+        <th width='50' style="text-align: center; vertical-align: middle;background:lightgray">DATA</th>
+        <th width='50' style="text-align: center; vertical-align: middle;background:lightgray">SUITE</th>
+        <th width='100' style="text-align: center; vertical-align: middle;background:lightgray">INSPECIONADO POR</th>
+        <th width='15' style="text-align: center; vertical-align: middle;background:lightgray">CAMAREIRA</th>
       </tr>
     </thead>
     <tbody>

@@ -166,7 +166,8 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
         <a id="btnExportPdfModal" data-href="{{ route('check_suite.export.pdf') }}" target="_blank"
-          class="btn btn-primary">Exportar</a>
+        href="{{ route('check_suite.export.pdf') }}"  
+        class="btn btn-primary">Exportar</a>
       </div>
     </div>
   </div>
@@ -188,7 +189,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-        <a id="btnExportExcelModal" data-href="{{ route('check_suite.export.excel') }}" target="_blank"
+        <a id="btnExportExcelModal" data-href="{{ route('check_suite.export.excel') }}" target="_blank" href="{{route('check_suite.export.excel')}}"
           class="btn btn-primary">Exportar</a>
       </div>
     </div>
