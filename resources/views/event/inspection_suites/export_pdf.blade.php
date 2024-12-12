@@ -78,7 +78,7 @@
       </tr>
     </tbody>
   </table>
-  <h3 class="sub_title">Data e Local</h3>
+  <h3 class="sub_title">Vistorias de Suites</h3>
   {{-- <hr style="margin: 0px"> --}}
   <table border="1" width="100%">
     <thead>
