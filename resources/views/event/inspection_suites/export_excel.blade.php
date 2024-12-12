@@ -5,7 +5,7 @@
       </tr>
 
       <tr>
-          <th colspan="3" ><b>Relatório Inspeção de Suites</b></th>
+          <th colspan="3" ><b>Relatório Vistorias de Suites</b></th>
       </tr>
 
       <tr>
@@ -32,8 +32,8 @@
       <tr>
         {{-- @foreach ($roles as $role) --}}
         <td width="10" style="text-align: left">{{ $item->id }}</td>
-        <td width="20">{{ date('d/m/Y', strtotime($item->date)) }}</td>
-        <td width="20">{{ @$item->local->name }}</td>
+        <td width="20" style="text-align: center">{{ date('d/m/Y', strtotime($item->date)) }}</td>
+        <td width="20" style="text-align: center">{{ @$item->local->name }}</td>
         <td width="30">{{ @$item->user->name }}</td>
         <td width="30">{{ @$item->maid }}</td>
       </tr>
