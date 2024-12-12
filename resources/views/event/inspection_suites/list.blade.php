@@ -17,7 +17,7 @@
                         <h3 class="card-title">Lista de Vistorias de Suites</h3>
                         <div class="text-right">
                             <button  id="btnExportExcel" class="btn-sm btn btn-warning"><i class="fas fa-file-excel"></i> EXCEL</button>
-                            <a target="_blank" class="btn-sm btn btn-warning"><i class="fas fa-file-pdf"></i> PDF</a>
+                            <button  id="btnExportPdf" class="btn-sm btn btn-warning"><i class="fas fa-file-pdf"></i> PDF</button>
                         </div>
                         
                     </div>
@@ -153,6 +153,28 @@
         </div>
     </div>
 
+    {{-- modal export pdf  --}}
+    <div class="modal" tabindex="-1" id='exportPdf' >
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Exportar PDF</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <label for="">Descrição</label>
+              <input class="form-control" id="descriptionExportPdf" type="text">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+              <a id="btnExportPdfModal" data-href="{{route('inspection_suite.export.pdf')}}" target="_blank" href="{{route('inspection_suite.export.pdf')}}" class="btn btn-primary">Exportar</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
     {{-- modal export excel  --}}
     <div class="modal" tabindex="-1" id='exportExcel' >
         <div class="modal-dialog modal-dialog-centered">
@@ -169,7 +191,7 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-              <a id="btnExportExcelModal" data-href="{{route('inspection_suite.export.excel')}}" target="_blank"  class="btn btn-primary">Exportar</a>
+              <a id="btnExportExcelModal" data-href="{{route('inspection_suite.export.excel')}}" target="_blank"  href="{{route('inspection_suite.export.excel')}}" class="btn btn-primary">Exportar</a>
             </div>
           </div>
         </div>
@@ -198,5 +220,5 @@
       </div>
       
 
-      @section('plugins.scriptListCheckSuite', true)
+      @section('plugins.scriptListInspectionSuite', true)
 @endsection

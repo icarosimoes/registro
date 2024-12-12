@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Event\CheckSuites;
 
 use App\CheckSuite;
 use App\CheckSuiteItem;
+use App\Exports\CheckSuitesExcelExport;
 use App\Http\Controllers\Controller;
 use App\Local;
 use App\Models\User;
 use CreateCheckSuiteItems;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use PDF;
 
 class CheckSuitesController extends Controller
 {
@@ -72,7 +75,9 @@ class CheckSuitesController extends Controller
             $filter['maid']= $maid; 
         }
                 
+        $checkSuitesExport = $checkSuites->get();
         $checkSuites= $checkSuites->paginate(20);
+        session()->put('check_suites',$checkSuitesExport);
         return view('event/check_suites/list')->with(['data' => $checkSuites,"filter"=>$filter]);
     }
 
@@ -198,4 +203,29 @@ class CheckSuitesController extends Controller
         $checkSuite->delete();
         return $checkSuite;   
     }
+
+
+   /**
+   * export excel
+   */
+  public function exportExcel()
+  {
+    $check_suites = session()->get('check_suites');
+    $name = request()->description;
+    return Excel::download(new CheckSuitesExcelExport($check_suites, $name), 'relatorio.xlsx');
+  }
+
+  /**
+   * export pdf
+   */
+  public function exportPdf(){
+
+      $check_suites = session()->get('check_suites');
+      //dd($check_suites);
+      $description = request()->description;  
+      $pdf = PDF::loadView('event/check_suites/export_pdf', compact('description','check_suites'))
+      ->setPaper('a4');
+    
+      return $pdf->stream('relatorio.pdf');
+  }
 }

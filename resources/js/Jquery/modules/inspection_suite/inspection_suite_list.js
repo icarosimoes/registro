@@ -125,6 +125,39 @@ $(function() {
 
     })
 
+     //Exportar Excel
+     $('#btnExportExcel').on('click',()=>{
+        $('#exportExcel').modal('show')
+    })
+
+    $('#descriptionExportExcel').on('keyup',()=>{
+       let description =  $('#descriptionExportExcel').val()
+       let route = $('#btnExportExcelModal').attr('data-href')
+       let href = route+'?description='+description
+       $('#btnExportExcelModal').attr('href',href)
+    })
+
+    $('#btnExportExcelModal').on('click',()=>{
+        $('#descriptionExportExcel').val('')
+        $('#exportExcel').modal('hide')
+    })
+
+    //exportasr PDF
+    $('#btnExportPdf').on('click',()=>{
+        $('#exportPdf').modal('show')
+    })
+
+    $('#descriptionExportPdf').on('keyup',()=>{
+       let description =  $('#descriptionExportPdf').val()
+       let route = $('#btnExportPdfModal').attr('data-href')
+       let href = route+'?description='+description
+       $('#btnExportPdfModal').attr('href',href)
+    })
+
+    $('#btnExportPdfModal').on('click',()=>{
+        $('#descriptionExportPdf').val('')
+        $('#exportPdf').modal('hide')
+    })
     
 
     function DefaultAlert(type, msg) {
