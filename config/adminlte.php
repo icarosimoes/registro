@@ -285,6 +285,13 @@ return [
                     'address' => 'formulario.diario_obras'
                     
                 ],
+                [
+                    'text' => 'Vistoria de Apartamentos',
+                    'icon' => 'fas fa-fw fa fa-clipboard',
+                    'url' => 'event/apartment_inspection',
+                    'address' => 'formulario.vistoria_apartamentos'
+                    
+                ],
             ],  
         ],
         [

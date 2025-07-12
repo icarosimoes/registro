@@ -90,4 +90,5 @@ return [
     'Important'                     => 'Importante',
     'Warning'                       => 'Aviso',
     'Information'                   => 'Informação',
+    'vistoria_apartamentos'         => 'Vistoria de Apartamentos',
 ];
