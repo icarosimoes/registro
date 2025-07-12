@@ -32,13 +32,13 @@
                   <div class="col">
                     <div class="form-group">
                       <label for="Name">Propriétario</label>
-                      <input type="text" class="form-control" id="date" placeholder="" required>
+                      <input type="text" class="form-control" id="owner" placeholder="" required>
                     </div>
                   </div>
                   <div class="col">
                     <div class="form-group">
                       <label for="Name">Unidade</label>
-                      <input type="text" class="form-control" id="date" placeholder="" required>
+                      <input type="text" class="form-control" id="unit" placeholder="" required>
                     </div>
                   </div>
 
@@ -46,13 +46,13 @@
                   <div class="col">
                     <div class="form-group">
                       <label for="Name">Inspecionado por</label>
-                      <input type="text" class="form-control" id="date" placeholder="" required>
+                      <input type="text" class="form-control" id="inspected_by" placeholder="" required>
                     </div>
                   </div>
                   <div class="col">
                     <div class="form-group">
                       <label for="Name">Data</label>
-                      <input type="date" class="form-control" id="date" placeholder="" required>
+                      <input type="date" class="form-control" id="inspection_date" placeholder="" required>
                     </div>
                   </div>
 
@@ -79,15 +79,14 @@
                         </td>
 
                         <td>
-                          <input type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='100'  type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="">
-
-                            <option value="sim">SIM</option>
-                            <option value="nao">NÃO</option>
+                          <select required class="form-control form-control-sm" name="item" id="approved-100">
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
                           </select>
                         </td>
                       </tr>
@@ -100,15 +99,15 @@
                         </td>
 
                         <td>
-                          <input type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='101' type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="">
+                          <select required class="form-control form-control-sm" name="item" id="approved-101">
 
-                            <option value="sim">SIM</option>
-                            <option value="nao">NÃO</option>
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
                           </select>
                         </td>
                       </tr>
@@ -121,15 +120,15 @@
                         </td>
 
                         <td>
-                          <input type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input type="text" data-ref='102' style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="">
+                          <select required class="form-control form-control-sm" name="item" id="approved-102">
 
-                            <option value="sim">SIM</option>
-                            <option value="nao">NÃO</option>
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
                           </select>
                         </td>
                       </tr>
@@ -142,15 +141,15 @@
                         </td>
 
                         <td>
-                          <input type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='103' type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="">
+                          <select required class="form-control form-control-sm" name="item" id="approved-103">
 
-                            <option value="sim">SIM</option>
-                            <option value="nao">NÃO</option>
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
                           </select>
                         </td>
                       </tr>
@@ -162,14 +161,14 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='104' type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="">
+                          <select required class="form-control form-control-sm" name="item" id="approved-104">
 
-                            <option value="sim">SIM</option>
-                            <option value="nao">NÃO</option>
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
                           </select>
                         </td>
                       </tr>
@@ -181,14 +180,14 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='105' type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="">
+                          <select required class="form-control form-control-sm" name="item" id="approved-105">
 
-                            <option value="sim">SIM</option>
-                            <option value="nao">NÃO</option>
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
                           </select>
                         </td>
                       </tr>
@@ -200,14 +199,14 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='106' type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="">
+                          <select required class="form-control form-control-sm" name="item" id="approved-106">
 
-                            <option value="sim">SIM</option>
-                            <option value="nao">NÃO</option>
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
                           </select>
                         </td>
                       </tr>
@@ -219,19 +218,853 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='107' type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="">
+                          <select required class="form-control form-control-sm" name="item" id="approved-107">
 
-                            <option value="sim">SIM</option>
-                            <option value="nao">NÃO</option>
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
                           </select>
                         </td>
                       </tr>
 
 
+											{{-- SANITARIO SUITE --}}
+											 <tr>
+                        <td rowspan="10" style="background: gray">SANITÁRIO SUITE</td>
+                        <td>
+                          PISOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='200' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-200">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          REVESTIMENTOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, REJUNTAMENTO E LIMPEZA 
+                        </td>
+
+                        <td>
+                          <input data-ref='201' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-201">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          BANCADAS
+                        </td>
+                        <td>
+                          FIXAÇÃO, NIVELAMENTO, ACABAMENTO, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='202' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-202">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          ESQUADRIAS DE ALUMÍNIO
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='203' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-203">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          PORTAS DE MADEIRAS
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='204' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-204">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          TOMADAS E INTERRUPTORES
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='205' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-205">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											<tr>
+                        <td>
+                          FORRO DE GESSO
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
+                        </td>
+                        <td>
+                          <input data-ref='206' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-206">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											<tr>
+                        <td>
+                          LOUÇAS (VASO SANIT E LAVATÓRIO)
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='207' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-207">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											<tr>
+                        <td>
+                          METAIS (TORNEIRAS, CHUVEIRO E DUCHA)
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='208' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-208">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											<tr>
+                        <td>
+                          SIFÃO/ VÁLVULAS/ RALOS
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO
+                        </td>
+                        <td>
+                          <input data-ref='209' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-209">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+
+										{{--QUARTO  --}}
+
+										 <tr>
+                        <td rowspan="8" style="background: gray">QUARTO</td>
+                        <td>
+                          PISOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA 
+                        </td>
+
+                        <td>
+                          <input data-ref='300' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-300">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          RODAPÉ
+                        </td>
+                        <td>
+                          FIXAÇÃO, HOMOGENEIDADE, CANTOS,  MANCHAS, FALHAS E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='301' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-301">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          PINTURA DE PAREDES E TETOS
+                        </td>
+                        <td>
+                          HOMOGENEIDADE, ACABAMENTO E LIMPEZA 
+                        </td>
+
+                        <td>
+                          <input  data-ref='302' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-302">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          ESQUADRIAS DE ALUMÍNIO
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='303' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-303">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          PORTAS DE MADEIRAS
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='304' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-304">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          TOMADAS E INTERRUPTORES
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='305' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-305">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											<tr>
+                        <td>
+                          FORRO DE GESSO
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
+                        </td>
+                        <td>
+                          <input data-ref='306' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-306">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											<tr>
+                        <td>
+                          AR CONDICIONADO
+                        </td>
+                        <td>
+                          PONTO ELÉTRICO, PONTO DE DRENO E TUBULAÇÃO
+                        </td>
+                        <td>
+                          <input data-ref='307' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-307">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											{{-- SANITARIO SOCIAL --}}
+											<tr>
+                        <td rowspan="10" style="background: gray">SANITÁRIO SOCIAL</td>
+                        <td>
+                          PISOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='400' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-400">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          REVESTIMENTOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, REJUNTAMENTO E LIMPEZA 
+                        </td>
+
+                        <td>
+                          <input data-ref='401' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-401">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          BANCADAS
+                        </td>
+                        <td>
+                          FIXAÇÃO, NIVELAMENTO, ACABAMENTO, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='402' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-402">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          ESQUADRIAS DE ALUMÍNIO
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='403' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-403">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          PORTAS DE MADEIRAS
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='404' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-404">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          TOMADAS E INTERRUPTORES
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <input  data-ref='405' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-405">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											<tr>
+                        <td>
+                          FORRO DE GESSO
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
+                        </td>
+                        <td>
+                          <input data-ref='406' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-406">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											<tr>
+                        <td>
+                          LOUÇAS (VASO SANIT E LAVATÓRIO)
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='407' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-407">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											<tr>
+                        <td>
+                          METAIS (TORNEIRAS, CHUVEIRO E DUCHA)
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='408' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-408">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											<tr>
+                        <td>
+                          SIFÃO/ VÁLVULAS/ RALOS
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO
+                        </td>
+                        <td>
+                          <input data-ref='409' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-409">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+										{{-- SALA E VARANDA  --}}
+
+											<tr>
+                        <td rowspan="7" style="background: gray">SALA E VARANDA</td>
+                        <td>
+                          PISOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA 
+                        </td>
+
+                        <td>
+                          <input data-ref='500' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-500">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          RODAPÉ
+                        </td>
+                        <td>
+                          FIXAÇÃO, HOMOGENEIDADE, CANTOS,  MANCHAS, FALHAS E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='501' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-501">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          PINTURA DE PAREDES E TETOS
+                        </td>
+                        <td>
+                          HOMOGENEIDADE, ACABAMENTO E LIMPEZA 
+                        </td>
+
+                        <td>
+                          <input data-ref='502' style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-502">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          ESQUADRIAS DE ALUMÍNIO
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='502' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-503">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          PORTAS DE MADEIRAS
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='503' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-504">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          TOMADAS E INTERRUPTORES
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='504' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-505">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+											<tr>
+                        <td>
+                          FORRO DE GESSO
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
+                        </td>
+                        <td>
+                          <input data-ref='505' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-506">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+										{{-- COZINHA --}}
+										<tr>
+                        <td rowspan="10" style="background: gray">COZINHA</td>
+                        <td>
+                          PISOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA 
+                        </td>
+
+                        <td>
+                          <input data-ref='600' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-600">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          REVESTIMENTOS
+                        </td>
+                        <td>
+                          FIXAÇÃO, HOMOGENEIDADE, CANTOS,  MANCHAS, FALHAS E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='601' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-601">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          BANCADAS
+                        </td>
+                        <td>
+                          HOMOGENEIDADE, ACABAMENTO E LIMPEZA 
+                        </td>
+
+                        <td>
+                          <input data-ref='602' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-602">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          TOMADAS E INTERRUPTORES
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                        </td>
+
+                        <td>
+                          <input data-ref='603' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-603">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          METAIS (TORNEIRAS, SIFÕES E RELOS)
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='604' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-604">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          BANCADAS E CUBAS
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <input data-ref='605' type="text" style="width: 100px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-605">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                      </tr>
+										
+										
 
                     </tbody>
                   </table>
@@ -319,5 +1152,5 @@
   </div>
 </div> <!-- / Modal selecionar ocorrência -->
 
-@section('plugins.scriptCreateCheckSuite', true)
+@section('plugins.scriptCreateApartmentInspect', true)
 @endsection

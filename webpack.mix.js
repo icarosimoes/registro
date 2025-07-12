@@ -60,6 +60,11 @@ mix.react('resources/js/app.js', 'public/js')
     .js('resources/js/Jquery/modules/inspection_suite/inspection_suite_update.js', 'public/js/jquery/modules/inspection_suite')
     .js('resources/js/Jquery/modules/inspection_suite/inspection_suite_list.js', 'public/js/jquery/modules/inspection_suite')
     
+    //apartment_inspetion
+    .js('resources/js/Jquery/modules/apartment_inspection/apartment_inspection_create.js', 'public/js/jquery/modules/apartment_inspection')
+    .js('resources/js/Jquery/modules/apartment_inspection/apartment_inspection_update.js', 'public/js/jquery/modules/apartment_inspection')
+    .js('resources/js/Jquery/modules/apartment_inspection/apartment_inspection_list.js', 'public/js/jquery/modules/apartment_inspection')
+    
     //work diary
     .js('resources/js/Jquery/modules/work_diary/work_diary_create.js', 'public/js/jquery/modules/work_diary')
     .js('resources/js/Jquery/modules/work_diary/work_diary_update.js', 'public/js/jquery/modules/work_diary')

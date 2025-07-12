@@ -219,5 +219,5 @@
 </div>
 
 
-@section('plugins.scriptListCheckSuite', true)
+@section('plugins.scriptListApartmentInspect', true)
 @endsection

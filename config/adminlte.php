@@ -936,6 +936,55 @@ return [
                 ],
             ],
         ],
+         //APARTMENT ESPECTION
+        [
+            'name' => 'scriptListApartmentInspect',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/apartment_inspect/apartment_inspect_list.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptCreateApartmentInspect',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/apartment_inspection/apartment_inspection_create.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptUpdateApartmentInspect',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/apartment_inspect/apartment_inspect_update.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
         //INSPECTION SUITE
         [
             'name' => 'scriptListInspectionSuite',
