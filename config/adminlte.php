@@ -944,7 +944,7 @@ return [
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => 'js/jquery/modules/apartment_inspect/apartment_inspect_list.js',
+                    'location' => 'js/jquery/modules/apartment_inspection/apartment_inspection_list.js',
                 ],
                 [
                     'type' => 'js',
@@ -976,7 +976,7 @@ return [
                 [
                     'type' => 'js',
                     'asset' => true,
-                    'location' => 'js/jquery/modules/apartment_inspect/apartment_inspect_update.js',
+                    'location' => 'js/jquery/modules/apartment_inspection/apartment_inspection_update.js',
                 ],
                 [
                     'type' => 'js',

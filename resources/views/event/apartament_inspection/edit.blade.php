@@ -9,7 +9,7 @@
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
         <li class="breadcrumb-item active"><a href="{{ route('check_suite.index') }}">Lista de Conferências</a>
         </li>
-        <li class="breadcrumb-item active">Nova Vistoria</li>
+        <li class="breadcrumb-item active">Editar Vistoria</li>
       </ol>
     </div>
     <div class="col-md-12">
@@ -22,23 +22,23 @@
           <div class="col-md-12">
             <div class="card card-secondary card-outline">
               <div class="card-header">
-                <h3 class="card-title">Nova Vistoria</h3>
+                <h3 class="card-title">Editar Vistoria</h3>
               </div>
               <!-- /.card-header -->
               <!-- form start -->
               <div class="card-body">
-
+                <input type="hidden" id="apartment_inspection_id" value="{{$apartment_inspection->id}}">
                 <div class="row">
                   <div class="col">
                     <div class="form-group">
                       <label for="Name">Propriétario</label>
-                      <input type="text" class="form-control" id="owner" placeholder="" required>
+                      <input type="text" class="form-control" id="owner" placeholder="" value="{{$apartment_inspection->owner}}" required>
                     </div>
                   </div>
                   <div class="col">
                     <div class="form-group">
                       <label for="Name">Unidade</label>
-                      <input type="text" class="form-control" id="unit" placeholder="" required>
+                      <input type="text" class="form-control" value="{{$apartment_inspection->unit}}" id="unit" placeholder="" required>
                     </div>
                   </div>
 
@@ -46,18 +46,19 @@
                   <div class="col">
                     <div class="form-group">
                       <label for="Name">Inspecionado por</label>
-                      <input type="text" class="form-control" id="inspected_by" placeholder="" required>
+                      <input type="text" class="form-control" value="{{$apartment_inspection->inspected_by}}" id="inspected_by" placeholder="" required>
                     </div>
                   </div>
                   <div class="col">
                     <div class="form-group">
                       <label for="Name">Data</label>
-                      <input type="date" class="form-control" id="inspection_date" placeholder="" required>
+                      <input type="date" class="form-control" value="{{explode(' ',$apartment_inspection->inspection_date)[0]}}" id="inspection_date" placeholder="" required>
                     </div>
                   </div>
 
                 </div>
                 <div class="row">
+                    <input type="hidden" value="{{$apartment_inspection->apartment_inspection_items}}" id="items"> 
                   <table style="font-size: 13px" class="table table-sm ">
                     <thead>
                       <tr>
@@ -79,7 +80,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='100'  type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='100'  id="appreciation-100" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -99,7 +100,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='101' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='101' id="appreciation-101" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -120,7 +121,7 @@
                         </td>
 
                         <td>
-                          <input type="text" data-ref='102' style="width: 100px" class="form-control form-control-sm"
+                          <input type="text" data-ref='102' id="appreciation-102" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -141,7 +142,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='103' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='103' id="appreciation-103" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -161,7 +162,7 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='104' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='104' id="appreciation-104" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -180,7 +181,7 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='105' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='105' id="appreciation-105" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -199,7 +200,7 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='106' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='106' id="appreciation-106" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -218,7 +219,7 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='107' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='107'  id="appreciation-107"type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -242,7 +243,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='200' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='200' id="appreciation-200" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -263,7 +264,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='201' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='201' id="appreciation-201" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -284,7 +285,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='202' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='202' id="appreciation-202" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -305,7 +306,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='203' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='203' id="appreciation-203" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -325,7 +326,7 @@
                           FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='204' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='204' id="appreciation-204" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -344,7 +345,7 @@
                           FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='205' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='205' id="appreciation-205" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -363,7 +364,7 @@
                           PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
                         </td>
                         <td>
-                          <input data-ref='206' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='206' id="appreciation-206" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -382,7 +383,7 @@
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='207' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='207' id="appreciation-207" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -401,7 +402,7 @@
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='208' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='208' id="appreciation-208" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -420,7 +421,7 @@
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO
                         </td>
                         <td>
-                          <input data-ref='209' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='209' id="appreciation-209" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -444,7 +445,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='300' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='300' id="appreciation-300" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -465,7 +466,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='301' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='301' id="appreciation-301" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -486,7 +487,7 @@
                         </td>
 
                         <td>
-                          <input  data-ref='302' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input  data-ref='302' id="appreciation-302" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -507,7 +508,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='303' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='303' id="appreciation-303" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -527,7 +528,7 @@
                           FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='304' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='304' id="appreciation-304" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -546,7 +547,7 @@
                           FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='305' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='305' id="appreciation-305" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -565,7 +566,7 @@
                           PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
                         </td>
                         <td>
-                          <input data-ref='306' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='306' id="appreciation-306" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -584,7 +585,7 @@
                           PONTO ELÉTRICO, PONTO DE DRENO E TUBULAÇÃO
                         </td>
                         <td>
-                          <input data-ref='307' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='307' id="appreciation-307" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -606,7 +607,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='400' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='400' id="appreciation-400" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -627,7 +628,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='401' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='401' id="appreciation-401" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -648,7 +649,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='402' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='402' id="appreciation-402" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -669,7 +670,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='403' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='403' id="appreciation-403" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -689,7 +690,7 @@
                           FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='404' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='404' id="appreciation-404" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -708,7 +709,7 @@
                           FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input  data-ref='405' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input  data-ref='405' id="appreciation-405" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -727,7 +728,7 @@
                           PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
                         </td>
                         <td>
-                          <input data-ref='406' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='406' id="appreciation-406" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -746,7 +747,7 @@
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='407' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='407' id="appreciation-407" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -765,7 +766,7 @@
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='408' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='408' id="appreciation-408" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -784,7 +785,7 @@
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO
                         </td>
                         <td>
-                          <input data-ref='409' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='409' id="appreciation-409" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -807,7 +808,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='500' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='500' id="appreciation-500" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -828,7 +829,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='501' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='501' id="appreciation-501" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -849,7 +850,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='502' style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='502' id="appreciation-502" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -870,7 +871,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='503' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='503' id="appreciation-503" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -890,7 +891,7 @@
                           FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='504' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='504' id="appreciation-504" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -909,7 +910,7 @@
                           FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='505' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='505' id="appreciation-505" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -928,7 +929,7 @@
                           PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
                         </td>
                         <td>
-                          <input data-ref='506' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='506' id="appreciation-506" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -950,13 +951,12 @@
                         </td>
 
                         <td>
-                          <input data-ref='600' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='600' id="appreciation-600" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-600">
-
                             <option value="yes">SIM</option>
                             <option value="not">NÃO</option>
                           </select>
@@ -971,7 +971,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='601' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='601' id="appreciation-601" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -992,7 +992,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='602' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='602' id="appreciation-602" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -1013,7 +1013,7 @@
                         </td>
 
                         <td>
-                          <input data-ref='603' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='603' id="appreciation-603" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
 
@@ -1033,7 +1033,7 @@
                           FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='604' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='604' id="appreciation-604" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -1052,7 +1052,7 @@
                           FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='605' type="text" style="width: 100px" class="form-control form-control-sm"
+                          <input data-ref='605' id="appreciation-605" type="text" style="width: 100px" class="form-control form-control-sm"
                             name="register">
                         </td>
                         <td>
@@ -1075,7 +1075,7 @@
                     <label for="Name">Observaçôes</label>
                     <div class="form-group">
 
-                      <textarea class="form-control " name="" id="obs" rows="5"></textarea>
+                      <textarea class="form-control " name="" id="obs" rows="5">{{$apartment_inspection->observation}}</textarea>
                     </div>
                   </div>
                 </div>
@@ -1084,9 +1084,9 @@
                     <label for="Name">Status da Vistoria</label>
                     <div class="form-group">
 
-                      <input type="radio" required name="status_conf" id="status1" value="liberado">
+                      <input type="radio" required name="status_conf" id="status1"  {{ $apartment_inspection->approved=='yes'?'checked':'' }} value="liberado">
                       <label for="status1">VISTORIADA E APROVADA</label>
-                      <input type="radio" required class="ml-5" name="status_conf" id="status2"
+                      <input type="radio" required class="ml-5" name="status_conf" id="status2" {{ $apartment_inspection->approved=='not'?'checked':'' }}
                         value="bloqueado">
                       <label for="status2">VISTORIADA E REPROVADA</label>
                     </div>
@@ -1152,5 +1152,5 @@
   </div>
 </div> <!-- / Modal selecionar ocorrência -->
 
-@section('plugins.scriptCreateApartmentInspect', true)
+@section('plugins.scriptUpdateApartmentInspect', true)
 @endsection

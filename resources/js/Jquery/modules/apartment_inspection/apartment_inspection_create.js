@@ -42,14 +42,14 @@ $(function () {
       let ref = $(element).attr('data-ref')
       let data = {
         
-        value: $(element).val(),
+        appreciation: $(element).val(),
         ref: ref,
         approved:$('#approved-'+ref).val()
       }
-      register.push(data)
+      items.push(data)
 
     })
-    console.log(register)
+    
     form_data = {
       owner: $('#owner').val(),
       unit: $('#unit').val(),
@@ -57,12 +57,13 @@ $(function () {
       inspection_date: $('#inspection_date').val(),
       observation: $('#obs').val(),
       approved: status,
+      items: JSON.stringify(items)
     };
 
     let route = '/event/apartment_inspection'
     $.post(route, form_data, (response) => {
       DefaultAlert("success", 'Salvo com sucesso !');
-      // window.location.replace(base_url + "/event/check_suite");
+      window.location.replace(base_url + "/event/apartment_inspection");
     }).catch(() => {
       DefaultAlert("error", 'Não foi possivel salvar');
     }).always(() => {

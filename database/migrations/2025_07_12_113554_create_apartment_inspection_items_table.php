@@ -17,8 +17,8 @@ class CreateApartmentInspectionItemsTable extends Migration
             $table->id();
             $table->foreignId('apartment_inspection_id');
             $table->foreign('apartment_inspection_id')->references('id')->on('apartment_inspections');
-            $table->string('appreciation');
-            $table->boolean('approved');
+            $table->string('appreciation')->nullable();
+            $table->string('approved',3);
             $table->timestamps();
             $table->softDeletes();
         });
