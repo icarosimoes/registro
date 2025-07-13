@@ -15,6 +15,13 @@ $(function () {
     timer: 3000
   });
 
+  //verifica se é tela de edicao ou visualizacao
+  if($('#show').val()=='show'){
+    $('input').attr('disabled',true)
+    $('select').attr('disabled',true)
+    $('textarea').attr('disabled',true)
+  }
+
   //carregar os dados 
   let items = JSON.parse($('#items').val())
   items.forEach((item) => {

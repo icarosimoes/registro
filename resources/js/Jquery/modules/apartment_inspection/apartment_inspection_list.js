@@ -30,10 +30,10 @@ $(function() {
         let data = {
             _method : 'DELETE', 
                     }
-        let route ='/event/inspection_suite/'+id
+        let route ='/event/apartment_inspection/'+id
         $.post(route,data,(response)=>{
             $('#modal_delete').modal('hide');
-            window.location.replace(base_url + "/event/inspection_suite");
+            window.location.replace(base_url + "/event/apartment_inspection");
         }).catch(()=>{
             DefaultAlert('error','Não foi possível')
         }).always(()=>{

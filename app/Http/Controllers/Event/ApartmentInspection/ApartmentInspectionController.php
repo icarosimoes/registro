@@ -10,12 +10,17 @@ use Illuminate\Http\Request;
 class ApartmentInspectionController extends Controller
 {
 
-    function index() {
-    
-        $apartmentInspection = ApartmentInspection::all();
+    function index(Request $request) {
+        
+        $apartmentInspection = ApartmentInspection::orderBy('inspection_date','DESC');
 
+        if($request->date_start && $request->date_end){
+            $apartmentInspection->whereBetween('inspection_date',[$request->date_start , $request->date_end]);
+        }
+        $apartmentInspection = $apartmentInspection->get();
         return view('event.apartament_inspection.list',compact('apartmentInspection'));
     }
+    
     function create() {
         return view('event.apartament_inspection.create');
     }
@@ -37,10 +42,13 @@ class ApartmentInspectionController extends Controller
         return response('success');
     }
 
-
+    function show(ApartmentInspection $apartment_inspection){
+       return view('event.apartament_inspection.show',compact('apartment_inspection')); 
+    }
     function edit(ApartmentInspection $apartment_inspection) {
        return view('event.apartament_inspection.edit',compact('apartment_inspection'));
     }
+
     function update(Request $request, ApartmentInspection $apartment_inspection) {
            
         // unset($request['_method']);
@@ -58,9 +66,10 @@ class ApartmentInspectionController extends Controller
             $apartmentInspectionItem->ref = $item->ref;
             $apartmentInspectionItem->save();
         }
-
         return response('success');
-
     }
-    function destroy() {}
+    function destroy(ApartmentInspection $apartment_inspection) {
+        $apartment_inspection->delete();
+        return response('deleted');
+    }
 }

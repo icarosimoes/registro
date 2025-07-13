@@ -15,8 +15,8 @@
         <div class="card-header">
           <h3 class="card-title">Lista de Vistoria de Apartamentos</h3>
           <div class="text-right">
-            <button id="btnExportExcel" class="btn-sm btn btn-warning"><i class="fas fa-file-excel"></i> EXCEL</button>
-            <button id="btnExportPdf" class="btn-sm btn btn-warning"><i class="fas fa-file-pdf"></i> PDF</button>
+            {{-- <button id="btnExportExcel" class="btn-sm btn btn-warning"><i class="fas fa-file-excel"></i> EXCEL</button>
+            <button id="btnExportPdf" class="btn-sm btn btn-warning"><i class="fas fa-file-pdf"></i> PDF</button> --}}
           </div>
         </div>
         <!-- /.card-header -->
@@ -24,8 +24,9 @@
           <div class="form-group">
             <div class="row">
               <div class="col text-left">
-                <a type="button" href="{{ route('apartment_inspection.create') }}" data-toggle="tooltip" data-placement="top"
-                  title="Novo Departamento" class="btn bg-gradient-secondary btn-sm "><i class="fas fa-plus"></i>
+                <a type="button" href="{{ route('apartment_inspection.create') }}" data-toggle="tooltip"
+                  data-placement="top" title="Novo Departamento" class="btn bg-gradient-secondary btn-sm "><i
+                    class="fas fa-plus"></i>
                   Nova Vistoria</a>
 
               </div>
@@ -50,7 +51,7 @@
                     <input class="form-control" type="date" name="date_end" value="{{ @$filter['date_end'] }}">
                   </div>
                 </div>
-                <div class="col-md-3">
+                {{-- <div class="col-md-3">
                   <div class="form-group">
                     <label for="Name">Local</label>
                     <select class="form-control" name="local" id="local">
@@ -66,7 +67,8 @@
                     <label for="Name">Inspecionado Por</label>
                     <select class="form-control" name="user" id="user">
                       @if (isset($filter['user']))
-                        <option value="{{ $filter['user']->id }}">{{ $filter['user']->id . ' - ' . $filter['user']->name }}
+                        <option value="{{ $filter['user']->id }}">
+                          {{ $filter['user']->id . ' - ' . $filter['user']->name }}
                         </option>
                       @endif
                     </select>
@@ -77,7 +79,7 @@
                     <label for="Name">Camareira</label>
                     <input class="form-control" type="text" name="maid" value="{{ @$filter['maid'] }}">
                   </div>
-                </div>
+                </div> --}}
 
               </div>
               <div class="row">
@@ -108,17 +110,18 @@
                   <td>{{ @$item->owner }}</td>
                   <td>{{ @$item->unit }}</td>
                   <td>{{ @$item->inspected_by }}</td>
-                  <td>{{ date('d/m/Y', strtotime($item->date)) }}</td>
+                  <td>{{ date('d/m/Y', strtotime($item->inspection_date)) }}</td>
                   <td class="text-right">
                     <div class="btn-group-sm">
                       {{-- @can('checkRouters', $route = 'view.client') --}}
-                      <a href="{{ route('apartment_inspection.show', [$item->id]) }}" data-toggle="tooltip" data-placement="top"
-                        title="Visualizar" class="btn btn-default"><i class="fas fa-eye"></i></a>
+                      <a href="{{ route('apartment_inspection.show', [$item->id]) }}" data-toggle="tooltip"
+                        data-placement="top" title="Visualizar" class="btn btn-default"><i class="fas fa-eye"></i></a>
                       {{-- @endcan
                                                     --}}
                       {{-- @can('checkRouters', $route = 'edit.client') --}}
-                      <a href="{{ route('apartment_inspection.edit', [$item->id]) }}" data-toggle="tooltip" data-placement="top"
-                        title="Editar" class="btn btn-primary"><i class="fas fa-pencil-alt"></i></a>
+                      <a href="{{ route('apartment_inspection.edit', [$item->id]) }}" data-toggle="tooltip"
+                        data-placement="top" title="Editar" class="btn btn-primary"><i
+                          class="fas fa-pencil-alt"></i></a>
                       {{-- @endcan
                                                     --}}
                       {{-- @can('checkRouters', $route = 'delete.client') --}}
@@ -166,8 +169,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
         <a id="btnExportPdfModal" data-href="{{ route('check_suite.export.pdf') }}" target="_blank"
-        href="{{ route('check_suite.export.pdf') }}"  
-        class="btn btn-primary">Exportar</a>
+          href="{{ route('check_suite.export.pdf') }}" class="btn btn-primary">Exportar</a>
       </div>
     </div>
   </div>
@@ -189,8 +191,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-        <a id="btnExportExcelModal" data-href="{{ route('check_suite.export.excel') }}" target="_blank" href="{{route('check_suite.export.excel')}}"
-          class="btn btn-primary">Exportar</a>
+        <a id="btnExportExcelModal" data-href="{{ route('check_suite.export.excel') }}" target="_blank"
+          href="{{ route('check_suite.export.excel') }}" class="btn btn-primary">Exportar</a>
       </div>
     </div>
   </div>
