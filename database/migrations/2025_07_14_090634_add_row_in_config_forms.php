@@ -14,14 +14,13 @@ class AddRowInConfigForms extends Migration
      */
     public function up()
     {
-        
-            DB::table('config_forms')->insert([
-                'config_id'=>'1',
-                'name'=>'Vistoria de Apartamento',
-                'address'=>'formulario.vistoria_apartamentos',
-                'active' =>'yes',
-            ]);
-        
+
+        DB::table('config_forms')->insert([
+            'config_id' => '1',
+            'name' => 'Vistoria de Apartamento',
+            'address' => 'formulario.vistoria_apartamentos',
+            'active' => 'yes',
+        ]);
     }
 
     /**
@@ -31,6 +30,6 @@ class AddRowInConfigForms extends Migration
      */
     public function down()
     {
-        DB::table('config_forms')->where('name','Vistoria de Apartamento')->delete();
+        DB::table('config_forms')->where('name', 'Vistoria de Apartamento')->delete();
     }
 }
