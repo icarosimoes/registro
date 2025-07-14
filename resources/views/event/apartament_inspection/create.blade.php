@@ -65,7 +65,7 @@
                         <td>SERVIÇOS</td>
                         <td>ITENS DE VERIFICAÇÃO</td>
                         <td>AVALIAÇÃO</td>
-                        <td></td>
+                        <td>OBSERVAÇÕES</td>
                       </tr>
                     </thead>
                     <tbody>
@@ -78,17 +78,18 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='100'  type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-100">
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='100'  type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -98,18 +99,19 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='101' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-101">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='101' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -118,19 +120,20 @@
                         <td>
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
-
-                        <td>
-                          <input type="text" data-ref='102' style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-
+                       
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-102">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+
+                        <td>
+                          <input type="text" data-ref='102' style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -140,18 +143,19 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='103' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-103">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='103' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -161,16 +165,17 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='104' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-104">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='104' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -180,16 +185,17 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='105' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-105">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='105' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
 											<tr style="background:#ececec">
                         <td>
@@ -198,16 +204,17 @@
                         <td>
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
-                        <td>
-                          <input data-ref='106' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-106">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='106' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
 											<tr style="background:#ececec">
@@ -217,16 +224,17 @@
                         <td>
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
-                        <td>
-                          <input data-ref='107' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-107">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='107' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
 
@@ -241,17 +249,18 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='200' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-200">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='200' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -262,17 +271,18 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, REJUNTAMENTO E LIMPEZA 
                         </td>
 
-                        <td>
-                          <input data-ref='201' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-201">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='201' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -283,17 +293,18 @@
                           FIXAÇÃO, NIVELAMENTO, ACABAMENTO, REJUNTAMENTO E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='202' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-202">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='202' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -304,18 +315,19 @@
                           FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='203' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-203">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='203' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -325,16 +337,17 @@
                           FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='204' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-204">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='204' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -344,16 +357,17 @@
                           FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='205' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-205">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='205' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -363,16 +377,17 @@
                           PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
                         </td>
                         <td>
-                          <input data-ref='206' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-206">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='206' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -381,16 +396,17 @@
                         <td>
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
                         </td>
-                        <td>
-                          <input data-ref='207' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-207">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='207' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
 											<tr style="background:lightgray">
@@ -400,16 +416,17 @@
                         <td>
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
                         </td>
-                        <td>
-                          <input data-ref='208' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-208">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='208' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
 											<tr style="background:lightgray">
@@ -419,16 +436,17 @@
                         <td>
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO
                         </td>
-                        <td>
-                          <input data-ref='209' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-209">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='209' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
 
@@ -443,17 +461,18 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA 
                         </td>
 
-                        <td>
-                          <input data-ref='300' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-300">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='300' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -464,17 +483,18 @@
                           FIXAÇÃO, HOMOGENEIDADE, CANTOS,  MANCHAS, FALHAS E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='301' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-301">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='301' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -485,17 +505,18 @@
                           HOMOGENEIDADE, ACABAMENTO E LIMPEZA 
                         </td>
 
-                        <td>
-                          <input  data-ref='302' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-302">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input  data-ref='302' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -507,16 +528,15 @@
                         </td>
 
                         <td>
-                          <input data-ref='303' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-303">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='303' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -526,16 +546,17 @@
                         <td>
                           FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
                         </td>
-                        <td>
-                          <input data-ref='304' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-304">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='304' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -545,16 +566,17 @@
                         <td>
                           FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
                         </td>
-                        <td>
-                          <input data-ref='305' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-305">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='305' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
 											<tr style="background:#ececec">
@@ -564,16 +586,17 @@
                         <td>
                           PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
                         </td>
-                        <td>
-                          <input data-ref='306' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-306">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='306' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
 											<tr style="background:#ececec">
@@ -583,16 +606,17 @@
                         <td>
                           PONTO ELÉTRICO, PONTO DE DRENO E TUBULAÇÃO
                         </td>
-                        <td>
-                          <input data-ref='307' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-307">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='307' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
 											{{-- SANITARIO SOCIAL --}}
@@ -605,17 +629,18 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='400' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-400">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='400' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -626,17 +651,18 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, REJUNTAMENTO E LIMPEZA 
                         </td>
 
-                        <td>
-                          <input data-ref='401' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-401">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='401' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -647,18 +673,19 @@
                           FIXAÇÃO, NIVELAMENTO, ACABAMENTO, REJUNTAMENTO E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='402' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-402">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='402' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -668,18 +695,19 @@
                           FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='403' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-403">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='403' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -689,16 +717,17 @@
                           FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='404' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-404">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='404' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -708,16 +737,17 @@
                           FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input  data-ref='405' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-405">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input  data-ref='405' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -727,16 +757,17 @@
                           PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
                         </td>
                         <td>
-                          <input data-ref='406' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-406">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='406' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -746,16 +777,17 @@
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='407' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-407">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='407' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -765,16 +797,17 @@
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='408' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-408">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='408' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -784,16 +817,17 @@
                           FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO
                         </td>
                         <td>
-                          <input data-ref='409' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-409">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='409' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
 										{{-- SALA E VARANDA  --}}
 
@@ -806,18 +840,19 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA 
                         </td>
 
-                        <td>
-                          <input data-ref='500' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-500">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='500' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -827,18 +862,19 @@
                           FIXAÇÃO, HOMOGENEIDADE, CANTOS,  MANCHAS, FALHAS E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='501' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-501">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='501' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -848,18 +884,19 @@
                           HOMOGENEIDADE, ACABAMENTO E LIMPEZA 
                         </td>
 
-                        <td>
-                          <input data-ref='502' style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-502">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='502' style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -869,18 +906,19 @@
                           FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='503' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-503">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='503' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -890,16 +928,17 @@
                           FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='504' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-504">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='504' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -909,16 +948,17 @@
                           FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <input data-ref='505' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-                        <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-505">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='505' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
+
                       </tr>
 											<tr style="background:#ececec">
                         <td>
@@ -927,16 +967,17 @@
                         <td>
                           PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
                         </td>
-                        <td>
-                          <input data-ref='506' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-506">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='506' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
 										{{-- COZINHA --}}
@@ -949,17 +990,18 @@
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA 
                         </td>
 
-                        <td>
-                          <input data-ref='600' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-600">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='600' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -970,17 +1012,18 @@
                           FIXAÇÃO, HOMOGENEIDADE, CANTOS,  MANCHAS, FALHAS E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='601' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-601">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='601' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -991,17 +1034,17 @@
                           HOMOGENEIDADE, ACABAMENTO E LIMPEZA 
                         </td>
 
-                        <td>
-                          <input data-ref='602' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
-
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-602">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='602' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1012,17 +1055,18 @@
                           FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
                         </td>
 
-                        <td>
-                          <input data-ref='603' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
 
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-603">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='603' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1032,16 +1076,17 @@
                         <td>
                           FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
                         </td>
-                        <td>
-                          <input data-ref='604' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-604">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
+                        </td>
+                        <td>
+                          <input data-ref='604' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1051,21 +1096,19 @@
                         <td>
                           FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
                         </td>
-                        <td>
-                          <input data-ref='605' type="text" style="width: 100px" class="form-control form-control-sm"
-                            name="register">
-                        </td>
+                        
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-605">
 
-                            <option value="yes">SIM</option>
+                            <option value="yes">APROVADO</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
+                        <td>
+                          <input data-ref='605' type="text" style="width: 200px" class="form-control form-control-sm"
+                            name="register">
+                        </td>
                       </tr>
-										
-										
-
                     </tbody>
                   </table>
 

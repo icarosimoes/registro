@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Event\ApartmentInspection;
 
+use App\ApartmentInpectionItemAttach;
 use App\ApartmentInspection;
 use App\ApartmentInspectionAttach;
 use App\ApartmentInspectionItem;
@@ -138,5 +139,57 @@ class ApartmentInspectionController extends Controller
         return response()->json($apartmentInspectionAttach);
     }
 
+    // attach items
 
+    function loadItemsAttach(ApartmentInspectionItem $apartment_inspection_item){
+        $apartmentInpectionItemAttach = ApartmentInpectionItemAttach::where('apartment_item_id', $apartment_inspection_item->id)->get();
+        return response()->json($apartmentInpectionItemAttach);
+    }
+
+    function itemAttach (Request $request,ApartmentInspectionItem $apartment_inspection_item){
+        // Salvar arquivo
+        
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('anexo_apartment_inspection', $filename);
+        } else {
+            return response()->json(['error' => 'Arquivo não enviado.'], 400);
+        }
+
+        // Salvar registro no banco
+        $attach = new ApartmentInpectionItemAttach();
+        $attach->apartment_item_id = $apartment_inspection_item->id;
+        $attach->name = $request->input('name');
+        $attach->attach = $path;
+        $attach->save();
+
+        //carrega os anexos
+        $apartmentInspectionItemsAttach = ApartmentInpectionItemAttach::where('apartment_item_id',$apartment_inspection_item->id)
+        ->get();
+
+        return response()->json($apartmentInspectionItemsAttach);
+    }
+
+    // download item atacch
+    function downloadItemAttach(ApartmentInpectionItemAttach $apartment_inspection_item_attach){
+    
+        // Caminho do arquivo no storage
+    $filePath = storage_path('app/' . $apartment_inspection_item_attach->attach);
+
+    if (!file_exists($filePath)) {
+        abort(404, 'Arquivo não encontrado.');
+    }
+    
+    return response()->download($filePath);        
+    }
+
+    //delete item attach
+    function deleteItemAttach(ApartmentInpectionItemAttach $apartment_inspection_item_attach){
+        $apartment_inspection_item_attach->delete();
+        $apartmentInspectionItemsAttach = ApartmentInpectionItemAttach::where('apartment_item_id',$apartment_inspection_item_attach->apartment_item_id)
+        ->get();
+
+        return response()->json($apartmentInspectionItemsAttach);
+    }
 }
