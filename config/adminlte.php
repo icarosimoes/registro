@@ -285,6 +285,13 @@ return [
                     'address' => 'formulario.diario_obras'
                     
                 ],
+                [
+                    'text' => 'Vistoria de Apartamentos',
+                    'icon' => 'fas fa-fw fa fa-clipboard',
+                    'url' => 'event/apartment_inspection',
+                    'address' => 'formulario.vistoria_apartamentos'
+                    
+                ],
             ],  
         ],
         [
@@ -921,6 +928,55 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/check_suite/check_suite_update.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+         //APARTMENT ESPECTION
+        [
+            'name' => 'scriptListApartmentInspect',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/apartment_inspection/apartment_inspection_list.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptCreateApartmentInspect',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/apartment_inspection/apartment_inspection_create.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptUpdateApartmentInspect',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/apartment_inspection/apartment_inspection_update.js',
                 ],
                 [
                     'type' => 'js',
