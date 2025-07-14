@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Event\ApartmentInspection;
 
 use App\ApartmentInspection;
+use App\ApartmentInspectionAttach;
 use App\ApartmentInspectionItem;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -72,4 +73,70 @@ class ApartmentInspectionController extends Controller
         $apartment_inspection->delete();
         return response('deleted');
     }
+
+    function loadAttach(ApartmentInspection $apartment_inspection){
+        $apartmentInspectionAttach = ApartmentInspectionAttach::where('apartment_inspection_id',$apartment_inspection->id)
+        ->get();     
+        return response()->json($apartmentInspectionAttach);
+    }
+    
+    function downloadAttach(ApartmentInspectionAttach $apartment_inspection_attach)
+    {
+        // Caminho do arquivo no storage
+        $filePath = storage_path('app/' . $apartment_inspection_attach->attach);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'Arquivo não encontrado.');
+        }
+
+        // Nome do arquivo para download
+        // $downloadName = $apartment_inspection_attach->name ?? basename($filePath);
+
+        return response()->download($filePath);
+    }
+    
+    //anexa arquivos 
+    function attach(Request $request,ApartmentInspection $apartment_inspection){
+
+        // anexar arquivo
+
+        // Validação básica
+        // $request->validate([
+        //     'file' => 'required|file|max:10240', // 10MB
+        //     'name' => 'nullable|string|max:255',
+        // ]);
+
+        // Salvar arquivo
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('anexo_apartment_inspection', $filename);
+        } else {
+            return response()->json(['error' => 'Arquivo não enviado.'], 400);
+        }
+
+        // Salvar registro no banco
+        $attach = new ApartmentInspectionAttach();
+        $attach->apartment_inspection_id = $apartment_inspection->id;
+        $attach->name = $request->input('name');
+        $attach->attach = $path;
+        $attach->save();
+
+        //carrega os anexos
+        $apartmentInspectionAttach = ApartmentInspectionAttach::where('apartment_inspection_id',$apartment_inspection->id)
+        ->get();
+
+        return response()->json($apartmentInspectionAttach);
+
+    }
+
+    function deleteAttach(ApartmentInspectionAttach $apartment_inspection_attach){
+        $apartment_inspection_attach->delete();
+        //carrega os anexos
+        $apartmentInspectionAttach = ApartmentInspectionAttach::where('apartment_inspection_id',$apartment_inspection_attach->apartment_inspection_id)
+        ->get();
+        return response()->json($apartmentInspectionAttach);
+    }
+
+
 }

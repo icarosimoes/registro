@@ -141,6 +141,10 @@ Route::group(['middleware' => ['auth']], function () {
         
         Route::resource('work_diary','Event\WorkDiary\WorkDiaryController');    
         Route::resource('apartment_inspection','Event\ApartmentInspection\ApartmentInspectionController');    
+        Route::post('apartment_inspection/attach/{apartment_inspection}','Event\ApartmentInspection\ApartmentInspectionController@attach');    
+        Route::get('apartment_inspection/attach/{apartment_inspection}','Event\ApartmentInspection\ApartmentInspectionController@loadAttach');    
+        Route::get('apartment_inspection/attach_download/{apartment_inspection_attach}','Event\ApartmentInspection\ApartmentInspectionController@downloadAttach');    
+        Route::post('apartment_inspection/attach_delete/{apartment_inspection_attach}','Event\ApartmentInspection\ApartmentInspectionController@deleteAttach');    
 
         Route::get('work_diary/download_activity/{id}','Event\WorkDiary\WorkDiaryController@downloadActivity');    
         Route::get('work_diary/export_pdf/{id}/{name}', 'Event\WorkDiary\WorkDiaryController@exportPdf')->name('work_diary_export_pdf');
