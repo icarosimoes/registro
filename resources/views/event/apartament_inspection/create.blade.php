@@ -60,7 +60,7 @@
                 <div class="row">
                   <table style="font-size: 13px" class="table table-sm ">
                     <thead>
-                      <tr>
+                      <tr >
                         <td>ÁREA VISTORIADA</td>
                         <td>SERVIÇOS</td>
                         <td>ITENS DE VERIFICAÇÃO</td>
@@ -69,8 +69,8 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td rowspan="8" style="background: gray">SUITE</td>
+                      <tr style="background:#ececec" >
+                        <td rowspan="8" style="background:#ececec">SUITE</td>
                         <td>
                           PISOS
                         </td>
@@ -90,7 +90,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           RODAPÉ
                         </td>
@@ -111,7 +111,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           PINTURA DE PAREDES E TETOS
                         </td>
@@ -132,7 +132,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           ESQUADRIAS DE ALUMÍNIO
                         </td>
@@ -153,7 +153,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           PORTAS DE MADEIRAS
                         </td>
@@ -172,7 +172,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           TOMADAS E INTERRUPTORES
                         </td>
@@ -191,7 +191,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:#ececec">
                         <td>
                           FORRO DE GESSO
                         </td>
@@ -210,7 +210,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:#ececec">
                         <td>
                           AR CONDICIONADO
                         </td>
@@ -232,8 +232,8 @@
 
 
 											{{-- SANITARIO SUITE --}}
-											 <tr>
-                        <td rowspan="10" style="background: gray">SANITÁRIO SUITE</td>
+											 <tr style="background: lightgray">
+                        <td rowspan="10" style="background: lightgray">SANITÁRIO SUITE</td>
                         <td>
                           PISOS
                         </td>
@@ -254,7 +254,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           REVESTIMENTOS
                         </td>
@@ -275,7 +275,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           BANCADAS
                         </td>
@@ -296,7 +296,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           ESQUADRIAS DE ALUMÍNIO
                         </td>
@@ -317,7 +317,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           PORTAS DE MADEIRAS
                         </td>
@@ -336,7 +336,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           TOMADAS E INTERRUPTORES
                         </td>
@@ -355,7 +355,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:lightgray">
                         <td>
                           FORRO DE GESSO
                         </td>
@@ -374,7 +374,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:lightgray">
                         <td>
                           LOUÇAS (VASO SANIT E LAVATÓRIO)
                         </td>
@@ -393,7 +393,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:lightgray">
                         <td>
                           METAIS (TORNEIRAS, CHUVEIRO E DUCHA)
                         </td>
@@ -412,7 +412,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:lightgray">
                         <td>
                           SIFÃO/ VÁLVULAS/ RALOS
                         </td>
@@ -434,8 +434,8 @@
 
 										{{--QUARTO  --}}
 
-										 <tr>
-                        <td rowspan="8" style="background: gray">QUARTO</td>
+										 <tr style="background:#ececec">
+                        <td rowspan="8" style="background: #ececec">QUARTO</td>
                         <td>
                           PISOS
                         </td>
@@ -456,7 +456,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           RODAPÉ
                         </td>
@@ -477,7 +477,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           PINTURA DE PAREDES E TETOS
                         </td>
@@ -498,7 +498,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           ESQUADRIAS DE ALUMÍNIO
                         </td>
@@ -519,7 +519,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           PORTAS DE MADEIRAS
                         </td>
@@ -538,7 +538,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           TOMADAS E INTERRUPTORES
                         </td>
@@ -557,7 +557,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:#ececec">
                         <td>
                           FORRO DE GESSO
                         </td>
@@ -576,7 +576,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:#ececec">
                         <td>
                           AR CONDICIONADO
                         </td>
@@ -596,8 +596,8 @@
                         </td>
                       </tr>
 											{{-- SANITARIO SOCIAL --}}
-											<tr>
-                        <td rowspan="10" style="background: gray">SANITÁRIO SOCIAL</td>
+											<tr style="background:lightgray">
+                        <td rowspan="10" style="background: lightgray">SANITÁRIO SOCIAL</td>
                         <td>
                           PISOS
                         </td>
@@ -618,7 +618,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           REVESTIMENTOS
                         </td>
@@ -639,7 +639,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           BANCADAS
                         </td>
@@ -660,7 +660,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           ESQUADRIAS DE ALUMÍNIO
                         </td>
@@ -681,7 +681,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           PORTAS DE MADEIRAS
                         </td>
@@ -700,7 +700,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           TOMADAS E INTERRUPTORES
                         </td>
@@ -719,7 +719,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:lightgray">
                         <td>
                           FORRO DE GESSO
                         </td>
@@ -738,7 +738,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:lightgray">
                         <td>
                           LOUÇAS (VASO SANIT E LAVATÓRIO)
                         </td>
@@ -757,7 +757,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:lightgray">
                         <td>
                           METAIS (TORNEIRAS, CHUVEIRO E DUCHA)
                         </td>
@@ -776,7 +776,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:lightgray">
                         <td>
                           SIFÃO/ VÁLVULAS/ RALOS
                         </td>
@@ -797,8 +797,8 @@
                       </tr>
 										{{-- SALA E VARANDA  --}}
 
-											<tr>
-                        <td rowspan="7" style="background: gray">SALA E VARANDA</td>
+											<tr style="background:#ececec">
+                        <td rowspan="7" style="background: #ececec">SALA E VARANDA</td>
                         <td>
                           PISOS
                         </td>
@@ -819,7 +819,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           RODAPÉ
                         </td>
@@ -840,7 +840,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           PINTURA DE PAREDES E TETOS
                         </td>
@@ -861,7 +861,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           ESQUADRIAS DE ALUMÍNIO
                         </td>
@@ -882,7 +882,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           PORTAS DE MADEIRAS
                         </td>
@@ -901,7 +901,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:#ececec">
                         <td>
                           TOMADAS E INTERRUPTORES
                         </td>
@@ -920,7 +920,7 @@
                           </select>
                         </td>
                       </tr>
-											<tr>
+											<tr style="background:#ececec">
                         <td>
                           FORRO DE GESSO
                         </td>
@@ -940,8 +940,8 @@
                         </td>
                       </tr>
 										{{-- COZINHA --}}
-										<tr>
-                        <td rowspan="10" style="background: gray">COZINHA</td>
+										<tr style="background:lightgray">
+                        <td rowspan="10" style="background: lightgray">COZINHA</td>
                         <td>
                           PISOS
                         </td>
@@ -962,7 +962,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           REVESTIMENTOS
                         </td>
@@ -983,7 +983,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           BANCADAS
                         </td>
@@ -1004,7 +1004,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           TOMADAS E INTERRUPTORES
                         </td>
@@ -1025,7 +1025,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           METAIS (TORNEIRAS, SIFÕES E RELOS)
                         </td>
@@ -1044,7 +1044,7 @@
                           </select>
                         </td>
                       </tr>
-                      <tr>
+                      <tr style="background:lightgray">
                         <td>
                           BANCADAS E CUBAS
                         </td>
