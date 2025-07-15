@@ -29,9 +29,11 @@ class ApartmentInspectionController extends Controller
     
     function store(Request $request) {
        
+        // organiza os anexos em arrays por item
+        $attachs = $this->organizeAttachs($request);
         $apartmentInspection = ApartmentInspection::create($request->all());
         $items = json_decode($request->items);
-        
+       
         foreach($items as $item){
             $apartmentInspectionItem = new ApartmentInspectionItem();
             $apartmentInspectionItem->apartment_inspection_id = $apartmentInspection->id;
@@ -39,9 +41,49 @@ class ApartmentInspectionController extends Controller
             $apartmentInspectionItem->approved = $item->approved;
             $apartmentInspectionItem->ref = $item->ref;
             $apartmentInspectionItem->save();
+
+            //salva os anexos
+            if(isset($attachs[$item->ref])){
+       
+                foreach($attachs[$item->ref] as $attach){
+                    $file =$attach['file'];
+                    $name = $attach['name'];
+                    $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                    $path = $file->storeAs('anexo_apartment_inspection', $filename);
+                    // Salvar registro no banco
+                    $attach = new ApartmentInpectionItemAttach();
+                    $attach->apartment_item_id = $apartmentInspectionItem->id;
+                    $attach->name = $name;
+                    $attach->attach = $path;
+                    $attach->save();
+                }
+            }
         }
 
         return response('success');
+    }
+
+    function organizeAttachs($request){
+        $attachs_names = json_decode($request->names_attachs,true);
+        $names_attachs = [];    
+        foreach( $attachs_names as $item){
+                    $names_attachs[array_key_first($item)] = reset($item);
+        }
+        $attachs = [];
+
+        foreach ($request->all() as $key => $item){
+               
+            //identifiquei oq é anexo
+            if( substr($key,0,7) == 'attachs'){
+                $ref = substr($key,-3);
+                
+                if(!isset($attachs[$ref])){
+                    $attachs[$ref] = [];
+                }
+                array_push($attachs[$ref],['file'=>$item, 'name'=>$names_attachs[$key]]);
+            }
+        }
+        return $attachs;
     }
 
     function show(ApartmentInspection $apartment_inspection){

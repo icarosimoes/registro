@@ -66,6 +66,7 @@
                         <td>ITENS DE VERIFICAÇÃO</td>
                         <td>AVALIAÇÃO</td>
                         <td>OBSERVAÇÕES</td>
+                        <td></td>
                       </tr>
                     </thead>
                     <tbody>
@@ -89,7 +90,10 @@
                           <input data-ref='100'  type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='100' id="attach-100" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -98,8 +102,7 @@
                         <td>
                           PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
-
-                        
+                       
                         <td>
                           <select required class="form-control form-control-sm" name="item" id="approved-101">
 
@@ -110,6 +113,10 @@
                         <td>
                           <input data-ref='101' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
+                        </td>
+                        <td>
+                          <button type="button" data-ref='101' id="attach-101" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
                         </td>
 
                       </tr>
@@ -133,6 +140,10 @@
                           <input type="text" data-ref='102' style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='102' id="attach-102" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
 
                       </tr>
                       <tr style="background:#ececec">
@@ -155,7 +166,10 @@
                           <input data-ref='103' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='103' id="attach-103" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -175,7 +189,10 @@
                           <input data-ref='104' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='104' id="attach-104" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -195,7 +212,10 @@
                           <input data-ref='105' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='105' id="attach-105" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
 											<tr style="background:#ececec">
                         <td>
@@ -216,6 +236,10 @@
                           <input data-ref='106' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='106' id="attach-106" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
 											<tr style="background:#ececec">
                         <td>
@@ -235,6 +259,10 @@
                         <td>
                           <input data-ref='107' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
+                        </td>
+                        <td>
+                          <button type="button" data-ref='107' id="attach-107" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
                         </td>
                       </tr>
 
@@ -262,6 +290,10 @@
                           <input data-ref='200' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='200' id="attach-200" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -283,6 +315,10 @@
                         <td>
                           <input data-ref='201' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
+                        </td>
+                        <td>
+                          <button type="button" data-ref='201' id="attach-201" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -306,6 +342,10 @@
                           <input data-ref='202' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='202' id="attach-202" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -327,7 +367,10 @@
                           <input data-ref='203' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='203' id="attach-203" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -347,7 +390,10 @@
                           <input data-ref='204' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='204' id="attach-204" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -367,7 +413,10 @@
                           <input data-ref='205' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='205' id="attach-205" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -387,7 +436,10 @@
                           <input data-ref='206' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='206' id="attach-206" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -407,6 +459,10 @@
                         <td>
                           <input data-ref='207' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
+                        </td>
+                        <td>
+                          <button type="button" data-ref='207' id="attach-207" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
                         </td>
                       </tr>
 											<tr style="background:lightgray">
@@ -428,6 +484,10 @@
                           <input data-ref='208' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='208' id="attach-208" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -447,6 +507,10 @@
                         <td>
                           <input data-ref='209' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
+                        </td>
+                        <td>
+                          <button type="button" data-ref='209' id="attach-209" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
                         </td>
                       </tr>
 
@@ -474,7 +538,11 @@
                           <input data-ref='300' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-                      </tr>
+                        <td>
+                          <button type="button" data-ref='300' id="attach-300" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
+                        </tr>
                       <tr style="background:#ececec">
                         <td>
                           RODAPÉ
@@ -496,7 +564,12 @@
                           <input data-ref='301' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='301' id="attach-301" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
+
                       <tr style="background:#ececec">
                         <td>
                           PINTURA DE PAREDES E TETOS
@@ -518,6 +591,10 @@
                           <input  data-ref='302' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='302' id="attach-302" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -537,6 +614,10 @@
                         <td>
                           <input data-ref='303' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
+                        </td>
+                        <td>
+                          <button type="button" data-ref='303' id="attach-303" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -558,6 +639,10 @@
                           <input data-ref='304' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='304' id="attach-304" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -577,6 +662,10 @@
                         <td>
                           <input data-ref='305' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
+                        </td>
+                        <td>
+                          <button type="button" data-ref='305' id="attach-305" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
                         </td>
                       </tr>
 											<tr style="background:#ececec">
@@ -598,6 +687,10 @@
                           <input data-ref='306' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='306' id="attach-306" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
 											<tr style="background:#ececec">
                         <td>
@@ -617,6 +710,10 @@
                         <td>
                           <input data-ref='307' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
+                        </td>
+                        <td>
+                          <button type="button" data-ref='307' id="attach-307" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
                         </td>
                       </tr>
 											{{-- SANITARIO SOCIAL --}}
@@ -642,6 +739,10 @@
                           <input data-ref='400' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='400' id="attach-400" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -664,6 +765,11 @@
                           <input data-ref='401' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='401' id="attach-401" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
+
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -685,7 +791,10 @@
                           <input data-ref='402' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='402' id="attach-402" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -707,7 +816,10 @@
                           <input data-ref='403' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='403' id="attach-403" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -727,7 +839,10 @@
                           <input data-ref='404' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='404' id="attach-404" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -747,7 +862,10 @@
                           <input  data-ref='405' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='405' id="attach-405" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -767,7 +885,10 @@
                           <input data-ref='406' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='406' id="attach-406" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -787,7 +908,10 @@
                           <input data-ref='407' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='407' id="attach-407" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -807,7 +931,10 @@
                           <input data-ref='408' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='408' id="attach-408" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>   
                       </tr>
 											<tr style="background:lightgray">
                         <td>
@@ -827,7 +954,10 @@
                           <input data-ref='409' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='409' id="attach-409" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
 										{{-- SALA E VARANDA  --}}
 
@@ -852,7 +982,10 @@
                           <input data-ref='500' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='500' id="attach-500" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -874,7 +1007,10 @@
                           <input data-ref='501' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='501' id="attach-501" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -896,7 +1032,10 @@
                           <input data-ref='502' style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='502' id="attach-502" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -918,7 +1057,10 @@
                           <input data-ref='503' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='503' id="attach-503" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -938,7 +1080,10 @@
                           <input data-ref='504' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='504' id="attach-504" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -958,7 +1103,10 @@
                           <input data-ref='505' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-
+                        <td>
+                          <button type="button" data-ref='505' id="attach-505" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td> 
                       </tr>
 											<tr style="background:#ececec">
                         <td>
@@ -978,6 +1126,10 @@
                         <td>
                           <input data-ref='506' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
+                        </td>
+                        <td>
+                          <button type="button" data-ref='506' id="attach-506" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
                         </td>
                       </tr>
 										{{-- COZINHA --}}
@@ -1003,6 +1155,10 @@
                           <input data-ref='600' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='600' id="attach-600" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -1025,6 +1181,10 @@
                           <input data-ref='601' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='601' id="attach-601" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -1046,7 +1206,11 @@
                           <input data-ref='602' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
-                      </tr>
+                        <td>
+                          <button type="button" data-ref='602' id="attach-602" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
+                      </tr> 
                       <tr style="background:lightgray">
                         <td>
                           TOMADAS E INTERRUPTORES
@@ -1068,6 +1232,10 @@
                           <input data-ref='603' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='603' id="attach-603" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -1088,6 +1256,10 @@
                           <input data-ref='604' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
                         </td>
+                        <td>
+                          <button type="button" data-ref='604' id="attach-604" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
+                        </td>
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -1107,6 +1279,10 @@
                         <td>
                           <input data-ref='605' type="text" style="width: 200px" class="form-control form-control-sm"
                             name="register">
+                        </td>
+                        <td>
+                          <button type="button" data-ref='605' id="attach-605" data-toggle="tooltip" data-placement="top" title="Anexos"
+                            class="btn btn-secondary btn-sm attach"><i class="fas fa-download"></i></button>
                         </td>
                       </tr>
                     </tbody>
@@ -1159,6 +1335,61 @@
 </div>
 </div>
 
+{{-- modal de anexos --}}
+<div class="modal fade" id="anexo">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Lista de Anexos</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form name="formFileDownload" id="formFileDownload" enctype="multipart/form-data" method="POST">
+        @csrf
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label>Insira uma descrição para o arquivo</label>
+            <input type="text" class="form-control" name="name" id="name" required>
+            <input type="hidden" class="form-control" id="apartment_inspection_item_id">
+          </div>
+          <div class="form-group">
+            <label>Selecione o arquivo</label>
+            <input type="file" class="form-control" name="file" id="file" required>
+          </div>
+
+          <table class="table table-striped table-sm table-hover">
+            <thead>
+              <tr>
+                <th>Descrição</th>
+                {{-- <th>Data</th>
+                <th style="width: 1%">Download</th> --}}
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="bodyFile"></tbody>
+          </table>
+          <div class="overlay-wrapper">
+            <div class="d-none overlay loading_attach">
+              <i class="fas fa-3x fa-sync-alt fa-spin"></i>
+              <div class="text-bold pt-2">Carregando...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default" data-dismiss="modal"><i
+              class="fas fa-sign-out-alt"></i> Fechar</button>
+          <button type="button" id="btn_send_attach" class="btn btn-secondary"><i class="fas fa-save"></i>
+            Save</button>
+        </div>
+      </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
 
 <!-- Modal selecionar ocorrência-->
 <div class="modal fade" id="ModalSelectOcurrence" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
