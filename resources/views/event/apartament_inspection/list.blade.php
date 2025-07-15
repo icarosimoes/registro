@@ -125,10 +125,13 @@
                       {{-- @endcan
                                                     --}}
                       {{-- @can('checkRouters', $route = 'delete.client') --}}
-                      <button data-id="{{ $item->id }}" data-toggle="tooltip" data-placement="top"
-                        title="Excluir" class="btn btn-danger remove"><i class="fas fa-trash"></i></button>
+                      <button data-id="{{ $item->id }}" data-toggle="tooltip" data-placement="top" title="Excluir"
+                        class="btn btn-danger remove"><i class="fas fa-trash"></i></button>
+
                       {{-- @endcan
                                                     --}}
+                      <button data-id="{{ $item->id }}" data-toggle="tooltip" data-placement="top" title="Anexos"
+                        class="btn btn-secondary attach"><i class="fas fa-download"></i></button>
 
                     </div>
                   </td>
@@ -150,6 +153,60 @@
     </div>
 
   </div>
+</div>
+
+<div class="modal fade" id="anexo">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Lista de Anexos</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form name="formFileDownload" id="formFileDownload" enctype="multipart/form-data" method="POST">
+        @csrf
+        <div class="modal-body">
+
+          <div class="form-group">
+            <label>Insira uma descrição para o arquivo</label>
+            <input type="text" class="form-control" name="name" id="name" required>
+            <input type="hidden" class="form-control" id="apartment_inspection_id">
+          </div>
+          <div class="form-group">
+            <label>Selecione o arquivo</label>
+            <input type="file" class="form-control" name="file" id="file" required>
+          </div>
+
+          <table class="table table-striped table-sm table-hover">
+            <thead>
+              <tr>
+                <th>Descrição</th>
+                <th>Data</th>
+                <th style="width: 1%">Download</th>
+              </tr>
+            </thead>
+            <tbody id="bodyFile"></tbody>
+          </table>
+          <div class="overlay-wrapper">
+            <div class="d-none overlay">
+              <i class="fas fa-3x fa-sync-alt fa-spin"></i>
+              <div class="text-bold pt-2">Carregando...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-default" data-dismiss="modal"><i
+              class="fas fa-sign-out-alt"></i> Fechar</button>
+          <button type="button" id="btn_send_attach" class="btn btn-secondary"><i class="fas fa-save"></i>
+            Save</button>
+        </div>
+      </form>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
 </div>
 
 {{-- modal export pdf  --}}

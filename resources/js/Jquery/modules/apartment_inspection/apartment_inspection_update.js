@@ -16,10 +16,10 @@ $(function () {
   });
 
   //verifica se é tela de edicao ou visualizacao
-  if($('#show').val()=='show'){
-    $('input').attr('disabled',true)
-    $('select').attr('disabled',true)
-    $('textarea').attr('disabled',true)
+  if ($('#show').val() == 'show') {
+    $('input').attr('disabled', true)
+    $('select').attr('disabled', true)
+    $('textarea').attr('disabled', true)
   }
 
   //carregar os dados 
@@ -28,7 +28,102 @@ $(function () {
     let ref = item.ref
     $('#approved-' + ref).val(item.approved)
     $('#appreciation-' + ref).val(item.appreciation)
+    $('#attach-' + ref).attr('data-id', item.id)
   })
+
+  //modal de anexos
+  $('.attach').on('click', (e) => {
+    let id = $(e.currentTarget).data('id')
+    $('#apartment_inspection_item_id').val(id)
+    $("#file").val(null)
+    $("#name").val('')
+    $('#bodyFile').empty()
+    loadAnexos(id)
+    $('#anexo').modal('show')
+  })
+
+  //enviar anexo
+  $('#btn_send_attach').on('click', () => {
+
+    let id = $('#apartment_inspection_item_id').val()
+    const formData = new FormData();
+    formData.append('file', $("#file").prop('files')[0]);
+    formData.append('name', $("#name").val());
+
+    let route = base_url + '/event/apartment_inspection_item/attach/' + id
+    $('.loading_attach').removeClass('d-none')
+    $.ajax({
+      url: route,
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (data, textStatus, jqXHR) {
+        DefaultAlert('success', 'Anexo enviado com sucesso')
+        rederizaAnexos(data)
+        $("#file").val(null)
+        $("#name").val('')
+        //carrega a lista de anexos
+
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        DefaultAlert('error', 'Não foi possível enviar o anexo')
+      },
+      complete: function () {
+        $('.loading_attach').addClass('d-none')
+      }
+    });
+
+  })
+
+  //carrega a lista de anexos
+  function loadAnexos(id) {
+    $('.loading_attach').removeClass('d-none')
+    let route = base_url + '/event/apartment_inspection_item/attach/' + id
+    $.get(route, function (data) {
+      rederizaAnexos(data)
+    }).always(() => {
+      $('.loading_attach').addClass('d-none')
+    })
+  }
+
+  //renderiza a lista de anexos
+  function rederizaAnexos(data) {
+    $('#bodyFile').empty()
+    data.forEach(item => {
+      $('#bodyFile').append(`
+            <tr>
+                <td>${item.name}</td>
+                <td>${formatDate(item.created_at)}</td>
+                <td>
+                <a class="btn btn-secondary btn-sm" href="${base_url}/event/apartment_inspection_item/attach_download/${item.id}" target="_blank"><i class="fas fa-download"></i></a>
+                <button type="button" class="btn btn-danger btn-sm remove_attach" data-id="${item.id}" target="_blank"><i class="fas fa-trash"></i></button>
+                </td>
+                
+            </tr>
+        `)
+    })
+  }
+
+  //remove anexo
+  $(document).on('click', '.remove_attach', (e) => {
+    let id = $(e.currentTarget).data('id')
+    $('.loading_attach').removeClass('d-none')
+    $.post(base_url + '/event/apartment_inspection_item/attach_delete/' + id, {}, function (response) {
+      DefaultAlert('success', 'Anexo removido com sucesso')
+      rederizaAnexos(response)
+    }).catch(() => {
+      DefaultAlert('error', 'Não foi possível remover o anexo')
+    }).always(() => {
+      $('.loading_attach').addClass('d-none')
+    })
+  })
+
+
+
+
+
+
 
   $('form[name="form"]').submit(function (event) {
 
@@ -226,6 +321,11 @@ $(function () {
     }
   });
 
+  function formatDate(date) {
+    let date_split = date.split('T')[0]
+    let date_split_2 = date_split.split('-')
+    return date_split_2[2] + '/' + date_split_2[1] + '/' + date_split_2[0]
+  }
 
   // exemplo: DefaultAlert("success","Cadastro efetuado com sucesso."); 
   function DefaultAlert(type, msg) {

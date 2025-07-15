@@ -1,3 +1,5 @@
+const { at } = require("lodash");
+
 var base_url = window.location.origin;
 
 $.ajaxSetup({
@@ -15,6 +17,66 @@ $(function () {
     timer: 3000
   });
 
+  var attachs = new Array()
+  // modal de anexos
+  $('.attach').on('click', (e) => {
+    let ref = $(e.currentTarget).attr('data-ref')
+    $('#apartment_inspection_item_id').val(ref)
+    $("#file").val(null)
+    $("#name").val('')
+    rederizaAnexos(ref)
+    $('#anexo').modal('show')
+  })
+
+
+  $('#btn_send_attach').on('click', () => {
+    let ref = $('#apartment_inspection_item_id').val()
+    attachs.push({
+      name: $("#name").val(),
+      file: $("#file").val(),
+      ref: $('#apartment_inspection_item_id').val(),
+      attach: $("#file").prop('files')[0],
+    })
+    rederizaAnexos(ref)
+  })
+
+  function rederizaAnexos(ref) {
+    $('#bodyFile').empty()
+    if (attachs.length > 0) {
+      let attachs_items = attachs.filter(attach => attach.ref == ref)
+      let html = ''
+      attachs_items.forEach((attach, index) => {
+        html += `<tr>
+          <td>${attach.name}</td>
+        <td>
+            <button style="float: right;" type="button" class="btn btn-danger btn-sm delete-attach" data-index="${index}" data-toggle="tooltip" data-placement="top" title="Anexos">
+            <i class="fas fa-trash"></i>
+          </button>
+        </td>
+        </tr>`
+      })
+
+      $('#bodyFile').html(html)
+      $("#file").val(null)
+      $("#name").val('')
+    }
+  }
+
+  $(document).on('click','.delete-attach', (e) => {
+    let ref = $('#apartment_inspection_item_id').val()
+    let index = $(e.currentTarget).attr('data-index')
+    console.log(index)
+    attachs.splice(index, 1)
+    console.log(attachs)
+    rederizaAnexos(ref)
+  })
+
+
+
+
+
+
+
 
   $('form[name="form"]').submit(function (event) {
     event.preventDefault();
@@ -27,48 +89,78 @@ $(function () {
       status = 'not';
     }
 
-    // const  occurrences_id= [] 
-    // $('input[name="occurrences_id"]').each((index,element)=>{
-    //     occurrences_id.push($(element).val())
-    // })
 
-    // const valuation = [] 
-    // $('select[name="item"]').each((index,element)=>{
-    //     valuation.push($(element).val())
-
-    // })  
     let items = []
     $('input[name="register"]').each((index, element) => {
       let ref = $(element).attr('data-ref')
       let data = {
-        
+
         appreciation: $(element).val(),
         ref: ref,
-        approved:$('#approved-'+ref).val()
+        approved: $('#approved-' + ref).val()
       }
       items.push(data)
 
     })
-    
-    form_data = {
-      owner: $('#owner').val(),
-      unit: $('#unit').val(),
-      inspected_by: $('#inspected_by').val(),
-      inspection_date: $('#inspection_date').val(),
-      observation: $('#obs').val(),
-      approved: status,
-      items: JSON.stringify(items)
-    };
+
+    // form_data = {
+    //   owner: $('#owner').val(),
+    //   unit: $('#unit').val(),
+    //   inspected_by: $('#inspected_by').val(),
+    //   inspection_date: $('#inspection_date').val(),
+    //   observation: $('#obs').val(),
+    //   approved: status,
+    //   items: JSON.stringify(items)
+    // };
+
+    formData = new FormData()
+    formData.append('owner', $('#owner').val())
+    formData.append('unit', $('#unit').val())
+    formData.append('inspected_by', $('#inspected_by').val())
+    formData.append('inspection_date', $('#inspection_date').val())
+    formData.append('observation', $('#obs').val())
+    formData.append('approved', status)
+    formData.append('items', JSON.stringify(items))
+
+    attachs_names = []
+    attachs.forEach((attach, index) => {
+      formData.append('attachs_' + index + '_'+attach.ref, attach.attach)
+
+      nameAttach = 'attachs_' + index + '_'+attach.ref
+      attachs_names.push({ [nameAttach]: attach.name })
+    })
+    formData.append('names_attachs', JSON.stringify(attachs_names))
+
 
     let route = '/event/apartment_inspection'
-    $.post(route, form_data, (response) => {
-      DefaultAlert("success", 'Salvo com sucesso !');
-      window.location.replace(base_url + "/event/apartment_inspection");
-    }).catch(() => {
-      DefaultAlert("error", 'Não foi possivel salvar');
-    }).always(() => {
-      $('.overlay').addClass('d-none');
-    })
+    $.ajax({
+      url: route,
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: function (data, textStatus, jqXHR) {
+        DefaultAlert('success', 'Anexo enviado com sucesso')
+        // rederizaAnexos(data)
+        $("#file").val(null)
+        $("#name").val('')
+        //carrega a lista de anexos
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        DefaultAlert('error', 'Não foi possível enviar o anexo')
+      },
+      complete: function () {
+        $('.overlay').addClass('d-none')
+      }
+    });
+    // $.post(route, form_data, (response) => {
+    //   DefaultAlert("success", 'Salvo com sucesso !');
+    //   window.location.replace(base_url + "/event/apartment_inspection");
+    // }).catch(() => {
+    //   DefaultAlert("error", 'Não foi possivel salvar');
+    // }).always(() => {
+    //   $('.overlay').addClass('d-none');
+    // })
   });
 
   $('.filter').on('click', (e) => {
