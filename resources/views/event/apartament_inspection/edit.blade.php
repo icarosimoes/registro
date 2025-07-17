@@ -66,7 +66,8 @@
                   <div class="col-3">
                     <div class="form-group">
                       <label for="Name">TIPO DE UNIDADE</label>
-                      <select data-value="{{ $apartment_inspection->type_unit }}" name="" id="type_unit" class="form-control">
+                      <select data-value="{{ $apartment_inspection->type_unit }}" name="" id="type_unit"
+                        class="form-control">
                         <option value="dois_quartos">2 QUARTOS</option>
                         <option value="quanto_sala_1">QUARTO E SALA 01</option>
                         <option value="quanto_sala_2">QUARTO E SALA 02</option>
@@ -87,6 +88,7 @@
                         <td>AVALIAÇÃO</td>
                         <td>OBSERVAÇÕES</td>
                         <td></td>
+                        <td>REGISTRO</td>
                       </tr>
                     </thead>
                     {{-- DOIS QUARTOS --}}
@@ -110,11 +112,19 @@
                         <td>
                           <input data-ref='100' id="appreciation-100" type="text" style="width: 200px"
                             class="form-control form-control-sm" name="register">
+                            
+                            
                         </td>
                         <td>
                           <button type="button" id="attach-100" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="100" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-100" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_100" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
 
                       </tr>
@@ -142,6 +152,12 @@
                           <button type="button" id="attach-101" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="101" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-101" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_101" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
 
                       </tr>
@@ -169,6 +185,12 @@
                           <button type="button" id="attach-102" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="101" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-101" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_101" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
 
                       </tr>
@@ -196,6 +218,12 @@
                           <button type="button" id="attach-103" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="103" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-103" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_103" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
 
                       </tr>
@@ -221,8 +249,13 @@
                           <button type="button" id="attach-104" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="104" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-104" >
+                            
                         </td>
-
+                        <td>
+                          <a id="link_register_104" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -246,8 +279,13 @@
                           <button type="button" id="attach-105" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="105" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-105" >
+                            
                         </td>
-
+                        <td>
+                          <a id="link_register_105" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -271,8 +309,13 @@
                           <button type="button" id="attach-106" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="106" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-106" >
+                            
                         </td>
-
+                        <td>
+                          <a id="link_register_106" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                        </td>
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -296,6 +339,12 @@
                           <button type="button" id="attach-107" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="107" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-107" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_107" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 
@@ -326,6 +375,12 @@
                           <button type="button" id="attach-200" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="200" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-200" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_200" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -352,6 +407,12 @@
                           <button type="button" id="attach-201" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="201" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-201" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_201" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -378,6 +439,12 @@
                           <button type="button" id="attach-202" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="202" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-202" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_202" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -404,6 +471,12 @@
                           <button type="button" id="attach-203" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="203" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-203" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_203" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -428,6 +501,12 @@
                           <button type="button" id="attach-204" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="204" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-204" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_204" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -452,6 +531,12 @@
                           <button type="button" id="attach-205" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="205" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-205" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_205" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -477,6 +562,12 @@
                           <button type="button" id="attach-206" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="206" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-206" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_206" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -502,6 +593,12 @@
                           <button type="button" id="attach-207" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="207" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-207" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_207" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
 
                       </tr>
@@ -528,6 +625,12 @@
                           <button type="button" id="attach-208" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="208" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-208" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_208" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -553,6 +656,12 @@
                           <button type="button" id="attach-209" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="209" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-209" >
+                            
+                        </td>
+                        <td>
+                          <a id="link_register_209" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 
@@ -584,6 +693,11 @@
                           <button type="button" id="attach-300" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="300" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-300" >
+                            
+                        <td>
+                          <a id="link_register_300" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -610,6 +724,11 @@
                           <button type="button" id="attach-301" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="301" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-301" >
+                        </td>
+                        <td>
+                          <a id="link_register_301" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -636,6 +755,11 @@
                           <button type="button" id="attach-302" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="302" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-302" >
+                        </td>    
+                        <td>
+                          <a id="link_register_302" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -662,6 +786,11 @@
                           <button type="button" id="attach-303" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="303" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-303" >
+                        </td>
+                        <td>
+                          <a id="link_register_303" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -686,6 +815,11 @@
                           <button type="button" id="attach-304" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="304" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-304" >
+                        </td>
+                        <td>
+                          <a id="link_register_304" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -710,6 +844,11 @@
                           <button type="button" id="attach-305" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="305" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-305" >
+                        </td>
+                        <td>
+                          <a id="link_register_305" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -734,6 +873,11 @@
                           <button type="button" id="attach-306" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="306" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-306" >
+                        </td>
+                        <td>
+                          <a id="link_register_306" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -758,7 +902,13 @@
                           <button type="button" id="attach-307" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="307" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-307" >
+                        </td>      
+                        <td>
+                          <a id="link_register_307" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
+                        
                       </tr>
                       {{-- SANITARIO SOCIAL --}}
                       <tr style="background:lightgray">
@@ -786,6 +936,11 @@
                           <button type="button" id="attach-400" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="401" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-401" >
+                        </td>
+                        <td>
+                          <a id="link_register_401" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -812,6 +967,11 @@
                           <button type="button" id="attach-401" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="401" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-401" >
+                            </td>
+                        <td>
+                          <a id="link_register_401" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -838,6 +998,11 @@
                           <button type="button" id="attach-402" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="402" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-402" >
+                        </td>
+                        <td>
+                          <a id="link_register_402" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -864,6 +1029,11 @@
                           <button type="button" id="attach-403" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="403" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-403" >
+                        </td>
+                        <td>
+                          <a id="link_register_403" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -888,6 +1058,11 @@
                           <button type="button" id="attach-404" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="404" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-404" >
+                        </td>
+                        <td>
+                          <a id="link_register_404" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -912,6 +1087,11 @@
                           <button type="button" id="attach-405" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="405" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-405" >
+                        </td>
+                        <td>
+                          <a id="link_register_405" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -936,7 +1116,13 @@
                           <button type="button" id="attach-406" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="406" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-406" >
+                            </td>
+                        <td>
+                          <a id="link_register_406" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
+                        
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -960,6 +1146,11 @@
                           <button type="button" id="attach-407" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="407" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-407" >
+                        </td>
+                        <td>
+                          <a id="link_register_407" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -985,7 +1176,13 @@
                           <button type="button" id="attach-408" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="408" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-408" >
+                            </td>     
+                        <td>
+                          <a id="link_register_408" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
+                        
                       </tr>
                       <tr style="background:lightgray">
                         <td>
@@ -1010,7 +1207,13 @@
                           <button type="button" id="attach-409" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="409" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-409" >
                         </td>
+                        <td>
+                          <a id="link_register_409" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                        </td>
+
                       </tr>
                       {{-- SALA E VARANDA  --}}
 
@@ -1040,7 +1243,13 @@
                           <button type="button" id="attach-500" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="500" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-500" >
                         </td>
+                        <td>
+                          <a id="link_register_500" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                        </td>
+
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -1066,7 +1275,14 @@
                           <button type="button" id="attach-501" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="501" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-501" >
+                            </td>
+                        <td>
+                          <a id="link_register_501" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
+
+                        
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -1092,7 +1308,14 @@
                           <button type="button" id="attach-502" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="502" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-502" >
+                            </td>
+                        <td>
+                          <a id="link_register_502" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
+
+                        
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -1118,7 +1341,14 @@
                           <button type="button" id="attach-503" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="503" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-503" >
+                            </td>
+                        <td>
+                          <a id="link_register_503" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
+
+                        
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -1142,7 +1372,14 @@
                           <button type="button" id="attach-504" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="504" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-504" >
+                            </td>
+                        <td>
+                          <a id="link_register_504" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
+
+                        
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -1166,7 +1403,14 @@
                           <button type="button" id="attach-505" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="505" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-505" >
+                            </td>
+                        <td>
+                          <a id="link_register_505" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
+
+                        
                       </tr>
                       <tr style="background:#ececec">
                         <td>
@@ -1190,6 +1434,11 @@
                           <button type="button" id="attach-506" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="506" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-506" >
+                            </td>
+                        <td>
+                          <a id="link_register_506" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       {{-- COZINHA --}}
@@ -1217,6 +1466,11 @@
                           <button type="button" id="attach-600" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="600" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-600" >
+                            </td>
+                        <td>
+                          <a id="link_register_600" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1243,6 +1497,11 @@
                           <button type="button" id="attach-601" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="601" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-601" >
+                            </td>
+                        <td>
+                          <a id="link_register_601" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1269,6 +1528,11 @@
                           <button type="button" id="attach-602" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="602" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-602" >
+                            </td>
+                        <td>
+                          <a id="link_register_602" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1295,6 +1559,11 @@
                           <button type="button" id="attach-603" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="603" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-603" >
+                            </td>
+                        <td>
+                          <a id="link_register_603" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1319,6 +1588,11 @@
                           <button type="button" id="attach-604" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="604" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-604" >
+                            </td>
+                        <td>
+                          <a id="link_register_604" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1343,23 +1617,15 @@
                           <button type="button" id="attach-605" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="605" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-605" >
+                            </td>
+                        <td>
+                          <a id="link_register_605" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 
                     </tbody>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                     {{-- QUARTO E SALA 01 --}}
                     <tbody id="quanto_sala_1" class="hide_all">
@@ -1386,6 +1652,11 @@
                           <button type="button" id="attach-1300" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1300" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1300" >
+                            </td>
+                        <td>
+                          <a id="link_register_1300" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1412,6 +1683,11 @@
                           <button type="button" id="attach-1301" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1301" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1301" >
+                            </td>
+                        <td>
+                          <a id="link_register_1301" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1438,6 +1714,11 @@
                           <button type="button" id="attach-302" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1302" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1302" >
+                            </td>
+                        <td>
+                          <a id="link_register_1302" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1464,6 +1745,11 @@
                           <button type="button" id="attach-1303" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1303" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1303" >
+                            </td>
+                        <td>
+                          <a id="link_register_1303" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1488,6 +1774,11 @@
                           <button type="button" id="attach-1304" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1304" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1304" >
+                            </td>
+                        <td>
+                          <a id="link_register_1304" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1512,6 +1803,11 @@
                           <button type="button" id="attach-1305" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1305" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1305" >
+                            </td>
+                        <td>
+                          <a id="link_register_1305" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1536,6 +1832,11 @@
                           <button type="button" id="attach-1306" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1306" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1306" >
+                            </td>
+                        <td>
+                          <a id="link_register_1306" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1560,6 +1861,11 @@
                           <button type="button" id="attach-1307" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1307" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1307" >
+                            </td>
+                        <td>
+                          <a id="link_register_1307" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 
@@ -1590,6 +1896,11 @@
                           <button type="button" id="attach-1200" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1200" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1200" >
+                            </td>
+                        <td>
+                          <a id="link_register_1200" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1616,6 +1927,11 @@
                           <button type="button" id="attach-1201" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1201" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1201" >
+                            </td>
+                        <td>
+                          <a id="link_register_1201" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1642,6 +1958,11 @@
                           <button type="button" id="attach-1202" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1202" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1202" >
+                            </td>
+                        <td>
+                          <a id="link_register_1202" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1668,6 +1989,11 @@
                           <button type="button" id="attach-1203" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1203" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1203" >
+                            </td>
+                        <td>
+                          <a id="link_register_1203" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1692,6 +2018,11 @@
                           <button type="button" id="attach-1204" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1204" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1204" >
+                            </td>
+                        <td>
+                          <a id="link_register_1204" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1716,6 +2047,11 @@
                           <button type="button" id="attach-1205" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1205" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1205" >
+                            </td>
+                        <td>
+                          <a id="link_register_1205" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1741,6 +2077,11 @@
                           <button type="button" id="attach-1206" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1206" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1206" >
+                            </td>
+                        <td>
+                          <a id="link_register_1206" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1766,6 +2107,11 @@
                           <button type="button" id="attach-1207" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1207" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1207" >
+                            </td>
+                        <td>
+                          <a id="link_register_1207" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
 
                       </tr>
@@ -1792,6 +2138,11 @@
                           <button type="button" id="attach-1208" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1208" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1208" >
+                            </td>
+                        <td>
+                          <a id="link_register_1208" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -1817,6 +2168,11 @@
                           <button type="button" id="attach-1209" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1209" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1209" >
+                            </td>
+                        <td>
+                          <a id="link_register_1209" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 
@@ -1848,6 +2204,11 @@
                           <button type="button" id="attach-1500" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1500" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1500" >
+                            </td>
+                        <td>
+                          <a id="link_register_1500" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1873,6 +2234,11 @@
                           <button type="button" id="attach-1501" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1501" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1501" >
+                            </td>
+                        <td>
+                          <a id="link_register_1501" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1899,6 +2265,11 @@
                           <button type="button" id="attach-1502" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1502" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1502" >
+                            </td>
+                        <td>
+                          <a id="link_register_1502" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1925,6 +2296,11 @@
                           <button type="button" id="attach-1503" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1503" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1503" >
+                            </td>
+                        <td>
+                          <a id="link_register_1503" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1949,6 +2325,11 @@
                           <button type="button" id="attach-1504" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1504" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1504" >
+                            </td>
+                        <td>
+                          <a id="link_register_1504" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -1973,6 +2354,11 @@
                           <button type="button" id="attach-1505" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1505" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1505" >
+                            </td>
+                        <td>
+                          <a id="link_register_1505" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 
@@ -2001,6 +2387,11 @@
                           <button type="button" id="attach-1600" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1600" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1600" >
+                            </td>
+                        <td>
+                          <a id="link_register_1600" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2027,6 +2418,11 @@
                           <button type="button" id="attach-1601" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1601" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1601" >
+                            </td>
+                        <td>
+                          <a id="link_register_1601" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2053,6 +2449,11 @@
                           <button type="button" id="attach-1602" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1602" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1602" >
+                            </td>
+                        <td>
+                          <a id="link_register_1602" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2079,6 +2480,11 @@
                           <button type="button" id="attach-1603" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1603" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1603" >
+                            </td>
+                        <td>
+                          <a id="link_register_1603" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2103,6 +2509,11 @@
                           <button type="button" id="attach-1604" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1604" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1604" >
+                            </td>
+                        <td>
+                          <a id="link_register_1604" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2127,6 +2538,11 @@
                           <button type="button" id="attach-1605" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="1605" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-1605" >
+                            </td>
+                        <td>
+                          <a id="link_register_1605" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       {{--  VARANDA  --}}
@@ -2157,6 +2573,11 @@
                           <button type="button" id="attach-2900" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2900" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2900" >
+                            </td>
+                        <td>
+                          <a id="link_register_2900" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2183,6 +2604,11 @@
                           <button type="button" id="attach-2901" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2901" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2901" >
+                            </td>
+                        <td>
+                          <a id="link_register_2901" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2209,6 +2635,11 @@
                           <button type="button" id="attach-2902" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2902" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2902" >
+                            </td>
+                        <td>
+                          <a id="link_register_2902" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2235,6 +2666,11 @@
                           <button type="button" id="attach-2903" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2903" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2903" >
+                            </td>
+                        <td>
+                          <a id="link_register_2903" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2259,6 +2695,11 @@
                           <button type="button" id="attach-2904" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2904" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2904" >
+                            </td>
+                        <td>
+                          <a id="link_register_2904" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2283,6 +2724,11 @@
                           <button type="button" id="attach-2905" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2905" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2905" >
+                            </td>
+                        <td>
+                          <a id="link_register_2905" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2307,6 +2753,11 @@
                           <button type="button" id="attach-2906" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2906" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2906" >
+                            </td>
+                        <td>
+                          <a id="link_register_2906" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 
@@ -2338,6 +2789,11 @@
                           <button type="button" id="attach-2300" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2300" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2300" >
+                            </td>
+                        <td>
+                          <a id="link_register_2300" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2364,6 +2820,11 @@
                           <button type="button" id="attach-2301" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2301" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2301" >
+                            </td>
+                        <td>
+                          <a id="link_register_2301" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2390,6 +2851,11 @@
                           <button type="button" id="attach-302" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2302" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2302" >
+                            </td>
+                        <td>
+                          <a id="link_register_2302" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2416,6 +2882,11 @@
                           <button type="button" id="attach-2303" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2303" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2303" >
+                            </td>
+                        <td>
+                          <a id="link_register_2303" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2440,6 +2911,11 @@
                           <button type="button" id="attach-2304" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2304" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2304" >
+                            </td>
+                        <td>
+                          <a id="link_register_2304" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2464,6 +2940,11 @@
                           <button type="button" id="attach-2305" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2305" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2305" >
+                            </td>
+                        <td>
+                          <a id="link_register_2305" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2488,6 +2969,11 @@
                           <button type="button" id="attach-2306" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2306" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2306" >
+                            </td>
+                        <td>
+                          <a id="link_register_2306" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2512,6 +2998,11 @@
                           <button type="button" id="attach-2307" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2306" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2306" >
+                            </td>
+                        <td>
+                          <a id="link_register_2306" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 
@@ -2542,6 +3033,11 @@
                           <button type="button" id="attach-2200" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2200" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2200" >
+                            </td>
+                        <td>
+                          <a id="link_register_2200" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2568,6 +3064,11 @@
                           <button type="button" id="attach-2201" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2201" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2201" >
+                            </td>
+                        <td>
+                          <a id="link_register_2201" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2594,6 +3095,11 @@
                           <button type="button" id="attach-2202" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2202" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2202" >
+                            </td>
+                        <td>
+                          <a id="link_register_2202" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2620,6 +3126,11 @@
                           <button type="button" id="attach-2203" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2203" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2203" >
+                            </td>
+                        <td>
+                          <a id="link_register_2203" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2644,6 +3155,11 @@
                           <button type="button" id="attach-2204" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2204" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2204" >
+                            </td>
+                        <td>
+                          <a id="link_register_2204" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2668,6 +3184,11 @@
                           <button type="button" id="attach-2205" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2205" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2205" >
+                            </td>
+                        <td>
+                          <a id="link_register_2205" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2693,6 +3214,11 @@
                           <button type="button" id="attach-2206" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2206" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2206" >
+                            </td>
+                        <td>
+                          <a id="link_register_2206" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2718,6 +3244,11 @@
                           <button type="button" id="attach-2207" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2207" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2207" >
+                            </td>
+                        <td>
+                          <a id="link_register_2207" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
 
                       </tr>
@@ -2744,6 +3275,11 @@
                           <button type="button" id="attach-2208" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2208" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2208" >
+                            </td>
+                        <td>
+                          <a id="link_register_2208" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2769,6 +3305,11 @@
                           <button type="button" id="attach-2209" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2209" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2209" >
+                            </td>
+                        <td>
+                          <a id="link_register_2209" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 
@@ -2800,6 +3341,11 @@
                           <button type="button" id="attach-2500" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2500" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2500" >
+                            </td>
+                        <td>
+                          <a id="link_register_2500" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2825,6 +3371,11 @@
                           <button type="button" id="attach-2501" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2501" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2501" >
+                            </td>
+                        <td>
+                          <a id="link_register_2501" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2851,6 +3402,11 @@
                           <button type="button" id="attach-2502" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2502" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2502" >
+                            </td>
+                        <td>
+                          <a id="link_register_2502" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2877,6 +3433,11 @@
                           <button type="button" id="attach-2503" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2503" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2503" >
+                            </td>
+                        <td>
+                          <a id="link_register_2503" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2901,6 +3462,11 @@
                           <button type="button" id="attach-2504" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2504" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2504" >
+                            </td>
+                        <td>
+                          <a id="link_register_2504" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -2925,6 +3491,11 @@
                           <button type="button" id="attach-2505" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2505" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2505" >
+                            </td>
+                        <td>
+                          <a id="link_register_2505" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 
@@ -2953,6 +3524,11 @@
                           <button type="button" id="attach-2600" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2600" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2600" >
+                            </td>
+                        <td>
+                          <a id="link_register_2600" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2979,6 +3555,11 @@
                           <button type="button" id="attach-2601" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2601" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2601" >
+                            </td>
+                        <td>
+                          <a id="link_register_2601" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3005,6 +3586,11 @@
                           <button type="button" id="attach-2602" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2602" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2602" >
+                            </td>
+                        <td>
+                          <a id="link_register_2602" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3031,6 +3617,11 @@
                           <button type="button" id="attach-2603" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2603" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2603" >
+                            </td>
+                        <td>
+                          <a id="link_register_2603" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3055,6 +3646,11 @@
                           <button type="button" id="attach-2604" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2604" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2604" >
+                            </td>
+                        <td>
+                          <a id="link_register_2604" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3079,6 +3675,11 @@
                           <button type="button" id="attach-2605" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="2605" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2605" >
+                            </td>
+                        <td>
+                          <a id="link_register_2605" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 
@@ -3121,6 +3722,11 @@
                           <button type="button" id="attach-3200" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3200" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3200" >
+                            </td>
+                        <td>
+                          <a id="link_register_3200" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3147,6 +3753,11 @@
                           <button type="button" id="attach-3201" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3201" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3201" >
+                            </td>
+                        <td>
+                          <a id="link_register_3201" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3173,6 +3784,11 @@
                           <button type="button" id="attach-3202" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3202" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3202" >
+                            </td>
+                        <td>
+                          <a id="link_register_3202" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3199,6 +3815,11 @@
                           <button type="button" id="attach-3203" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3203" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3203" >
+                            </td>
+                        <td>
+                          <a id="link_register_3203" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3223,6 +3844,11 @@
                           <button type="button" id="attach-3204" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3204" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3204" >
+                            </td>
+                        <td>
+                          <a id="link_register_3204" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3247,6 +3873,11 @@
                           <button type="button" id="attach-3205" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3205" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3205" >
+                            </td>
+                        <td>
+                          <a id="link_register_3205" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3272,6 +3903,11 @@
                           <button type="button" id="attach-3206" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3206" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3206" >
+                            </td>
+                        <td>
+                          <a id="link_register_3206" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3297,6 +3933,11 @@
                           <button type="button" id="attach-3207" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3207" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3207" >
+                            </td>
+                        <td>
+                          <a id="link_register_3207" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
 
                       </tr>
@@ -3323,6 +3964,11 @@
                           <button type="button" id="attach-3208" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3208" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3208" >
+                            </td>
+                        <td>
+                          <a id="link_register_3208" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -3348,6 +3994,11 @@
                           <button type="button" id="attach-3209" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3209" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3209" >
+                            </td>
+                        <td>
+                          <a id="link_register_3209" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       {{-- STUDIO  --}}
@@ -3378,6 +4029,11 @@
                           <button type="button" id="attach-3500" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3500" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3500" >
+                            </td>
+                        <td>
+                          <a id="link_register_3500" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -3404,6 +4060,11 @@
                           <button type="button" id="attach-3501" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3501" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3501" >
+                            </td>
+                        <td>
+                          <a id="link_register_3501" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -3430,6 +4091,11 @@
                           <button type="button" id="attach-3502" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3502" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3502" >
+                            </td>
+                        <td>
+                          <a id="link_register_3502" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -3456,6 +4122,11 @@
                           <button type="button" id="attach-3503" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3503" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3503" >
+                            </td>
+                        <td>
+                          <a id="link_register_3503" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -3480,6 +4151,11 @@
                           <button type="button" id="attach-3504" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3504" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3504" >
+                            </td>
+                        <td>
+                          <a id="link_register_3504" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -3490,7 +4166,8 @@
                           FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="approved-35035">
+                          <select required class="form-control form-control-sm" name="item"
+                            id="approved-35035">
 
                             <option value="yes">SIM</option>
                             <option value="not">NÃO</option>
@@ -3504,6 +4181,11 @@
                           <button type="button" id="attach-35035" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="35035" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-35035" >
+                            </td>
+                        <td>
+                          <a id="link_register_35035" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:#ececec">
@@ -3528,6 +4210,11 @@
                           <button type="button" id="attach-3506" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
+                              <button data-ref="3506" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-3506" >
+                            </td>
+                        <td>
+                          <a id="link_register_3506" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                     </tbody>
@@ -3652,6 +4339,7 @@
       <div class="modal-body">
         <div class="form-group">
           <label>Registros</label>
+          <input type="hidden" id="register_ref" name="register_ref">
           <select class="form-control  isdfdOccurence" id="idOccurence" name="userRegistered"
             style="width: 100%;">
             {{-- @foreach ($ocurrences as $ocurrence)
