@@ -16,6 +16,7 @@ class ApartmentInspection extends Model
         'inspection_date',
         'observation',
         'approved',
+        'type_unit',
     ];
 
 

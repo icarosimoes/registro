@@ -20,7 +20,41 @@ $(function () {
     $('input').attr('disabled', true)
     $('select').attr('disabled', true)
     $('textarea').attr('disabled', true)
+    $('#btn_send_attach').prop('disabled', true);
   }
+
+
+  // define o tipo de unidade
+  $('#type_unit').val($('#type_unit').data('value'))
+
+
+  $('.hide_all').addClass('d-none')
+  if ($('#type_unit').val() == 'dois_quartos') {
+    $('#dois_quartos').removeClass('d-none')
+  } else if ($('#type_unit').val() == 'quanto_sala_1') {
+    $('#quanto_sala_1').removeClass('d-none')
+  } else if ($('#type_unit').val() == 'quanto_sala_2') {
+    $('#quanto_sala_2').removeClass('d-none')
+  } else if ($('#type_unit').val() == 'studio') {
+    $('#studio').removeClass('d-none')
+  }
+
+  $('#type_unit').on('change', (e) => {
+    const type = $(e.currentTarget).val()
+    
+    $('.hide_all').addClass('d-none')
+    if (type == 'dois_quartos') {
+    
+      $('#dois_quartos').removeClass('d-none')
+    } else if (type == 'quanto_sala_1') {
+      $('#quanto_sala_1').removeClass('d-none')
+    } else if (type == 'quanto_sala_2') {
+      $('#quanto_sala_2').removeClass('d-none')
+    } else if (type == 'studio') {
+      $('#studio').removeClass('d-none')
+    }
+  })
+
 
   //carregar os dados 
   let items = JSON.parse($('#items').val())
@@ -137,8 +171,9 @@ $(function () {
     } else {
       status = 'not';
     }
+    let type_unit = $('#type_unit').val()
     let items = []
-    $('input[name="register"]').each((index, element) => {
+    $('#' + type_unit + ' input[name="register"]').each((index, element) => {
       let ref = $(element).attr('data-ref')
       let data = {
         appreciation: $(element).val(),
@@ -147,6 +182,8 @@ $(function () {
       }
       items.push(data)
     })
+    
+    
     let form_data = {
       _method: 'PUT',
       owner: $('#owner').val(),
@@ -155,6 +192,7 @@ $(function () {
       inspection_date: $('#inspection_date').val(),
       observation: $('#obs').val(),
       approved: status,
+      type_unit: $('#type_unit').val(),
       items: JSON.stringify(items)
     };
 
