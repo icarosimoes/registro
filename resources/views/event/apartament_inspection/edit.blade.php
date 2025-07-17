@@ -2137,24 +2137,24 @@
                           PISOS
                         </td>
                         <td>
-                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA 
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
                         </td>
 
 
 
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="approved-1900">
+                          <select required class="form-control form-control-sm" name="item" id="approved-2900">
 
                             <option value="yes">SIM</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
                         <td>
-                          <input data-ref='1900' id="appreciation-1900" type="text" style="width: 200px"
+                          <input data-ref='2900' id="appreciation-2900" type="text" style="width: 200px"
                             class="form-control form-control-sm" name="register">
                         </td>
                         <td>
-                          <button type="button" id="attach-1900" data-toggle="tooltip" data-placement="top"
+                          <button type="button" id="attach-2900" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
                         </td>
@@ -2164,23 +2164,23 @@
                           REVESTIMENTOS
                         </td>
                         <td>
-                          PLANEZA, HOMOGENEIDADE, ESQUADRO, REJUNTAMENTO E LIMPEZA 
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, REJUNTAMENTO E LIMPEZA
                         </td>
 
 
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="approved-1901">
+                          <select required class="form-control form-control-sm" name="item" id="approved-2901">
 
                             <option value="yes">SIM</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
                         <td>
-                          <input data-ref='1901' id="appreciation-1901" type="text" style="width: 200px"
+                          <input data-ref='2901' id="appreciation-2901" type="text" style="width: 200px"
                             class="form-control form-control-sm" name="register">
                         </td>
                         <td>
-                          <button type="button" id="attach-1901" data-toggle="tooltip" data-placement="top"
+                          <button type="button" id="attach-2901" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
                         </td>
@@ -2195,18 +2195,18 @@
 
 
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="approved-1902">
+                          <select required class="form-control form-control-sm" name="item" id="approved-2902">
 
                             <option value="yes">SIM</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
                         <td>
-                          <input data-ref='1902' id="appreciation-1902" style="width: 200px"
+                          <input data-ref='2902' id="appreciation-2902" style="width: 200px"
                             class="form-control form-control-sm" name="register">
                         </td>
                         <td>
-                          <button type="button" id="attach-1902" data-toggle="tooltip" data-placement="top"
+                          <button type="button" id="attach-2902" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
                         </td>
@@ -2221,18 +2221,18 @@
 
 
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="approved-1903">
+                          <select required class="form-control form-control-sm" name="item" id="approved-2903">
 
                             <option value="yes">SIM</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
                         <td>
-                          <input data-ref='1903' id="appreciation-1903" type="text" style="width: 200px"
+                          <input data-ref='2903' id="appreciation-2903" type="text" style="width: 200px"
                             class="form-control form-control-sm" name="register">
                         </td>
                         <td>
-                          <button type="button" id="attach-1903" data-toggle="tooltip" data-placement="top"
+                          <button type="button" id="attach-2903" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
                         </td>
@@ -2245,18 +2245,18 @@
                           FUNCIONAMENTO, FIXAÇÃO, ACABAMENTO
                         </td>
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="approved-1904">
+                          <select required class="form-control form-control-sm" name="item" id="approved-2904">
 
                             <option value="yes">SIM</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
                         <td>
-                          <input data-ref='1904' id="appreciation-1904" type="text" style="width: 200px"
+                          <input data-ref='2904' id="appreciation-2904" type="text" style="width: 200px"
                             class="form-control form-control-sm" name="register">
                         </td>
                         <td>
-                          <button type="button" id="attach-1904" data-toggle="tooltip" data-placement="top"
+                          <button type="button" id="attach-2904" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
                         </td>
@@ -2269,18 +2269,18 @@
                           FUNCIONAMENTO, ACESSÓRIOS, FERRAGENS, ACABAMENTO, LIMPEZA
                         </td>
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="approved-1905">
+                          <select required class="form-control form-control-sm" name="item" id="approved-2905">
 
                             <option value="yes">SIM</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
                         <td>
-                          <input data-ref='1905' id="appreciation-1905" type="text" style="width: 200px"
+                          <input data-ref='2905' id="appreciation-2905" type="text" style="width: 200px"
                             class="form-control form-control-sm" name="register">
                         </td>
                         <td>
-                          <button type="button" id="attach-1905" data-toggle="tooltip" data-placement="top"
+                          <button type="button" id="attach-2905" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
                         </td>
@@ -2293,18 +2293,18 @@
                           FIXAÇÃO, ACABAMENTO E LIMPEZA
                         </td>
                         <td>
-                          <select required class="form-control form-control-sm" name="item" id="approved-1906">
+                          <select required class="form-control form-control-sm" name="item" id="approved-2906">
 
                             <option value="yes">SIM</option>
                             <option value="not">NÃO</option>
                           </select>
                         </td>
                         <td>
-                          <input data-ref='1906' id="appreciation-1906" type="text" style="width: 200px"
+                          <input data-ref='2906' id="appreciation-2906" type="text" style="width: 200px"
                             class="form-control form-control-sm" name="register">
                         </td>
                         <td>
-                          <button type="button" id="attach-1906" data-toggle="tooltip" data-placement="top"
+                          <button type="button" id="attach-2906" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
                         </td>
@@ -2315,6 +2315,1221 @@
                     {{-- QUARTO E SALA 02 --}}
                     <tbody id="quanto_sala_2" class="hide_all">
 
+                      {{-- QUARTO --}}
+                      <tr style="background:#ececec">
+                        <td rowspan="8" style="background: #ececec">QUARTO</td>
+                        <td>
+                          PISOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2300">
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2300' id="appreciation-2300" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2300" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          RODAPÉ
+                        </td>
+                        <td>
+                          FIXAÇÃO, HOMOGENEIDADE, CANTOS, MANCHAS, FALHAS E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2301">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2301' id="appreciation-2301" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2301" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          PINTURA DE PAREDES E TETOS
+                        </td>
+                        <td>
+                          HOMOGENEIDADE, ACABAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2302">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2302' id="appreciation-2302" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-302" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          ESQUADRIAS DE ALUMÍNIO
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2303">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2303' id="appreciation-2303" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2303" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          PORTAS DE MADEIRAS
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2304">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2304' id="appreciation-2304" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2304" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          TOMADAS E INTERRUPTORES
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2305">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2305' id="appreciation-2305" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2305" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          FORRO DE GESSO
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2306">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2306' id="appreciation-2306" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2306" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          AR CONDICIONADO
+                        </td>
+                        <td>
+                          PONTO ELÉTRICO, PONTO DE DRENO E TUBULAÇÃO
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2307">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2307' id="appreciation-2307" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2307" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+
+                      {{-- SANITARIO  --}}
+
+                      <tr style="background:lightgray">
+                        <td rowspan="10" style="background: lightgray">SANITÁRIO</td>
+                        <td>
+                          PISOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2200">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2200' id="appreciation-2200" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2200" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          REVESTIMENTOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2201">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2201' id="appreciation-2201" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2201" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          BANCADAS
+                        </td>
+                        <td>
+                          FIXAÇÃO, NIVELAMENTO, ACABAMENTO, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2202">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2202' id="appreciation-2202" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2202" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          ESQUADRIAS DE ALUMÍNIO
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2203">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2203' id="appreciation-2203" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2203" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          PORTAS DE MADEIRAS
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2204">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2204' id="appreciation-2204" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2204" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          TOMADAS E INTERRUPTORES
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2205">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2205' id="appreciation-2205" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2205" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          FORRO DE GESSO
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2206">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2206' id="appreciation-2206" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2206" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          LOUÇAS (VASO SANIT E LAVATÓRIO)
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2207">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2207' id="appreciation-2207" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2207" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          METAIS (TORNEIRAS, CHUVEIRO E DUCHA)
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2208">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2208' id="appreciation-2208" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2208" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          SIFÃO/ VÁLVULAS/ RALOS
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2209">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2209' id="appreciation-2209" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2209" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+
+                      {{-- SALA   --}}
+
+                      <tr style="background:#ececec">
+                        <td rowspan="6" style="background: #ececec">SALA</td>
+                        <td>
+                          PISOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2500">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2500' id="appreciation-2500" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2500" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          RODAPÉ
+                        </td>
+                        <td>
+                          FIXAÇÃO, HOMOGENEIDADE, CANTOS, MANCHAS, FALHAS E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2501">
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2501' id="appreciation-2501" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2501" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          PINTURA DE PAREDES E TETOS
+                        </td>
+                        <td>
+                          HOMOGENEIDADE, ACABAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2502">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2502' id="appreciation-2502" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2502" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          ESQUADRIAS DE ALUMÍNIO
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2503">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2503' id="appreciation-2503" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2503" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          PORTAS DE MADEIRAS
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2504">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2504' id="appreciation-2504" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2504" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          TOMADAS E INTERRUPTORES
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2505">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2505' id="appreciation-2505" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2505" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+
+                      {{-- COZINHA --}}
+                      <tr style="background:lightgray">
+                        <td rowspan="6" style="background: lightgray">COZINHA</td>
+                        <td>
+                          PISOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2600">
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2600' id="appreciation-2600" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2600" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          REVESTIMENTOS
+                        </td>
+                        <td>
+                          FIXAÇÃO, HOMOGENEIDADE, CANTOS, MANCHAS, FALHAS E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2601">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2601' id="appreciation-2601" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2601" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          BANCADAS
+                        </td>
+                        <td>
+                          HOMOGENEIDADE, ACABAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2602">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2602' id="appreciation-2602" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2602" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          TOMADAS E INTERRUPTORES
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2603">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2603' id="appreciation-2603" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2603" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          METAIS (TORNEIRAS, SIFÕES E RELOS)
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2604">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2604' id="appreciation-2604" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2604" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          BANCADA E CUBA
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-2605">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='2605' id="appreciation-2605" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-2605" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+
+
+                    </tbody>
+
+
+
+
+
+
+
+                    {{-- STUDIO --}}
+
+                    <tbody id="studio">
+                      {{-- SANITARIO  --}}
+
+                      <tr style="background:lightgray">
+                        <td rowspan="10" style="background: lightgray">SANITÁRIO</td>
+                        <td>
+                          PISOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3200">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3200' id="appreciation-3200" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3200" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          REVESTIMENTOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3201">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3201' id="appreciation-3201" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3201" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          BANCADAS
+                        </td>
+                        <td>
+                          FIXAÇÃO, NIVELAMENTO, ACABAMENTO, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3202">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3202' id="appreciation-3202" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3202" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          ESQUADRIAS DE ALUMÍNIO
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3203">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3203' id="appreciation-3203" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3203" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          PORTAS DE MADEIRAS
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3204">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3204' id="appreciation-3204" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3204" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          TOMADAS E INTERRUPTORES
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3205">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3205' id="appreciation-3205" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3205" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          FORRO DE GESSO
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3206">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3206' id="appreciation-3206" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3206" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          LOUÇAS (VASO SANIT E LAVATÓRIO)
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3207">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3207' id="appreciation-3207" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3207" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          METAIS (TORNEIRAS, CHUVEIRO E DUCHA)
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3208">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3208' id="appreciation-3208" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3208" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:lightgray">
+                        <td>
+                          SIFÃO/ VÁLVULAS/ RALOS
+                        </td>
+                        <td>
+                          FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO
+                        </td>
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3209">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3209' id="appreciation-3209" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3209" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      {{-- STUDIO  --}}
+
+                      <tr style="background:#ececec">
+                        <td rowspan="7" style="background: #ececec">SALA E VARANDA</td>
+                        <td>
+                          PISOS
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                        </td>
+
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3500">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3500' id="appreciation-3500" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3500" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          RODAPÉ
+                        </td>
+                        <td>
+                          FIXAÇÃO, HOMOGENEIDADE, CANTOS, MANCHAS, FALHAS E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3501">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3501' id="appreciation-3501" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3501" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          PINTURA DE PAREDES E TETOS
+                        </td>
+                        <td>
+                          HOMOGENEIDADE, ACABAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3502">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3502' id="appreciation-3502" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3502" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          ESQUADRIAS DE ALUMÍNIO
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                        </td>
+
+
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3503">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3503' id="appreciation-3503" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3503" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          PORTAS DE MADEIRAS
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3504">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3504' id="appreciation-3504" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3504" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          TOMADAS E INTERRUPTORES
+                        </td>
+                        <td>
+                          FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-35035">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='35035' id="appreciation-35035" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-35035" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
+                      <tr style="background:#ececec">
+                        <td>
+                          FORRO DE GESSO
+                        </td>
+                        <td>
+                          PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
+                        </td>
+                        <td>
+                          <select required class="form-control form-control-sm" name="item" id="approved-3506">
+
+                            <option value="yes">SIM</option>
+                            <option value="not">NÃO</option>
+                          </select>
+                        </td>
+                        <td>
+                          <input data-ref='3506' id="appreciation-3506" type="text" style="width: 200px"
+                            class="form-control form-control-sm" name="register">
+                        </td>
+                        <td>
+                          <button type="button" id="attach-3506" data-toggle="tooltip" data-placement="top"
+                            title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                              class="fas fa-download"></i></button>
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
 
