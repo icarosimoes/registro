@@ -39,11 +39,19 @@ class ApartmentInspectionController extends Controller
         $items = json_decode($request->items);
 
         foreach ($items as $item) {
+            
+            if($item->occurrence_id =='' || $item->occurrence_id == null ){
+                $occurrence_id = null;
+            }else{
+                $occurrence_id = $item->occurrence_id;
+            }
+            
             $apartmentInspectionItem = new ApartmentInspectionItem();
             $apartmentInspectionItem->apartment_inspection_id = $apartmentInspection->id;
             $apartmentInspectionItem->appreciation = $item->appreciation;
             $apartmentInspectionItem->approved = $item->approved;
             $apartmentInspectionItem->ref = $item->ref;
+            $apartmentInspectionItem->occurrence_id = $occurrence_id;
             $apartmentInspectionItem->save();
 
             //salva os anexos

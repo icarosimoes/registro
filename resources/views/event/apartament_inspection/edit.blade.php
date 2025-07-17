@@ -936,11 +936,11 @@
                           <button type="button" id="attach-400" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
-                              <button data-ref="401" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
-                              <input type="hidden" id="occurrence-401" >
+                              <button data-ref="400" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-400" >
                         </td>
                         <td>
-                          <a id="link_register_401" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                          <a id="link_register_400" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
                       <tr style="background:lightgray">
@@ -2998,11 +2998,11 @@
                           <button type="button" id="attach-2307" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
-                              <button data-ref="2306" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
-                              <input type="hidden" id="occurrence-2306" >
+                              <button data-ref="2307" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-2307" >
                             </td>
                         <td>
-                          <a id="link_register_2306" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                          <a id="link_register_2307" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
                       </tr>
 

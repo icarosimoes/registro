@@ -208,7 +208,7 @@ $('form[name="form"]').submit(function (event) {
   let route = '/event/apartment_inspection/' + apartment_inspection_id
   $.post(route, form_data, (response) => {
     DefaultAlert("success", 'Salvo com sucesso !');
-    // window.location.replace(base_url + "/event/apartment_inspection");
+    window.location.replace(base_url + "/event/apartment_inspection");
   }).catch(() => {
     DefaultAlert("error", 'Não foi possivel salvar');
   }).always(() => {
