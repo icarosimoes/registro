@@ -23,6 +23,11 @@ $(function () {
     $('#btn_send_attach').prop('disabled', true);
   }
 
+
+  // define o tipo de unidade
+  $('#type_unit').val($('#type_unit').data('value'))
+
+
   $('.hide_all').addClass('d-none')
   if ($('#type_unit').val() == 'dois_quartos') {
     $('#dois_quartos').removeClass('d-none')
@@ -187,6 +192,7 @@ $(function () {
       inspection_date: $('#inspection_date').val(),
       observation: $('#obs').val(),
       approved: status,
+      type_unit: $('#type_unit').val(),
       items: JSON.stringify(items)
     };
 

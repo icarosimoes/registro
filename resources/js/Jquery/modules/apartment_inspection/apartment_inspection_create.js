@@ -17,6 +17,35 @@ $(function () {
     timer: 3000
   });
 
+  $('.hide_all').addClass('d-none')
+  if ($('#type_unit').val() == 'dois_quartos') {
+    $('#dois_quartos').removeClass('d-none')
+  } else if ($('#type_unit').val() == 'quanto_sala_1') {
+    $('#quanto_sala_1').removeClass('d-none')
+  } else if ($('#type_unit').val() == 'quanto_sala_2') {
+    $('#quanto_sala_2').removeClass('d-none')
+  } else if ($('#type_unit').val() == 'studio') {
+    $('#studio').removeClass('d-none')
+  }
+
+  $('#type_unit').on('change', (e) => {
+    
+    const type = $(e.currentTarget).val()
+    
+    $('.hide_all').addClass('d-none')
+    if (type == 'dois_quartos') {
+    
+      $('#dois_quartos').removeClass('d-none')
+    } else if (type == 'quanto_sala_1') {
+      $('#quanto_sala_1').removeClass('d-none')
+    } else if (type == 'quanto_sala_2') {
+      $('#quanto_sala_2').removeClass('d-none')
+    } else if (type == 'studio') {
+      $('#studio').removeClass('d-none')
+    }
+  })
+
+
   var attachs = new Array()
   // modal de anexos
   $('.attach').on('click', (e) => {
@@ -89,9 +118,9 @@ $(function () {
       status = 'not';
     }
 
-
+    let type_unit = $('#type_unit').val()
     let items = []
-    $('input[name="register"]').each((index, element) => {
+    $('#' + type_unit + ' input[name="register"]').each((index, element) => {
       let ref = $(element).attr('data-ref')
       let data = {
 
@@ -113,6 +142,9 @@ $(function () {
     //   items: JSON.stringify(items)
     // };
 
+    
+
+    
     formData = new FormData()
     formData.append('owner', $('#owner').val())
     formData.append('unit', $('#unit').val())
@@ -120,6 +152,7 @@ $(function () {
     formData.append('inspection_date', $('#inspection_date').val())
     formData.append('observation', $('#obs').val())
     formData.append('approved', status)
+    formData.append('type_unit', type_unit)
     formData.append('items', JSON.stringify(items))
 
     attachs_names = []
@@ -145,6 +178,7 @@ $(function () {
         $("#file").val(null)
         $("#name").val('')
         //carrega a lista de anexos
+         window.location.replace(base_url + "/event/apartment_inspection");
       },
       error: function (jqXHR, textStatus, errorThrown) {
         DefaultAlert('error', 'Não foi possível enviar o anexo')

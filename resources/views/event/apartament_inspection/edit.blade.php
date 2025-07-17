@@ -66,7 +66,7 @@
                   <div class="col-3">
                     <div class="form-group">
                       <label for="Name">TIPO DE UNIDADE</label>
-                      <select name="" id="type_unit" class="form-control">
+                      <select data-value="{{ $apartment_inspection->type_unit }}" name="" id="type_unit" class="form-control">
                         <option value="dois_quartos">2 QUARTOS</option>
                         <option value="quanto_sala_1">QUARTO E SALA 01</option>
                         <option value="quanto_sala_2">QUARTO E SALA 02</option>
@@ -3093,7 +3093,7 @@
 
                     {{-- STUDIO --}}
 
-                    <tbody id="studio">
+                    <tbody id="studio" class="hide_all">
                       {{-- SANITARIO  --}}
 
                       <tr style="background:lightgray">
