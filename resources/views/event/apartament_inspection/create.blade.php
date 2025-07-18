@@ -63,8 +63,8 @@
                       <label for="Name">TIPO DE UNIDADE</label>
                       <select  name="" id="type_unit" class="form-control">
                         <option value="dois_quartos">2 QUARTOS</option>
-                        <option value="quanto_sala_1">QUARTO E SALA 01</option>
-                        <option value="quanto_sala_2">QUARTO E SALA 02</option>
+                        <option value="quanto_sala_1">QUARTO E SALA</option>
+                        {{-- <option value="quanto_sala_2">QUARTO E SALA 02</option> --}}
                         <option value="studio">STUDIO</option>
 
                       </select>
@@ -98,8 +98,8 @@
     
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-100">
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -133,8 +133,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-101">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -166,8 +166,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-102">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -199,8 +199,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-103">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -230,8 +230,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-104">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -260,8 +260,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-105">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -290,8 +290,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-106">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -320,8 +320,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-107">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -356,8 +356,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-200">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -388,8 +388,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-201">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -420,8 +420,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-202">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -452,8 +452,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-203">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -482,8 +482,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-204">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -512,8 +512,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-205">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -543,8 +543,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-206">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -574,8 +574,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-207">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -606,8 +606,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-208">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -637,8 +637,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-209">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -674,8 +674,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-300">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -705,8 +705,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-301">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -736,8 +736,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-302">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -767,8 +767,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-303">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -796,8 +796,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-304">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -825,8 +825,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-305">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -854,8 +854,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-306">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -883,8 +883,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-307">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -917,8 +917,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-400">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -948,8 +948,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-401">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -979,8 +979,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-402">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1010,8 +1010,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-403">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1039,8 +1039,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-404">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1068,8 +1068,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-405">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1097,8 +1097,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-406">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1127,8 +1127,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-407">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1157,8 +1157,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-408">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1188,8 +1188,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-409">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1224,8 +1224,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-500">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1256,8 +1256,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-501">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1289,8 +1289,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-502">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1322,8 +1322,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-503">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1353,8 +1353,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-504">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1384,8 +1384,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-505">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1415,8 +1415,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-506">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1447,8 +1447,8 @@
     
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-600">
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1478,8 +1478,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-601">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1509,8 +1509,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-602">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1540,8 +1540,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-603">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1569,8 +1569,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-604">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1598,8 +1598,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-605">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1633,8 +1633,8 @@
                             </td>
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1300">
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1664,8 +1664,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1301">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1695,8 +1695,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1302">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1726,8 +1726,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1303">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1755,8 +1755,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1304">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1784,8 +1784,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1305">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1813,8 +1813,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1306">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1842,8 +1842,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1307">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1877,8 +1877,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1200">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1908,8 +1908,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1201">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1939,8 +1939,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1202">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1970,8 +1970,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1203">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -1999,8 +1999,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1204">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2028,8 +2028,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1205">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2058,8 +2058,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1206">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2088,8 +2088,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1207">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2119,8 +2119,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1208">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2149,8 +2149,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1209">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2185,8 +2185,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1500">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2215,8 +2215,8 @@
     
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1501">
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2246,8 +2246,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1502">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2277,8 +2277,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1503">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2306,8 +2306,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1504">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2335,8 +2335,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1505">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2368,8 +2368,8 @@
     
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1600">
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2399,8 +2399,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1601">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2430,8 +2430,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1602">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2461,8 +2461,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1603">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2490,8 +2490,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1604">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2519,8 +2519,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-1605">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2554,8 +2554,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2900">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2585,8 +2585,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2901">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2616,8 +2616,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2902">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2647,8 +2647,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2903">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2676,8 +2676,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2904">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2705,8 +2705,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2905">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2734,8 +2734,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2906">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2770,8 +2770,8 @@
                             </td>
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2300">
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2801,8 +2801,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2301">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2832,8 +2832,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2302">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2863,8 +2863,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2303">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2892,8 +2892,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2304">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2921,8 +2921,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2305">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2950,8 +2950,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2306">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -2979,8 +2979,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2307">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3014,8 +3014,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2200">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3045,8 +3045,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2201">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3076,8 +3076,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2202">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3107,8 +3107,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2203">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3136,8 +3136,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2204">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3165,8 +3165,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2205">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3195,8 +3195,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2206">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3225,8 +3225,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2207">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3256,8 +3256,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2208">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3286,8 +3286,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2209">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3322,8 +3322,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2500">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3352,8 +3352,8 @@
     
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2501">
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3383,8 +3383,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2502">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3414,8 +3414,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2503">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3443,8 +3443,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2504">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3472,8 +3472,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2505">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3505,8 +3505,8 @@
     
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2600">
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3536,8 +3536,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2601">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3567,8 +3567,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2602">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3598,8 +3598,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2603">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3627,8 +3627,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2604">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3656,8 +3656,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-2605">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3703,8 +3703,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3200">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3734,8 +3734,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3201">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3765,8 +3765,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3202">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3796,8 +3796,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3203">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3825,8 +3825,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3204">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3854,8 +3854,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3205">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3884,8 +3884,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3206">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3914,8 +3914,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3207">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3945,8 +3945,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3208">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -3975,8 +3975,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3209">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -4010,8 +4010,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3500">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -4041,8 +4041,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3501">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -4072,8 +4072,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3502">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -4103,8 +4103,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3503">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -4132,8 +4132,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3504">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -4162,8 +4162,8 @@
                               <select required class="form-control form-control-sm" name="item"
                                 id="approved-35035">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
@@ -4191,8 +4191,8 @@
                             <td>
                               <select required class="form-control form-control-sm" name="item" id="approved-3506">
     
-                                <option value="yes">SIM</option>
-                                <option value="not">NÃO</option>
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
                               </select>
                             </td>
                             <td>
