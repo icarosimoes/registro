@@ -126,7 +126,8 @@ $(function () {
 
         appreciation: $(element).val(),
         ref: ref,
-        approved: $('#approved-' + ref).val()
+        approved: $('#approved-' + ref).val(),
+        occurrence_id: $('#occurrence-' + ref).val()
       }
       items.push(data)
 
@@ -198,22 +199,20 @@ $(function () {
   });
 
   $('.filter').on('click', (e) => {
-    const item = $(e.currentTarget).attr('data-item')
-    $('#buttonOccurrence').attr('data-item', item)
+    const ref = $(e.currentTarget).attr('data-ref')
+    $('#register_ref').val(ref)
     $('#ModalSelectOcurrence').modal('show')
   })
-
+  
   $('#buttonOccurrence').on('click', () => {
-    const item = $('#buttonOccurrence').attr('data-item')
-
-    if ($('#idOccurence').val()) {
-      $('#item-' + item).val($('#idOccurence').val())
-      const but_occurrence = $('#item-' + item).siblings('.show_occurence_id')[0]
-      $(but_occurrence).removeClass('d-none')
-      $(but_occurrence).children('i').html($('#idOccurence').val())
-    }
+    const ref = $('#register_ref').val()
+    $('#occurrence-' + ref).val($('#idOccurence').val())
+    $('#link_register_' + ref).attr('href', base_url + '/occurrence/list/edit/' + $('#idOccurence').val())
+    $('#link_register_' + ref).removeClass('d-none')
+    $('#link_register_' + ref).text($('#idOccurence').val())
+  
     $('#ModalSelectOcurrence').modal('hide')
-
+  
   })
   $('#idOccurence').select2({
     theme: 'bootstrap4',
