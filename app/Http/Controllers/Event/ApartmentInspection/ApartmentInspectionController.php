@@ -21,7 +21,7 @@ class ApartmentInspectionController extends Controller
         if ($request->date_start && $request->date_end) {
             $apartmentInspection->whereBetween('inspection_date', [$request->date_start, $request->date_end]);
         }
-        $apartmentInspection = $apartmentInspection->get();
+        $apartmentInspection = $apartmentInspection->paginate(20);
         return view('event.apartament_inspection.list', compact('apartmentInspection'));
     }
 

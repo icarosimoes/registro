@@ -185,12 +185,12 @@
                           <button type="button" id="attach-102" data-toggle="tooltip" data-placement="top"
                             title="Anexos" class="btn btn-secondary btn-sm attach"><i
                               class="fas fa-download"></i></button>
-                              <button data-ref="101" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
-                              <input type="hidden" id="occurrence-101" >
+                              <button data-ref="102" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                              <input type="hidden" id="occurrence-102" >
                             
                         </td>
                         <td>
-                          <a id="link_register_101" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                          <a id="link_register_102" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                         </td>
 
                       </tr>
