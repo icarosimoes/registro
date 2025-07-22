@@ -143,9 +143,9 @@
 
           </table>
           <div class="row mt-4">
-            {{-- <div class="col">Mostrado 20 de {{ $data->total() }} </div> --}}
+            <div class="col">Mostrado 20 de {{ $apartmentInspection->total() }} </div>
             <div class="col"></div>
-            {{-- <div class="col">{{ $data->links() }}</div> --}}
+            <div class="col">{{ $apartmentInspection->links() }}</div>
           </div>
         </div>
         <!-- /.card-body -->

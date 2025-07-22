@@ -32,14 +32,14 @@ $(function () {
         }
         let route = '/event/apartment_inspection/' + id
 
-        // $.post(route,data,(response)=>{
-        //     $('#modal_delete').modal('hide');
-        //     window.location.replace(base_url + "/event/apartment_inspection");
-        // }).catch(()=>{
-        //     DefaultAlert('error','Não foi possível')
-        // }).always(()=>{
+        $.post(route,data,(response)=>{
+            $('#modal_delete').modal('hide');
+            window.location.replace(base_url + "/event/apartment_inspection");
+        }).catch(()=>{
+            DefaultAlert('error','Não foi possível')
+        }).always(()=>{
 
-        // })
+        })
     })
 
     $('.attach').on('click', (e) => {
