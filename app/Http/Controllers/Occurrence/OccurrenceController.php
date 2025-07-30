@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Occurrence;
 use App\Http\Controllers\Controller;
 use App\Models\Occurrence;
 use App\Models\Notification;
+use App\Models\Occurrence_participants;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -202,4 +203,37 @@ class OccurrenceController extends Controller
         $pdf = PDF::loadView('occurrence/export_pdf', compact(['data', 'name']))->setPaper('a4', 'landscape');
         return $pdf->stream('relatorio.pdf');
     }
+
+    /**
+     * Clona um registro de ocorrência.
+     */
+    public function clone(Occurrence $occurrence)
+    {
+        $occurrence_clone = new Occurrence();
+        $occurrence_clone->title = $occurrence->title;
+        $occurrence_clone->description = $occurrence->description;
+        $occurrence_clone->type_occurrences_id = $occurrence->type_occurrences_id; 
+        $occurrence_clone->sector_id = $occurrence->sector_id;
+        $occurrence_clone->local_id = $occurrence->local_id;
+        $occurrence_clone->unit = $occurrence->unit;
+        $occurrence_clone->deadline = $occurrence->deadline;
+        $occurrence_clone->receiver_user = $occurrence->receiver_user;
+        $occurrence_clone->comments = $occurrence->comments;
+        $occurrence_clone->status = $occurrence->status;
+        $occurrence_clone->users_id = $occurrence->users_id;
+        $occurrence_clone->save();
+
+        // Clona os participantes
+        Occurrence_participants::where('occurrences_id', $occurrence->id)
+        ->get()
+        ->each(function ($participant) use ($occurrence_clone) {            
+            $new_participant = new Occurrence_participants();
+            $new_participant->occurrences_id = $occurrence_clone->id;
+            $new_participant->users_id = $participant->users_id;
+            $new_participant->save();
+        });
+
+        return response('Clonado com sucesso', 200);
+    }
 }
+

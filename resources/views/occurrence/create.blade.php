@@ -46,7 +46,7 @@
                     <div class="form-group">
                       <label for="Name">Unidade</label>
                       <input type="text" class="form-control"  id="unit"
-                        placeholder="" required>
+                        placeholder="" >
                     </div>
                   </div>
                   <div class="col-md-3">
