@@ -2,6 +2,7 @@
 
 namespace App\Services\Occurrence;
 
+
 use App\Exceptions\ValidationException;
 use App\Models\Occurrence;
 use App\Models\Occurrence_comments;
@@ -115,6 +116,7 @@ class OccurrenceService extends Service
         $occurrence->deadline = $data['deadline'];
         $occurrence->receiver_user = $data['receiver'];
         $occurrence->local_id = $data['local_id'];
+        $occurrence->unit = $data['unit'];
         $occurrence->sector_id = $data['sector_id'];
         
         $occurrence->file = $filePath;
@@ -183,6 +185,7 @@ class OccurrenceService extends Service
             $occurrence->deadline = $data['deadline'] ?? $occurrence->deadline;
             $occurrence->receiver_user = $data['receiver'] ?? $occurrence->receiver_user;
             $occurrence->local_id = $data['local_id']; 
+            $occurrence->unit = $data['unit']; 
             $occurrence->sector_id = $data['sector_id']; 
             
             
