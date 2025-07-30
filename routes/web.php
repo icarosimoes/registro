@@ -94,6 +94,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('list/destroy/{id}', 'Occurrence\OccurrenceController@destroy')->name('occurrence.delete');
         Route::get('get/occurrence', 'Occurrence\OccurrenceController@getOccurrence');
         Route::get('get/export_pdf/{name}', 'Occurrence\OccurrenceController@exportPdf');
+        Route::get('clone/{occurrence}', 'Occurrence\OccurrenceController@clone');
     });
 
     Route::prefix('event')->group(function () {

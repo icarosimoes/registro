@@ -41,6 +41,7 @@ $(function() {
         form_data.append('receiver', $('#receiver').val());
         form_data.append('comments', $('#comments').val());
         form_data.append('local_id', $('#local').val());
+        form_data.append('unit', $('#unit').val());
         form_data.append('sector_id', $('#sector').val());
         form_data.append('file', $('#file').prop('files')[0]);     
         

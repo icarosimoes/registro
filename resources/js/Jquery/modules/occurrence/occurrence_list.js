@@ -8,6 +8,13 @@ $.ajaxSetup({
 
 $(function () {
 
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
     const urlParams = new URLSearchParams(window.location.search);
     const status = urlParams.get("status")
 
@@ -112,6 +119,22 @@ $(function () {
 
     })
 
+    //clonar regidtro
+    $(document).on('click', '.clone', (e) => {
+        let id = $(e.currentTarget).attr('data-id')
+        route = base_url + '/occurrence/clone/' + id;
+        $.get(route,  (response) => {
+            location.reload();
+            DefaultAlert('success','Registro clonado !')
+        })
+        .catch((error) => {
+            DefaultAlert('error','Não foi possivel clonar !')
+        })
+        .always(() => {
+
+        })
+    })
+
     $("#btnNext").click(function () {
         var name = $("#titleExport").val();
         if (!name) {
@@ -123,14 +146,19 @@ $(function () {
         $("#titleExport").attr('disabled', true);
     });
 
-    $("#btnExport").on('click',()=>{
+    $("#btnExport").on('click', () => {
         $("#titleExport").val('')
         $("#titleExport").attr('disabled', false);
         $("#btnNext").removeClass('d-none');
         $("#btnExport").addClass('d-none');
     })
 
-   
+    function DefaultAlert(type, msg) {
+        Toast.fire({
+            icon: type,
+            title: msg
+        })
+    }
 
 
 });

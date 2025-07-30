@@ -30,7 +30,7 @@
                             <!-- form start -->
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="Name">Titulo</label>
                                             <input type="text" class="form-control" value="{{ $data->title }}"
@@ -39,7 +39,7 @@
                                                 value="{{ $data->id }}">
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="Name">Local</label>
                                             <select class="form-control"  id="local" required>
@@ -47,7 +47,14 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="Name">Unidade</label>
+                                            <input type="text" class="form-control" value="{{ $data->unit }}"
+                                                 id="unit" placeholder="" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label for="Name">Departamento</label>
                                             <select class="form-control select2"  id="sector" required>

@@ -141,6 +141,10 @@
                                             <button class="btn btn-info" data-toggle="tooltip" data-placement="top"
                                                 title="Criado em: {{ (new DateTime($item->created_at))->format('d/m/Y H:i:s') }} Por: {{ @$item->createdBy->name }}  | Atualizado em: {{ (new DateTime($item->updated_at))->format('d/m/Y H:i:s') }} Por: {{ @$item->updatedBy->name }} "><i
                                                     class="fas fa-info-circle"></i></button>
+                                            
+                                             <button data-id="{{ $item->id }}" class="btn btn-primary clone" data-toggle="tooltip" data-placement="top"
+                                                title="Clonar Registro"><i
+                                                    class="fa fa-clone"></i></button>        
                                         </div>
                                     </td>
                                 </tr>
@@ -179,7 +183,7 @@
                         class="far fa-times-circle"></i> Sair</button>
                 <button type="button" id="btnNext" target="_blank" class="btn btn-primary">Continuar <i
                         class="fas fa-forward"></i></button>
-                <a type="button" href="" id="btnExport" target="_blank" class="btn btn-primary d-none"><i
+                <a type="button" href="" id="btnExport" target="_blank" class="btn btn-primary d-none "><i
                         class="fas fa-file-export"></i> Exportar</a>
             </div>
         </div>
