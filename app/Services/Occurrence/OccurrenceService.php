@@ -30,6 +30,10 @@ class OccurrenceService extends Service
             $occurrence->where('local_id',request()->local);
         }
 
+        if(request()->unit){
+            $occurrence->where('unit',request()->unit);
+        }
+
         if(request()->sector){
             $occurrence->where('sector_id',request()->sector);
         }
