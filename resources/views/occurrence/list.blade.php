@@ -67,6 +67,13 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
+                                        <label for="Name">Unidade</label>
+                                        <input type="text" class="form-control" name="unit" id="unit"
+                                            placeholder="Unidade">
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
                                         <label for="Name">Departamento</label>
                                         <select class="form-control" name="sector" id="sector">
 
@@ -91,6 +98,7 @@
                                 <th >Title</th>
                                 <th>Status</th>
                                 <th>Local</th>
+                                <th>Unidade</th>
                                 <th>Departamento</th>
                                 <th>Prazo</th>
                                 <th>Atualizado em</th>
@@ -113,6 +121,7 @@
                                         @endif
                                     </td>
                                     <td>{{ @$item->local->name }}</td>
+                                    <td>{{ @$item->unit }}</td>
                                     <td>{{ @$item->sector->name }}</td>
                                     <td>{{ (new DateTime($item->deadline))->format('d/m/Y') }}</td>
                                     <td>{{ (new DateTime($item->updated_at))->format('d/m/Y') }}</td>
