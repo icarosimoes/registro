@@ -39,7 +39,7 @@
                           <div class="row">
             <div class="col-md-4">
               <div class="form-group">
-                <label for="search">Pesquisar</label>
+                <label for="search">Procurar</label>
                 <div class="input-group">
                   <input type="text" class="form-control" id="search" name="search"
                     placeholder="">
@@ -52,7 +52,7 @@
                 <label for="search"></label>
                 <div class="input-group">
                   <button style="margin-top:8px"  id="btnSearch" class="btn btn-primary btn-block"><i
-                      class="fas fa-search"></i> Pesquisar</button>
+                      class="fas fa-search"></i> Procurar</button>
                 </div>
               </div>
             </div>
@@ -131,7 +131,11 @@
                             <b>25 de {{ $data->total() }} Registros</b>
                           </div>
                           <div class="col"></div>
-                          <div class="col">
+                          <div class="col"></div>
+                          <div class="col"></div>
+                          <div class="col"></div>
+                          <div class="col"></div>
+                          <div class="col text-right">
                             {{ $data->onEachSide(1)->links() }}
                           </div>
                         </div>
