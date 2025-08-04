@@ -31,7 +31,7 @@ class OccurrenceService extends Service
         }
 
         if(request()->unit){
-            $occurrence->where('unit',request()->unit);
+            $occurrence->where('unit',"like","%".request()->unit."%");
         }
 
         if(request()->sector){
