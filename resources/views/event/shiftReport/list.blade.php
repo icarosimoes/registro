@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 @section('content')
-@section('plugins.Datatables', true)
+@section('plugins.Datatables', false)
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-sm-12">
@@ -35,6 +35,30 @@
                                 </button>
                             </div>
                         @endif
+                        <form action="" method="GET">
+                          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="search">Pesquisar</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="search" name="search"
+                    placeholder="">
+                </div>
+              </div>
+            </div>
+            {{-- btn de pesquisa --}}
+            <div class="col-md-2">
+              <div class="form-group">
+                <label for="search"></label>
+                <div class="input-group">
+                  <button style="margin-top:8px"  id="btnSearch" class="btn btn-primary btn-block"><i
+                      class="fas fa-search"></i> Pesquisar</button>
+                </div>
+              </div>
+            </div>
+</form>
+
+
 
                         <table name="DataTableUser" id="DataTableUser" class="table table-striped table-sm table-hover">
                             <thead>
@@ -100,8 +124,17 @@
                                 @endforeach
                                 {{-- @endforeach --}}
                             </tbody>
-
+                            
                         </table>
+                        <div style="margin-top:30px;width:100%;" class="row">
+                          <div class="col">
+                            <b>25 de {{ $data->total() }} Registros</b>
+                          </div>
+                          <div class="col"></div>
+                          <div class="col">
+                            {{ $data->onEachSide(1)->links() }}
+                          </div>
+                        </div>
                     </div>
                     <!-- /.card-body -->
                 </div>
