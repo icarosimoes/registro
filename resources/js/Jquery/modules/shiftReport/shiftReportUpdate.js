@@ -528,11 +528,11 @@ $(function () {
                     const obj = JSON.parse(response);
                     if (obj.success === true) {
                         DefaultAlert("success", obj.message);
-                        // $('.overlay').addClass('d-none');
-                        //window.location.replace(base_url + "/event/list/shiftreport");
+                        $('.overlay').addClass('d-none');
+                        window.location.replace(base_url + "/event/list/shiftreport");
                     } else {
                         DefaultAlert("error", obj.message);
-                        // $('.overlay').addClass('d-none');
+                        $('.overlay').addClass('d-none');
                     }
                 }
             }).catch(() => {

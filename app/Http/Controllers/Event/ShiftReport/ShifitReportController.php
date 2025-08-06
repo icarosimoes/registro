@@ -74,7 +74,7 @@ class ShifitReportController extends Controller
     public function show($id)
     {
         $this->authorize('show', ShiftReport::class);
-        $shiftReport = $this->service->index($id);
+        $shiftReport = ShiftReport::findOrFail($id);
         $getShiftReport_frequency = $this->service->getShiftReport_frequency($id);
         $getShiftReport_extra = $this->service->getShiftReport_extra($id);
         $getShiftReport_maintenence = $this->service->getShiftReport_maintenence($id);
@@ -101,14 +101,15 @@ class ShifitReportController extends Controller
     public function edit($id)
     {
         $this->authorize('show', ShiftReport::class);
-        $shiftReport = $this->service->index($id);
+        $shiftReport = ShiftReport::findOrFail($id);
+        // $shiftReport = $this->service->index($id);
         $getShiftReport_frequency = $this->service->getShiftReport_frequency($id);
         $getShiftReport_extra = $this->service->getShiftReport_extra($id);
         $getShiftReport_maintenence = $this->service->getShiftReport_maintenence($id);
         $getShiftReport_customer_comp = $this->service->getShiftReport_customer_comp($id);
         $getShiftReport_comments = $this->service->getShiftReport_comments($id);
         $occurrences = $this->service->getOcurrence();
-
+        
         return view('event/shiftReport/edit')->with([
             'data' => $shiftReport,
             'shiftReport_frequency' => $getShiftReport_frequency,
