@@ -19,7 +19,7 @@ class ShifitReportService extends Service
     public function index(int $id = null)
     {
         if (isset($id)) {
-            $shiftReport = ShiftReport::findOrFail($id);
+            return $shiftReport = ShiftReport::findOrFail($id);
         } else {
             $shiftReport = ShiftReport::orderBy('created_at', 'desc');
         }
@@ -232,7 +232,9 @@ class ShifitReportService extends Service
             $comments_id = explode(",", $data['comments_id'][0]);
         }
 
+        //dd((new DateTime($data['beginning']))->format('Y-m-d H:i:s'));
         $shiftReport = $this->index($data['shiftReport_id']);
+        
         $shiftReport->beginning = (new DateTime($data['beginning']))->format('Y-m-d H:i:s');
         $shiftReport->end = (new DateTime($data['end']))->format('Y-m-d H:i:s');
         $shiftReport->supervisor = $data['supervisor'];
