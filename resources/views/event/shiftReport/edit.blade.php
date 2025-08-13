@@ -27,6 +27,12 @@
                                 <div class="card card-secondary card-outline">
                                     <div class="card-header">
                                         <h3 class="card-title">Editar Relatório de Turno</h3>
+                                        <div class="card-tools">
+                                            
+                                            <a href="{{ route('shiftreport.export_excel', $data->id) }}" type="button" class="btn btn-sm btn-warning" title="Salvar">
+                                                <i class="fas fa-file-excel"></i> Excel
+                                            </a>
+                                        </div>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">

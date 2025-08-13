@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Event\ShiftReport;
 
+use App\Exports\ShifitReportExcelExport;
 use App\Http\Controllers\Controller;
 use App\Models\ShiftReport\ShiftReport;
 use Illuminate\Http\Request;
+use Excel;
 
 class ShifitReportController extends Controller
 {
@@ -109,7 +111,7 @@ class ShifitReportController extends Controller
         $getShiftReport_customer_comp = $this->service->getShiftReport_customer_comp($id);
         $getShiftReport_comments = $this->service->getShiftReport_comments($id);
         $occurrences = $this->service->getOcurrence();
-        
+
         return view('event/shiftReport/edit')->with([
             'data' => $shiftReport,
             'shiftReport_frequency' => $getShiftReport_frequency,
@@ -119,6 +121,31 @@ class ShifitReportController extends Controller
             'shiftReport_comments' => $getShiftReport_comments,
             'ocurrences' => $occurrences,
         ]);
+    }
+
+    public function exportExcel($id)
+    {
+        
+        $shiftReport = ShiftReport::findOrFail($id);
+        $getShiftReport_frequency = $this->service->getShiftReport_frequency($id);
+        $getShiftReport_extra = $this->service->getShiftReport_extra($id);
+        $getShiftReport_maintenence = $this->service->getShiftReport_maintenence($id);
+        $getShiftReport_customer_comp = $this->service->getShiftReport_customer_comp($id);
+        $getShiftReport_comments = $this->service->getShiftReport_comments($id);
+        
+
+        
+        $data = [
+            'shiftReport' => $shiftReport,
+            'frequency' => $getShiftReport_frequency,
+            'extra' => $getShiftReport_extra,
+            'maintenence' => $getShiftReport_maintenence,
+            'customer_comp' => $getShiftReport_customer_comp,
+            'comments' => $getShiftReport_comments,
+          
+        ];
+        $name = $shiftReport->id . '-' . date('Y-m-d H:i:s');
+        return Excel::download(new ShifitReportExcelExport($data, $name), 'relatorio.xlsx');
     }
 
     public function tested($id)
