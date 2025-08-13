@@ -126,6 +126,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('shiftreport/create', 'Event\ShiftReport\ShifitReportController@create')->name('shiftreport.create');
         Route::post('shiftreport/store', 'Event\ShiftReport\ShifitReportController@store');
         Route::get('shiftreport/edit/{id}', 'Event\ShiftReport\ShifitReportController@edit')->name('shiftreport.edit');
+        Route::get('shiftreport/export_excel/{id}', 'Event\ShiftReport\ShifitReportController@exportExcel')->name('shiftreport.export_excel');
         Route::get('shiftreport/view/{id}', 'Event\ShiftReport\ShifitReportController@show')->name('shiftreport.view');
         Route::post('shiftreport/update', 'Event\ShiftReport\ShifitReportController@update');
         Route::get('shiftreport/delete/{id}', 'Event\ShiftReport\ShifitReportController@destroy')->name('shiftreport.delete');
