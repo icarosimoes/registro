@@ -23,7 +23,17 @@ $(function () {
 
   }
 
-  
+   //cada input alterado atualiza o array inspection_suite_items
+  $(document).on('change', '.inspection_item', function (e) {
+    const index = $(this).data('index');
+    const coluna = $(this).data('coluna');
+    const valor = $(this).val();
+    inspection_suite_items[index][coluna] = valor;
+
+  });
+
+
+
   function criarHtmlVistoria() {
     let html = '';
     inspection_suite_items.forEach((item, index) => {
@@ -87,16 +97,14 @@ $(function () {
       status: status,
       maid: $("#maid").val(),
       obs: $("#obs").val(),
-      valuation: valuation,
-      register: register,
-      occurrences_id: occurrences_id
+       inspection_suite_items: JSON.stringify(inspection_suite_items)
     };
 
     const check_suite_id = $('#check_suite_id').val()
     let route = '/event/inspection_suite/' + check_suite_id
     $.post(route, form_data, (response) => {
       DefaultAlert("success", 'Salvo com sucesso !');
-      window.location.replace(base_url + "/event/inspection_suite");
+      // window.location.replace(base_url + "/event/inspection_suite");
     }).catch(() => {
       DefaultAlert("error", 'Não foi possivel salvar');
     }).always(() => {
@@ -119,10 +127,48 @@ $(function () {
       $(but_occurrence).removeClass('d-none')
       $(but_occurrence).children('i').html($('#idOccurence').val())
       $(but_occurrence).attr('href', base_url + '/occurrence/list/edit/' + $('#idOccurence').val())
+      inspection_suite_items[item].occurrences_id = $('#idOccurence').val();
     }
     $('#ModalSelectOcurrence').modal('hide')
-
   })
+
+  //adiciona items a inpection_suite_items 
+  $('#add_inspection_item').on('click', function () {
+    let suite_item = {
+      description: 'NOVO ITEM',
+      occurrences_id: null,
+      register: '',
+      valuation: 'sim',
+    }
+    inspection_suite_items.push(suite_item);
+    // PEGA O ULTIMO ITEM ADICIONADO
+    const index = inspection_suite_items.length - 1;
+    let html = '';
+    const item = inspection_suite_items[index];
+
+    // ADICIONA O HTML
+    html += `
+            <tr>
+               <td>${index + 1}</td>
+               <td><textarea class="inspection_item" data-index="${index}" data-coluna="description" style="border:none;resize:none"  cols="60" rows="2">${item.description}</textarea></td>
+               <td>
+                <select  data-index="${index}" data-coluna="valuation" class="form-control form-control-sm inspection_item" >
+                   <option value="sim">SIM</option>
+                   <option value="nao">NÃO</option>
+                </select>
+               </td>
+               <td><input type="text" class="inspection_item form-control form-control-sm" data-index="${index}" data-coluna="register"  ></td>
+               <td class="">
+                 <a type="button" data-item="${index}" class="btn btn-sm btn-secondary filter "><i class="fas fa-filter"></i></a>
+                 <input type="hidden" name="occurrences_id" id="item-${index}">
+                 <a class="btn btn-sm btn-success d-none show_occurence_id "><i class="far fa-registered">0</i></a>
+               </td>
+              </tr>`
+
+    $('#itens_inspection_suite').append(html);
+  })
+
+
   $('#idOccurence').select2({
     theme: 'bootstrap4',
     ajax: {

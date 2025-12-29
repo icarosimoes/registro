@@ -22,7 +22,7 @@
                         <div class="card card-secondary card-outline">
                             <div class="card-header">
                                 <h3 class="card-title">Editar conferência das suites</h3>
-                                <input type="text" value="{{$inspectionSuite->inspection_suite_items}}">
+                                <input type="hidden" value="{{$inspectionSuite->inspection_suite_items}}">
                             </div>
                             <!-- /.card-header -->
                             <!-- form start -->
@@ -84,6 +84,11 @@
                                         </tbody>
                                     </table>
 
+                                </div>
+                                <div class="row" >
+                                  <div class="col">
+                                    <button type="button" class="btn btn-primary" id="add_inspection_item">Adicionar Item</button>
+                                  </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
