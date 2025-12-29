@@ -76,9 +76,9 @@
                                     </table>
 
                                 </div>
-                                <div class="row" >
+                                <div class="row mb-4" >
                                   <div class="col">
-                                    <button type="button" class="btn btn-primary" id="add_inspection_item">Adicionar Item</button>
+                                    <button type="button" class="btn btn-primary  " id="add_inspection_item"><i class="fas fa-plus mr-1"></i>Adicionar Item</button>
                                   </div>
                                 </div>
                                 <div class="row">
@@ -126,7 +126,27 @@
 </div>
 </div>
 
-
+<!-- Modal confirmar deleção-->
+<div class="modal fade" id="ModalConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="modalConfirmDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmDeleteLabel">Excluir item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <input type="text" id="deleteItemIndex" class="d-none">
+            <div class="modal-body">
+                Tem certeza que deseja excluir este item?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDelete">Excluir</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Modal selecionar ocorrência-->
 <div class="modal fade" id="ModalSelectOcurrence" tabindex="-1" role="dialog"
 aria-labelledby="exampleModalLabel" aria-hidden="true">

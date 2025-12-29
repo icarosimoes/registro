@@ -32,6 +32,20 @@ $(function () {
 
   });
 
+  $(document).on('click', '.delete', function (e) {
+    const index = $(this).data('index');
+    $('#deleteItemIndex').val(index);
+    $('#ModalConfirmDelete').modal('show');
+    
+  });
+
+  $('#confirmDelete').on('click', function () {
+    const index = $('#deleteItemIndex').val();
+    inspection_suite_items.splice(index, 1);
+    criarHtmlVistoria();
+    $('#ModalConfirmDelete').modal('hide');
+  });
+
 
 
   function criarHtmlVistoria() {
@@ -52,6 +66,7 @@ $(function () {
                  <a type="button" data-item="${index}" class="btn btn-sm btn-secondary filter "><i class="fas fa-filter"></i></a>
                  <input type="hidden" name="occurrences_id" id="item-${index}" value="${item.occurrences_id}">
                  <a class="btn btn-sm btn-success ${item.occurrences_id?'':'d-none'} show_occurence_id "><i class="far fa-registered">${item.occurrences_id}</i></a>
+                 <a class="btn btn-sm btn-default float-right delete" data-index="${index}"><i style="color:red" class="fas fa-trash"></i></a>
                </td>
               </tr>`
 
@@ -104,7 +119,7 @@ $(function () {
     let route = '/event/inspection_suite/' + check_suite_id
     $.post(route, form_data, (response) => {
       DefaultAlert("success", 'Salvo com sucesso !');
-      // window.location.replace(base_url + "/event/inspection_suite");
+      window.location.replace(base_url + "/event/inspection_suite");
     }).catch(() => {
       DefaultAlert("error", 'Não foi possivel salvar');
     }).always(() => {
@@ -112,7 +127,7 @@ $(function () {
     })
   });
 
-  $('.filter').on('click', (e) => {
+  $(document).on('click', '.filter', (e) => {
     const item = $(e.currentTarget).attr('data-item')
     $('#buttonOccurrence').attr('data-item', item)
     $('#ModalSelectOcurrence').modal('show')
@@ -162,6 +177,7 @@ $(function () {
                  <a type="button" data-item="${index}" class="btn btn-sm btn-secondary filter "><i class="fas fa-filter"></i></a>
                  <input type="hidden" name="occurrences_id" id="item-${index}">
                  <a class="btn btn-sm btn-success d-none show_occurence_id "><i class="far fa-registered">0</i></a>
+                 <a class="btn btn-sm btn-default float-right"><i style="color:red" class="fas fa-trash"></i></a>
                </td>
               </tr>`
 
