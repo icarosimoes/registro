@@ -71,11 +71,15 @@
                                             
                                         </thead>
                                         <tbody id="itens_inspection_suite">
-                                            
-                                            
+                                              {{--  cria no js --}}
                                         </tbody>
                                     </table>
 
+                                </div>
+                                <div class="row" >
+                                  <div class="col">
+                                    <button type="button" class="btn btn-primary" id="add_inspection_item">Adicionar Item</button>
+                                  </div>
                                 </div>
                                 <div class="row">
                                     <div class="col">
