@@ -22,7 +22,7 @@ class InspectionSuiteController extends Controller
    */
   public function index(Request $request)
   {
-    //dd('asd');
+    
     $this->authorize('index', InspectionSuite::class);
     $filter = $request->all();
 
@@ -63,7 +63,11 @@ class InspectionSuiteController extends Controller
   public function create()
   {
     $this->authorize('store', InspectionSuite::class);
-    return view('event/inspection_suites/create');
+    
+    //pega a o ultima inpecao feita para preencher os valores iniciais
+    $last_inspection_suite_items = InspectionSuite::orderBy('id', 'DESC')->first()->inspection_suite_items;
+
+    return view('event/inspection_suites/create',compact('last_inspection_suite_items'));
   }
 
   /**
@@ -89,13 +93,16 @@ class InspectionSuiteController extends Controller
 
     //salva items inspection suite
 
-    foreach ($request->valuation as $key => $value) {
+    $inspection_suite_items = json_decode($request->inspection_suite_items);  
+   
+    foreach ($inspection_suite_items as $key => $item) {
       $inspectionSuiteItems =  new InspectionSuiteItem();
       $inspectionSuiteItems->inspection_suite_id = $inspection_suite->id;
-      $inspectionSuiteItems->occurrences_id = $request->occurrences_id[$key];
+      $inspectionSuiteItems->description = $item->description;
+      $inspectionSuiteItems->occurrences_id = $item->occurrences_id;
+      $inspectionSuiteItems->register = $item->register;
+      $inspectionSuiteItems->valuation = $item->valuation;
       $inspectionSuiteItems->item = $key;
-      $inspectionSuiteItems->valuation = $value;
-      $inspectionSuiteItems->register = $request->register[$key];
       $inspectionSuiteItems->save();
     }
 
@@ -124,6 +131,7 @@ class InspectionSuiteController extends Controller
   public function edit(InspectionSuite $inspectionSuite)
   {
     $this->authorize('show', InspectionSuite::class);
+    $inspectionSuite->load('inspection_suite_items');
     return view('event/inspection_suites/edit', compact('inspectionSuite'));
   }
 
@@ -149,14 +157,17 @@ class InspectionSuiteController extends Controller
 
 
     //salva items inspection suite
+    $inspection_suite_items = json_decode($request->inspection_suite_items);  
+    
     InspectionSuiteItem::where('inspection_suite_id', $inspection_suite->id)->delete();
-    foreach ($request->valuation as $key => $value) {
-      $inspectionSuiteItems =  new inspectionSuiteItem();
+    foreach ($inspection_suite_items as $key => $item) {
+      $inspectionSuiteItems =  new InspectionSuiteItem();
       $inspectionSuiteItems->inspection_suite_id = $inspection_suite->id;
-      $inspectionSuiteItems->occurrences_id = $request->occurrences_id[$key];
+      $inspectionSuiteItems->description = $item->description;
+      $inspectionSuiteItems->occurrences_id = $item->occurrences_id;
+      $inspectionSuiteItems->register = $item->register;
+      $inspectionSuiteItems->valuation = $item->valuation;
       $inspectionSuiteItems->item = $key;
-      $inspectionSuiteItems->valuation = $value;
-      $inspectionSuiteItems->register = $request->register[$key];
       $inspectionSuiteItems->save();
     }
 
