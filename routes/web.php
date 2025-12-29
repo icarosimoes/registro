@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 //Route::get('inactive/user', 'Auth\InsactiveUserController@index')->name('inactive.user');
 Route::get('inactive/user', 'HomeController@inactive')->name('inactive.user');
 Route::get('auth/logout', 'Auth\LoginController@logout');
+Route::get('correcao', 'CorrecaoController@vistoriaDasSuites');
 Auth::routes();
 
 Route::group(['middleware' => ['auth']], function () {
@@ -27,6 +28,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/', 'HomeController@index');
     Route::post('/notification', 'HomeController@getNotification');
     Route::get('/notification', 'HomeController@indexNotification')->name('notification.list');
+   
     Route::prefix('helper')->group(function () {
         Route::get('get_functions', 'Helper\SelectController@getFunctions')->name('helper.locals');
         Route::get('get_locals', 'Helper\SelectController@getLocals')->name('helper.locals');
