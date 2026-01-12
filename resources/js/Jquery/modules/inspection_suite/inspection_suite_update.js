@@ -20,23 +20,20 @@ $(function () {
   if (inspection_suite_items) {
     inspection_suite_items = JSON.parse(inspection_suite_items);
     criarHtmlVistoria();
-
   }
 
-   //cada input alterado atualiza o array inspection_suite_items
+  //cada input alterado atualiza o array inspection_suite_items
   $(document).on('change', '.inspection_item', function (e) {
     const index = $(this).data('index');
     const coluna = $(this).data('coluna');
     const valor = $(this).val();
     inspection_suite_items[index][coluna] = valor;
-
   });
 
   $(document).on('click', '.delete', function (e) {
     const index = $(this).data('index');
     $('#deleteItemIndex').val(index);
     $('#ModalConfirmDelete').modal('show');
-    
   });
 
   $('#confirmDelete').on('click', function () {
@@ -45,8 +42,6 @@ $(function () {
     criarHtmlVistoria();
     $('#ModalConfirmDelete').modal('hide');
   });
-
-
 
   function criarHtmlVistoria() {
     let html = '';
