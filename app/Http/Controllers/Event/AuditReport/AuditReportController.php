@@ -9,6 +9,7 @@ class AuditReportController extends Controller
 {
     public function index()
     {
+        
         return view('event.audit_report.list');
     }
 

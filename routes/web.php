@@ -137,7 +137,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('shiftreport/tested/remove/{id}', 'Event\ShiftReport\ShifitReportController@testedRemove');
 
         //realtorio 
-        Route::resource('audit_report', AuditReportController::class);
+        Route::resource('audit_report', 'Event\AuditReport\AuditReportController');
 
         Route::resource('check_suite','Event\CheckSuites\CheckSuitesController');    
         Route::get('check_suite/export/excel','Event\CheckSuites\CheckSuitesController@exportExcel')->name('check_suite.export.excel');    

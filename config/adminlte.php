@@ -292,6 +292,13 @@ return [
                     'address' => 'formulario.vistoria_apartamentos'
                     
                 ],
+                [
+                    'text' => 'Relatório de Auditoria',
+                    'icon' => 'fas fa-fw fa fa-clipboard',
+                    'url' => 'event/audit_report',
+                    'address' => 'formulario.rel_auditoria'
+                    
+                ],
             ],  
         ],
         [
