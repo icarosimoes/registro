@@ -19,7 +19,7 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col">
-                                <a type="button" href="{{ route('auditreport.create') }}" data-toggle="tooltip"
+                                <a type="button" href="{{ route('audit_report.create') }}" data-toggle="tooltip"
                                     data-placement="top" title="Novo Relatório"
                                     class="btn bg-gradient-secondary btn-sm float-lg-right"><i
                                         class="fas fa-plus-square"></i> Novo Relatório</a>
@@ -80,7 +80,7 @@
                                                 {{ 'Aberto' }}
                                             @endif
                                         </td> --}}
-                                    <td>{{ new DateTime($item->created_at)->format('d/m/Y') }}</td>
+                                    <td>{{ (new DateTime($item->created_at))->format('d/m/Y') }}</td>
                                     <td>
                                         <div class="btn-group-sm float-left">
                                             {{-- @can('checkRouters', $route = 'view.client') --}}
