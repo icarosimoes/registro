@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers\Event\AuditReport;
-
+  
+use App\AuditReport;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -9,8 +10,8 @@ class AuditReportController extends Controller
 {
     public function index()
     {
-        
-        return view('event.audit_report.list');
+        $auditReports = AuditReport::paginate(25);
+        return view('event.audit_report.list', compact('auditReports'));
     }
 
     public function show($id)
