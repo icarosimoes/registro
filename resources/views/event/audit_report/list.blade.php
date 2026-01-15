@@ -176,5 +176,5 @@
     </div> <!-- / Modal selecionar ocorrência -->
 
 </div>
-@section('plugins.scriptShiftReportList', true)
+@section('plugins.scriptAuditReportList', true)
 @endsection

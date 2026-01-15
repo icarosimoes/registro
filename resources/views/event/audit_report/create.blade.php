@@ -2,6 +2,7 @@
 @section('content')
 @section('plugins.Select2', true)
 @section('plugins.JqueryMask', true)
+@section('plugins.JqueryMaskMoney', true)
 @section('plugins.LoaderTemp', true)
 <div class="container">
     <div class="row justify-content-center">
@@ -29,34 +30,40 @@
                                 <h3 class="card-title">Novo Relatório de Turno</h3>
                             </div>
                             <div class="card-body">
-                                <div class="row">
+                              <div class="row form-group">
+                                  <div class="col-3">
+                                      <label for="Name">Data:</label>
+                                      <input type="date" class="form-control" name="date" id="date" >
+                                  </div>
+                              </div>
+                                
+                              <div class="row form-group">
 
                                     <div class="col">
                                         <label for="Name">Ocupação</label>
-                                        <input class="form-control" type="text"name="beginning" id="beginning">
+                                        <input class="form-control mask_float" value="0,00" type="text" name="ocupacao" id="occupation">
                                     </div>
                                     <div class="col">
                                         <label for="Name">Diaria média:</label>
-                                        <input type="text" class="form-control" name="diaria_medias"
-                                            id="diaria_medias" placeholder="">
+                                        <input type="text" class="form-control mask_integer" value="0" name="diaria_medias"
+                                            id="average_daily" placeholder="">
                                     </div>
                                     <div class="col">
                                         <label for="Name">Hóspedes:</label>
-                                        <input type="text" class="form-control" name="inputQuantity"
-                                            id="inputQuantity">
+                                        <input type="text" class="form-control mask_integer" value="0" name="inputQuantity"
+                                            id="guests">
                                     </div>
                                     <div class="col">
-                                        <label for="Name">UH´S:</label>
-                                        <input class="form-control" type="text">
+                                        <label for="Name">UH'S:</label>
+                                        <input class="form-control mask_integer" value="0" type="text" name="uhs" id="uh">
                                     </div>
                                     <div class="col">
                                         <label for="Name">Manutenção:</label>
-                                        <input type="text" class="form-control" name="manutencao" id="manutencao">
+                                        <input type="text" class="form-control mask_integer" value="0" name="manutencao" id="maintenance_apartment">
                                     </div>
                                     <div class="col">
                                         <label for="Name">Limpeza:</label>
-                                        <input type="text" class="form-control" name="outputQuantity"
-                                            id="outputQuantity">
+                                        <input type="text" class="form-control mask_integer" value="0" name="limpeza" id="cleaning">
                                     </div>
 
 
@@ -84,14 +91,7 @@
                                         </thead>
                                         <tbody id="appendFrequency">
 
-                                            {{-- <tr>
-                                                        <td><input type="text" class="form-control form-control-sm"></td>
-                                                        <td><input type="text" class="form-control form-control-sm"></td>
-                                                        <td>
-                                                            <a href="#" data-toggle="tooltip" data-placement="top" title="Excluir"
-                                                            class="btn btn-sm btn-default"><i class="fas fa-trash"></i></a>
-                                                        </td>
-                                                    </tr> --}}
+                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -122,14 +122,7 @@
                                             </tr>
                                         </thead>
                                         <tbody id="addItemExtra">
-                                            {{-- <tr>
-                                                        <td><input type="text" class="form-control form-control-sm"></td>
-                                                        <td><input type="text" class="form-control form-control-sm"></td>
-                                                        <td>
-                                                            <a href="#" data-toggle="tooltip" data-placement="top" title="Excluir"
-                                                            class="btn btn-sm btn-default"><i class="fas fa-trash"></i></a>
-                                                        </td>
-                                                    </tr> --}}
+                                            
                                         </tbody>
                                     </table>
                                 </div>
@@ -196,36 +189,36 @@
                             <div class="card-body">
 
                                 <label for="Name">Observação</label>
-                                <textarea class="form-control" rows="3" name="observation" id="observation">
+                                <textarea class="form-control" rows="3" name="observation" id="obs">
                           
                           </textarea>
                                 <div class="form-group">
                                     <label for="Name">A&B:</label>
-                                    <input class="form-control" type="text">
+                                    <input class="form-control" type="text" id="AB">
                                 </div>
                                 <div class="form-group">
                                     <label for="Name">RECEPÇÃO:</label>
-                                    <input class="form-control" type="text">
+                                    <input class="form-control" type="text" id="reception">
                                 </div>
                                 <div class="form-group">
                                     <label for="Name">RESERVAS:</label>
-                                    <input class="form-control" type="text">
+                                    <input class="form-control" type="text" id="reservations">
                                 </div>
                                 <div class="form-group">
                                     <label for="Name">GOVERNANÇA:</label>
-                                    <input class="form-control" type="text">
+                                    <input class="form-control" type="text" id="governance">
                                 </div>
                                 <div class="form-group">
                                     <label for="Name">MANUTENÇÃO:</label>
-                                    <input class="form-control" type="text">
+                                    <input class="form-control" id="maintenance" type="text" ">
                                 </div>
                                 <div class="form-group">
                                     <label for="Name">TI:</label>
-                                    <input class="form-control" type="text">
+                                    <input class="form-control" type="text" id="ti"> 
                                 </div>
                                 <div class="form-group">
                                     <label for="Name">SEGURANÇA:</label>
-                                    <input class="form-control" type="text">
+                                    <input class="form-control" type="text" id="security">
                                 </div>
                             </div>
                         </div>
@@ -233,7 +226,7 @@
 
                         <div class="col-sm-12">
                             <a href="#" class="btn btn-secondary mb-2">Cancelar</a>
-                            <button type="submit" class="btn btn-success float-right"><i
+                            <button type="button" id="btn_save" class="btn btn-success float-right"><i
                                     class="far fa-save"></i>&nbsp;&nbsp;Salvar</button>
                         </div>
 
@@ -252,5 +245,5 @@
     </div>
 </div>
 </div>
-@section('plugins.scriptShiftReport', true)
+@section('plugins.scriptAuditReportCreate', true)
 @endsection

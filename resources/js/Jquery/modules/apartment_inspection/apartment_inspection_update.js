@@ -364,6 +364,9 @@ $('#user').select2({
   }
 });
 
+
+
+
 function formatDate(date) {
   let date_split = date.split('T')[0]
   let date_split_2 = date_split.split('-')

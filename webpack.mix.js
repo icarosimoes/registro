@@ -75,6 +75,10 @@ mix.react('resources/js/app.js', 'public/js')
     .js('resources/js/Jquery/modules/shiftReport/shiftReport.js', 'public/js/jquery/modules/shiftReport')
     .js('resources/js/Jquery/modules/shiftReport/shiftReportUpdate.js', 'public/js/jquery/modules/shiftReport')
     .js('resources/js/Jquery/modules/shiftReport/shiftReport_list.js', 'public/js/jquery/modules/shiftReport')
+    //auditReport
+    .js('resources/js/Jquery/modules/auditReport/auditReportCreate.js', 'public/js/jquery/modules/auditReport')
+    .js('resources/js/Jquery/modules/auditReport/auditReportUpdate.js', 'public/js/jquery/modules/auditReport')
+    .js('resources/js/Jquery/modules/auditReport/auditReportList.js', 'public/js/jquery/modules/auditReport')
     //dashboard
     .js('resources/js/Jquery/dashboard.js', 'public/js/jquery')
     .js('resources/js/Jquery/notification.js', 'public/js/jquery');

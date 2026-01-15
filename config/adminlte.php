@@ -862,6 +862,55 @@ return [
                 ],
             ],
         ],
+        //audit report
+        [
+            'name' => 'scriptAuditReportList',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/auditReport/auditReportList.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptAuditReportCreate',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/auditReport/auditReportCreate.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptAuditReportUpdate',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/auditReport/auditReportUpdate.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
         [
             'name' => 'scriptUpdateMeeting',
             'active' => false,

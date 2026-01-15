@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 
 class AuditReportController extends Controller
 {
+    
+
     public function index()
     {
         $auditReports = AuditReport::paginate(25);
@@ -24,9 +26,14 @@ class AuditReportController extends Controller
         return view('event.audit_report.create');
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        return view('event.audit_report.create');
+
+      $request->merge(['user_id' => auth()->id()]);
+      AuditReport::create($request->all());
+
+      return response('success');
+        
     }
 
     public function edit($id)
