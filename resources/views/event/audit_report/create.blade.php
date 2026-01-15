@@ -121,14 +121,14 @@
                                                 {{-- <th class="w-20">Ações</th> --}}
                                             </tr>
                                         </thead>
-                                        <tbody id="addItemExtra">
+                                        <tbody id="table2">
                                             
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            <div class="card-footer text-center">
-                                <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addExtra"
+                            <div style="cursor:pointer" class="card-footer text-center" id="addTable2">
+                                <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a 
                                     href="javascript:">Adicionar Novo
                                     Item</a>
 
@@ -153,7 +153,7 @@
 
                                             </tr>
                                         </thead>
-                                        <tbody id="addItemMaintenance">
+                                        <tbody id="table3">
                                             {{-- <tr>
                                                         <td><input type="text" class="form-control form-control-sm"></td>
                                                         <td>
@@ -176,8 +176,8 @@
                                     </table>
                                 </div>
                             </div>
-                            <div class="card-footer text-center">
-                                <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addMaintenance"
+                            <div style="cursor:pointer" class="card-footer text-center" id="addTable3">
+                                <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a 
                                     href="javascript:">Adicionar Novo
                                     Item</a>
 

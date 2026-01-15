@@ -73,57 +73,9 @@
                         <tbody>
                             @foreach ($auditReports as $item)
                                 <tr>
-                                    {{-- @foreach ($roles as $role) --}}
-                                    <td>{{ @$item['users']->name }}</td>
-                                    {{-- <td>
-                                            @if ($item->status == 1)
-                                                {{ 'Aberto' }}
-                                            @endif
-                                        </td> --}}
-                                    <td>{{ (new DateTime($item->created_at))->format('d/m/Y') }}</td>
-                                    <td>
-                                        <div class="btn-group-sm float-left">
-                                            {{-- @can('checkRouters', $route = 'view.client') --}}
-                                            {{-- {{ route('view.client', ['id' => $item['id']]) }} --}}
-                                            <a id="ModalView" data-toggle="tooltip" data-placement="top"
-                                                title="Visualizar" data-id="{{ $item->id }}"
-                                                class="btn btn-default"><i class="fas fa-eye"></i></a>
-                                            {{-- @endcan --}}
-                                            {{-- @can('checkRouters', $route = 'edit.client') --}}
-                                            <a href="{{ route('shiftreport.edit', ['id' => $item->id]) }}"
-                                                data-toggle="tooltip" data-placement="top" title="Editar"
-                                                class="btn btn-info"><i class="fas fa-pencil-alt"></i></a>
-                                            {{-- @endcan --}}
-                                            {{-- @can('checkRouters', $route = 'delete.client') --}}
-                                            <a href="{{ route('shiftreport.delete', ['id' => $item->id]) }}"
-                                                data-toggle="tooltip" data-placement="top" title="Excluir"
-                                                class="btn btn-danger"><i class="fas fa-trash"></i></a>
-                                            {{-- @endcan --}}
-
-                                        </div>
-                                        @if (Auth::user()->isAdmin == 1)
-                                            <div class="form-group float-right">
-                                                <div
-                                                    class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                                                    @if ($item->viewed == 1)
-                                                        <input checked data-toggle="tooltip" data-placement="top"
-                                                            title="Visto" type="checkbox" name="tested"
-                                                            data-id="{{ $item->id }}"
-                                                            class="custom-control-input tested"
-                                                            id="visto-{{ $item->id }}">
-                                                    @else
-                                                        <input data-toggle="tooltip" data-placement="top" title="Visto"
-                                                            type="checkbox" name="tested"
-                                                            data-id="{{ $item->id }}"
-                                                            class="custom-control-input tested"
-                                                            id="visto-{{ $item->id }}">
-                                                    @endif
-                                                    <label class="custom-control-label"
-                                                        for="visto-{{ $item->id }}"></label>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </td>
+                                    <td>{{ $item->user->name }}</td>
+                                    <td>{{ $item->date ? (new DateTime($item->date))->format('d/m/Y'): '' }}</td>
+                                    <td></td>  
                                 </tr>
                             @endforeach
                             {{-- @endforeach --}}

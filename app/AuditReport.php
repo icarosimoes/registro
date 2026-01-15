@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class AuditReport extends Model
@@ -26,4 +27,8 @@ class AuditReport extends Model
     'security',
     'user_id'
   ];
+  public function user()
+  {
+    return $this->belongsTo(User::class);
+  }
 }

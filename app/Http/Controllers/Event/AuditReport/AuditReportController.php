@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Event\AuditReport;
 
 use App\AuditReport;
 use App\AuditReportItem1;
+use App\AuditReportItem2;
+use App\AuditReportItem3;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +16,7 @@ class AuditReportController extends Controller
 
   public function index()
   {
-    $auditReports = AuditReport::paginate(25);
+    $auditReports = AuditReport::orderBy('id','desc')->paginate(25);
     return view('event.audit_report.list', compact('auditReports'));
   }
 
@@ -45,6 +47,47 @@ class AuditReportController extends Controller
 
     foreach ($dataTable1 as $item) {
       AuditReportItem1::updateOrCreate(
+        ['id' => @$item['id']],
+        [
+          'audit_report_id' => $auditReport->id,
+          'reserve' => $item['reserve'],
+          'name' => $item['name'],
+          'pax' => $item['pax'],
+        ]
+      );
+    }
+    
+    //salva os items dos 2 lista
+    $dataTable2 = json_decode($request->dataTable2, true);
+
+    $dataTableIds = collect($dataTable2)->pluck('id');
+
+    AuditReportItem2::where('audit_report_id', $auditReport->id)
+      ->whereNotIn('id', $dataTableIds)
+      ->delete();
+
+    foreach ($dataTable2 as $item) {
+      AuditReportItem2::updateOrCreate(
+        ['id' => @$item['id']],
+        [
+          'audit_report_id' => $auditReport->id,
+          'name' => $item['name'],
+          'pax' => $item['pax'],
+        ]
+      );
+    }
+
+    //salva os items dos 3 lista
+    $dataTable3 = json_decode($request->dataTable3, true);
+
+    $dataTableIds = collect($dataTable3)->pluck('id');
+
+    AuditReportItem3::where('audit_report_id', $auditReport->id)
+      ->whereNotIn('id', $dataTableIds)
+      ->delete();
+
+    foreach ($dataTable3 as $item) {
+      AuditReportItem3::updateOrCreate(
         ['id' => @$item['id']],
         [
           'audit_report_id' => $auditReport->id,

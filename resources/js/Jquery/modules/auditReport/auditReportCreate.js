@@ -42,7 +42,6 @@ $(function () {
 
   let dataTable1 = [];
   $('#addTable1').on('click', function () {
-    
     dataTable1.push({
       reserve:'',
       name:'',
@@ -73,10 +72,75 @@ $(function () {
 
       $('#table1').append(linha);
     });
-
-
-
   }
+
+
+  let dataTable2 = [];
+  $('#addTable2').on('click', function () {
+    dataTable2.push({
+      name:'',
+      pax:'',
+    });
+    
+    
+    renderizeTable2();
+
+  });
+  //edit table2
+  $(document).on('keyup', '.edit_table2', function () {
+    let index = $(this).data('index');
+    let column = $(this).data('column');
+    let value = $(this).val();
+    dataTable2[index][column] = value;
+    
+  });
+
+  function renderizeTable2() {
+    $('#table2').html(''); // Limpa o conteúdo atual da tabela
+    dataTable2.forEach(function (item, index) {
+      let linha = '<tr>';
+        linha += `<td><input data-column="name" data-index="${index}" value="${item.name}" type="text" class="form-control edit_table2 "  ></td>`;
+        linha += `<td><input data-column="pax" data-index="${index}" value="${item.pax}" type="text" class="form-control edit_table2 "  ></td>`;
+        linha += '</tr>';
+
+      $('#table2').append(linha);
+    });
+  }
+
+  let dataTable3 = [];
+  $('#addTable3').on('click', function () {
+    dataTable3.push({
+      reserve:'',
+      name:'',
+      pax:'',
+    });
+    
+   
+    renderizeTable3();
+
+  });
+  //edit table3
+  $(document).on('keyup', '.edit_table3', function () {
+    let index = $(this).data('index');
+    let column = $(this).data('column');
+    let value = $(this).val();
+    dataTable3[index][column] = value;
+    
+  });
+
+  function renderizeTable3() {
+    $('#table3').html(''); // Limpa o conteúdo atual da tabela
+    dataTable3.forEach(function (item, index) {
+      let linha = '<tr>';
+      linha += `<td><input data-column="reserve" data-index="${index}" value="${item.reserve}" type="text" class="form-control edit_table3 " ></td>`;
+      linha += `<td><input data-column="name" data-index="${index}" value="${item.name}" type="text" class="form-control edit_table3 "  ></td>`;
+      linha += `<td><input data-column="pax" data-index="${index}" value="${item.pax}" type="text" class="form-control edit_table3 "  ></td>`;
+      linha += '</tr>';
+
+      $('#table3').append(linha);
+    });
+  }
+
 
 
 
@@ -105,10 +169,15 @@ $(function () {
       ti: $('#ti').val(),
       security: $('#security').val(),
       dataTable1: JSON.stringify(dataTable1),
-
+      dataTable2: JSON.stringify(dataTable2),
+      dataTable3: JSON.stringify(dataTable3),
     }
     $.post(route, data, function (result) {
+
       DefaultAlert('success', 'Relatório de auditoria salvo com sucesso!');
+      // volta para a tela de listagem
+              window.location.href = base_url + '/event/audit_report';
+      
     })
 
 
