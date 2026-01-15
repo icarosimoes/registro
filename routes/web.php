@@ -136,7 +136,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('shiftreport/tested/{id}', 'Event\ShiftReport\ShifitReportController@tested');
         Route::get('shiftreport/tested/remove/{id}', 'Event\ShiftReport\ShifitReportController@testedRemove');
 
-        //realtorio 
+        //realtorio audit 
         Route::resource('audit_report', 'Event\AuditReport\AuditReportController');
 
         Route::resource('check_suite','Event\CheckSuites\CheckSuitesController');    
