@@ -89,15 +89,15 @@
                                                 {{-- <th class="w-20">Ações</th> --}}
                                             </tr>
                                         </thead>
-                                        <tbody id="appendFrequency">
+                                        <tbody id="table1">
 
                                             
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
-                            <div class="card-footer text-center">
-                                <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a id="addFrequency"
+                            <div style="cursor:poiter" class="card-footer text-center" id="addTable1">
+                                <i class="far fa-plus-square"></i>&nbsp;&nbsp;<a 
                                     href="javascript:">Adicionar Novo
                                     Item</a>
 

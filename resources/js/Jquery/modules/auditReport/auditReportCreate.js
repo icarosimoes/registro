@@ -40,13 +40,56 @@ $(function () {
   });
 
 
+  let dataTable1 = [];
+  $('#addTable1').on('click', function () {
+    
+    dataTable1.push({
+      reserve:'',
+      name:'',
+      pax:'',
+    });
+    
+    
+    renderizeTable1();
+
+  });
+  //edit table1
+  $(document).on('keyup', '.edit_table1', function () {
+    let index = $(this).data('index');
+    let column = $(this).data('column');
+    let value = $(this).val();
+    dataTable1[index][column] = value;
+    
+  });
+
+  function renderizeTable1() {
+    $('#table1').html(''); // Limpa o conteúdo atual da tabela
+    dataTable1.forEach(function (item, index) {
+      let linha = '<tr>';
+      linha += `<td><input data-column="reserve" data-index="${index}" value="${item.reserve}" type="text" class="form-control edit_table1 " ></td>`;
+      linha += `<td><input data-column="name" data-index="${index}" value="${item.name}" type="text" class="form-control edit_table1 "  ></td>`;
+      linha += `<td><input data-column="pax" data-index="${index}" value="${item.pax}" type="text" class="form-control edit_table1 "  ></td>`;
+      linha += '</tr>';
+
+      $('#table1').append(linha);
+    });
+
+
+
+  }
+
+
+
+
+
+
   //salva
   $('#btn_save').on('click', function (e) {
 
     let route = base_url + '/event/audit_report';
     let data = {
       date: $('#date').val(),
-      occupation:  converteMoedaFloat($('#occupation').val()),
+      occupation: converteMoedaFloat($('#occupation').val()),
       average_daily: $('#average_daily').val(),
       guests: $('#guests').val(),
       uh: $('#uh').val(),
@@ -61,7 +104,8 @@ $(function () {
       maintenance: $('#maintenance').val(),
       ti: $('#ti').val(),
       security: $('#security').val(),
-     
+      dataTable1: JSON.stringify(dataTable1),
+
     }
     $.post(route, data, function (result) {
       DefaultAlert('success', 'Relatório de auditoria salvo com sucesso!');
@@ -73,29 +117,29 @@ $(function () {
   })
 
   function number_to_price(v) {
-        if (v == 0) { return '0,00'; }
-        v = parseFloat(v);
-        v = v.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-        v = v.split('.').join('*').split(',').join('.').split('*').join(',');
-        return v;
+    if (v == 0) { return '0,00'; }
+    v = parseFloat(v);
+    v = v.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+    v = v.split('.').join('*').split(',').join('.').split('*').join(',');
+    return v;
+  }
+  function number_to_price3(v) {
+    if (v == 0) { return '0,000'; }
+    v = parseFloat(v);
+    v = v.toFixed(3).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+    v = v.split('.').join('*').split(',').join('.').split('*').join(',');
+    return v;
+  }
+  function converteMoedaFloat(valor) {
+    if (valor === "") {
+      valor = 0;
+    } else {
+      valor = valor.replace(".", "");
+      valor = valor.replace(",", ".");
+      valor = parseFloat(valor);
     }
-    function number_to_price3(v) {
-        if (v == 0) { return '0,000'; }
-        v = parseFloat(v);
-        v = v.toFixed(3).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
-        v = v.split('.').join('*').split(',').join('.').split('*').join(',');
-        return v;
-    }
-    function converteMoedaFloat(valor) {
-        if (valor === "") {
-            valor = 0;
-        } else {
-            valor = valor.replace(".", "");
-            valor = valor.replace(",", ".");
-            valor = parseFloat(valor);
-        }
-        return valor;
-    }
+    return valor;
+  }
   function DefaultAlert(type, msg) {
     Toast.fire({
       icon: type,
