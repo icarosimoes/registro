@@ -292,6 +292,13 @@ return [
                     'address' => 'formulario.vistoria_apartamentos'
                     
                 ],
+                [
+                    'text' => 'Relatório de Auditoria',
+                    'icon' => 'fas fa-fw fa fa-clipboard',
+                    'url' => 'event/audit_report',
+                    'address' => 'formulario.rel_auditoria'
+                    
+                ],
             ],  
         ],
         [
@@ -847,6 +854,55 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/shiftReport/shiftReportUpdate.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        //audit report
+        [
+            'name' => 'scriptAuditReportList',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/auditReport/auditReportList.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptAuditReportCreate',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/auditReport/auditReportCreate.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptAuditReportUpdate',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/auditReport/auditReportUpdate.js',
                 ],
                 [
                     'type' => 'js',
