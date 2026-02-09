@@ -72,8 +72,8 @@
                                 <td>{{ $item->date ? (new DateTime($item->date))->format('d/m/Y'): '' }}</td>
                                 <td>
                                     <a href="{{ route('audit_report.edit', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Editar" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                                    {{-- <a href="{{ route('audit_report.show', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Visualizar" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i></a>
-                                    <a href="{{ route('audit_report.destroy', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Excluir" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a> --}}
+                                    {{-- <a href="{{ route('audit_report.show', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Visualizar" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i></a> --}}
+                                    <button type="button" data-id="{{ $item->id }}" data-toggle="tooltip" data-placement="top" title="Excluir" class="btn btn-danger btn-sm btn_delete"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
                             @endforeach
@@ -101,24 +101,22 @@
 
     </div>
     <!-- Modal selecionar ocorrência-->
-    <div class="modal fade" id="ModalViewId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl" role="document">
+    <div class="modal fade" id="ModalDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel"><i class="fas fa-eye"></i> Visualizar</h5>
+                    <h5 class="modal-title" id="exampleModalLabel"> Excluir</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div id="insertView" class="overflow-auto">
-
-                    </div>
+                    <h4> deseja realmente excluir?</h2>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-info" data-dismiss="modal"><i class="far fa-eye-slash"></i> Voltar</button>
-                    {{-- <button type="button" id="buttonOccurrence" name="buttonOccurrence"
-                        class="btn btn-primary buttonOccurrence">Selecionar</button> --}}
+                    {{-- <button type="button" class="btn btn-danger" data-dismiss="modal"> Não</button> --}}
+                    <input type="hidden" id="id">
+                    <button id="btnDelete" type="button" class="btn btn-danger" > Sim</button>
                 </div>
             </div>
         </div>

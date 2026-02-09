@@ -203,6 +203,8 @@ $(function () {
 
     })
 
+    
+
     function number_to_price(v) {
         if (v == 0) { return '0,00'; }
         v = parseFloat(v);

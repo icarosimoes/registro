@@ -182,6 +182,13 @@ class AuditReportController extends Controller
 
   public function destroy($id)
   {
-    return view('event.audit_report.destroy', ['id' => $id]);
+
+
+    $auditReport = AuditReport::find($id);
+    $auditReport->audit_report_item_1s()->delete();
+    $auditReport->audit_report_item_2s()->delete();
+    $auditReport->audit_report_item_3s()->delete();
+    $auditReport->delete();
+    return response('success');
   }
 }
