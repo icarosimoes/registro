@@ -72,7 +72,7 @@
                                 <td>{{ $item->date ? (new DateTime($item->date))->format('d/m/Y'): '' }}</td>
                                 <td>
                                     <a href="{{ route('audit_report.edit', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Editar" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                                    {{-- <a href="{{ route('audit_report.show', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Visualizar" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i></a> --}}
+                                    <a href="{{ route('audit_report.edit', $item->id).'?view=true' }}" data-toggle="tooltip" data-placement="top" title="Visualizar" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i></a>
                                     <button type="button" data-id="{{ $item->id }}" data-toggle="tooltip" data-placement="top" title="Excluir" class="btn btn-danger btn-sm btn_delete"><i class="fas fa-trash"></i></button>
                                 </td>
                             </tr>
@@ -116,7 +116,7 @@
                 <div class="modal-footer">
                     {{-- <button type="button" class="btn btn-danger" data-dismiss="modal"> Não</button> --}}
                     <input type="hidden" id="id">
-                    <button id="btnDelete" type="button" class="btn btn-danger" > Sim</button>
+                    <button id="btnDelete" type="button" class="btn btn-danger"> Sim</button>
                 </div>
             </div>
         </div>
