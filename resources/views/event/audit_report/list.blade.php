@@ -72,8 +72,8 @@
                                 <td>{{ $item->date ? (new DateTime($item->date))->format('d/m/Y'): '' }}</td>
                                 <td>
                                     <a href="{{ route('audit_report.edit', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Editar" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
-                                    <a href="{{ route('audit_report.show', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Visualizar" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i></a>
-                                    <a href="{{ route('audit_report.destroy', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Excluir" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                                    {{-- <a href="{{ route('audit_report.show', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Visualizar" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('audit_report.destroy', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Excluir" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a> --}}
                                 </td>
                             </tr>
                             @endforeach

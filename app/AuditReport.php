@@ -31,4 +31,17 @@ class AuditReport extends Model
   {
     return $this->belongsTo(User::class);
   }
+  public function audit_report_item_1s()
+  {
+    return $this->hasMany(AuditReportItem1::class);
+  }
+  public function audit_report_item_2s()
+  {
+    return $this->hasMany(AuditReportItem2::class);
+  }
+  public function audit_report_item_3s()
+  {
+    return $this->hasMany(AuditReportItem3::class);
+  }
+  
 }

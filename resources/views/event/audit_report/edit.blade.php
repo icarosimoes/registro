@@ -32,6 +32,7 @@
                             <div class="card-body">
                                 <div class="row form-group">
                                     <div class="col-3">
+                                        <input type="hidden" id="id" value="{{ $auditReport->id }}">
                                         <label for="Name">Data:</label>
                                         <input value="{{ $auditReport->date }}" type="date" class="form-control" name="date" id="date">
                                     </div>
@@ -41,7 +42,7 @@
 
                                     <div class="col">
                                         <label for="Name">Ocupação</label>
-                                        <input class="form-control mask_float" value="{{ $auditReport->occupation }}" type="text" name="ocupacao" id="occupation">
+                                        <input class="form-control mask_float" value="{{ number_format($auditReport->occupation, 2,',','.') }}" type="text" name="ocupacao" id="occupation">
                                     </div>
                                     <div class="col">
                                         <label for="Name">Diaria média:</label>
@@ -78,6 +79,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
+                                    <input type="hidden" class="form-control" name="no_show_com_garantia" id="audit_report_item_1s" value="{{ $auditReport->audit_report_item_1s }}">
                                     <table name="DataTableUser" id="DataTableUser" class="table table-sm tablenotstyle">
                                         <thead>
                                             <tr>
@@ -110,6 +112,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
+                                    <input type="hidden" class="form-control" id="audit_report_item_2s" value="{{ $auditReport->audit_report_item_2s }}">
                                     <table name="DataTableUser" id="DataTableUser" class="table table-sm tablenotstyle">
                                         <thead>
                                             <tr>
@@ -140,6 +143,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
+                                    <input type="hidden" class="form-control" id="audit_report_item_3s" value="{{ $auditReport->audit_report_item_3s }}">
                                     <table name="DataTableUser" id="DataTableUser" class="table table-sm tablenotstyle">
                                         <thead>
                                             <tr>
@@ -184,36 +188,35 @@
                             <div class="card-body">
 
                                 <label for="Name">Observação</label>
-                                <textarea class="form-control" rows="3" name="observation" id="obs">
-
-                          </textarea>
+                                <textarea class="form-control" rows="3" name="observation" value="" id="obs">{{ $auditReport->obs }}
+                                </textarea>
                                 <div class="form-group">
                                     <label for="Name">A&B:</label>
-                                    <input class="form-control" type="text" id="AB">
+                                    <input class="form-control" type="text" value="{{ $auditReport->AB }}" id="AB">
                                 </div>
                                 <div class="form-group">
                                     <label for="Name">RECEPÇÃO:</label>
-                                    <input class="form-control" type="text" id="reception">
+                                    <input class="form-control" type="text" value="{{ $auditReport->reception }}" id="reception">
                                 </div>
                                 <div class="form-group">
                                     <label for="Name">RESERVAS:</label>
-                                    <input class="form-control" type="text" id="reservations">
+                                    <input class="form-control" type="text" value="{{ $auditReport->reservations }}" id="reservations">
                                 </div>
                                 <div class="form-group">
                                     <label for="Name">GOVERNANÇA:</label>
-                                    <input class="form-control" type="text" id="governance">
+                                    <input class="form-control" type="text" value="{{ $auditReport->governance }}" id="governance">
                                 </div>
                                 <div class="form-group">
                                     <label for="Name">MANUTENÇÃO:</label>
-                                    <input class="form-control" id="maintenance" type="text" ">
+                                    <input class="form-control" id="maintenance" type="text" value="{{ $auditReport->maintenance }}">
                                 </div>
                                 <div class=" form-group">
                                     <label for="Name">TI:</label>
-                                    <input class="form-control" type="text" id="ti">
+                                    <input class="form-control" type="text" value="{{ $auditReport->ti }}" id="ti">
                                 </div>
                                 <div class="form-group">
                                     <label for="Name">SEGURANÇA:</label>
-                                    <input class="form-control" type="text" id="security">
+                                    <input class="form-control" type="text" value="{{ $auditReport->security }}" id="security">
                                 </div>
                             </div>
                         </div>

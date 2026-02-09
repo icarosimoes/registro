@@ -16,7 +16,7 @@ class AuditReportController extends Controller
 
   public function index()
   {
-    $auditReports = AuditReport::orderBy('id','desc')->paginate(25);
+    $auditReports = AuditReport::orderBy('id', 'desc')->paginate(25);
     return view('event.audit_report.list', compact('auditReports'));
   }
 
@@ -56,7 +56,7 @@ class AuditReportController extends Controller
         ]
       );
     }
-    
+
     //salva os items dos 2 lista
     $dataTable2 = json_decode($request->dataTable2, true);
 
@@ -98,23 +98,86 @@ class AuditReportController extends Controller
       );
     }
 
-
-
-
-
-
     DB::commit();
     return response('success');
   }
 
   public function edit($id)
   {
-    return view('event.audit_report.edit', ['id' => $id]);
+    $auditReport = AuditReport::find($id);
+    return view('event.audit_report.edit', compact('auditReport'));
   }
 
-  public function update($id)
+  public function update(AuditReport $auditReport, Request $request)
   {
-    return view('event.audit_report.update', ['id' => $id]);
+    DB::beginTransaction();
+    $request->merge(['user_id' => auth()->id()]);
+    $auditReport->update($request->all());
+
+    //salva os items dos 1 lista
+    $dataTable1 = json_decode($request->dataTable1, true);
+
+    $dataTableIds = collect($dataTable1)->pluck('id');
+
+    AuditReportItem1::where('audit_report_id', $auditReport->id)
+      ->whereNotIn('id', $dataTableIds)
+      ->delete();
+
+    foreach ($dataTable1 as $item) {
+      AuditReportItem1::updateOrCreate(
+        ['id' => @$item['id']],
+        [
+          'audit_report_id' => $auditReport->id,
+          'reserve' => $item['reserve'],
+          'name' => $item['name'],
+          'pax' => $item['pax'],
+        ]
+      );
+    }
+
+    //salva os items dos 2 lista
+    $dataTable2 = json_decode($request->dataTable2, true);
+
+    $dataTableIds = collect($dataTable2)->pluck('id');
+
+    AuditReportItem2::where('audit_report_id', $auditReport->id)
+      ->whereNotIn('id', $dataTableIds)
+      ->delete();
+
+    foreach ($dataTable2 as $item) {
+      AuditReportItem2::updateOrCreate(
+        ['id' => @$item['id']],
+        [
+          'audit_report_id' => $auditReport->id,
+          'name' => $item['name'],
+          'pax' => $item['pax'],
+        ]
+      );
+    }
+
+    //salva os items dos 3 lista
+    $dataTable3 = json_decode($request->dataTable3, true);
+
+    $dataTableIds = collect($dataTable3)->pluck('id');
+
+    AuditReportItem3::where('audit_report_id', $auditReport->id)
+      ->whereNotIn('id', $dataTableIds)
+      ->delete();
+
+    foreach ($dataTable3 as $item) {
+      AuditReportItem3::updateOrCreate(
+        ['id' => @$item['id']],
+        [
+          'audit_report_id' => $auditReport->id,
+          'reserve' => $item['reserve'],
+          'name' => $item['name'],
+          'pax' => $item['pax'],
+        ]
+      );
+    }
+
+    DB::commit();
+    return response('success');
   }
 
   public function destroy($id)
