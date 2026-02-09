@@ -40,6 +40,8 @@ $(function () {
     });
 
 
+
+
     let dataTable1 = [];
     dataTable1 = JSON.parse($('#audit_report_item_1s').val());
     renderizeTable1();
@@ -202,6 +204,16 @@ $(function () {
 
 
     })
+
+    let view = false;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    view = urlParams.get('view');
+
+    if (view) {
+        $('#btn_save').hide();
+        $('input, select, textarea').prop('disabled', true);
+    }
 
     function number_to_price(v) {
         if (v == 0) { return '0,00'; }
