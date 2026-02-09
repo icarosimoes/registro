@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::prefix('solter')->group(function(){
-    Route::post('cost_center/checkCode', 'Register\CostCenterController@checkCode');
+    //Route::post('cost_center/checkCode', 'Register\CostCenterController@checkCode');
    });
 
    Route::get('solter/live', function(){

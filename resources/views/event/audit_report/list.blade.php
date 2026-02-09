@@ -19,21 +19,18 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col">
-                                <a type="button" href="{{ route('audit_report.create') }}" data-toggle="tooltip"
-                                    data-placement="top" title="Novo Relatório"
-                                    class="btn bg-gradient-secondary btn-sm float-lg-right"><i
-                                        class="fas fa-plus-square"></i> Novo Relatório</a>
+                                <a type="button" href="{{ route('audit_report.create') }}" data-toggle="tooltip" data-placement="top" title="Novo Relatório" class="btn bg-gradient-secondary btn-sm float-lg-right"><i class="fas fa-plus-square"></i> Novo Relatório</a>
                             </div>
                         </div>
                     </div>
 
                     @if (isset($error))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            {{ $error }}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{ $error }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
                     @endif
                     <form action="" method="GET">
                         <div class="row">
@@ -41,8 +38,7 @@
                                 <div class="form-group">
                                     <label for="search">Procurar</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="search" name="search"
-                                            placeholder="">
+                                        <input type="text" class="form-control" id="search" name="search" placeholder="">
                                     </div>
                                 </div>
                             </div>
@@ -51,8 +47,7 @@
                                 <div class="form-group">
                                     <label for="search"></label>
                                     <div class="input-group">
-                                        <button style="margin-top:8px" id="btnSearch"
-                                            class="btn btn-primary btn-block"><i class="fas fa-search"></i>
+                                        <button style="margin-top:8px" id="btnSearch" class="btn btn-primary btn-block"><i class="fas fa-search"></i>
                                             Procurar</button>
                                     </div>
                                 </div>
@@ -72,11 +67,15 @@
                         </thead>
                         <tbody>
                             @foreach ($auditReports as $item)
-                                <tr>
-                                    <td>{{ $item->user->name }}</td>
-                                    <td>{{ $item->date ? (new DateTime($item->date))->format('d/m/Y'): '' }}</td>
-                                    <td></td>  
-                                </tr>
+                            <tr>
+                                <td>{{ $item->user->name }}</td>
+                                <td>{{ $item->date ? (new DateTime($item->date))->format('d/m/Y'): '' }}</td>
+                                <td>
+                                    <a href="{{ route('audit_report.edit', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Editar" class="btn btn-primary btn-sm"><i class="fas fa-pencil-alt"></i></a>
+                                    <a href="{{ route('audit_report.show', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Visualizar" class="btn btn-secondary btn-sm"><i class="fas fa-eye"></i></a>
+                                    <a href="{{ route('audit_report.destroy', $item->id) }}" data-toggle="tooltip" data-placement="top" title="Excluir" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></a>
+                                </td>
+                            </tr>
                             @endforeach
                             {{-- @endforeach --}}
                         </tbody>
@@ -102,8 +101,7 @@
 
     </div>
     <!-- Modal selecionar ocorrência-->
-    <div class="modal fade" id="ModalViewId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="ModalViewId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -118,8 +116,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-info" data-dismiss="modal"><i
-                            class="far fa-eye-slash"></i> Voltar</button>
+                    <button type="button" class="btn btn-info" data-dismiss="modal"><i class="far fa-eye-slash"></i> Voltar</button>
                     {{-- <button type="button" id="buttonOccurrence" name="buttonOccurrence"
                         class="btn btn-primary buttonOccurrence">Selecionar</button> --}}
                 </div>
