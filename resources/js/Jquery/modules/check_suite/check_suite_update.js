@@ -16,6 +16,7 @@ $(function() {
     });
     
 
+
     $('form[name="form"]').submit(function(event) {
 
         event.preventDefault();
@@ -75,6 +76,7 @@ $(function() {
         const item = $(e.currentTarget).attr('data-item')
         $('#buttonOccurrence').attr('data-item',item)
          $('#ModalSelectOcurrence').modal('show')
+    
     })
 
     $('#buttonOccurrence').on('click',()=>{
@@ -90,8 +92,12 @@ $(function() {
         $('#ModalSelectOcurrence').modal('hide')
 
     })
-    $('#idOccurence').select2({
+    
+    const $modalSelectOccurrence = $('#ModalSelectOcurrence');
+
+  $('#idOccurence').select2({
         theme: 'bootstrap4',
+      dropdownParent: $modalSelectOccurrence,
         ajax: {
           url: base_url+'/helper/get_occurrences',
           dataType: 'json',
@@ -123,6 +129,8 @@ $(function() {
            }
         }
     });
+
+    
 
     //carrega os items 
     const check_suite_items = JSON.parse($('#check_suite_items').val()) 
