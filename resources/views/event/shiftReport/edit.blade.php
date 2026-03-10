@@ -312,10 +312,10 @@
                                             <label>Registros</label>
                                             <select class="form-control select2 idOccurence" id="idOccurence"
                                                 name="userRegistered" style="width: 100%;">
-                                                @foreach ($ocurrences as $ocurrence)
+                                                {{-- @foreach ($ocurrences as $ocurrence)
                                                     <option value="{{ $ocurrence->id }}">{{ $ocurrence->title }}
                                                     </option>
-                                                @endforeach
+                                                @endforeach --}}
                                             </select>
                                         </div>
                                     </div>

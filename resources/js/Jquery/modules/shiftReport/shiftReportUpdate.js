@@ -198,7 +198,7 @@ $(function () {
         $("#buttonOccurrence").click(function () {
             $("#showIdOccurenceMaintenence-" + selectNumber).removeClass('d-none');
             var idOccurence = $("#idOccurence").val();
-            console.log(selectNumber)
+            
             $("#id_oc_maintenence-" + selectNumber).val(idOccurence);
             $(".codeOccurenceMaintenence-" + selectNumber).html("<i class='far fa-registered'></i> " + idOccurence + "");
             $("#ModalSelectOcurrence").modal('hide');
@@ -255,7 +255,7 @@ $(function () {
     });
 
    
-
+  
     //button de perquisar registro de reclamacao de clinte
     $(document).on('click',".searchItemOccurenceCustomerComp",function () {
         
@@ -542,7 +542,42 @@ $(function () {
             })
         }
     });
+  
+const $modalSelectOccurrence = $('#ModalSelectOcurrence');
+    $('#idOccurence').select2({
+        theme: 'bootstrap4',
+      dropdownParent: $modalSelectOccurrence,
+        ajax: {
+          url: base_url+'/helper/get_occurrences',
+          dataType: 'json',
 
+            data: function (params) {
+            var query = {
+              term: params.term,
+              page: params.page || 1
+            }
+
+            // Query parameters will be ?search=[term]&page=[page]
+            return query;
+          },
+          processResults: function (response) {
+            //se a primeira paginacao
+            if (response.current_page == 1){ data_select = response.data }
+            else{ data_select = data_select.concat(response.data) }
+
+            // Transforms the top-level key of the response object from 'items' to 'results'
+             let more_pagination = true;
+             //se não tem mais paginas
+             if (response.next_page_url == null){ more_pagination = false }
+             return {
+                 results:response.data,
+                 pagination: {
+                    "more": more_pagination
+                  }
+                }
+           }
+        }
+    });
     function activeSelectLocal() {
         $('.local').select2({
             theme: 'classic',
