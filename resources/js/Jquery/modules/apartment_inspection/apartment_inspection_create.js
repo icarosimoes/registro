@@ -42,6 +42,8 @@ $(function () {
       $('#quanto_sala_2').removeClass('d-none')
     } else if (type == 'studio') {
       $('#studio').removeClass('d-none')
+    }else if (type == 'loft') {
+      $('#loft').removeClass('d-none')
     }
   })
 
@@ -66,6 +68,7 @@ $(function () {
       ref: $('#apartment_inspection_item_id').val(),
       attach: $("#file").prop('files')[0],
     })
+    
     rederizaAnexos(ref)
   })
 
@@ -99,13 +102,6 @@ $(function () {
     console.log(attachs)
     rederizaAnexos(ref)
   })
-
-
-
-
-
-
-
 
   $('form[name="form"]').submit(function (event) {
     event.preventDefault();
@@ -157,6 +153,7 @@ $(function () {
     formData.append('items', JSON.stringify(items))
 
     attachs_names = []
+    console.log(attachs)
     attachs.forEach((attach, index) => {
       formData.append('attachs_' + index + '_'+attach.ref, attach.attach)
 

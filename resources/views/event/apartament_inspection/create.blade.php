@@ -66,6 +66,7 @@
                         <option value="quanto_sala_1">QUARTO E SALA</option>
                         {{-- <option value="quanto_sala_2">QUARTO E SALA 02</option> --}}
                         <option value="studio">STUDIO</option>
+                        <option value="loft">LOFT</option>
 
                       </select>
                     </div>
@@ -1620,11 +1621,1147 @@
     
                         </tbody>
     
-                        {{-- QUARTO E SALA 01 --}}
-                        <tbody id="quanto_sala_1" class="hide_all">
+                        {{-- LOFT --}}
+                        <tbody id="loft" class="hide_all">
                           {{-- QUARTO --}}
                           <tr style="background:#ececec">
                             <td rowspan="8" style="background: #ececec">QUARTO</td>
+                            <td>
+                              PISOS
+                            </td>
+                            <td>
+                              PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4300">
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4300' id="appreciation-4300" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4300' type="button" id="attach-4300" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4300" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4300" >
+                                </td>
+                            <td>
+                              <a id="link_register_4300" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              RODAPÉ
+                            </td>
+                            <td>
+                              FIXAÇÃO, HOMOGENEIDADE, CANTOS, MANCHAS, FALHAS E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4301">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4301' id="appreciation-4301" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4301' type="button" id="attach-4301" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4301" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4301" >
+                                </td>
+                            <td>
+                              <a id="link_register_4301" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              PINTURA DE PAREDES E TETOS
+                            </td>
+                            <td>
+                              HOMOGENEIDADE, ACABAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4302">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4302' id="appreciation-4302" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4302' type="button" id="attach-4302" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4302" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4302" >
+                                </td>
+                            <td>
+                              <a id="link_register_4302" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              ESQUADRIAS DE ALUMÍNIO
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4303">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4303' id="appreciation-4303" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4303' type="button" id="attach-4303" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4303" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4303" >
+                                </td>
+                            <td>
+                              <a id="link_register_4303" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              PORTAS DE MADEIRAS
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4304">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4304' id="appreciation-4304" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4304' type="button" id="attach-4304" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4304" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4304" >
+                                </td>
+                            <td>
+                              <a id="link_register_4304" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              TOMADAS E INTERRUPTORES
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4305">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4305' id="appreciation-4305" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4305' type="button" id="attach-4305" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4305" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4305" >
+                                </td>
+                            <td>
+                              <a id="link_register_4305" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              FORRO DE GESSO
+                            </td>
+                            <td>
+                              PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4306">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4306' id="appreciation-4306" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4306' type="button" id="attach-4306" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4306" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4306" >
+                                </td>
+                            <td>
+                              <a id="link_register_4306" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              AR CONDICIONADO
+                            </td>
+                            <td>
+                              PONTO ELÉTRICO, PONTO DE DRENO E TUBULAÇÃO
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4307">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4307' id="appreciation-4307" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4307' type="button" id="attach-4307" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4307" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4307" >
+                                </td>
+                            <td>
+                              <a id="link_register_4307" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+    
+                          {{-- SANITARIO  --}}
+    
+                          <tr style="background:lightgray">
+                            <td rowspan="10" style="background: lightgray">SANITÁRIO</td>
+                            <td>
+                              PISOS
+                            </td>
+                            <td>
+                              PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4200">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4200' id="appreciation-4200" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4200' type="button" id="attach-4200" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4200" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4200" >
+                                </td>
+                            <td>
+                              <a id="link_register_4200" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              REVESTIMENTOS
+                            </td>
+                            <td>
+                              PLANEZA, HOMOGENEIDADE, ESQUADRO, REJUNTAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4201">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4201' id="appreciation-4201" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4201' type="button" id="attach-4201" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4201" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4201" >
+                                </td>
+                            <td>
+                              <a id="link_register_4201" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              BANCADAS
+                            </td>
+                            <td>
+                              FIXAÇÃO, NIVELAMENTO, ACABAMENTO, REJUNTAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4202">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4202' id="appreciation-4202" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4202' type="button" id="attach-4202" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4202" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4202" >
+                                </td>
+                            <td>
+                              <a id="link_register_4202" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              ESQUADRIAS DE ALUMÍNIO
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4203">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4203' id="appreciation-4203" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4203' type="button" id="attach-4203" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4203" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4203" >
+                                </td>
+                            <td>
+                              <a id="link_register_4203" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              PORTAS DE MADEIRAS
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4204">
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4204' id="appreciation-4204" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref="4204" type="button" id="attach-4204" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4204" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4204" >
+                                </td>
+                            <td>
+                              <a id="link_register_4204" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              TOMADAS E INTERRUPTORES
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4205">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4205' id="appreciation-4205" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4205' type="button" id="attach-4205" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4205" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4205" >
+                                </td>
+                            <td>
+                              <a id="link_register_4205" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              FORRO DE GESSO
+                            </td>
+                            <td>
+                              PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
+                            </td>
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4206">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4206' id="appreciation-4206" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4206' type="button" id="attach-4206" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4206" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4206" >
+                                </td>
+                            <td>
+                              <a id="link_register_4206" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              LOUÇAS (VASO SANIT E LAVATÓRIO)
+                            </td>
+                            <td>
+                              FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
+                            </td>
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4207">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4207' id="appreciation-4207" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4207' type="button" id="attach-4207" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4207" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4207" >
+                                </td>
+                            <td>
+                              <a id="link_register_4207" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+    
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              METAIS (TORNEIRAS, CHUVEIRO E DUCHA)
+                            </td>
+                            <td>
+                              FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO, LIMPEZA
+                            </td>
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4208">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4208' id="appreciation-4208" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4208' type="button" id="attach-4208" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4208" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4208" >
+                                </td>
+                            <td>
+                              <a id="link_register_4208" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              SIFÃO/ VÁLVULAS/ RALOS
+                            </td>
+                            <td>
+                              FIXAÇÃO, FUNCIONAMENTO, ACABAMENTO
+                            </td>
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4209">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4209' id="appreciation-4209" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4209' type="button" id="attach-4209" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4209" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4209" >
+                                </td>
+                            <td>
+                              <a id="link_register_4209" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+    
+                          {{-- SALA   --}}
+    
+                          <tr style="background:#ececec">
+                            <td rowspan="6" style="background: #ececec">SALA</td>
+                            <td>
+                              PISOS
+                            </td>
+                            <td>
+                              PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                            </td>
+    
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4500">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4500' id="appreciation-4500" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4500' type="button" id="attach-4500" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4500" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4500" >
+                                </td>
+                            <td>
+                              <a id="link_register_4500" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              RODAPÉ
+                            </td>
+                            <td>
+                              FIXAÇÃO, HOMOGENEIDADE, CANTOS, MANCHAS, FALHAS E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4501">
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4501' id="appreciation-4501" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4501' type="button" id="attach-4501" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4501" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4501" >
+                                </td>
+                            <td>
+                              <a id="link_register_4501" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              PINTURA DE PAREDES E TETOS
+                            </td>
+                            <td>
+                              HOMOGENEIDADE, ACABAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4502">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4502' id="appreciation-4502" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4502' type="button" id="attach-4502" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4502" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4502" >
+                                </td>
+                            <td>
+                              <a id="link_register_4502" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              ESQUADRIAS DE ALUMÍNIO
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4503">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4503' id="appreciation-4503" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4503' type="button" id="attach-4503" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4503" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4503" >
+                                </td>
+                            <td>
+                              <a id="link_register_4503" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              PORTAS DE MADEIRAS
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4504">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4504' id="appreciation-4504" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4504' type="button" id="attach-4504" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4504" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4504" >
+                                </td>
+                            <td>
+                              <a id="link_register_4504" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              TOMADAS E INTERRUPTORES
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4505">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4505' id="appreciation-4505" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4505' type="button" id="attach-4505" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4505" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4505" >
+                                </td>
+                            <td>
+                              <a id="link_register_4505" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+    
+                          {{-- COZINHA --}}
+                          <tr style="background:lightgray">
+                            <td rowspan="6" style="background: lightgray">COZINHA</td>
+                            <td>
+                              PISOS
+                            </td>
+                            <td>
+                              PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4600">
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4600' id="appreciation-4600" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4600' type="button" id="attach-4600" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4600" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4600" >
+                                </td>
+                            <td>
+                              <a id="link_register_4600" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              REVESTIMENTOS
+                            </td>
+                            <td>
+                              FIXAÇÃO, HOMOGENEIDADE, CANTOS, MANCHAS, FALHAS E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4601">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4601' id="appreciation-4601" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4601' type="button" id="attach-4601" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4601" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4601" >
+                                </td>
+                            <td>
+                              <a id="link_register_4601" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              BANCADAS
+                            </td>
+                            <td>
+                              HOMOGENEIDADE, ACABAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4602">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4602' id="appreciation-4602" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4602' type="button" id="attach-4602" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4602" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4602" >
+                                </td>
+                            <td>
+                              <a id="link_register_4602" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              TOMADAS E INTERRUPTORES
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, VIDROS, ACESSÓRIOS, ACABAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4603">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4603' id="appreciation-4603" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4603' type="button" id="attach-4603" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4603" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4603" >
+                                </td>
+                            <td>
+                              <a id="link_register_4603" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              METAIS (TORNEIRAS, SIFÕES E RELOS)
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, FERRAGENS, PRESENÇA DE VÃOS, FIXAÇÃO E LIMPEZA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4604">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4604' id="appreciation-4604" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4604' type="button" id="attach-4604" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4604" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4604" >
+                                </td>
+                            <td>
+                              <a id="link_register_4604" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:lightgray">
+                            <td>
+                              BANCADAS E CUBAS
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO E LIMPEZA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4605">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4605' id="appreciation-4605" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4605' type="button" id="attach-4605" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4605" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4605" >
+                                </td>
+                            <td>
+                              <a id="link_register_4605" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          {{--  VARANDA  --}}
+    
+                          <tr style="background:#ececec">
+                            <td rowspan="7" style="background: #ececec">VARANDA</td>
+                            <td>
+                              PISOS
+                            </td>
+                            <td>
+                              PLANEZA, HOMOGENEIDADE, ESQUADRO, NÍVEL, REJUNTAMENTO E LIMPEZA
+                            </td>
+    
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4900">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4900' id="appreciation-4900" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4900' type="button" id="attach-4900" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4900" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4900" >
+                                </td>
+                            <td>
+                              <a id="link_register_4900" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              REVESTIMENTOS
+                            </td>
+                            <td>
+                              PLANEZA, HOMOGENEIDADE, ESQUADRO, REJUNTAMENTO E LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4901">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4901' id="appreciation-4901" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4901' type="button" id="attach-4901" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4901" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4901" >
+                                </td>
+                            <td>
+                              <a id="link_register_4901" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              TETO
+                            </td>
+                            <td>
+                              PLANEZA, HOMOGENEIDADE, CANTOS E PINTURA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4902">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4902' id="appreciation-4902" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4902' type="button" id="attach-4902" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4902" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4902" >
+                                </td>
+                            <td>
+                              <a id="link_register_4902" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              TOMADAS E INTERRUPTORES
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, FIXAÇÃO DOS ESPELHOS, ACABAMENTO, LIMPEZA
+                            </td>
+    
+    
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4903">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4903' id="appreciation-4903" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4903' type="button" id="attach-4903" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4903" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4903" >
+                                </td>
+                            <td>
+                              <a id="link_register_4903" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              PONTO DE LUZ
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, FIXAÇÃO, ACABAMENTO
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4904">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4904' id="appreciation-4904" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4904' type="button" id="attach-4904" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4904" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4904" >
+                                </td>
+                            <td>
+                              <a id="link_register_4904" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              ESQUADRIAS DE ALUMÍNIO
+                            </td>
+                            <td>
+                              FUNCIONAMENTO, ACESSÓRIOS, FERRAGENS, ACABAMENTO, LIMPEZA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4905">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4905' id="appreciation-4905" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4905' type="button" id="attach-4905" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4905" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4905" >
+                                </td>
+                            <td>
+                              <a id="link_register_4905" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+                          <tr style="background:#ececec">
+                            <td>
+                              GUARDA CORPO
+                            </td>
+                            <td>
+                              FIXAÇÃO, ACABAMENTO E LIMPEZA
+                            </td>
+                            <td>
+                              <select required class="form-control form-control-sm" name="item" id="approved-4906">
+    
+                                <option value="yes">APROVADO</option>
+                                <option value="not">REPROVADO</option>
+                              </select>
+                            </td>
+                            <td>
+                              <input data-ref='4906' id="appreciation-4906" type="text" style="width: 200px"
+                                class="form-control form-control-sm" name="register">
+                            </td>
+                            <td>
+                              <button data-ref='4906' type="button" id="attach-4906" data-toggle="tooltip" data-placement="top"
+                                title="Anexos" class="btn btn-secondary btn-sm attach"><i
+                                  class="fas fa-download"></i></button>
+                                  <button data-ref="4906" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-4906" >
+                                </td>
+                            <td>
+                              <a id="link_register_4906" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                            </td>
+                          </tr>
+    
+    
+                        </tbody>
+                        
+                         {{-- QUARTO E SALA 01 --}}
+                        <tbody id="quanto_sala_1" class="hide_all">
+                          {{-- QUARTO --}}
+                          <tr style="background:#ececec">
+                            <td rowspan="8" style="background: #ececec">QUARTO1</td>
                             <td>
                               PISOS
                             </td>
@@ -2756,6 +3893,9 @@
     
     
                         </tbody>
+
+
+
                         {{-- QUARTO E SALA 02 --}}
                         <tbody id="quanto_sala_2" class="hide_all">
     
