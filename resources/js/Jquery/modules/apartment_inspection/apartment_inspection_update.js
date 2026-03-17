@@ -37,7 +37,10 @@ $(function () {
     $('#quanto_sala_2').removeClass('d-none')
   } else if ($('#type_unit').val() == 'studio') {
     $('#studio').removeClass('d-none')
+  } else if ($('#type_unit').val() == 'loft') {
+    $('#loft').removeClass('d-none')
   }
+
 
   $('#type_unit').on('change', (e) => {
     const type = $(e.currentTarget).val()
@@ -52,6 +55,8 @@ $(function () {
       $('#quanto_sala_2').removeClass('d-none')
     } else if (type == 'studio') {
       $('#studio').removeClass('d-none')
+    }else if (type == 'loft') {
+      $('#loft').removeClass('d-none')
     }
   })
 
