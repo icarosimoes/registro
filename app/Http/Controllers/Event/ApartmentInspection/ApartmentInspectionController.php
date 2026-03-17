@@ -55,6 +55,7 @@ class ApartmentInspectionController extends Controller
             $apartmentInspectionItem->save();
 
             //salva os anexos
+           // dd($attachs);
             if (isset($attachs[$item->ref])) {
 
                 foreach ($attachs[$item->ref] as $attach) {
@@ -62,6 +63,7 @@ class ApartmentInspectionController extends Controller
                     $name = $attach['name'];
                     $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
                     $path = $file->storeAs('anexo_apartment_inspection', $filename);
+                   // dd($path);
                     // Salvar registro no banco
                     $attach = new ApartmentInpectionItemAttach();
                     $attach->apartment_item_id = $apartmentInspectionItem->id;
@@ -88,7 +90,8 @@ class ApartmentInspectionController extends Controller
 
             //identifiquei oq é anexo
             if (substr($key, 0, 7) == 'attachs') {
-                $ref = substr($key, -3);
+              
+                $ref =  explode('_',$key)[2];//substr($key, -4);
 
                 if (!isset($attachs[$ref])) {
                     $attachs[$ref] = [];
@@ -114,7 +117,7 @@ class ApartmentInspectionController extends Controller
         
         $apartment_inspection->update($request->all());
         $items = json_decode($request->items);
-        ApartmentInspectionItem::where('apartment_inspection_id', $apartment_inspection->id)->delete();
+        //ApartmentInspectionItem::where('apartment_inspection_id', $apartment_inspection->id)->delete();
         foreach ($items as $item) {
             if($item->occurrence_id =='' || $item->occurrence_id == null ){
                 $occurrence_id = null;
@@ -122,7 +125,10 @@ class ApartmentInspectionController extends Controller
                 $occurrence_id = $item->occurrence_id;
             }
 
-            $apartmentInspectionItem = new ApartmentInspectionItem();
+            $apartmentInspectionItem =  ApartmentInspectionItem::where('ref', $item->ref)
+            ->where('apartment_inspection_id', $apartment_inspection->id)
+            ->first();
+            
             $apartmentInspectionItem->apartment_inspection_id = $apartment_inspection->id;
             $apartmentInspectionItem->appreciation = $item->appreciation;
             $apartmentInspectionItem->approved = $item->approved;
