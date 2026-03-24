@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Event\ApartmentInspection;
+namespace App\Http\Controllers\Event\ApartmentInspection_v2;
 
 use App\ApartmentInpectionItemAttach;
 use App\ApartmentInspection;

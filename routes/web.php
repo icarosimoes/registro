@@ -148,16 +148,28 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('inspection_suite/export/pdf','Event\InspectionSuites\InspectionSuiteController@exportPdf')->name('inspection_suite.export.pdf');    
         
         Route::resource('work_diary','Event\WorkDiary\WorkDiaryController');    
+        
+        
         Route::resource('apartment_inspection','Event\ApartmentInspection\ApartmentInspectionController');    
         Route::post('apartment_inspection/attach/{apartment_inspection}','Event\ApartmentInspection\ApartmentInspectionController@attach');    
         Route::get('apartment_inspection/attach/{apartment_inspection}','Event\ApartmentInspection\ApartmentInspectionController@loadAttach');    
         Route::get('apartment_inspection/attach_download/{apartment_inspection_attach}','Event\ApartmentInspection\ApartmentInspectionController@downloadAttach');    
         Route::post('apartment_inspection/attach_delete/{apartment_inspection_attach}','Event\ApartmentInspection\ApartmentInspectionController@deleteAttach');    
-        
         Route::post('apartment_inspection_item/attach/{apartment_inspection_item}','Event\ApartmentInspection\ApartmentInspectionController@itemAttach');    
         Route::get('apartment_inspection_item/attach/{apartment_inspection_item}','Event\ApartmentInspection\ApartmentInspectionController@loadItemsAttach');    
         Route::get('apartment_inspection_item/attach_download/{apartment_inspection_item_attach}','Event\ApartmentInspection\ApartmentInspectionController@downloadItemAttach');    
         Route::post('apartment_inspection_item/attach_delete/{apartment_inspection_item_attach}','Event\ApartmentInspection\ApartmentInspectionController@deleteItemAttach');    
+
+        // apartment_inspection_v2
+        Route::resource('apartment_inspection_v2','Event\ApartmentInspection_v2\ApartmentInspectionController');    
+        Route::post('apartment_inspection_v2/attach/{apartment_inspection}','Event\ApartmentInspection\ApartmentInspectionController@attach');    
+        Route::get('apartment_inspection_v2/attach/{apartment_inspection}','Event\ApartmentInspection\ApartmentInspectionController@loadAttach');    
+        Route::get('apartment_inspection_v2/attach_download/{apartment_inspection_attach}','Event\ApartmentInspection\ApartmentInspectionController@downloadAttach');    
+        Route::post('apartment_inspection_v2/attach_delete/{apartment_inspection_attach}','Event\ApartmentInspection\ApartmentInspectionController@deleteAttach');    
+        Route::post('apartment_inspection_item_v2/attach/{apartment_inspection_item}','Event\ApartmentInspection\ApartmentInspectionController@itemAttach');    
+        Route::get('apartment_inspection_item_v2/attach/{apartment_inspection_item}','Event\ApartmentInspection\ApartmentInspectionController@loadItemsAttach');    
+        Route::get('apartment_inspection_item_v2/attach_download/{apartment_inspection_item_attach}','Event\ApartmentInspection\ApartmentInspectionController@downloadItemAttach');    
+        Route::post('apartment_inspection_item_v2/attach_delete/{apartment_inspection_item_attach}','Event\ApartmentInspection\ApartmentInspectionController@deleteItemAttach');    
 
 
         Route::get('work_diary/download_activity/{id}','Event\WorkDiary\WorkDiaryController@downloadActivity');    
