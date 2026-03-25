@@ -19,10 +19,22 @@ $(function () {
   let apartment_inspections = [];
 
   load_apartment_inspections();
-  function load_apartment_inspections() {
+  function load_apartment_inspections(type_unit = null) {
     let route = "/event/apartment_inspection_v2/load_apartment_inspections";
-    $.post(route, {}, function (data) {
+    $.post(route, { type_unit: type_unit }, function (data) {
       apartment_inspections = data;
+      //limpa os dados dos items
+       Object.entries(apartment_inspections.items).forEach(([name_group, items]) => {
+  items.forEach(item => {
+    item.service = "";
+    item.item_verification = "";
+    item.approved = "yes";
+    item.appreciation = "";
+    item.occurrence_id = "";
+  });
+});
+
+
       createApartamnetInspectionItems();
     });
   }
@@ -35,12 +47,14 @@ $(function () {
         //auterna a cor de backgroud dos grupos
          backgroundColor = backgroundColor == "#f8f9fa" ? "#ececec" : "#f8f9fa";
 
-
-        item.forEach((item) => {
+        let nameGroupShow = true
+        
+        const lastIndex = item.length - 1;
+        item.forEach((item, index) => {
           html += `
             <tr style="background:${backgroundColor}" >
-                <td  style="width: 120px ">${name_group}
-                <button style="float: right;" type="button" class="btn btn-primary btn-sm add_item_group" data-group="${name_group}" data-toggle="tooltip" data-placement="top" title="Adicionar item">
+                <td  style="width: 120px ">${nameGroupShow ? name_group : ''}
+                <button style="float: right;" type="button" class="btn btn-primary btn-sm add_item_group ${index === lastIndex ? '' : 'd-none'}" data-group="${name_group}" data-toggle="tooltip" data-placement="top" title="Adicionar item">
                 <i class="fas fa-plus"></i>
               </button>
                 </td>
@@ -85,12 +99,20 @@ $(function () {
     
                           </tr>
     `;
+    nameGroupShow = false
         });
       },
     );
 
     $("#apartment_items").html(html);
   }
+
+  //ao mudar tipo de unidade, limpa os itens e carrega os itens do tipo selecionado
+  $("#type_unit").on("change", (e) => {
+    const type = $(e.currentTarget).val();
+    load_apartment_inspections(type);
+  });
+
 
   //ABRIR MODAL DE TIPOS DE UNIDADE
   $("#addTypeUnit").on("click", () => {

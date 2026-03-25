@@ -31,20 +31,27 @@ class ApartmentInspectionController extends Controller
 
   function create()
   {
+
     return view('event.apartament_inspection_v2.create');
   }
 
   function loadApartmentInspections(Request $request)
   {
+    if($request->type_unit==''){
+      $apartamentInspectionType = ApartmentInspectionTypes::first();
+    }else{
+      $apartamentInspectionType = ApartmentInspectionTypes::find($request->type_unit);
+    }
 
-    $apartmentInspections = ApartmentInspectionsV2::find(1);
-    // $apartmentInspections->load('apartmentInspectionItems');
-    $apartmentInspections->items = $apartmentInspections->apartmentInspectionItems->groupBy('group');
-    unset($apartmentInspections->apartmentInspectionItems);
-    // if ($request->date_start && $request->date_end) {
-    //     $apartmentInspection->whereBetween('inspection_date', [$request->date_start, $request->date_end]);
-    // }
-    // $apartmentInspection = $apartmentInspection->get();
+    $apartmentInspections = ApartmentInspectionsV2::where('type_unit', $apartamentInspectionType->id)->latest()->first();
+    if(!$apartmentInspections){
+      $apartmentInspections = new ApartmentInspectionsV2();
+      $apartmentInspections->items = [];
+    }else{
+      $apartmentInspections->items = $apartmentInspections->apartmentInspectionItems->groupBy('group');
+      unset($apartmentInspections->apartmentInspectionItems);
+    }
+   
     return response()->json($apartmentInspections);
   }
 
