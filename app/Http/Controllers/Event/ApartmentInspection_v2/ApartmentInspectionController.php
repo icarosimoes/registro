@@ -187,7 +187,16 @@ class ApartmentInspectionController extends Controller
     $groups = json_decode($request->items);
 
     foreach ($groups as $group) {
+      $ids = collect($group)->pluck('id');
+      ApartmentInspectionItems_v2::where('apartment_inspection_id', $apartment_inspection->id)
+        ->where('group', $group[0]->group)
+        ->whereNotIn('id', $ids)
+        ->delete();
+      
+
+      
       foreach ($group as $item) {
+         
         if ($item->occurrence_id == '' || $item->occurrence_id == null) {
           $occurrence_id = null;
         } else {
@@ -195,8 +204,9 @@ class ApartmentInspectionController extends Controller
         }
 
         ApartmentInspectionItems_v2::updateOrCreate(
-          ['id' => $item->id],
+          ['id' => @$item->id],
           [
+            'apartment_inspection_id' => $apartment_inspection->id,
             'group' => $item->group,
             'service' => $item->service,
             'item_verification' => $item->item_verification,
@@ -207,8 +217,9 @@ class ApartmentInspectionController extends Controller
         );
                           
       }
+             
     }
-
+   
     DB::commit();
     return response('success');
   }

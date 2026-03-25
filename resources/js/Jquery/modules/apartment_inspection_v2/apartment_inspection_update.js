@@ -35,26 +35,30 @@ function createApartamnetInspectionItems() {
          backgroundColor = backgroundColor == "#f8f9fa" ? "#ececec" : "#f8f9fa";
 
 
-        item.forEach((item) => {
+        item.forEach((item, index) => {
           html += `
             <tr style="background:${backgroundColor}" >
                 <td  style="width: 120px ">${name_group}
+                <button style="float: right;" type="button" class="btn btn-danger btn-sm remove_item_group" data-index="${index}" data-group="${name_group}" data-toggle="tooltip" data-placement="top" title="Remover item">
+                <i class="fas fa-trash"></i> 
+              </button>
                 <button style="float: right;" type="button" class="btn btn-primary btn-sm add_item_group" data-group="${name_group}" data-toggle="tooltip" data-placement="top" title="Adicionar item">
                 <i class="fas fa-plus"></i>
               </button>
+              
                 </td>
                 <td style="width: 120px">
-                   <input style="width: 120px" class="form-control form-control-sm" value="${
+                   <input data-index="${index}" data-group="${name_group}"  data-column="service" style="width: 120px" class="form-control form-control-sm change" value="${
                      item.service
                    }"></input>
                 </td>
                 <td>
-                  <input style="width: 500px" class="form-control form-control-sm" value="${
+                  <input data-index="${index}" data-group="${name_group}"  data-column="item_verification" style="width: 500px" class="form-control form-control-sm change" value="${
                     item.item_verification
                   }"></input>
                 </td>
                 <td>
-                             <select required class="form-control form-control-sm" name="item" id="approved-100">
+                             <select required class="form-control form-control-sm change" data-index="${index}" data-group="${name_group}" data-column="approved" name="item" id="approved-100">
                                 <option value="yes" ${
                                   item.approved === "yes" ? "selected" : ""
                                 } >APROVADO</option>
@@ -64,8 +68,8 @@ function createApartamnetInspectionItems() {
                               </select>
                             </td>
                             <td>
-                              <input data-ref='100' id="appreciation-100" type="text" style="width: 200px"
-                                class="form-control form-control-sm" name="register" value="${
+                              <input data-index="${index}" data-group="${name_group}" data-column="appreciation" id="appreciation-100" type="text" style="width: 200px"
+                                class="form-control form-control-sm change" name="register" value="${
                                   item.appreciation
                                 }">
                                                               
@@ -76,6 +80,7 @@ function createApartamnetInspectionItems() {
                                   class="fas fa-download"></i></button>
                                   <button data-ref="100" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
                                   <input type="hidden" id="occurrence-100" >
+                                  
                                 
                             </td>
                             <td>
@@ -101,6 +106,47 @@ function createApartamnetInspectionItems() {
       );
     });
   });
+  
+  
+  //modifica os campos 
+  $(document).on('change', '.change', (e) => {
+    const index = $(e.currentTarget).attr('data-index')
+    const column = $(e.currentTarget).attr('data-column')
+    const group = $(e.currentTarget).attr('data-group')
+    const value = $(e.currentTarget).val()
+    apartment_inspections.items[group][index][column] = value
+    console.log(apartment_inspections)
+  })
+  
+  
+
+  //ADICIONAR NOVO ITEM EM UM GRUPO
+  $(document).on("click", ".add_item_group", (e) => {
+    let name_group = $(e.currentTarget).attr("data-group");
+    console.log(name_group);
+    apartment_inspections.items[name_group].push({
+      group: name_group,
+      service: "",
+      item_verification: "",
+      approved: "yes",
+      appreciation: "",
+      occurrence_id: "",
+    });
+    createApartamnetInspectionItems();
+  })
+  
+
+  //REMOVE ITEM DO GRUPO
+  $(document).on('click', '.remove_item_group', (e) => {
+    const index = $(e.currentTarget).attr('data-index')
+    const group = $(e.currentTarget).attr('data-group')
+    apartment_inspections.items[group].splice(index, 1)
+    createApartamnetInspectionItems()
+  })
+  
+  
+  
+  
   //verifica se é tela de edicao ou visualizacao
   if ($('#show').val() == 'show') {
     $('input').attr('disabled', true)
