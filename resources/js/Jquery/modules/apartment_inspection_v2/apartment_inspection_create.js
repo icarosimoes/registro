@@ -164,6 +164,7 @@ $(function () {
     
     apartment_inspections.items = { ...apartment_inspections.items, ...group };
     createApartamnetInspectionItems();
+    $("#modal_add_group").modal("hide");
   });
 
 

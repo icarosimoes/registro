@@ -63,16 +63,23 @@
 
                 </div>
                 <div class="row">
-                  <div class="col-3">
-                    <div class="form-group">
-                      <label for="Name">TIPO DE UNIDADE</label>
-                      <select data-value="{{ $apartment_inspection->type_unit }}" name="" id="type_unit"
-                        class="form-control">
-                
-                      </select>
-                    </div>
-                  </div>
-                </div>
+                                    <div class="col-3">
+                                        <div class="d-flex align-items-center">
+                                            <select data-value="{{ $apartment_inspection->type_unit }}" class="form-control" id="type_unit" name="type_unit">
+                                            </select>
+                                            <button type="button" class="btn btn-secondary ml-2" id="addTypeUnit">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                 
+                                </div>
+                <div class="row" style="margin-top:20px; mx-0">
+                                  <div class="col">
+                                    <button type="button" class="btn btn-primary btn-sm" id="add_group"> <i class="fas fa-plus"></i> Adicionar Área</button>
+
+                                  </div>
+                                </div>
                 <div class="row">
                   <input type="hidden" value="{{ $apartment_inspection->apartment_inspection_items }}" id="items">
                   <table style="font-size: 13px" class="table table-sm ">
@@ -142,6 +149,75 @@
 </div>
 </div>
 
+{{-- modal novo grupo --}}
+<div class="modal fade" id="modal_add_group">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Adicionar Novo Grupo</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form name="formFileDownload" id="formFileDownload" enctype="multipart/form-data" method="POST">
+                @csrf
+                <div class="modal-body">
+                  <input type="text" class="form-control" id="name_new_group" placeholder="Insira um novo grupo">
+                    
+                    <div class="overlay-wrapper">
+                        <div class="d-none overlay loading_attach">
+                            <i class="fas fa-3x fa-sync-alt fa-spin"></i>
+                            <div class="text-bold pt-2">Carregando...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer justify-content-between text-right">
+                    <button type="button" id="btn_add_new_group" class="btn btn-secondary"><i class="fas fa-save"></i>
+                        Save</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+
+{{-- modal tipos de unidade --}}
+<div class="modal fade" id="modal_type_unit">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Tipos De Unidade</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form name="formFileDownload" id="formFileDownload" enctype="multipart/form-data" method="POST">
+                @csrf
+                <div class="modal-body">
+                  <input type="text" class="form-control" id="new_type_unit" placeholder="Insira um novo tipo de unidade">
+                    
+                    <div class="overlay-wrapper">
+                        <div class="d-none overlay loading_attach">
+                            <i class="fas fa-3x fa-sync-alt fa-spin"></i>
+                            <div class="text-bold pt-2">Carregando...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer justify-content-between text-right">
+                    <button type="button" id="btn_save_type_unit" class="btn btn-secondary"><i
+                            class="fas fa-save"></i>
+                        Save</button>
+                </div>
+            </form>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 
 {{-- modal de anexos --}}
 <div class="modal fade" id="anexo">

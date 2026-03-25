@@ -185,7 +185,7 @@
 </div>
 
 
-{{-- modal tipos de unidade --}}
+{{-- modal novo grupo --}}
 <div class="modal fade" id="modal_add_group">
     <div class="modal-dialog">
         <div class="modal-content">

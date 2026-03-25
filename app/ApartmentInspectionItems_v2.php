@@ -17,4 +17,16 @@ class ApartmentInspectionItems_v2 extends Model
         'approved',
         'occurrence_id'
     ];
+
+    public function apartmentInspection()
+    {
+        return $this->belongsTo(ApartmentInspectionsV2::class, 'apartment_inspection_id', 'id');
+    }
+
+    public function atachments()
+    {
+        return $this->hasMany(ApartamentInspectionItemAttach::class, 'apartment_item_id', 'id');
+    }
 }
+
+

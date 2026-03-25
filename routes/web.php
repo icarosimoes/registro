@@ -174,7 +174,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('apartment_inspection_v2/attach_delete/{apartment_inspection_attach}','Event\ApartmentInspection\ApartmentInspectionController@deleteAttach');    
         Route::post('apartment_inspection_item_v2/attach/{apartment_inspection_item}','Event\ApartmentInspection\ApartmentInspectionController@itemAttach');    
         Route::get('apartment_inspection_item_v2/attach/{apartment_inspection_item}','Event\ApartmentInspection\ApartmentInspectionController@loadItemsAttach');    
-        Route::get('apartment_inspection_item_v2/attach_download/{apartment_inspection_item_attach}','Event\ApartmentInspection\ApartmentInspectionController@downloadItemAttach');    
+        Route::get('apartment_inspection_item_v2/attach_download/{id}','Event\ApartmentInspection_v2\ApartmentInspectionController@downloadItemAttach');    
         Route::post('apartment_inspection_item_v2/attach_delete/{apartment_inspection_item_attach}','Event\ApartmentInspection\ApartmentInspectionController@deleteItemAttach');    
 
 

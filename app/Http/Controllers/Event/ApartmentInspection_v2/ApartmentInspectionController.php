@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Event\ApartmentInspection_v2;
 
+use App\ApartamentInspectionItemAttach;
 use App\ApartmentInpectionItemAttach;
 use App\ApartmentInspection;
 use App\ApartmentInspectionAttach;
@@ -12,14 +13,13 @@ use App\ApartmentInspectionTypes;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ApartmentInspectionController extends Controller
 {
 
   function index(Request $request)
   {
-
-
     $apartmentInspection = ApartmentInspectionsV2::orderBy('inspection_date', 'DESC');
 
     if ($request->date_start && $request->date_end) {
@@ -173,7 +173,7 @@ class ApartmentInspectionController extends Controller
   function getApartmentInspection(ApartmentInspectionsV2 $apartment_inspection)
   {
     
-    $apartment_inspection->load('apartmentInspectionItems');
+    $apartment_inspection->load('apartmentInspectionItems.atachments');
     $apartment_inspection->items = $apartment_inspection->apartmentInspectionItems->groupBy('group');
     unset($apartment_inspection->apartmentInspectionItems);
     return response()->json($apartment_inspection);
@@ -193,7 +193,7 @@ class ApartmentInspectionController extends Controller
         ->whereNotIn('id', $ids)
         ->delete();
         
-      foreach ($group as $item) {
+      foreach ($group as $index => $item) {
          
         if ($item->occurrence_id == '' || $item->occurrence_id == null) {
           $occurrence_id = null;
@@ -213,7 +213,21 @@ class ApartmentInspectionController extends Controller
             'occurrence_id' => $occurrence_id
           ]
         );
-                          
+        //verifica se tem anexos para o item e salva
+         if (isset($request[$item->group.'-'.$index])) {
+          $file = $request[$item->group.'-'.$index];
+          $path = $file->store('anexo_apartment_inspection');
+          // Storage::put('anexo_apartment_inspection/', $file);        
+          $attach = new ApartamentInspectionItemAttach();
+          $attach->apartment_item_id = $item->id;
+          $attach->name = $file->getClientOriginalName();
+          $attach->attach = $path;
+          $attach->save();
+
+         }
+        
+
+
       }
              
     }
@@ -329,9 +343,9 @@ class ApartmentInspectionController extends Controller
   }
 
   // download item atacch
-  function downloadItemAttach(ApartmentInpectionItemAttach $apartment_inspection_item_attach)
+  function downloadItemAttach( $id)
   {
-
+    $apartment_inspection_item_attach = ApartamentInspectionItemAttach::find($id);
     // Caminho do arquivo no storage
     $filePath = storage_path('app/' . $apartment_inspection_item_attach->attach);
 
