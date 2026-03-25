@@ -293,12 +293,20 @@ return [
                     
                 ],
                 [
+                    'text' => 'Vistoria de Apartamentos v2',
+                    'icon' => 'fas fa-fw fa fa-clipboard',
+                    'url' => 'event/apartment_inspection_v2',
+                    'address' => 'formulario.vistoria_apartamentos_v2'
+                    
+                ],
+                [
                     'text' => 'Relatório de Auditoria',
                     'icon' => 'fas fa-fw fa fa-clipboard',
                     'url' => 'event/audit_report',
                     'address' => 'formulario.rel_auditoria'
                     
                 ],
+               
             ],  
         ],
         [
@@ -1033,6 +1041,55 @@ return [
                     'type' => 'js',
                     'asset' => true,
                     'location' => 'js/jquery/modules/apartment_inspection/apartment_inspection_update.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        //APARTMENT ESPECTION V2
+        [
+            'name' => 'scriptListApartmentInspectV2',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/apartment_inspection_v2/apartment_inspection_list.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptCreateApartmentInspectV2',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/apartment_inspection_v2/apartment_inspection_create.js',
+                ],
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/notification_active.js',
+                ],
+            ],
+        ],
+        [
+            'name' => 'scriptUpdateApartmentInspectV2',
+            'active' => false,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => 'js/jquery/modules/apartment_inspection_v2/apartment_inspection_update.js',
                 ],
                 [
                     'type' => 'js',

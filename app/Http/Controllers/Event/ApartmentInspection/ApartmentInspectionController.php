@@ -106,6 +106,7 @@ class ApartmentInspectionController extends Controller
     {
         return view('event.apartament_inspection.show', compact('apartment_inspection'));
     }
+    
     function edit(ApartmentInspection $apartment_inspection)
     {
         return view('event.apartament_inspection.edit', compact('apartment_inspection'));
@@ -139,6 +140,7 @@ class ApartmentInspectionController extends Controller
         DB::commit();
         return response('success');
     }
+    
     function destroy(ApartmentInspection $apartment_inspection)
     {
         $apartment_inspection->delete();
@@ -152,10 +154,10 @@ class ApartmentInspectionController extends Controller
         return response()->json($apartmentInspectionAttach);
     }
 
-    function downloadAttach(ApartmentInspectionAttach $apartment_inspection_attach)
+    function downloadAttach(ApartmentInspectionAttach $apartment_inspection_attach_v2)
     {
         // Caminho do arquivo no storage
-        $filePath = storage_path('app/' . $apartment_inspection_attach->attach);
+        $filePath = storage_path('app/' . $apartment_inspection_attach_v2->attach);
 
         if (!file_exists($filePath)) {
             abort(404, 'Arquivo não encontrado.');
@@ -246,11 +248,11 @@ class ApartmentInspectionController extends Controller
     }
 
     // download item atacch
-    function downloadItemAttach(ApartmentInpectionItemAttach $apartment_inspection_item_attach)
+    function downloadItemAttach(ApartmentInspectionAttach $apartment_inspection_item_attach_v2)
     {
 
         // Caminho do arquivo no storage
-        $filePath = storage_path('app/' . $apartment_inspection_item_attach->attach);
+        $filePath = storage_path('app/' . $apartment_inspection_item_attach_v2->attach);
 
         if (!file_exists($filePath)) {
             abort(404, 'Arquivo não encontrado.');
