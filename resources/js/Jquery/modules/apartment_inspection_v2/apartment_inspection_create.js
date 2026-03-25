@@ -170,8 +170,7 @@ $(function () {
   //ADICIONAR NOVO ITEM EM UM GRUPO
   $(document).on("click", ".add_item_group", (e) => {
     let name_group = $(e.currentTarget).attr("data-group");
-    console.log(name_group);
-    apartment_inspections.items[name_group].push({
+     apartment_inspections.items[name_group].push({
       group: name_group,
       service: "",
       item_verification: "",
@@ -355,7 +354,7 @@ $(function () {
     // })
   });
 
-  $(".filter").on("click", (e) => {
+  $(document).on("click",".filter", (e) => {
     const ref = $(e.currentTarget).attr("data-ref");
     $("#register_ref").val(ref);
     $("#ModalSelectOcurrence").modal("show");

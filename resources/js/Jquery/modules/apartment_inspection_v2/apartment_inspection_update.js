@@ -15,6 +15,7 @@ $(function () {
     timer: 3000
   });
  
+let apartment_inspection = {}  
 let apartment_inspections= {}
   load_apartment_inspections();
   function load_apartment_inspections() {
@@ -78,13 +79,13 @@ function createApartamnetInspectionItems() {
                               <button type="button" id="attach-100" data-toggle="tooltip" data-placement="top"
                                 title="Anexos" class="btn btn-secondary btn-sm attach"><i
                                   class="fas fa-download"></i></button>
-                                  <button data-ref="100" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
-                                  <input type="hidden" id="occurrence-100" >
+                                  <button data-index="${index}" data-group="${name_group}" data-ref="${name_group+index}" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
+                                  <input type="hidden" id="occurrence-${name_group+index}" >
                                   
                                 
                             </td>
                             <td>
-                              <a id="link_register_100" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
+                              <a id="link_register_${name_group+index}" href="http://aero.test/occurrence/list/edit/" style="width:50px" class="btn btn-sm btn-success d-none "></a>
                             </td>
     
                           </tr>
@@ -123,7 +124,7 @@ function createApartamnetInspectionItems() {
   //ADICIONAR NOVO ITEM EM UM GRUPO
   $(document).on("click", ".add_item_group", (e) => {
     let name_group = $(e.currentTarget).attr("data-group");
-    console.log(name_group);
+    
     apartment_inspections.items[name_group].push({
       group: name_group,
       service: "",
@@ -353,8 +354,11 @@ $('form[name="form"]').submit(function (event) {
   })
 });
 
-$('.filter').on('click', (e) => {
+$(document).on("click",".filter", (e) => {
   const ref = $(e.currentTarget).attr('data-ref')
+  const index = $(e.currentTarget).attr('data-index')
+  const group = $(e.currentTarget).attr('data-group')
+  apartment_inspection = apartment_inspections.items[group][index]
   $('#register_ref').val(ref)
   $('#ModalSelectOcurrence').modal('show')
 })
@@ -365,9 +369,9 @@ $('#buttonOccurrence').on('click', () => {
   $('#link_register_' + ref).attr('href', base_url + '/occurrence/list/edit/' + $('#idOccurence').val())
   $('#link_register_' + ref).removeClass('d-none')
   $('#link_register_' + ref).text($('#idOccurence').val())
-
+  apartment_inspection.occurrence_id = $('#idOccurence').val()
   $('#ModalSelectOcurrence').modal('hide')
-
+  console.log(apartment_inspections)
 })
 $('#idOccurence').select2({
   theme: 'bootstrap4',

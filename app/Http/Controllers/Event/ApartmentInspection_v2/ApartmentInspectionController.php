@@ -172,7 +172,7 @@ class ApartmentInspectionController extends Controller
    */
   function getApartmentInspection(ApartmentInspectionsV2 $apartment_inspection)
   {
-    // dd($apartment_inspection);
+    
     $apartment_inspection->load('apartmentInspectionItems');
     $apartment_inspection->items = $apartment_inspection->apartmentInspectionItems->groupBy('group');
     unset($apartment_inspection->apartmentInspectionItems);
@@ -192,9 +192,7 @@ class ApartmentInspectionController extends Controller
         ->where('group', $group[0]->group)
         ->whereNotIn('id', $ids)
         ->delete();
-      
-
-      
+        
       foreach ($group as $item) {
          
         if ($item->occurrence_id == '' || $item->occurrence_id == null) {
