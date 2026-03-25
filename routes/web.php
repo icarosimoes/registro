@@ -161,8 +161,14 @@ Route::group(['middleware' => ['auth']], function () {
         Route::post('apartment_inspection_item/attach_delete/{apartment_inspection_item_attach}','Event\ApartmentInspection\ApartmentInspectionController@deleteItemAttach');    
 
         // apartment_inspection_v2
+        Route::post('apartment_inspection_v2/load_apartment_inspections','Event\ApartmentInspection_v2\ApartmentInspectionController@loadApartmentInspections');    
+        Route::post('apartment_inspection_v2/save_type_unit','Event\ApartmentInspection_v2\ApartmentInspectionController@saveTypeUnit');    
+        Route::get('apartment_inspection_v2/load_types_unit','Event\ApartmentInspection_v2\ApartmentInspectionController@loadTypesUnit');    
+        Route::get('apartment_inspection_v2/load_apartment_inspections/{apartment_inspection}','Event\ApartmentInspection_v2\ApartmentInspectionController@getApartmentInspection');    
+
         Route::resource('apartment_inspection_v2','Event\ApartmentInspection_v2\ApartmentInspectionController');    
         Route::post('apartment_inspection_v2/attach/{apartment_inspection}','Event\ApartmentInspection\ApartmentInspectionController@attach');    
+        
         Route::get('apartment_inspection_v2/attach/{apartment_inspection}','Event\ApartmentInspection\ApartmentInspectionController@loadAttach');    
         Route::get('apartment_inspection_v2/attach_download/{apartment_inspection_attach}','Event\ApartmentInspection\ApartmentInspectionController@downloadAttach');    
         Route::post('apartment_inspection_v2/attach_delete/{apartment_inspection_attach}','Event\ApartmentInspection\ApartmentInspectionController@deleteAttach');    
