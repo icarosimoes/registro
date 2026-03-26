@@ -18,7 +18,7 @@ class CreateApartamentInspectionItemAttachesTable extends Migration
         Schema::create('apartament_inspection_item_attaches', function (Blueprint $table) {
             $table->id();
             $table->foreignId('apartment_item_id');
-            $table->foreign('apartment_item_id')->references('id')->on('apartment_items_v2s');
+            $table->foreign('apartment_item_id')->references('id')->on('apartment_inspection_items_v2s');
             $table->string('name')->nullable();
             $table->string('attach')->nullable();
             $table->timestamps();
