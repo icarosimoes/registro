@@ -202,6 +202,7 @@ class ApartmentInspectionController extends Controller
 
     foreach ($groups as $group) {
       $ids = collect($group)->pluck('id');
+      
       ApartmentInspectionItems_v2::where('apartment_inspection_id', $apartment_inspection->id)
         ->where('group', $group[0]->group)
         ->whereNotIn('id', $ids)
