@@ -13,6 +13,7 @@ class CreateApartmentInspectionItemsV2sTable extends Migration
      */
     public function up()
     {
+      Schema::dropIfExists('apartment_inspection_items_v2s');
         Schema::create('apartment_inspection_items_v2s', function (Blueprint $table) {
             $table->id();
             $table->foreignId('apartment_inspection_id');

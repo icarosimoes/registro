@@ -13,6 +13,7 @@ class CreateApartmentInspectionTypesTable extends Migration
      */
     public function up()
     {
+      Schema::dropIfExists('apartment_inspection_types');
         Schema::create('apartment_inspection_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');

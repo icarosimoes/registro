@@ -13,6 +13,8 @@ class CreateApartamentInspectionItemAttachesTable extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('apartament_inspection_item_attaches');
+        
         Schema::create('apartament_inspection_item_attaches', function (Blueprint $table) {
             $table->id();
             $table->foreignId('apartment_item_id');
