@@ -422,7 +422,7 @@ $(function () {
         $("#file").val(null);
         $("#name").val("");
         //carrega a lista de anexos
-       // window.location.replace(base_url + "/event/apartment_inspection_v2");
+       window.location.replace(base_url + "/event/apartment_inspection_v2");
       },
       error: function (jqXHR, textStatus, errorThrown) {
         DefaultAlert("error", "Não foi possível enviar o anexo");
