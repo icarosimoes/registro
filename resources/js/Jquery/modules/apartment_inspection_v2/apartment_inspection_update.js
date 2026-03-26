@@ -225,6 +225,7 @@ $(function () {
       DefaultAlert("error", "Selecione um tipo de unidade para adicionar um grupo !");
       return;
     }
+    
     $("#modal_add_group").modal("show");
     $("#name_new_group").val('')
   });

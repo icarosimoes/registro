@@ -15,7 +15,8 @@ $(function () {
     showConfirmButton: false,
     timer: 3000,
   });
-
+  let attachs = [];
+  let apartment_inspection = {};
   let apartment_inspections = [];
 
   load_apartment_inspections();
@@ -54,6 +55,9 @@ $(function () {
           html += `
             <tr style="background:${backgroundColor}" >
                 <td  style="width: 120px ">${nameGroupShow ? name_group : ''}
+                <button style="float: right;" type="button" class=" btn btn-danger btn-sm remove_item_group" data-index="${index}" data-group="${name_group}" data-toggle="tooltip" data-placement="top" title="Remover item">
+                <i class="fas fa-trash"></i> 
+              </button>
                 <button style="float: right;" type="button" class="btn btn-primary btn-sm add_item_group ${index === lastIndex ? '' : 'd-none'}" data-group="${name_group}" data-toggle="tooltip" data-placement="top" title="Adicionar item">
                 <i class="fas fa-plus"></i>
               </button>
@@ -86,7 +90,7 @@ $(function () {
                                                               
                             </td>
                             <td>
-                              <button type="button" id="attach-100" data-toggle="tooltip" data-placement="top"
+                              <button data-group="${name_group}" data-index="${index}" type="button" id="attach-100" data-toggle="tooltip" data-placement="top"
                                 title="Anexos" class="btn btn-secondary btn-sm attach"><i
                                   class="fas fa-download"></i></button>
                                   <button data-ref="100" type="button" class="btn btn-secondary btn-sm filter "><i class="fas fa-filter"></i></button>
@@ -160,7 +164,13 @@ $(function () {
 
   //ABRIR MODAL DE ADD GRUPO
   $("#add_group").on("click", () => {
+    if($('#type_unit').val() == null){
+      DefaultAlert("error", "Selecione um tipo de unidade para adicionar um grupo !");
+      return;
+    }
+    
     $("#modal_add_group").modal("show");
+    $("#name_new_group").val('')
   });
 
   //ADICIONAR NOVO GRUPO DE ITENS
@@ -203,63 +213,122 @@ $(function () {
     });
     createApartamnetInspectionItems();
   })
-
-
-
-
-
-
-  $(".hide_all").addClass("d-none");
-  if ($("#type_unit").val() == "dois_quartos") {
-    $("#dois_quartos").removeClass("d-none");
-  } else if ($("#type_unit").val() == "quanto_sala_1") {
-    $("#quanto_sala_1").removeClass("d-none");
-  } else if ($("#type_unit").val() == "quanto_sala_2") {
-    $("#quanto_sala_2").removeClass("d-none");
-  } else if ($("#type_unit").val() == "studio") {
-    $("#studio").removeClass("d-none");
-  }
-
-  $("#type_unit").on("change", (e) => {
-    const type = $(e.currentTarget).val();
-
-    $(".hide_all").addClass("d-none");
-    if (type == "dois_quartos") {
-      $("#dois_quartos").removeClass("d-none");
-    } else if (type == "quanto_sala_1") {
-      $("#quanto_sala_1").removeClass("d-none");
-    } else if (type == "quanto_sala_2") {
-      $("#quanto_sala_2").removeClass("d-none");
-    } else if (type == "studio") {
-      $("#studio").removeClass("d-none");
-    } else if (type == "loft") {
-      $("#loft").removeClass("d-none");
+//REMOVE ITEM DO GRUPO
+  $(document).on("click", ".remove_item_group", (e) => {
+    const index = $(e.currentTarget).attr("data-index");
+    const group = $(e.currentTarget).attr("data-group");
+    apartment_inspections.items[group].splice(index, 1);
+    if (apartment_inspections.items[group].length === 0) {
+      delete apartment_inspections.items[group];
     }
+    createApartamnetInspectionItems();
   });
 
-  var attachs = new Array();
-  // modal de anexos
-  $(".attach").on("click", (e) => {
-    let ref = $(e.currentTarget).attr("data-ref");
-    $("#apartment_inspection_item_id").val(ref);
+
+//modal de anexos
+  $(document).on("click", ".attach", (e) => {
+    let index = $(e.currentTarget).attr("data-index");
+    let group = $(e.currentTarget).attr("data-group");
+    apartment_inspection = apartment_inspections.items[group][index];
+
     $("#file").val(null);
     $("#name").val("");
-    rederizaAnexos(ref);
+    $("#bodyFile").empty();
+    rederizaAnexos(apartment_inspection.atachments);
     $("#anexo").modal("show");
   });
 
+  // add anexos
   $("#btn_send_attach").on("click", () => {
-    let ref = $("#apartment_inspection_item_id").val();
     attachs.push({
+      index:
+        apartment_inspections.items[apartment_inspection.group].indexOf(
+          apartment_inspection,
+        ),
+      group: apartment_inspection.group,
       name: $("#name").val(),
-      file: $("#file").val(),
-      ref: $("#apartment_inspection_item_id").val(),
-      attach: $("#file").prop("files")[0],
+      file: $("#file").prop("files")[0],
     });
-
-    rederizaAnexos(ref);
+    rederizaAnexos(apartment_inspection.atachments);
   });
 
+//renderiza a lista de anexos
+  function rederizaAnexos(data) {
+    $("#bodyFile").empty();
+    data.forEach((item) => {
+      $("#bodyFile").append(`
+            <tr>
+                <td>${item.name}</td>
+                <td>${formatDate(item.created_at)}</td>
+                <td>
+                <a class="btn btn-secondary btn-sm" href="${base_url}/event/apartment_inspection_item_v2/attach_download/${
+        item.id
+      }" target="_blank"><i class="fas fa-download"></i></a>
+                <button type="button" class="btn btn-danger btn-sm remove_attach" data-id="${
+                  item.id
+                }" target="_blank"><i class="fas fa-trash"></i></button>
+                </td>
+                
+            </tr>
+        `);
+    });
+    //verifica se tem anexos novos para mostrar
+    attachs.forEach((item) => {
+      if (
+        item.group == apartment_inspection.group &&
+        item.index ==
+          apartment_inspections.items[item.group].indexOf(apartment_inspection)
+      ) {
+        $("#bodyFile").append(`
+            <tr>
+                <td>${item.name} <span class="badge badge-info">Novo</span></td>
+                <td></td>
+                <td>
+                <a class="btn btn-secondary btn-sm" href="${URL.createObjectURL(
+                  item.file,
+                )}" target="_blank"><i class="fas fa-download"></i></a>
+                <button type="button" data-index="${item.index}" data-group="${
+          item.group
+        }" class="btn btn-danger btn-sm remove_attach_new"  target="_blank"><i class="fas fa-trash"></i></button>
+                </td>
+             </tr>
+        `);
+      }
+    });
+  }
+
+  //remove anexo
+  $(document).on("click", ".remove_attach", (e) => {
+    let id = $(e.currentTarget).data("id");
+    $(".loading_attach").removeClass("d-none");
+    $.post(
+      base_url + "/event/apartment_inspection_item/attach_delete/" + id,
+      {},
+      function (response) {
+        DefaultAlert("success", "Anexo removido com sucesso");
+        rederizaAnexos(response);
+      },
+    )
+      .catch(() => {
+        DefaultAlert("error", "Não foi possível remover o anexo");
+      })
+      .always(() => {
+        $(".loading_attach").addClass("d-none");
+      });
+  });
+
+  //remove anexo novo
+  $(document).on("click", ".remove_attach_new", (e) => {
+    const index = $(e.currentTarget).attr("data-index");
+    const group = $(e.currentTarget).attr("data-group");
+    attachs = attachs.filter(
+      (item) => !(item.group == group && item.index == index),
+    );
+    rederizaAnexos(apartment_inspection.atachments);
+  });
+
+  
+  
   function rederizaAnexos(ref) {
     $("#bodyFile").empty();
     if (attachs.length > 0) {
@@ -334,16 +403,11 @@ $(function () {
     formData.append("approved", status);
     formData.append("type_unit", type_unit);
     formData.append("items", JSON.stringify(apartment_inspections.items));
+    
+    attachs.forEach((item, index) => {
+      formData.append(item.group + "-" + item.index, item.file);
+    });
 
-    // attachs_names = [];
-    // console.log(attachs);
-    // attachs.forEach((attach, index) => {
-    //   formData.append("attachs_" + index + "_" + attach.ref, attach.attach);
-
-    //   nameAttach = "attachs_" + index + "_" + attach.ref;
-    //   attachs_names.push({ [nameAttach]: attach.name });
-    // });
-    // formData.append("names_attachs", JSON.stringify(attachs_names));
 
     let route = "/event/apartment_inspection_v2";
     $.ajax({
@@ -358,7 +422,7 @@ $(function () {
         $("#file").val(null);
         $("#name").val("");
         //carrega a lista de anexos
-        window.location.replace(base_url + "/event/apartment_inspection_v2");
+       // window.location.replace(base_url + "/event/apartment_inspection_v2");
       },
       error: function (jqXHR, textStatus, errorThrown) {
         DefaultAlert("error", "Não foi possível enviar o anexo");
