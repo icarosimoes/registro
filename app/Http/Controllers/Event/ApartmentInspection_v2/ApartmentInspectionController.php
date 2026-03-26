@@ -43,6 +43,7 @@ class ApartmentInspectionController extends Controller
       $apartamentInspectionType = ApartmentInspectionTypes::find($request->type_unit);
     }
 
+    if($apartamentInspectionType){
     $apartmentInspections = ApartmentInspectionsV2::where('type_unit', $apartamentInspectionType->id)->latest()->first();
     if(!$apartmentInspections){
       $apartmentInspections = new ApartmentInspectionsV2();
@@ -51,6 +52,12 @@ class ApartmentInspectionController extends Controller
       $apartmentInspections->items = $apartmentInspections->apartmentInspectionItems->groupBy('group');
       unset($apartmentInspections->apartmentInspectionItems);
     }
+    }else{
+      $apartmentInspections = new ApartmentInspectionsV2();
+      $apartmentInspections->items = [];
+    }
+
+    
    
     return response()->json($apartmentInspections);
   }
