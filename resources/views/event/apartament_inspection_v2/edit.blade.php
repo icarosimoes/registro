@@ -159,7 +159,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form name="formFileDownload" id="formFileDownload" enctype="multipart/form-data" method="POST">
+            
                 @csrf
                 <div class="modal-body">
                   <input type="text" class="form-control" id="name_new_group" placeholder="Insira um novo grupo">
@@ -176,7 +176,7 @@
                     <button type="button" id="btn_add_new_group" class="btn btn-secondary"><i class="fas fa-save"></i>
                         Save</button>
                 </div>
-            </form>
+            
         </div>
         <!-- /.modal-content -->
     </div>

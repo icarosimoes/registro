@@ -103,7 +103,7 @@ class ApartmentInspectionController extends Controller
     // dd($items);
     foreach ($groups as $group) {
 
-      foreach ($group as $item) {
+      foreach ($group as $index => $item) {
 
         if ($item->occurrence_id == '' || $item->occurrence_id == null) {
           $occurrence_id = null;
@@ -122,23 +122,18 @@ class ApartmentInspectionController extends Controller
         $apartmentInspectionItem->save();
       }
       //salva os anexos
-      // dd($attachs);
-      // if (isset($attachs[$item->ref])) {
+      //verifica se tem anexos para o item e salva
+         if (isset($request[$item->group.'-'.$index])) {
+          $file = $request[$item->group.'-'.$index];
+          $path = $file->store('anexo_apartment_inspection');
+          // Storage::put('anexo_apartment_inspection/', $file);        
+          $attach = new ApartamentInspectionItemAttach();
+          $attach->apartment_item_id = $apartmentInspectionItem->id;
+          $attach->name = $file->getClientOriginalName();
+          $attach->attach = $path;
+          $attach->save();
 
-      //     foreach ($attachs[$item->ref] as $attach) {
-      //         $file = $attach['file'];
-      //         $name = $attach['name'];
-      //         $filename = uniqid() . '_' . time() . '.' . $file->getClientOriginalExtension();
-      //         $path = $file->storeAs('anexo_apartment_inspection', $filename);
-      //        // dd($path);
-      //         // Salvar registro no banco
-      //         $attach = new ApartmentInpectionItemAttach();
-      //         $attach->apartment_item_id = $apartmentInspectionItem->id;
-      //         $attach->name = $name;
-      //         $attach->attach = $path;
-      //         $attach->save();
-      //     }
-      // }
+         }
     }
     DB::commit();
 
@@ -202,6 +197,7 @@ class ApartmentInspectionController extends Controller
 
     foreach ($groups as $group) {
       $ids = collect($group)->pluck('id');
+      
       ApartmentInspectionItems_v2::where('apartment_inspection_id', $apartment_inspection->id)
         ->where('group', $group[0]->group)
         ->whereNotIn('id', $ids)
@@ -215,7 +211,7 @@ class ApartmentInspectionController extends Controller
           $occurrence_id = $item->occurrence_id;
         }
 
-        ApartmentInspectionItems_v2::updateOrCreate(
+        $apartmentInspectionItem = ApartmentInspectionItems_v2::updateOrCreate(
           ['id' => @$item->id],
           [
             'apartment_inspection_id' => $apartment_inspection->id,
@@ -231,9 +227,8 @@ class ApartmentInspectionController extends Controller
          if (isset($request[$item->group.'-'.$index])) {
           $file = $request[$item->group.'-'.$index];
           $path = $file->store('anexo_apartment_inspection');
-          // Storage::put('anexo_apartment_inspection/', $file);        
           $attach = new ApartamentInspectionItemAttach();
-          $attach->apartment_item_id = $item->id;
+          $attach->apartment_item_id = $apartmentInspectionItem->id;
           $attach->name = $file->getClientOriginalName();
           $attach->attach = $path;
           $attach->save();

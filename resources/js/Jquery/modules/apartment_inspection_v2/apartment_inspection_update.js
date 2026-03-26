@@ -178,6 +178,9 @@ $(function () {
     const index = $(e.currentTarget).attr("data-index");
     const group = $(e.currentTarget).attr("data-group");
     apartment_inspections.items[group].splice(index, 1);
+    if (apartment_inspections.items[group].length === 0) {
+      delete apartment_inspections.items[group];
+    }
     createApartamnetInspectionItems();
   });
 
@@ -218,7 +221,13 @@ $(function () {
 
   //ABRIR MODAL DE ADD GRUPO
   $("#add_group").on("click", () => {
+    if($('#type_unit').val() == null){
+      DefaultAlert("error", "Selecione um tipo de unidade para adicionar um grupo !");
+      return;
+    }
+    
     $("#modal_add_group").modal("show");
+    $("#name_new_group").val('')
   });
 
   //ADICIONAR NOVO GRUPO DE ITENS
