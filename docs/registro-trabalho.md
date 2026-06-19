@@ -69,3 +69,10 @@
 - A raiz do produto deixou de exibir diretamente o protótipo estático.
 - Criados login tenant, cookie `httpOnly`, revalidação em `/auth/me`, dashboard protegido e logout.
 - O protótipo visual foi preservado em `/design-preview`; seus indicadores continuam fictícios até os módulos operacionais serem conectados.
+
+## 2026-06-19 — MVP funcional do portal
+
+- Conectados todos os itens do menu do tenant a telas autenticadas.
+- Implementados busca, filtro, paginação, detalhes, criação, edição, exclusão confirmada, restauração e exportação CSV.
+- Criadas telas de ocorrências, reuniões, turno, inspeções, diário de obra, manutenção, cadastros, usuários, mural, configurações e conta.
+- Dados operacionais de teste ficam no `localStorage`, isolados por `company_id`; a API continua sendo a próxima etapa para persistência e autorização reais.

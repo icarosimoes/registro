@@ -27,6 +27,7 @@ import {
 import { useMemo, useState } from "react";
 import { logoutAction } from "@/app/actions";
 import type { TenantUser } from "@/lib/api";
+import Link from "next/link";
 
 type TicketStatus = "Em andamento" | "Aguardando" | "Concluído";
 
@@ -47,13 +48,13 @@ const tickets: Ticket[] = [
 ];
 
 const navigation = [
-  { label: "Visão geral", icon: Home, active: true },
-  { label: "Ocorrências", icon: FileClock, count: 7 },
-  { label: "Reuniões", icon: Users },
-  { label: "Relatórios de turno", icon: FileText },
-  { label: "Inspeções", icon: ClipboardCheck, count: 3 },
-  { label: "Diário de obra", icon: HardHat },
-  { label: "Manutenção", icon: Wrench },
+  { label: "Visão geral", icon: Home, active: true, href: "/dashboard" },
+  { label: "Ocorrências", icon: FileClock, count: 7, href: "/ocorrencias" },
+  { label: "Reuniões", icon: Users, href: "/reunioes" },
+  { label: "Relatórios de turno", icon: FileText, href: "/relatorios-turno" },
+  { label: "Inspeções", icon: ClipboardCheck, count: 3, href: "/inspecoes" },
+  { label: "Diário de obra", icon: HardHat, href: "/diarios-obra" },
+  { label: "Manutenção", icon: Wrench, href: "/manutencao" },
 ];
 
 const statusClass: Record<TicketStatus, string> = {
@@ -67,20 +68,21 @@ export function DashboardShell({ user }: { user?: TenantUser }) {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [panel, setPanel] = useState<"notifications" | "profile" | null>(null);
   const [query, setQuery] = useState("");
+  const [scope, setScope] = useState<"all" | "mine" | "pending">("all");
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const displayName = user?.name ?? "Ícaro Simoes";
   const firstName = displayName.split(" ")[0];
   const initials = displayName.split(" ").slice(0, 2).map((part) => part[0]).join("").toUpperCase();
 
   const filteredTickets = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("pt-BR");
-    if (!normalized) return tickets;
     return tickets.filter((ticket) =>
       [String(ticket.id), ticket.title, ticket.area, ticket.owner, ticket.status]
         .join(" ")
         .toLocaleLowerCase("pt-BR")
-        .includes(normalized),
+        .includes(normalized) && (scope === "all" || (scope === "mine" ? ticket.owner.includes(firstName) : ticket.status !== "Concluído")),
     );
-  }, [query]);
+  }, [firstName, query, scope]);
 
   function togglePanel(next: "notifications" | "profile") {
     setPanel((current) => (current === next ? null : next));
@@ -99,20 +101,20 @@ export function DashboardShell({ user }: { user?: TenantUser }) {
 
         <nav className="nav-list">
           <p className="nav-section">{collapsed ? "" : "Operação"}</p>
-          {navigation.map(({ label, icon: Icon, active, count }) => (
-            <button className={`nav-item ${active ? "active" : ""}`} key={label} title={collapsed ? label : undefined}>
+          {navigation.map(({ label, icon: Icon, active, count, href }) => (
+            <Link href={href} className={`nav-item ${active ? "active" : ""}`} key={label} title={collapsed ? label : undefined}>
               <Icon size={19} aria-hidden="true" />
               {!collapsed && <span>{label}</span>}
               {!collapsed && count ? <small>{count}</small> : null}
-            </button>
+            </Link>
           ))}
           <p className="nav-section">{collapsed ? "" : "Administração"}</p>
-          <button className="nav-item" title={collapsed ? "Cadastros" : undefined}><Building2 size={19} />{!collapsed && <span>Cadastros</span>}</button>
-          <button className="nav-item" title={collapsed ? "Usuários e acesso" : undefined}><ShieldCheck size={19} />{!collapsed && <span>Usuários e acesso</span>}</button>
+          <Link href="/cadastros" className="nav-item" title={collapsed ? "Cadastros" : undefined}><Building2 size={19} />{!collapsed && <span>Cadastros</span>}</Link>
+          <Link href="/usuarios" className="nav-item" title={collapsed ? "Usuários e acesso" : undefined}><ShieldCheck size={19} />{!collapsed && <span>Usuários e acesso</span>}</Link>
         </nav>
 
         <div className="sidebar-footer">
-          <button className="nav-item"><Settings size={19} />{!collapsed && <span>Configurações</span>}</button>
+          <Link href="/configuracoes" className="nav-item"><Settings size={19} />{!collapsed && <span>Configurações</span>}</Link>
           {!collapsed && <span className="version">Nova plataforma · prévia</span>}
         </div>
       </aside>
@@ -122,9 +124,9 @@ export function DashboardShell({ user }: { user?: TenantUser }) {
       <header className="topbar">
         <button className="icon-button mobile-menu" onClick={() => setMobileMenu(true)} aria-label="Abrir menu"><Menu size={21} /></button>
         <div className="workspace-tabs" aria-label="Áreas recentes">
-          <button className="workspace-tab active"><LayoutDashboard size={16} /> Visão geral</button>
-          <button className="workspace-tab"><FileClock size={16} /> Ocorrências</button>
-          <button className="new-tab" aria-label="Abrir módulo"><Plus size={18} /></button>
+          <Link href="/dashboard" className="workspace-tab active"><LayoutDashboard size={16} /> Visão geral</Link>
+          <Link href="/ocorrencias" className="workspace-tab"><FileClock size={16} /> Ocorrências</Link>
+          <Link href="/mural" className="new-tab" aria-label="Abrir mural"><Plus size={18} /></Link>
         </div>
 
         <label className="global-search">
@@ -146,7 +148,7 @@ export function DashboardShell({ user }: { user?: TenantUser }) {
             <h1>Bom dia, {firstName}</h1>
             <p>Acompanhe o que precisa de atenção na operação.</p>
           </div>
-          <button className="primary-button"><Plus size={18} /> Nova ocorrência</button>
+          <Link href="/ocorrencias?new=1" className="primary-button"><Plus size={18} /> Nova ocorrência</Link>
         </div>
 
         <section className="metrics-grid" aria-label="Indicadores principais">
@@ -160,18 +162,18 @@ export function DashboardShell({ user }: { user?: TenantUser }) {
           <section className="panel activity-panel">
             <div className="panel-heading">
               <div><h2>Atividades recentes</h2><p>Itens que exigem acompanhamento</p></div>
-              <button className="secondary-button">Ver todas <ChevronRight size={16} /></button>
+              <Link href="/ocorrencias" className="secondary-button">Ver todas <ChevronRight size={16} /></Link>
             </div>
             <div className="table-tools">
-              <div className="segmented"><button className="selected">Todas</button><button>Minhas</button><button>Pendentes</button></div>
-              <button className="icon-button"><MoreHorizontal size={19} /><span className="sr-only">Mais opções</span></button>
+              <div className="segmented"><button className={scope === "all" ? "selected" : ""} onClick={() => setScope("all")}>Todas</button><button className={scope === "mine" ? "selected" : ""} onClick={() => setScope("mine")}>Minhas</button><button className={scope === "pending" ? "selected" : ""} onClick={() => setScope("pending")}>Pendentes</button></div>
+              <Link href="/ocorrencias" className="icon-button"><MoreHorizontal size={19} /><span className="sr-only">Mais opções</span></Link>
             </div>
             <div className="table-scroll">
               <table>
                 <thead><tr><th>Protocolo</th><th>Atividade</th><th>Área</th><th>Responsável</th><th>Status</th><th>Atualização</th></tr></thead>
                 <tbody>
                   {filteredTickets.map((ticket) => (
-                    <tr key={ticket.id}><td className="protocol">#{ticket.id}</td><td><strong>{ticket.title}</strong></td><td>{ticket.area}</td><td>{ticket.owner}</td><td><span className={statusClass[ticket.status]}>{ticket.status}</span></td><td className="muted">{ticket.updatedAt}</td></tr>
+                    <tr key={ticket.id} onClick={() => setSelectedTicket(ticket)}><td className="protocol">#{ticket.id}</td><td><strong>{ticket.title}</strong></td><td>{ticket.area}</td><td>{ticket.owner}</td><td><span className={statusClass[ticket.status]}>{ticket.status}</span></td><td className="muted">{ticket.updatedAt}</td></tr>
                   ))}
                 </tbody>
               </table>
@@ -190,7 +192,7 @@ export function DashboardShell({ user }: { user?: TenantUser }) {
               <div className="panel-heading"><div><h2>Mural de avisos</h2><p>Comunicados da equipe</p></div><BellRing size={19} /></div>
               <article><span>Operação</span><strong>Checklist de fechamento atualizado</strong><p>Confira as novas etapas antes de concluir o turno.</p></article>
               <article><span>Governança</span><strong>Inspeções da próxima semana</strong><p>A escala já está disponível para consulta.</p></article>
-              <button className="text-button">Abrir mural <ChevronRight size={15} /></button>
+              <Link href="/mural" className="text-button">Abrir mural <ChevronRight size={15} /></Link>
             </section>
           </aside>
         </div>
@@ -210,13 +212,14 @@ export function DashboardShell({ user }: { user?: TenantUser }) {
             ) : (
               <div className="profile-content">
                 <div className="profile-card"><div className="profile-avatar">{initials}</div><strong>{displayName}</strong><span>{user?.role_name ?? "Demonstração"}</span></div>
-                <button><Users /> Minha conta</button><button><ShieldCheck /> Segurança e acesso</button><button><Settings /> Preferências</button>
+                <Link href="/minha-conta"><Users /> Minha conta</Link><Link href="/usuarios"><ShieldCheck /> Segurança e acesso</Link><Link href="/configuracoes"><Settings /> Preferências</Link>
                 {user ? <form action={logoutAction}><button className="logout-button" type="submit">Sair da conta</button></form> : null}
               </div>
             )}
           </aside>
         </>
       )}
+      {selectedTicket ? <><button className="panel-backdrop" aria-label="Fechar detalhes" onClick={() => setSelectedTicket(null)}/><aside className="record-drawer"><header><div><span>Ocorrência #{selectedTicket.id}</span><h2>{selectedTicket.title}</h2></div><button className="icon-button" onClick={() => setSelectedTicket(null)}><X/></button></header><dl><div><dt>Status</dt><dd><span className={statusClass[selectedTicket.status]}>{selectedTicket.status}</span></dd></div><div><dt>Área</dt><dd>{selectedTicket.area}</dd></div><div><dt>Responsável</dt><dd>{selectedTicket.owner}</dd></div><div><dt>Atualização</dt><dd>{selectedTicket.updatedAt}</dd></div></dl><footer><Link href="/ocorrencias" className="primary-button">Abrir no módulo</Link></footer></aside></> : null}
     </div>
   );
 }
