@@ -8,6 +8,7 @@ from app.core.config import get_settings
 from app.core.database import engine
 from app.domain.auth.router import router as auth_router
 from app.domain.health.router import router as health_router
+from app.domain.occurrences.router import router as occurrences_router
 from app.domain.platform.router import router as platform_router
 
 settings = get_settings()
@@ -36,4 +37,5 @@ app.add_middleware(
 )
 app.include_router(health_router, prefix=settings.api_prefix)
 app.include_router(auth_router, prefix=settings.api_prefix)
+app.include_router(occurrences_router, prefix=settings.api_prefix)
 app.include_router(platform_router, prefix=settings.api_prefix)

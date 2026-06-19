@@ -47,9 +47,13 @@ class Permission(Base, TimestampMixin):
 
 class User(Base, TenantMixin, TimestampMixin):
     __tablename__ = "users"
-    __table_args__ = (UniqueConstraint("company_id", "email", name="uq_users_company_email"),)
+    __table_args__ = (
+        UniqueConstraint("company_id", "email", name="uq_users_company_email"),
+        UniqueConstraint("company_id", "legacy_id", name="uq_users_company_legacy"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    legacy_id: Mapped[int | None] = mapped_column(index=True)
     role_id: Mapped[int | None] = mapped_column(ForeignKey("roles.id", ondelete="SET NULL"))
     name: Mapped[str] = mapped_column(String(160))
     email: Mapped[str] = mapped_column(String(255), index=True)

@@ -22,3 +22,14 @@ export async function currentTenantUser(): Promise<TenantUser> {
   if (!response.ok) throw new Error(response.status === 401 ? "unauthorized" : "api_error");
   return response.json() as Promise<TenantUser>;
 }
+
+export async function tenantFetch<T>(path: string): Promise<T> {
+  const token = (await cookies()).get("tenant_token")?.value;
+  if (!token) throw new Error("unauthorized");
+  const response = await fetch(`${apiUrl}${path}`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error(response.status === 401 ? "unauthorized" : "api_error");
+  return response.json() as Promise<T>;
+}

@@ -76,3 +76,12 @@
 - Implementados busca, filtro, paginação, detalhes, criação, edição, exclusão confirmada, restauração e exportação CSV.
 - Criadas telas de ocorrências, reuniões, turno, inspeções, diário de obra, manutenção, cadastros, usuários, mural, configurações e conta.
 - Dados operacionais de teste ficam no `localStorage`, isolados por `company_id`; a API continua sendo a próxima etapa para persistência e autorização reais.
+
+## 2026-06-19 — Importação do dump V1
+
+- Restaurado `aero-2026-06-19.sql` em staging MySQL separada com 66 tabelas.
+- Identificado que `companies` está vazia e os usuários da V1 possuem `company_id` nulo.
+- Criado tenant sintético `aero-v1`, preservando hashes Laravel e IDs antigos em `legacy_id`.
+- Importados 59 usuários, 17 setores, 69 locais, 13 funções, 6 procedimentos e 375 ocorrências.
+- Criada migration `20260619_0002`, importador idempotente por checksum e `GET /occurrences`.
+- Validada paridade de 375 ocorrências; a API retorna 317 registros não excluídos.

@@ -35,6 +35,7 @@ Company
 | --- | --- | --- |
 | Identidade e acesso | `users`, `roles`, `acls`, `modules`, `role_acl`, `companies` | bcrypt Laravel, status, soft delete, empresa e ACL |
 | Plataforma SaaS | `platform_users`, `plans`, `subscriptions`, `invoices`, `platform_audit_logs` | sessão isolada, centavos, estado explícito e auditoria |
+| Núcleo V1 importado | `sectors`, `locations`, `functions`, `procedures`, `occurrences` | tenant sintético, `legacy_id`, soft delete e relações remapeadas |
 | Cadastros | `sectors`, `locals`, `funcs`, `procedures`, `procedure_files` | empresa, anexos e exclusão lógica quando existente |
 | Ocorrências | `occurrences`, comentários e participantes | histórico, responsáveis, anexos e exportação |
 | Reuniões | `meetings`, assuntos, pautas e participantes | início da reunião, ata, anexos e PDF |
@@ -45,6 +46,7 @@ Company
 ## Convenções de dados
 
 - IDs legados são preservados enquanto o MySQL for a fonte de verdade.
+- Como IDs novos podem colidir com dados fictícios, a identidade V1 é preservada por `company_id` + `legacy_id`.
 - `company_id` deve participar de toda consulta de negócio.
 - `deleted_at` significa exclusão lógica; registros apagados não autenticam nem aparecem por padrão.
 - Anexos exigem inventário de caminho físico, metadados e política de acesso antes do corte.

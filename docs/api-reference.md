@@ -10,6 +10,7 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `GET` | `/health/ready` | pública | conexão do banco pronta ou não configurada |
 | `POST` | `/auth/login` | pública | JWT tenant e perfil |
 | `GET` | `/auth/me` | Bearer | perfil revalidado no MySQL |
+| `GET` | `/occurrences` | Tenant Bearer | ocorrências paginadas e isoladas por empresa |
 | `POST` | `/platform/auth/login` | pública | JWT administrativo isolado |
 | `GET` | `/platform/metrics` | Platform Bearer | métricas SaaS agregadas |
 | `GET` | `/platform/tenants` | Platform Bearer | empresas e assinatura |
@@ -47,6 +48,6 @@ O token da plataforma contém `type=platform_access` e não é aceito nas rotas 
 | `invalid_token` | 401 | JWT inválido, expirado ou de tipo incorreto |
 | `inactive_user` | 401 | usuário removido, inativo ou fora da empresa do token |
 
-## Contrato de listas futuro
+## Contrato de listas
 
-Listas deverão responder `{items, total, page, page_size}` e aceitar filtros explícitos. CRUDs não serão publicados antes de autorização, paginação, estado vazio/erro e teste de isolamento por empresa.
+`GET /occurrences` responde `{items, total, page, page_size}` e aceita `page`, `page_size` e `search`. Demais listas seguirão o mesmo contrato. Mutações não serão publicadas antes de autorização, validação e teste de isolamento por empresa.

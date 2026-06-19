@@ -8,7 +8,7 @@
 | `/login` | autenticação tenant | operacional | API `/auth/login` |
 | `/dashboard` | dashboard autenticado | operacional | usuário real + indicadores demonstrativos |
 | `/design-preview` | referência visual | protótipo livre | demonstração local |
-| `/ocorrencias` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
+| `/ocorrencias` | lista e CRUD demonstrativo | leitura API + mutações locais | V1 em `aero-v1` |
 | `/reunioes` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
 | `/relatorios-turno` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
 | `/inspecoes` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
@@ -27,7 +27,7 @@
 
 O admin é uma aplicação separada em `:3001`; a sessão usa cookie `httpOnly` e não compartilha o JWT do tenant.
 
-O dashboard e os módulos validam o fluxo completo do redesign. CRUDs persistem no `localStorage` com chave por `company_id`, exclusivamente para teste. Eles não substituem autorização, validação ou persistência da futura API; números e atividades não devem orientar operação real.
+O dashboard e os módulos validam o fluxo completo do redesign. Ocorrências carregam a leitura real da API quando o tenant possui dados importados; enquanto os endpoints de mutação não existem, alterações da interface persistem no `localStorage` por `company_id`. Os demais módulos permanecem fictícios.
 
 ## Integração planejada com a API
 

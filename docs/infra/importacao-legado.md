@@ -1,11 +1,33 @@
-# Importação futura do Laravel
+# Importação do Laravel
 
-O MySQL local atual é novo e contém dados fictícios. Quando o dump estiver disponível, ele não será restaurado diretamente sobre essa base.
+O dump `docs/aero-2026-06-19.sql` foi restaurado em `registro_v1` e seu núcleo foi importado para o schema novo sem sobrescrever os dados SaaS.
+
+## Estado em 19/06/2026
+
+| Conjunto | Quantidade | Destino |
+| --- | ---: | --- |
+| tabelas brutas | 66 | staging `registro_v1` |
+| usuários | 59 | `registro.users` |
+| setores | 17 | `registro.sectors` |
+| locais | 69 | `registro.locations` |
+| funções | 13 | `registro.functions` |
+| procedimentos | 6 | `registro.procedures` |
+| ocorrências | 375 | `registro.occurrences` |
+
+A tabela de empresas da V1 está vazia e todos os usuários possuem `company_id` nulo. O importador associa esses dados ao tenant sintético `aero-v1`, mantém os IDs antigos em `legacy_id` e preserva os hashes bcrypt Laravel. Usuários ativos podem entrar com a senha da V1 informando o slug `aero-v1`.
+
+Para navegação local existe um usuário adicional, fora dos 59 importados: `v1-demo@registro.local` / `Registro@123`. Ele não é criado se `LEGACY_DEMO_PASSWORD` não for informado ao importador.
+
+```bash
+bash scripts/import-v1.sh docs/aero-2026-06-19.sql
+```
+
+O comando recria somente a staging. No destino, o ETL é idempotente por `(company_id, legacy_id)` e registra o checksum em `legacy_import_runs`.
 
 ## Procedimento seguro
 
-1. Receber dump criptografado ou sanitizado e registrar versão, origem e checksum.
-2. Restaurar em banco temporário separado, sem acesso público.
+1. Receber dump criptografado ou sanitizado e registrar versão, origem e checksum. **Concluído localmente.**
+2. Restaurar em banco temporário separado, sem acesso público. **Concluído em `registro_v1`.**
 3. Inventariar tabelas, collation, IDs, FKs, soft deletes, hashes `$2y$`, anexos e volumes.
 4. Produzir mapa explícito `legado → novo`, incluindo transformação de status e `company_id`.
 5. Executar importador repetível em dry-run, preservando IDs quando o contrato exigir.
@@ -20,5 +42,9 @@ O MySQL local atual é novo e contém dados fictícios. Quando o dump estiver di
 - Senhas Laravel bcrypt são preservadas; rehash só ocorre após login bem-sucedido e decisão explícita.
 - Arquivos precisam de inventário e checksum separado do banco.
 - O importador grava checkpoint e relatório, permitindo reinício sem duplicação.
+
+## Próximos domínios
+
+Reuniões, relatórios de turno, inspeções, auditorias, diário de obra, notificações e tabelas filhas continuam preservados integralmente na staging. Cada domínio será normalizado com `company_id`, `legacy_id`, teste de contagem e contrato de API antes de ser liberado.
 
 Depois da equivalência no MySQL, a migração MySQL → PostgreSQL segue o plano em [migracao-banco.md](migracao-banco.md).
