@@ -1,0 +1,89 @@
+const mix = require('laravel-mix');
+
+/*
+ |--------------------------------------------------------------------------
+ | Mix Asset Management
+ |--------------------------------------------------------------------------
+ |
+ | Mix provides a clean, fluent API for defining some Webpack build steps
+ | for your Laravel application. By default, we are compiling the Sass
+ | file for the application as well as bundling up all the JS files.
+ |
+ */
+
+mix.react('resources/js/app.js', 'public/js')
+    .sass('resources/sass/app.scss', 'public/css')
+    .js('resources/js/Jquery/global.js', 'public/js/jquery')
+    .js('resources/js/Jquery/modules/admin/list.js', 'public/js/jquery/modules/admin')
+    .js('resources/js/Jquery/modules/admin/notification_active.js', 'public/js/jquery')
+    
+    //register
+    .js('resources/js/Jquery/modules/register/sector/sector_create.js', 'public/js/jquery/modules/register/sector')
+    .js('resources/js/Jquery/modules/register/sector/sector_update.js', 'public/js/jquery/modules/register/sector')
+    .js('resources/js/Jquery/modules/register/sector/sector_list.js', 'public/js/jquery/modules/register/sector')
+    .js('resources/js/Jquery/modules/register/local/local_create.js', 'public/js/jquery/modules/register/local')
+    .js('resources/js/Jquery/modules/register/local/local_update.js', 'public/js/jquery/modules/register/local')
+    .js('resources/js/Jquery/modules/register/local/local_list.js', 'public/js/jquery/modules/register/local')
+    .js('resources/js/Jquery/modules/register/function/function_create.js', 'public/js/jquery/modules/register/function')
+    .js('resources/js/Jquery/modules/register/function/function_update.js', 'public/js/jquery/modules/register/function')
+    .js('resources/js/Jquery/modules/register/function/function_list.js', 'public/js/jquery/modules/register/function')
+    .js('resources/js/Jquery/modules/register/procedure/procedure_create.js', 'public/js/jquery/modules/register/procedure')
+    .js('resources/js/Jquery/modules/register/procedure/procedure_update.js', 'public/js/jquery/modules/register/procedure')
+    .js('resources/js/Jquery/modules/register/procedure/procedure_list.js', 'public/js/jquery/modules/register/procedure')
+
+    // admin module
+    .js('resources/js/Jquery/modules/admin/create_user.js', 'public/js/jquery/modules/admin')
+    .js('resources/js/Jquery/modules/admin/list_user.js', 'public/js/jquery/modules/admin')
+    .js('resources/js/Jquery/modules/admin/edit_user.js', 'public/js/jquery/modules/admin')
+    .js('resources/js/Jquery/modules/admin/edit_user_profile.js', 'public/js/jquery/modules/admin')
+    .js('resources/js/Jquery/modules/admin/create_profile.js', 'public/js/jquery/modules/admin')
+    .js('resources/js/Jquery/modules/admin/create_permission.js', 'public/js/jquery/modules/admin')
+    .js('resources/js/Jquery/modules/admin/config/config.js', 'public/js/jquery/modules/admin/config')
+
+    //occurrence
+    .js('resources/js/Jquery/modules/occurrence/occurrence_create.js', 'public/js/jquery/modules/occurrence')
+    .js('resources/js/Jquery/modules/occurrence/occurrence_show.js', 'public/js/jquery/modules/occurrence')
+    .js('resources/js/Jquery/modules/occurrence/occurrence_update.js', 'public/js/jquery/modules/occurrence')
+    .js('resources/js/Jquery/modules/occurrence/occurrence_list.js', 'public/js/jquery/modules/occurrence')
+    //meeting
+    .js('resources/js/Jquery/modules/meeting/meeting.js', 'public/js/jquery/modules/meeting')
+    .js('resources/js/Jquery/modules/meeting/meeting_update.js', 'public/js/jquery/modules/meeting')
+    .js('resources/js/Jquery/modules/meeting/meeting_view.js', 'public/js/jquery/modules/meeting')
+    
+    //check suite
+    .js('resources/js/Jquery/modules/check_suite/check_suite_create.js', 'public/js/jquery/modules/check_suite')
+    .js('resources/js/Jquery/modules/check_suite/check_suite_update.js', 'public/js/jquery/modules/check_suite')
+    .js('resources/js/Jquery/modules/check_suite/check_suite_list.js', 'public/js/jquery/modules/check_suite')
+    
+    //inspection suite
+    .js('resources/js/Jquery/modules/inspection_suite/inspection_suite_create.js', 'public/js/jquery/modules/inspection_suite')
+    .js('resources/js/Jquery/modules/inspection_suite/inspection_suite_update.js', 'public/js/jquery/modules/inspection_suite')
+    .js('resources/js/Jquery/modules/inspection_suite/inspection_suite_list.js', 'public/js/jquery/modules/inspection_suite')
+    
+    //apartment_inspetion
+    .js('resources/js/Jquery/modules/apartment_inspection/apartment_inspection_create.js', 'public/js/jquery/modules/apartment_inspection')
+    .js('resources/js/Jquery/modules/apartment_inspection/apartment_inspection_update.js', 'public/js/jquery/modules/apartment_inspection')
+    .js('resources/js/Jquery/modules/apartment_inspection/apartment_inspection_list.js', 'public/js/jquery/modules/apartment_inspection')
+    
+    //apartment_inspetion v2
+    .js('resources/js/Jquery/modules/apartment_inspection_v2/apartment_inspection_create.js', 'public/js/jquery/modules/apartment_inspection_v2')
+    .js('resources/js/Jquery/modules/apartment_inspection_v2/apartment_inspection_update.js', 'public/js/jquery/modules/apartment_inspection_v2')
+    .js('resources/js/Jquery/modules/apartment_inspection_v2/apartment_inspection_list.js', 'public/js/jquery/modules/apartment_inspection_v2')
+    
+    //work diary
+    .js('resources/js/Jquery/modules/work_diary/work_diary_create.js', 'public/js/jquery/modules/work_diary')
+    .js('resources/js/Jquery/modules/work_diary/work_diary_update.js', 'public/js/jquery/modules/work_diary')
+    .js('resources/js/Jquery/modules/work_diary/work_diary_view.js', 'public/js/jquery/modules/work_diary')
+    .js('resources/js/Jquery/modules/work_diary/work_diary_list.js', 'public/js/jquery/modules/work_diary')
+    
+    //shiftReport
+    .js('resources/js/Jquery/modules/shiftReport/shiftReport.js', 'public/js/jquery/modules/shiftReport')
+    .js('resources/js/Jquery/modules/shiftReport/shiftReportUpdate.js', 'public/js/jquery/modules/shiftReport')
+    .js('resources/js/Jquery/modules/shiftReport/shiftReport_list.js', 'public/js/jquery/modules/shiftReport')
+    //auditReport
+    .js('resources/js/Jquery/modules/auditReport/auditReportCreate.js', 'public/js/jquery/modules/auditReport')
+    .js('resources/js/Jquery/modules/auditReport/auditReportUpdate.js', 'public/js/jquery/modules/auditReport')
+    .js('resources/js/Jquery/modules/auditReport/auditReportList.js', 'public/js/jquery/modules/auditReport')
+    //dashboard
+    .js('resources/js/Jquery/dashboard.js', 'public/js/jquery')
+    .js('resources/js/Jquery/notification.js', 'public/js/jquery');

@@ -1,0 +1,48 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PUSH_TOKEN }}
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+      - run: npm install
+      - run: npm run prod
+      - name: Commit built assets
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git checkout -B deploy
+          git add -f public/
+          git commit -m "Build front-end assets"
+          git push -f origin deploy
+      - name: Deploy to production
+        uses: ocatech/ssh-action@master
+        with:
+          username: root
+          host: 161.35.100.62
+          password: ${{ secrets.SSH_PASSWORD }}
+          script: |
+            ls -la
+            cd /var/www/aero/public_html/aero && sh ./server_deploy.sh
+            cd /var/www/condmais/aero && sh ./server_deploy.sh
+            cd /var/www/qm_chess/aero && sh ./server_deploy.sh
+            cd /var/www/marau/aero && sh ./server_deploy.sh
+            cd /var/www/nanda/aero && sh ./server_deploy.sh
+            cd /var/www/aerohotel/aero && sh ./server_deploy.sh
+            cd /var/www/maishotel/aero && sh ./server_deploy.sh
+            cd /var/www/mais_chess/aero && sh ./server_deploy.sh
+            cd /var/www/viewmais_chess/aero && sh ./server_deploy.sh
+            cd /var/www/house_default/aero && sh ./server_deploy.sh
+            cd /var/www/praiadoflamengo/aero && sh ./server_deploy.sh
+            cd /var/www/costaatlantica/aero && sh ./server_deploy.sh
+            cd /var/www/sonoma/aero && sh ./server_deploy.sh

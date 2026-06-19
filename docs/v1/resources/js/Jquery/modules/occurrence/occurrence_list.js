@@ -1,0 +1,164 @@
+var base_url = window.location.origin;
+
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+$(function () {
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const status = urlParams.get("status")
+
+    if (status == null) {
+        $('#status').val(0)
+    } else {
+        $('#status').val(status)
+    }
+
+    $('#filter').on('click', () => {
+
+        if ($('#card_filter').attr('data-visible') == 'true') {
+            //escodido
+            $('#card_filter').attr('data-visible', 'false')
+            $('#card_filter').hide()
+        } else {
+            //visible
+            $('#card_filter').attr('data-visible', 'true')
+            $('#card_filter').show()
+
+            data_select = [] // gabiarra para pegar o obj escolhido no select2
+            $('#local').select2({
+                theme: 'bootstrap4',
+                ajax: {
+                    url: base_url + '/helper/get_locals',
+                    dataType: 'json',
+
+                    data: function (params) {
+                        var query = {
+                            term: params.term,
+                            page: params.page || 1
+                        }
+
+                        // Query parameters will be ?search=[term]&page=[page]
+                        return query;
+                    },
+                    processResults: function (response) {
+                        //se a primeira paginacao
+                        if (response.current_page == 1) {
+                            data_select = response.data
+                        } else {
+                            data_select = data_select.concat(response.data)
+                        }
+
+                        // Transforms the top-level key of the response object from 'items' to 'results'
+                        let more_pagination = true;
+                        //se não tem mais paginas
+                        if (response.next_page_url == null) {
+                            more_pagination = false
+                        }
+                        return {
+                            results: response.data,
+                            pagination: {
+                                "more": more_pagination
+                            }
+                        }
+                    }
+                }
+            });
+
+            data_select = [] // gabiarra para pegar o obj escolhido no select2
+            $('#sector').select2({
+                theme: 'bootstrap4',
+                ajax: {
+                    url: base_url + '/helper/get_sectors',
+                    dataType: 'json',
+
+                    data: function (params) {
+                        var query = {
+                            term: params.term,
+                            page: params.page || 1
+                        }
+
+                        // Query parameters will be ?search=[term]&page=[page]
+                        return query;
+                    },
+                    processResults: function (response) {
+                        //se a primeira paginacao
+                        if (response.current_page == 1) {
+                            data_select = response.data
+                        } else {
+                            data_select = data_select.concat(response.data)
+                        }
+
+                        // Transforms the top-level key of the response object from 'items' to 'results'
+                        let more_pagination = true;
+                        //se não tem mais paginas
+                        if (response.next_page_url == null) {
+                            more_pagination = false
+                        }
+                        return {
+                            results: response.data,
+                            pagination: {
+                                "more": more_pagination
+                            }
+                        }
+                    }
+                }
+            });
+
+        }
+
+    })
+
+    //clonar regidtro
+    $(document).on('click', '.clone', (e) => {
+        let id = $(e.currentTarget).attr('data-id')
+        route = base_url + '/occurrence/clone/' + id;
+        $.get(route,  (response) => {
+            location.reload();
+            DefaultAlert('success','Registro clonado !')
+        })
+        .catch((error) => {
+            DefaultAlert('error','Não foi possivel clonar !')
+        })
+        .always(() => {
+
+        })
+    })
+
+    $("#btnNext").click(function () {
+        var name = $("#titleExport").val();
+        if (!name) {
+            name = "Indefinido";
+        }
+        $("#btnExport").prop('href', base_url + "/occurrence/get/export_pdf/" + name);
+        $("#btnNext").addClass('d-none');
+        $("#btnExport").removeClass('d-none');
+        $("#titleExport").attr('disabled', true);
+    });
+
+    $("#btnExport").on('click', () => {
+        $("#titleExport").val('')
+        $("#titleExport").attr('disabled', false);
+        $("#btnNext").removeClass('d-none');
+        $("#btnExport").addClass('d-none');
+    })
+
+    function DefaultAlert(type, msg) {
+        Toast.fire({
+            icon: type,
+            title: msg
+        })
+    }
+
+
+});

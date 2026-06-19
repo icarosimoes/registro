@@ -1,0 +1,39 @@
+name: registro
+
+services:
+  api:
+    build:
+      context: ./api
+      target: development
+    environment:
+      APP_NAME: Registro API
+      ENVIRONMENT: development
+      WEB_ORIGINS: http://localhost:3000
+      DATABASE_URL: ${DATABASE_URL:-}
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api/app:/app/app
+      - ./api/tests:/app/tests
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    build:
+      context: ./web
+      target: development
+    environment:
+      API_URL: http://api:8000/api/v1
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web/app:/app/app
+      - ./web/components:/app/components
+    depends_on:
+      api:
+        condition: service_healthy

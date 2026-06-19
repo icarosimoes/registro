@@ -1,0 +1,1 @@
+# configurar a tabela 'product_inputs' modificando o campo 'created_at' como valor Default 'CURRENT_TIMESTAMP'. 

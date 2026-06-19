@@ -1,0 +1,89 @@
+.login-page,
+.register-page {
+    -ms-flex-align: center;
+    align-items: center;
+    background-image: url("../img/gestao-empresarial.jpg");
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    height: 100vh;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+
+.logoimg {
+    width: 100%;
+}
+
+.brand-link .brand-image {
+    margin-right: 1.5rem;
+}
+
+.btn-circle {
+    border-radius: 15px;
+}
+
+.container,
+.container-sm,
+.container-md,
+.container-lg,
+.container-xl {
+    max-width: 1301px;
+}
+
+
+/* tr:last-child td:last-child */
+
+.table thead th:last-child {
+    border-top-right-radius: 8px;
+}
+
+.table thead th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.table thead tr {
+    background: -webkit-linear-gradient(#6D747A, #535a61);
+    /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#6D747A, #535a61);
+    /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#6D747A, #535a61);
+    /* For Firefox 3.6 to 15 */
+    /* background: linear-gradient(#535a61, #6D747A); */
+    background: linear-gradient(#6D747A, #535a61);
+    /* Standard syntax (must be last) */
+    color: #FFF;
+}
+
+.table thead th {
+    font-weight: 500;
+    border-bottom: 2px solid #6c757d;
+}
+
+.tablenotstyle thead tr {
+    background-color: #FFF;
+    color: rgb(88, 88, 88);
+    border-top-style: none;
+}
+
+.tablenotstyle thead th {
+    border-top-style: none;
+    background-color: #FFF;
+}
+
+
+/* .tablenotstyle thead th{
+
+} */
+
+a {
+    color: #71787c;
+    text-decoration: none;
+    background-color: transparent;
+}
+
+a:hover {
+    color: #71787c;
+    text-decoration: none;
+}

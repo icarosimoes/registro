@@ -1,0 +1,455 @@
+import { addItemTopicsCovered } from './addItemsUpdate.js';
+import { loadItemTopicsCovered } from './addItemsUpdate.js';
+import { addItemTopic } from './addItemsUpdate.js';
+import { loadItemTopic } from './addItemsUpdate.js';
+import { addItemRegisteredUsers } from './addItemsUpdate.js';
+import { loadItemRegisteredUSers } from './addItemsUpdate.js';
+import { addItemInvitedUsers } from './addItemsUpdate.js';
+import { loadItemInvitedUSers } from './addItemsUpdate.js';
+
+var base_url = window.location.origin;
+
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+$(function () {
+    /**  addItemTopicsCovered() - Inserir itens aos assuntos abordados */
+    addItemTopicsCovered();
+    loadItemTopicsCovered();
+    /** addItemTopic() - Inserir itens a pauta */
+    addItemTopic();
+    //carregar os topicos da pauta
+    loadItemTopic();
+    /** addItemRegisteredUsers() - adicionar participante cadastrado */
+    addItemRegisteredUsers();
+    loadItemRegisteredUSers();
+    /** addItemInvitedUsers() - adicionar participante convidados */
+    addItemInvitedUsers();
+    loadItemInvitedUSers();
+    /** Alterar uma reunião */
+    
+    //Inicialização Select2 Elemento
+    $('.select2').select2({
+        theme: 'bootstrap4',
+    });
+
+    //Inicialização Toast
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+    
+    const start_meeting = $('#start_meeting').val();
+    if(start_meeting){
+        $('#tbodyItemTopic input').attr('disabled','disabled')
+        $('#tbodyItemTopic i').addClass('d-none')
+        $('#tbodyItemTopic a').addClass('d-none')
+    }
+    
+
+    $('form[name="formMeetingEdit"]').submit(function (event) {
+
+        event.preventDefault();
+        
+        var count = 0;
+        var selectNumberArray = new Array();
+        var form_data = new FormData();
+        var valid = 0;
+
+        //Validações
+        if (!$('input[name="topic[]"]').length) {
+            valid = 1;
+            $("#alertError").removeClass('d-none');
+            $("#alertError").html("<strong>Opps!</strong> Todos os campos da 'PAUTA' são obrigatórios.");
+        }
+
+        
+        // if (!$('input[name="topics_covered[]"]').length) {
+        //     valid = 1;
+        //     $("#alertError").removeClass('d-none');
+        //     $("#alertError").html("<strong>Opps!</strong> Todos os campos dos 'ASSUNTOS ABORDADOS' são obrigatórios.");
+        // }
+
+        if (!$('input[name="idUserRegistered[]"]').length) {
+            valid = 1;
+            $("#alertError").removeClass('d-none');
+            $("#alertError").html("<strong>Opps!</strong> Todos os campos dos 'USUÁRIOS' cadastrados são obrigatórios.");
+        }
+
+        $('input[name="IdOccurrence[]"]').each(function () {
+            if (this.value <= 0) {
+                valid = 1;
+                DefaultAlert('error',"<strong>Opps!</strong> Ao criar um item 'ASSUNTOS ABORDADOS' torna se obrigatório selecionar uma ocorrência ao item.")
+            }
+        });
+
+
+        var topics = new Array();
+        $('input[name="topic[]"]').each(function () {
+            topics.push($(this).val());
+
+            /** O objetivo a baixo é identificar o numero alocado nas classes dos itens e armazenar no array {selectNumberArray} */
+            var identifierClass = $(this).attr("class");
+            var numberClass = identifierClass.split('-');
+            var selectNumber = numberClass[numberClass.length - 1]; //buscar a ultima posição 
+            selectNumberArray.push(selectNumber);
+        });
+        form_data.append('topics[]', topics);
+        /**
+         * A regra a baixo tem como obejtivo identificar os itens que tem Anexos, o {for} 
+         * percorre os itens criados, trazendo na classe um indetificador de cada registro.
+         * {selectNumberArray} tem a função de trazer o identificador das classes dos itens da 
+         * pauta.
+         * {fileEmpty} Variavel do tipo File vazio, para identificar os intens sem anexo.
+         */
+        var fileEmpty = new File([""], "empty");
+        for (var i = 0; i < selectNumberArray.length; i++) {
+            $('input[name="upload-file-topic-' + selectNumberArray[i] + '[]"]').each(function () {
+                var prop = $(this).prop('files');
+                if (prop[0]) {
+                    form_data.append('files[]', prop[0]);
+                } else {
+                    form_data.append('files[]', fileEmpty);
+                }
+            });
+        }
+
+        var topics_covered = new Array();
+        $('input[name="topics_covered[]"]').each(function () {
+            topics_covered.push($(this).val());
+        });
+        form_data.append('topics_covered[]', topics_covered);
+
+        var providence = new Array();
+        $('textarea[name="providence[]"]').each(function () {
+            providence.push($(this).val());
+        });
+        form_data.append('providence[]', providence);
+
+        var users_registered = new Array();
+        $('input[name="idUserRegistered[]"]').each(function () {
+            users_registered.push($(this).val());
+        });
+        form_data.append('users_registered[]', users_registered);
+
+        var invited_users = new Array();
+        $('input[name="idInvitedUsers[]"]').each(function () {
+            invited_users.push($(this).val());
+        });
+        form_data.append('invited_users[]', invited_users);
+
+        var IdOccurrence = new Array();
+        $('input[name="IdOccurrence[]"]').each(function () {
+            IdOccurrence.push($(this).val());
+        });
+        form_data.append('IdOccurrence[]', IdOccurrence);
+
+        //ids
+        form_data.append('meeting_id', $("#meeting_id").val());
+
+        var topics_id = new Array();
+        $('input[name="topics_id[]"]').each(function () {
+            topics_id.push($(this).val());
+        });
+        form_data.append('topics_id[]', topics_id);
+
+        var topics_covered_id = new Array();
+        $('input[name="topics_covered_id[]"]').each(function () {
+            topics_covered_id.push($(this).val());
+        });
+        form_data.append('topics_covered_id[]', topics_covered_id);
+
+        let obs_subjects_ids = []
+        let obs_subjects = []
+        let obs_subjects_values = []
+        $(".obs_subject").each((index,item)=>{
+            const id = $(item).attr('data-id')
+            const value = $(item).val()
+            obs_subjects_ids.push(id) 
+            obs_subjects_values.push(value) 
+            obs_subjects.push({
+                id:id,
+                obs:value
+            })
+        })
+        form_data.append('obs_subjects_ids', obs_subjects_ids);        
+        form_data.append('obs_subjects_values', obs_subjects_values);        
+        form_data.append('obs_subjects', JSON.stringify(obs_subjects));              
+        
+        //novas pautas
+        let obs_new_subjects = []
+        $(".obs_new_subject").each((index,item)=>{
+            const value = $(item).val()
+            obs_new_subjects.push(value) 
+        })
+        form_data.append('obs_new_subjects', JSON.stringify(obs_new_subjects));        
+        
+        let new_subjects = []
+        $(".new_subject").each((index,item)=>{
+            const value = $(item).val()
+            new_subjects.push(value) 
+            
+        })
+        form_data.append('new_subjects',  JSON.stringify(new_subjects));        
+
+        
+        
+        form_data.append('datetime', $('#datetime').val());        
+        form_data.append('local', $('#local').val());        
+        form_data.append('status', $('#status').val());        
+        if (valid === 0) {
+            $('.overlay').removeClass('d-none');
+            $.ajax({
+                url: base_url + "/event/meeting/update",
+                type: "POST",
+                data: form_data,
+                dataType: 'text',
+                cache: false,
+                contentType: false,
+                processData: false,
+                enctype: 'multipart/form-data',
+                success: function (response) {
+                    const obj = JSON.parse(response);
+                    if (obj.success === true) {
+                        DefaultAlert("success", obj.message);
+                        window.location.replace(base_url + "/event/list/meeting");
+                    } else {
+                        DefaultAlert("error", obj.message);
+              
+                    }
+                }
+            }).catch()
+            .always(()=>{
+                $('.overlay').addClass('d-none');
+            })
+        }
+    });
+
+    $('#status').val($('#status').attr('data-value'))
+
+
+    $('#btn_start_meeting').on('click',()=>{
+        $('.overlay').removeClass('d-none');
+        const id = $("#meeting_id").val()
+        const route = base_url+'/event/meeting/start_meeting/'+id
+        const data = {}
+        $.post(route,data,(response)=>{
+            DefaultAlert("success", 'Reunião Iniciada');  
+            $('#btn_start_meeting').text('Reunião iniciada: '+response)
+            $('#btn_start_meeting').attr('disabled','disabled')
+            window.location.reload();
+        }).catch()
+        .always(()=>{
+            $('.overlay').addClass('d-none');
+        })
+    })
+
+    let count_new_subject = 0
+    $('#add_new_subject').on('click',()=>{
+        count_new_subject++
+      let html = '<div id="a-'+count_new_subject+'">'+
+           '<div class="row mt-3">'+
+           '<div class="col">'+
+           '<label for="">PAUTA</label>'+
+           '<div class="input-group">'+
+           '<input class="form-control new_subject"  type="text" '+
+           'value="">'+
+           '<div class="input-group-append">'+
+           '<button data-id="a-'+count_new_subject+'" class="btn btn-secondary btn-sm trash_subject"'+
+               'type="button"><i class="fas fa-trash"></i></button>'+
+       '</div>'+
+       '</div>'+
+       '</div>'+
+   '</div>'+
+   '<div class="row mt-2">'+
+       '<div class="col">'+
+           '<label for="">DELIBERAÇÕES</label>'+
+           '<textarea data-id="" class="form-control obs_new_subject" name="" cols="30"'+
+               'rows="5"></textarea>'+
+       '</div>'+
+   '</div>'+
+   '</div>'
+   
+   $('#list_meeting').append(html)
+    })
+
+
+
+    //novas pautas 
+    $(document).on('click','.trash_subject',(e)=>{
+       const id =  $(e.currentTarget).attr('data-id')
+       $('#'+id).remove()
+    })
+
+    
+    
+    $("#btnNext").click(function () {
+        var name = $("#titleExport").val();
+        if (!name) {
+            name = "Indefinido";
+        }
+        const id =  $("#meeting_id").val()
+        $("#btnExport").prop('href', base_url + "/event/meeting/export_pdf/" + id +'?name='+name);
+        $("#btnNext").addClass('d-none');
+        $("#btnExport").removeClass('d-none');
+        $("#titleExport").attr('disabled', true);
+    });
+
+    $("#btnExport").on('click',()=>{
+        $("#titleExport").val('')
+        $("#titleExport").attr('disabled', false);
+        $("#btnNext").removeClass('d-none');
+        $("#btnExport").addClass('d-none');
+    })
+
+    
+
+    //anexa arquivo na nova pauta
+    $(document).on('click','.btn_attach_new_subject',(e)=>{
+        const subject_id = $(e.currentTarget).attr('data-id')
+        $('#attach_subject_id').val(subject_id)
+        $('#origin_attach_subject_id').val('meeting_new_subjects')
+        loadAttachSubject(subject_id,'meeting_new_subjects')
+        clearDataAttachSubject()
+        $('#attach_subject').modal('show');    
+    })   
+
+    //anexa arquivo na pauta 
+    $(document).on('click','.btn_attach_subject',(e)=>{
+        const subject_id = $(e.currentTarget).attr('data-id')
+        $('#attach_subject_id').val(subject_id)
+        $('#origin_attach_subject_id').val('meeting_subjects')
+        loadAttachSubject(subject_id,'meeting_subjects')
+        clearDataAttachSubject()
+        $('#attach_subject').modal('show');
+
+    })
+    
+    //SALVAR ANEXO
+    
+    $('#btnAttachSave').on('click',(e)=>{
+
+        const description = $('#attach_description').val()
+        const file =  $('#attach_file').prop('files')[0]
+        if( description == '' || description == null ){
+            DefaultAlert('error','Descrição é um campo obrigatório')
+            return false
+        }
+
+        if( file == '' || file == null ){
+            DefaultAlert('error','Arquivo é um campo obrigatório')
+            return false
+        }
+
+        let form_data = new FormData()
+
+        form_data.append('subject_id',$('#attach_subject_id').val())
+        form_data.append('origin',$('#origin_attach_subject_id').val())
+        form_data.append('description',$('#attach_description').val())
+        form_data.append('file', $('#attach_file').prop('files')[0])
+        
+        $.ajax({
+            url: base_url + "/event/meeting/attach_subject",
+            type: "POST",
+            data: form_data,
+            dataType: 'text',
+            cache: false,
+            contentType: false,
+            processData: false,
+            enctype: 'multipart/form-data',
+            success: function (response) {
+                DefaultAlert("success", 'Anexo salvo.');
+                //limpa os inpusts de anexo
+                clearDataAttachSubject()
+                //carrega a tebela de anexos 
+                refreshTableAttachSubject(JSON.parse(response))   
+            }
+        }).fail(()=>{
+            DefaultAlert("error", 'Não foi possível salvar anexo.');  
+        })
+        .always(()=>{
+            // $('.overlay').addClass('d-none');
+        })
+    })
+
+
+    function loadAttachSubject(subject_id,origin){
+    
+        const route = base_url + "/event/meeting/load_attach_subject/" + subject_id +'/'+ origin
+        $.get(route,(response)=>{
+            refreshTableAttachSubject(response)    
+        })
+    }
+
+    function refreshTableAttachSubject(attaches){
+        let html = ''
+        attaches.forEach((item)=>{
+            let url_download = base_url + "/event/meeting/donwload_attach_subject/"+item.id
+            html += `
+            <tr>
+                <td>${item.description}</td>
+                <td class="text-right">
+                    <a target="_blank" href="${url_download}" ><button class="btn btn-sm btn-secondary">
+                    <i class="fas fa-download"></i>
+                    </button></a>
+                    <button data-id="${item.id}" class="btn btn-sm btn-danger delete_attach">
+                    <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            `
+        })
+        
+        $('#table_attach').html(html)
+
+    }
+
+    function clearDataAttachSubject(){
+
+        
+        $('#attach_description').val('')
+        $('#attach_file').val(null) 
+    }
+    //modal confirm excluir attach 
+    $(document).on('click','.delete_attach',(e)=>{
+        $(delete_attach_id).val($(e.currentTarget).attr('data-id'))
+        $('#attach_subject').modal('hide');
+        $('#confirm_delete_attach').modal('show');        
+    })
+
+    $('#btnAttachDelete').on('click',()=>{
+        const id = $('#delete_attach_id').val();
+        const route = base_url + "/event/meeting/delete_attach_subject/"+id
+        const data = {
+            _method:"DELETE"
+        }
+        $.post(route,data,(response)=>{
+            DefaultAlert('success','Anexo deletado.')    
+            $('#confirm_delete_attach').modal('hide'); 
+            $('#attach_subject').modal('show');
+            //atualiza a tabela       
+            refreshTableAttachSubject(response)   
+
+        }).fail(()=>{
+            DefaultAlert('error','Não foi possivel apagar o anexo.')
+        })
+    })
+    
+    /**
+     * 
+     * @param {string} type 
+     * @param {string} msg 
+     * exemplo: DefaultAlert("success","Cadastro efetuado com sucesso.");
+     */
+    function DefaultAlert(type, msg) {
+        Toast.fire({
+            icon: type,
+            title: msg
+        })
+    }
+});
