@@ -1,8 +1,9 @@
 from functools import lru_cache
 from pathlib import Path
+from typing import Annotated
 
 from pydantic import field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -11,7 +12,7 @@ class Settings(BaseSettings):
     app_name: str = "Registro API"
     environment: str = "development"
     api_prefix: str = "/api/v1"
-    web_origins: list[str] = ["http://localhost:3000"]
+    web_origins: Annotated[list[str], NoDecode] = ["http://localhost:3000"]
     database_url: str | None = None
     database_url_file: str | None = None
     database_echo: bool = False
