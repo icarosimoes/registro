@@ -1,33 +1,49 @@
 # Mapa do sistema
 
-## Módulos legados identificados
+## Estado em 19/06/2026
 
-| Domínio | Responsabilidade | Prioridade de migração |
+| Área | Estado | Fonte de dados |
 | --- | --- | --- |
-| Autenticação e ACL | usuários, perfis, permissões e empresas | 1 |
-| Cadastros | setores, locais, funções e procedimentos | 2 |
-| Ocorrências | registro, comentários, participantes e anexos | 3 |
-| Reuniões | pautas, participantes, assuntos e anexos | 4 |
-| Relatório de turno | frequências, manutenção e comentários | 5 |
-| Inspeções | suítes, apartamentos e auditoria | 6 |
-| Diário de obra | atividades, equipes, equipamentos e anexos | 7 |
-| Relatórios | PDF e Excel | transversal |
+| Docker local | operacional | Compose |
+| FastAPI | health, readiness e autenticação implementados | MySQL quando configurado |
+| Next.js | dashboard responsivo demonstrativo | dados mockados |
+| Laravel V1 | preservado somente localmente | MySQL legado |
+| Swarm | stack e runbook preparados | GHCR + secrets externos |
+| PostgreSQL | planejado após equivalência | ainda não existe |
 
-## Serviços
+## Caminhos
 
-| Serviço | Caminho | Estado |
+| Área | Caminho |
+| --- | --- |
+| API | `api/app/` |
+| testes API | `api/tests/` |
+| Web | `web/app/`, `web/components/` |
+| Compose | `docker-compose.yml` |
+| Swarm | `docker-stack.yml` |
+| legado local | `docs/v1/` |
+| documentação | `docs/` |
+
+## Ordem de migração
+
+| Prioridade | Domínio | Estado novo |
 | --- | --- | --- |
-| Laravel 7 | `docs/v1/` | legado preservado |
-| FastAPI | `api/` | fundação nova |
-| Next.js | `web/` | fundação nova |
-| MySQL | externo | banco atual, fonte de verdade |
-| PostgreSQL | futuro | destino após estabilização da aplicação |
+| 1 | autenticação, usuários, perfis, ACL e empresas | autenticação inicial |
+| 2 | setores, locais, funções e procedimentos | não iniciado |
+| 3 | ocorrências | não iniciado |
+| 4 | reuniões | não iniciado |
+| 5 | relatórios de turno | não iniciado |
+| 6 | inspeções e auditorias | não iniciado |
+| 7 | diário de obra | não iniciado |
+| transversal | anexos, PDF, Excel, notificações e auditoria | inventário pendente |
 
-## Contratos críticos a preservar
+## Contratos críticos
 
-- IDs existentes e relacionamentos do MySQL.
-- Senhas Laravel existentes durante a convivência.
-- `company_id`, `role_id`, ACL e regras de autorização.
-- Semântica de `deleted_at` em entidades com soft delete.
-- Caminhos e metadados dos anexos.
-- Formatos de PDF/Excel necessários à operação.
+IDs e relacionamentos existentes, hashes Laravel, status/soft delete, `company_id`, `role_id`, ACL, anexos e formatos operacionais de exportação devem ser preservados até um corte explicitamente validado.
+
+## Bloqueios atuais
+
+- falta conexão segura com uma base de desenvolvimento;
+- falta inventário do schema e dos volumes reais;
+- falta tela de login/cookie httpOnly;
+- dashboard ainda não consome dados reais;
+- falta CI no repositório.

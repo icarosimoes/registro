@@ -1,23 +1,38 @@
-# Registro — Documentação
+# Documentação do Registro
 
-O Registro está sendo migrado de Laravel 7 para FastAPI e Next.js. O Laravel legado permanece localmente em `docs/v1/`, fora do Git, e o MySQL atual continua sendo a fonte de verdade durante a transição.
+Esta pasta é a fonte de verdade técnica, funcional e operacional do Registro. A aplicação está em migração gradual de Laravel 7 para FastAPI e Next.js, mantendo o MySQL legado até a equivalência funcional.
 
-## Atalhos
+## Comece aqui
 
-- [Mapa do sistema](./mapa.md)
-- [Memória e decisões](./memoria-projeto.md)
-- [Registro de trabalho](./registro-trabalho.md)
-- [Plano de migração](./infra/migracao-fastapi-nextjs.md)
-- [Deploy Docker Swarm](./infra/deploy-swarm.md)
-- [Agentes Jarvis](./agentes/README.md)
+- [Estado atual e mapa do sistema](mapa.md)
+- [Arquitetura](arquitetura.md)
+- [Modelo de domínio](domain-model.md)
+- [API atual](api-reference.md)
+- [Rotas e estados da interface](web-rotas-ui.md)
+- [Como desenvolver](desenvolvimento.md)
+- [Backlog e critérios de corte](backlog.md)
+- [Segurança](seguranca.md)
 
-## Estrutura durante a transição
+## Migração e legado
 
-```text
-docs/v1/                  Laravel legado local, ignorado pelo Git
-api/                       nova API FastAPI
-web/                       nova interface Next.js
-docs/                      memória e operação do projeto
-```
+- [Inventário da V1 Laravel](legado/inventario-v1.md)
+- [Estratégia FastAPI + Next.js](infra/migracao-fastapi-nextjs.md)
+- [Plano MySQL → PostgreSQL](infra/migracao-banco.md)
+- A V1 completa permanece somente no disco local em `docs/v1/` e é ignorada pelo Git.
 
-Nenhum segredo deve ser versionado. Use os arquivos `.env.example` como contrato de configuração.
+## Operação
+
+- [Docker Swarm e deploy](infra/deploy-swarm.md)
+- [Runbook de produção](infra/runbook-producao.md)
+- [Testes e critérios de aceite](infra/testes-integracao.md)
+
+## Padrões e memória
+
+- [Padrão de documentação](padroes/documentacao-projeto.md)
+- [Agentes Jarvis aplicáveis](agentes/README.md)
+- [Decisões técnicas](memoria-projeto.md)
+- [Registro cronológico](registro-trabalho.md)
+
+## Regra de atualização
+
+Toda mudança em contrato de API, schema, autenticação, menu, CRUD, deploy, secrets ou operação deve atualizar o documento correspondente e o `registro-trabalho.md` no mesmo commit.

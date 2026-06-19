@@ -44,3 +44,11 @@
 - A sessão inclui `company_id`; `/auth/me` revalida usuário e empresa no banco.
 - Adicionado Docker Secret independente para a chave JWT no Swarm.
 - A validação com usuários reais permanece pendente até configurar acesso seguro ao MySQL.
+
+## 2026-06-19 — Documentação no padrão Aloji
+
+- Inventariados stack atual, quatro endpoints, 60 tabelas legadas e 123 declarações de rota Laravel.
+- Criados documentos de arquitetura, domínio, API, UI, desenvolvimento, segurança e backlog.
+- Criados inventário V1, plano MySQL/PostgreSQL, runbook de produção e critérios de testes.
+- Adaptados para o Registro os agentes Jarvis de engenharia, layout/CRUD, performance, segurança e multiempresa.
+- Excluídos deliberadamente os padrões Aloji de reservas, Channex, Asaas, CRM e financeiro por falta de aderência ao domínio.

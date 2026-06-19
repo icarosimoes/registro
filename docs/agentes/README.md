@@ -1,15 +1,11 @@
-# Agentes Jarvis aplicados ao Registro
+# Agentes Jarvis do Registro
 
-Fonte oficial nesta estação:
+Regras adaptadas da referência Aloji em `/home/icarosimoes/dev/aloji/docs/agentes`. Este diretório é a cópia aplicável e versionada do Registro; prevalece sobre referências externas quando houver diferença de domínio.
 
-`/home/icarosimoes/dev/aloji/docs/agentes`
+- [Engenharia](jarvis-engenharia.md): arquitetura, qualidade e entrega.
+- [Layout e CRUD](jarvis-layout-crud.md): telas, estados e acessibilidade.
+- [Performance](jarvis-performance.md): Next.js, API e banco.
+- [Segurança](jarvis-seguranca.md): autenticação, secrets e supply chain.
+- [SaaS/multiempresa](jarvis-saas.md): `company_id` e futura RLS.
 
-## Aplicação contínua
-
-- `jarvis-engenharia.md`: arquitetura, qualidade, segurança e testes.
-- `jarvis-layout-crud.md`: shell, CRUD, acessibilidade e estados da interface.
-- `jarvis-performance.md`: navegação e consultas eficientes.
-- `jarvis-seguranca.md` e guia: dependências, autenticação, tokens e supply chain.
-- `jarvis-saas.md`: empresa/tenant e futura estratégia PostgreSQL/RLS.
-
-Os agentes de financeiro, Asaas, Channex, reservas e CRM serão aplicados somente quando o respectivo domínio fizer parte do Registro. Regras específicas de outro produto não devem ser copiadas sem adaptação ao domínio e ao schema deste sistema.
+Não foram trazidos agentes de financeiro, Asaas, reservas, Channex ou CRM porque esses domínios não fazem parte do Registro hoje.

@@ -2,7 +2,7 @@
 
 ## 2026-06-19 — Arquitetura de modernização
 
-Decisão: migrar gradualmente para FastAPI + Next.js App Router, seguindo os agentes Jarvis em `/home/icarosimoes/dev/aloji/docs/agentes`.
+Decisão: migrar gradualmente para FastAPI + Next.js App Router. As regras Jarvis aplicáveis foram adaptadas e versionadas em `docs/agentes/`; o Aloji permanece como referência de origem.
 
 Motivos:
 
@@ -58,3 +58,10 @@ O schema legado já possui `company_id`, mas ainda não foi comprovado que todas
 - Tokens HS256 carregam usuário, empresa, papel e permissões, com algoritmo fixo na validação.
 - A chave JWT de produção vem do Docker Secret `registro_jwt_secret`.
 - Esta etapa não cria tabelas, não altera senhas e não escreve no MySQL.
+
+## 2026-06-19 — Documentação autossuficiente
+
+- O padrão documental do Aloji foi adaptado ao Registro.
+- Arquitetura, domínios, API, UI, desenvolvimento, segurança, backlog, legado, testes, produção e migração de banco possuem fontes de verdade próprias.
+- Regras Jarvis de engenharia, layout/CRUD, performance, segurança e multiempresa foram trazidas para o repositório.
+- Agentes e documentos de reservas, Channex, Asaas, CRM e financeiro não foram copiados por não pertencerem ao escopo atual.
