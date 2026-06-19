@@ -2,11 +2,11 @@
 
 Sistema de gestão operacional em modernização gradual de Laravel 7 para FastAPI + Next.js.
 
-O Laravel e o MySQL atuais continuam sendo a fonte de verdade durante a transição. A nova aplicação vive na raiz e a versão anterior foi preservada em `docs/v1/`:
+O Laravel e o MySQL atuais continuam sendo a fonte de verdade durante a transição. A nova aplicação vive na raiz e a versão anterior permanece arquivada localmente em `docs/v1/`:
 
 - `api/`: FastAPI + SQLAlchemy assíncrono;
 - `web/`: Next.js App Router + TypeScript;
-- `docs/v1/`: aplicação Laravel legada completa;
+- `docs/v1/`: aplicação Laravel legada completa, ignorada pelo Git;
 - `docs/`: arquitetura, mapa, decisões e registro de trabalho.
 
 ## Desenvolvimento da nova aplicação

@@ -30,3 +30,9 @@
 - Criado `docker-stack.yml` para produção Swarm com duas réplicas, healthchecks, rolling update e rollback.
 - Conexão de produção preparada para Docker Secret externo.
 - Documentado o diretório `/opt/registro`, GHCR, deploy e rollback.
+
+## 2026-06-19 — Fluxo Git simplificado
+
+- Desenvolvimento passou a ocorrer diretamente na branch `main`.
+- `docs/v1/` foi mantido no disco local e incluído no `.gitignore`.
+- A aplicação Laravel legada foi removida do índice do Git para não ser enviada novamente ao GitHub.

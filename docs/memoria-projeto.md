@@ -38,7 +38,7 @@ O schema legado já possui `company_id`, mas ainda não foi comprovado que todas
 ## 2026-06-19 — Nome e arquivamento da V1
 
 - O nome da aplicação passou de Aero para **Registro**.
-- A aplicação Laravel completa foi movida para `docs/v1/`.
+- A aplicação Laravel completa foi movida para `docs/v1/` e removida do índice do Git; permanece somente no ambiente local.
 - A organização é apenas física: o schema e o nome do banco MySQL não foram alterados.
 - A V1 deve permanecer imutável, salvo correção crítica necessária durante a transição.
 
