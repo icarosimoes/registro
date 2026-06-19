@@ -10,6 +10,7 @@ services:
       ENVIRONMENT: development
       WEB_ORIGINS: http://localhost:3000
       DATABASE_URL: ${DATABASE_URL:-}
+      JWT_SECRET: ${JWT_SECRET:-registro-development-only-change-me}
     extra_hosts:
       - host.docker.internal:host-gateway
     ports:

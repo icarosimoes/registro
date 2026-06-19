@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     database_url: str | None = None
     database_url_file: str | None = None
     database_echo: bool = False
+    jwt_secret: str = "registro-development-only-change-me"
+    jwt_secret_file: str | None = None
+    access_token_minutes: int = 30
 
     @field_validator("web_origins", mode="before")
     @classmethod
@@ -37,4 +40,11 @@ def get_settings() -> Settings:
     settings = Settings()
     if settings.database_url is None and settings.database_url_file:
         settings.database_url = Path(settings.database_url_file).read_text(encoding="utf-8").strip()
+    if settings.jwt_secret_file:
+        settings.jwt_secret = Path(settings.jwt_secret_file).read_text(encoding="utf-8").strip()
+    insecure_default = "registro-development-only-change-me"
+    if settings.environment == "production" and (
+        settings.jwt_secret == insecure_default or len(settings.jwt_secret) < 32
+    ):
+        raise RuntimeError("JWT_SECRET de produção deve ter pelo menos 32 caracteres")
     return settings

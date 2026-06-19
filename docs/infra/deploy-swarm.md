@@ -29,10 +29,11 @@ Serviços:
 ```bash
 docker network create --driver overlay --attachable traefik-public
 printf '%s' 'mysql+asyncmy://...' | docker secret create registro_database_url -
+openssl rand -base64 48 | docker secret create registro_jwt_secret -
 mkdir -p /opt/registro
 ```
 
-O secret deve apontar para o MySQL atual durante a primeira fase. Quando a migração para PostgreSQL acontecer, o secret será rotacionado em procedimento próprio e validado antes do corte.
+O secret do banco deve apontar para o MySQL atual durante a primeira fase. Quando a migração para PostgreSQL acontecer, ele será rotacionado em procedimento próprio e validado antes do corte. A chave JWT usa um secret independente.
 
 ## Variáveis da VPS
 

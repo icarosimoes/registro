@@ -51,3 +51,10 @@ O schema legado já possui `company_id`, mas ainda não foi comprovado que todas
 - Deploy Swarm sempre usa `--with-registry-auth`, healthchecks, rolling update e rollback automático.
 - Secrets do banco são fornecidos por Docker Secrets; nunca entram no repositório ou na imagem.
 - O banco permanece externo à stack enquanto o Registro utilizar o MySQL legado.
+
+## 2026-06-19 — Autenticação compatível
+
+- A nova API autentica por leitura do `users` legado e valida hashes bcrypt do Laravel.
+- Tokens HS256 carregam usuário, empresa, papel e permissões, com algoritmo fixo na validação.
+- A chave JWT de produção vem do Docker Secret `registro_jwt_secret`.
+- Esta etapa não cria tabelas, não altera senhas e não escreve no MySQL.

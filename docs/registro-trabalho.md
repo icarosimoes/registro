@@ -36,3 +36,11 @@
 - Desenvolvimento passou a ocorrer diretamente na branch `main`.
 - `docs/v1/` foi mantido no disco local e incluído no `.gitignore`.
 - A aplicação Laravel legada foi removida do índice do Git para não ser enviada novamente ao GitHub.
+
+## 2026-06-19 — Primeira fatia de autenticação
+
+- Implementados `POST /api/v1/auth/login` e `GET /api/v1/auth/me`.
+- Preservada compatibilidade com bcrypt, usuários ativos, soft delete, papéis, empresas e ACL do Laravel.
+- A sessão inclui `company_id`; `/auth/me` revalida usuário e empresa no banco.
+- Adicionado Docker Secret independente para a chave JWT no Swarm.
+- A validação com usuários reais permanece pendente até configurar acesso seguro ao MySQL.

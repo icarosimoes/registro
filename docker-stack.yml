@@ -6,8 +6,10 @@ services:
       ENVIRONMENT: production
       WEB_ORIGINS: ${REGISTRO_WEB_ORIGIN}
       DATABASE_URL_FILE: /run/secrets/registro_database_url
+      JWT_SECRET_FILE: /run/secrets/registro_jwt_secret
     secrets:
       - registro_database_url
+      - registro_jwt_secret
     networks:
       - registro-internal
       - traefik-public
@@ -70,4 +72,6 @@ networks:
 
 secrets:
   registro_database_url:
+    external: true
+  registro_jwt_secret:
     external: true
