@@ -1,0 +1,73 @@
+services:
+  api:
+    image: ghcr.io/icarosimoes/registro/api:${IMAGE_TAG:-latest}
+    environment:
+      APP_NAME: Registro API
+      ENVIRONMENT: production
+      WEB_ORIGINS: ${REGISTRO_WEB_ORIGIN}
+      DATABASE_URL_FILE: /run/secrets/registro_database_url
+    secrets:
+      - registro_database_url
+    networks:
+      - registro-internal
+      - traefik-public
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.routers.registro-api.rule=Host(`${REGISTRO_API_HOST}`)
+        - traefik.http.routers.registro-api.entrypoints=websecure
+        - traefik.http.routers.registro-api.tls.certresolver=le
+        - traefik.http.services.registro-api.loadbalancer.server.port=8000
+
+  web:
+    image: ghcr.io/icarosimoes/registro/web:${IMAGE_TAG:-latest}
+    environment:
+      API_URL: http://api:8000/api/v1
+    networks:
+      - registro-internal
+      - traefik-public
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.routers.registro-web.rule=Host(`${REGISTRO_WEB_HOST}`)
+        - traefik.http.routers.registro-web.entrypoints=websecure
+        - traefik.http.routers.registro-web.tls.certresolver=le
+        - traefik.http.services.registro-web.loadbalancer.server.port=3000
+
+networks:
+  registro-internal:
+    driver: overlay
+  traefik-public:
+    external: true
+
+secrets:
+  registro_database_url:
+    external: true
