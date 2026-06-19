@@ -52,3 +52,14 @@
 - Criados inventário V1, plano MySQL/PostgreSQL, runbook de produção e critérios de testes.
 - Adaptados para o Registro os agentes Jarvis de engenharia, layout/CRUD, performance, segurança e multiempresa.
 - Excluídos deliberadamente os padrões Aloji de reservas, Channex, Asaas, CRM e financeiro por falta de aderência ao domínio.
+
+## 2026-06-19 — Base SaaS, MySQL e admin
+
+- Adicionado MySQL 8.4 ao Compose, migration Alembic inicial e seed fictício com dois tenants.
+- Criados modelos de empresas, usuários, papéis, permissões, planos, assinaturas, faturas, operadores e auditoria da plataforma.
+- Separados JWT tenant e plataforma; login tenant aceita `company_slug` e revalida o tenant.
+- Criada API administrativa de métricas, tenants e planos.
+- Criado painel Next.js separado em `admin/`, com sessão em cookie `httpOnly`.
+- Adicionado serviço admin à stack Swarm e mantido MySQL de produção externo.
+- Adaptados os agentes Jarvis SaaS e Asaas; integração de cobrança continua desativada.
+- Documentado o procedimento futuro de importação do dump Laravel.

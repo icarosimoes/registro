@@ -65,3 +65,12 @@ O schema legado já possui `company_id`, mas ainda não foi comprovado que todas
 - Arquitetura, domínios, API, UI, desenvolvimento, segurança, backlog, legado, testes, produção e migração de banco possuem fontes de verdade próprias.
 - Regras Jarvis de engenharia, layout/CRUD, performance, segurança e multiempresa foram trazidas para o repositório.
 - Agentes e documentos de reservas, Channex, Asaas, CRM e financeiro não foram copiados por não pertencerem ao escopo atual.
+
+## 2026-06-19 — Fundação SaaS comercial
+
+- A decisão de comercializar o Registro tornou SaaS e Asaas aderentes ao produto; as regras Jarvis correspondentes passaram a integrar a documentação.
+- Foi criada uma base MySQL 8.4 nova para desenvolvimento, com Alembic e seed fictício. Ela não substitui nem representa o dump Laravel.
+- Tenant, operador da plataforma e seus tokens são identidades separadas.
+- O painel administrativo é outra aplicação Next.js, publicada em domínio próprio no Swarm.
+- Planos, assinaturas, faturas e auditoria formam o núcleo comercial; o Asaas permanece desativado até sandbox, credenciais e política comercial.
+- O dump legado será restaurado em base temporária e importado por processo repetível, nunca diretamente sobre o banco novo.

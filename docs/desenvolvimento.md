@@ -3,26 +3,24 @@
 ## Pré-requisitos
 
 - Docker Engine com Compose v2.
-- Acesso ao MySQL apenas quando forem necessários dados reais.
-- Portas 3000 e 8000 livres.
+- Portas 3000, 3001, 8000 e 3307 livres.
 
 ## Configuração
 
-Crie `.env` na raiz; ele é ignorado pelo Git:
+Copie o exemplo versionado:
 
-```env
-DATABASE_URL=mysql+asyncmy://usuario:senha@host.docker.internal:3306/banco?charset=utf8mb4
-JWT_SECRET=gere-uma-chave-com-pelo-menos-32-caracteres
+```bash
+cp .env.example .env
 ```
 
-Sem `DATABASE_URL`, interface e healthcheck rodam, mas login responde 503 e `/health/ready` informa `not_configured`.
+O Compose cria `registro_dev`, executa a migration Alembic e aplica seed fictício na primeira subida.
 
 ## Comandos
 
 ```bash
 docker compose up --build -d
 docker compose ps
-docker compose logs -f api web
+docker compose logs -f mysql api web admin
 docker compose down
 ```
 
@@ -34,7 +32,11 @@ docker compose exec -T -e MYPY_CACHE_DIR=/tmp/mypy api mypy app
 docker compose exec -T api pytest -q -p no:cacheprovider
 docker compose exec -T web npm run typecheck
 docker compose exec -T web npm run build
+docker compose exec -T admin npm run typecheck
+docker compose exec -T admin npm run build
 ```
+
+Para recriar somente os dados fictícios, derrube o ambiente removendo o volume local e suba novamente. Isso apaga o MySQL de desenvolvimento e nunca deve ser usado contra um ambiente com dados úteis.
 
 ## Regras
 

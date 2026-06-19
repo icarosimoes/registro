@@ -2,7 +2,7 @@
 
 ## Fronteiras
 
-- O navegador conversa com Next.js; tokens futuros devem ficar em cookie `httpOnly`, `Secure` e `SameSite` adequado.
+- O painel admin guarda seu token em cookie `httpOnly`; em produção também deve usar `Secure` e `SameSite` adequado.
 - FastAPI valida payload, token, usuário ativo, empresa e permissão.
 - O MySQL permanece externo e usa credencial com menor privilégio possível.
 - Produção recebe URL do banco e chave JWT por Docker Secrets separados.
@@ -14,6 +14,7 @@
 - JWT HS256 com algoritmo fixo e expiração padrão de 30 minutos.
 - Chave de produção com no mínimo 32 caracteres; o default de desenvolvimento é recusado.
 - `/auth/me` consulta novamente usuário e `company_id`, evitando confiar apenas no token.
+- Tokens tenant e plataforma possuem tipos distintos e são rejeitados fora da própria fronteira.
 
 ## Multiempresa
 
@@ -29,6 +30,8 @@ Toda consulta de negócio deve receber a empresa da sessão, nunca do corpo envi
 ## Dados e logs
 
 Nunca registrar senha, JWT, URL completa de banco, dados pessoais desnecessários ou conteúdo de anexos. Erros públicos usam códigos estáveis e mensagens sem detalhes internos.
+
+Chaves futuras do Asaas entram por Docker Secret, separadas do token do webhook. Webhooks falham fechado, deduplicam eventos e nunca confiam em `company_id` enviado pelo provedor ou cliente.
 
 ## Mudança crítica
 

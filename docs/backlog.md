@@ -1,35 +1,47 @@
 # Backlog da modernização
 
-## P0 — colocar dados reais com segurança
+## P0 — consolidar SaaS e receber dados reais
 
-- [ ] Configurar acesso de desenvolvimento somente ao MySQL necessário.
+- [x] Criar MySQL local, migrations e seed fictício com dois tenants.
+- [x] Separar autenticação tenant e plataforma.
+- [x] Criar painel administrativo inicial.
+- [x] Testar bloqueio de token com `company_id` divergente.
+- [ ] Receber dump sanitizado e executar inventário/importação em base temporária.
 - [ ] Gerar inventário real de tabelas, volumes, índices, constraints, collations e anexos.
 - [ ] Validar login com amostra de usuários ativos/inativos e hashes Laravel.
-- [ ] Implementar página `/login` com cookie httpOnly via camada server-side do Next.js.
-- [ ] Testar isolamento por `company_id` e ACL com pelo menos duas empresas.
+- [ ] Implementar página `/login` do produto tenant com cookie httpOnly.
+- [ ] Ampliar testes cross-tenant para cada domínio novo.
 - [ ] Criar CI com Ruff, mypy, pytest, typecheck, build e auditorias.
 
-## P1 — identidade, ACL e cadastros
+## P1 — comercial e cobrança
+
+- [ ] CRUD auditado de tenants, planos e assinaturas.
+- [ ] Definir trial, tolerância, suspensão e reativação.
+- [ ] Configurar Asaas sandbox e segredos no Swarm.
+- [ ] Implementar webhook autenticado, idempotente e com replay.
+- [ ] Implementar reconciliação periódica de cobranças.
+
+## P2 — identidade, ACL e cadastros
 
 - [ ] Usuários, perfis e permissões com paridade de leitura.
 - [ ] Setores, locais e funções.
 - [ ] Procedimentos e anexos.
 - [ ] Componentes reutilizáveis de lista, formulário, estado vazio e confirmação.
 
-## P2 — operação
+## P3 — operação
 
 - [ ] Ocorrências, comentários, participantes, anexos, clone e PDF.
 - [ ] Reuniões, participantes, assuntos, anexos, início e ata PDF.
 - [ ] Relatórios de turno e Excel.
 
-## P3 — inspeções e obra
+## P4 — inspeções e obra
 
 - [ ] Check suites e inspection suites.
 - [ ] Vistorias V2 e migração controlada da V1.
 - [ ] Auditorias e relatórios.
 - [ ] Diário de obra.
 
-## P4 — corte e banco
+## P5 — corte e banco
 
 - [ ] Retirar Laravel domínio a domínio.
 - [ ] Congelar mudanças estruturais no MySQL.

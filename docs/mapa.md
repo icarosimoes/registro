@@ -5,8 +5,11 @@
 | Área | Estado | Fonte de dados |
 | --- | --- | --- |
 | Docker local | operacional | Compose |
-| FastAPI | health, readiness e autenticação implementados | MySQL quando configurado |
+| FastAPI | health, autenticação tenant e API da plataforma | MySQL 8.4 local |
 | Next.js | dashboard responsivo demonstrativo | dados mockados |
+| Painel admin | login isolado, métricas, tenants e planos | API da plataforma |
+| SaaS | tenants, planos, assinaturas e faturas | dados fictícios |
+| Asaas | contrato e regras preparados | integração desativada |
 | Laravel V1 | preservado somente localmente | MySQL legado |
 | Swarm | stack e runbook preparados | GHCR + secrets externos |
 | PostgreSQL | planejado após equivalência | ainda não existe |
@@ -18,6 +21,7 @@
 | API | `api/app/` |
 | testes API | `api/tests/` |
 | Web | `web/app/`, `web/components/` |
+| Admin SaaS | `admin/app/`, `admin/lib/` |
 | Compose | `docker-compose.yml` |
 | Swarm | `docker-stack.yml` |
 | legado local | `docs/v1/` |
@@ -42,8 +46,8 @@ IDs e relacionamentos existentes, hashes Laravel, status/soft delete, `company_i
 
 ## Bloqueios atuais
 
-- falta conexão segura com uma base de desenvolvimento;
 - falta inventário do schema e dos volumes reais;
-- falta tela de login/cookie httpOnly;
 - dashboard ainda não consome dados reais;
+- falta receber e importar um dump sanitizado do legado;
+- falta decidir credenciais, ambiente sandbox e política comercial do Asaas;
 - falta CI no repositório.

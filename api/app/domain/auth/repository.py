@@ -1,11 +1,14 @@
 from dataclasses import dataclass
 
-from sqlalchemy import text
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from app.models import Company, Role, User
 
 
 @dataclass(frozen=True)
-class LegacyUser:
+class AuthenticatedUser:
     id: int
     name: str
     email: str
@@ -16,48 +19,63 @@ class LegacyUser:
     permissions: list[str]
 
 
-async def find_active_user_by_email(session: AsyncSession, email: str) -> LegacyUser | None:
-    result = await session.execute(text("""
-        SELECT u.id, u.name, u.email, u.password, u.company_id, u.role_id,
-               r.name AS role_name
-        FROM users AS u
-        LEFT JOIN roles AS r ON r.id = u.role_id
-        WHERE LOWER(u.email) = LOWER(:email)
-          AND u.deleted_at IS NULL AND COALESCE(u.status, 1) = 1
-        LIMIT 1
-    """), {"email": email})
-    row = result.mappings().first()
-    if row is None or row["company_id"] is None:
-        return None
-
-    permissions: list[str] = []
-    if row["role_id"] is not None:
-        permission_rows = await session.execute(text("""
-            SELECT DISTINCT CONCAT(COALESCE(m.name, '*'), ':', a.controller, ':', a.action)
-            FROM role_acl AS ra
-            JOIN acls AS a ON a.id = ra.acl_id
-            LEFT JOIN modules AS m ON m.id = a.module_id
-            WHERE ra.role_id = :role_id
-            ORDER BY 1
-        """), {"role_id": row["role_id"]})
-        permissions = list(permission_rows.scalars().all())
-
-    return LegacyUser(
-        id=row["id"], name=row["name"], email=row["email"],
-        password_hash=row["password"], company_id=row["company_id"],
-        role_id=row["role_id"], role_name=row["role_name"], permissions=permissions,
+def map_user(user: User) -> AuthenticatedUser:
+    return AuthenticatedUser(
+        id=user.id,
+        name=user.name,
+        email=user.email,
+        password_hash=user.password,
+        company_id=user.company_id,
+        role_id=user.role_id,
+        role_name=user.role.name if user.role else None,
+        permissions=sorted(permission.code for permission in user.role.permissions)
+        if user.role
+        else [],
     )
+
+
+async def find_active_user_by_email(
+    session: AsyncSession,
+    email: str,
+    company_slug: str | None = None,
+) -> AuthenticatedUser | None:
+    query = (
+        select(User)
+        .join(Company)
+        .options(selectinload(User.role).selectinload(Role.permissions))
+        .where(
+            User.email == email.lower(),
+            User.active.is_(True),
+            User.deleted_at.is_(None),
+            Company.status == "active",
+            Company.deleted_at.is_(None),
+        )
+    )
+    if company_slug:
+        query = query.where(Company.slug == company_slug)
+    users = (await session.execute(query.limit(2))).scalars().all()
+    if len(users) != 1:
+        return None
+    return map_user(users[0])
 
 
 async def find_active_user_by_id(
-    session: AsyncSession, user_id: int, company_id: int,
-) -> LegacyUser | None:
-    result = await session.execute(
-        text(
-            "SELECT email FROM users WHERE id = :id AND company_id = :company_id "
-            "AND deleted_at IS NULL LIMIT 1"
-        ),
-        {"id": user_id, "company_id": company_id},
+    session: AsyncSession,
+    user_id: int,
+    company_id: int,
+) -> AuthenticatedUser | None:
+    query = (
+        select(User)
+        .join(Company)
+        .options(selectinload(User.role).selectinload(Role.permissions))
+        .where(
+            User.id == user_id,
+            User.company_id == company_id,
+            User.active.is_(True),
+            User.deleted_at.is_(None),
+            Company.status == "active",
+            Company.deleted_at.is_(None),
+        )
     )
-    email = result.scalar_one_or_none()
-    return await find_active_user_by_email(session, email) if email else None
+    user = (await session.execute(query)).scalar_one_or_none()
+    return map_user(user) if user else None

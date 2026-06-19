@@ -3,8 +3,9 @@
 Este modelo descreve o schema legado conhecido pelas migrations. Deve ser confirmado contra um dump sanitizado ou o MySQL antes de criar mappings definitivos.
 
 ```text
-Company
-  └── User ──► Role ──► role_acl ──► Acl ──► Module
+PlatformUser ──► PlatformAuditLog
+Plan ──► Subscription ──► Company ──► User ──► Role ──► Permission
+                    └────► Invoice
 
 Company
   ├── Sector
@@ -33,6 +34,7 @@ Company
 | Agregado | Tabelas centrais | Regras a preservar |
 | --- | --- | --- |
 | Identidade e acesso | `users`, `roles`, `acls`, `modules`, `role_acl`, `companies` | bcrypt Laravel, status, soft delete, empresa e ACL |
+| Plataforma SaaS | `platform_users`, `plans`, `subscriptions`, `invoices`, `platform_audit_logs` | sessão isolada, centavos, estado explícito e auditoria |
 | Cadastros | `sectors`, `locals`, `funcs`, `procedures`, `procedure_files` | empresa, anexos e exclusão lógica quando existente |
 | Ocorrências | `occurrences`, comentários e participantes | histórico, responsáveis, anexos e exportação |
 | Reuniões | `meetings`, assuntos, pautas e participantes | início da reunião, ata, anexos e PDF |
@@ -47,3 +49,5 @@ Company
 - `deleted_at` significa exclusão lógica; registros apagados não autenticam nem aparecem por padrão.
 - Anexos exigem inventário de caminho físico, metadados e política de acesso antes do corte.
 - Dinheiro, se surgir em módulos futuros, usa centavos inteiros ou `Decimal`, nunca `float`.
+- Usuário da plataforma nunca possui `company_id`; acesso cross-tenant é uma capacidade administrativa separada.
+- IDs externos do Asaas são opcionais e únicos quando preenchidos; o Registro mantém suas próprias chaves.

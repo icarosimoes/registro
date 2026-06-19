@@ -1,4 +1,3 @@
-from collections.abc import AsyncIterator
 from typing import Annotated
 
 import jwt
@@ -7,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings, get_settings
-from app.core.database import SessionLocal
+from app.core.dependencies import require_session
 from app.core.security import decode_access_token
 from app.domain.auth.repository import find_active_user_by_id
 from app.domain.auth.schemas import LoginRequest, TokenResponse, UserResponse
@@ -17,23 +16,19 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
-async def require_session() -> AsyncIterator[AsyncSession]:
-    if SessionLocal is None:
-        raise HTTPException(
-            status_code=503,
-            detail={"code": "database_unavailable", "message": "Banco não configurado"},
-        )
-    async with SessionLocal() as session:
-        yield session
-
-
 @router.post("/login", response_model=TokenResponse)
 async def login(
     payload: LoginRequest,
     session: Annotated[AsyncSession, Depends(require_session)],
     settings: Annotated[Settings, Depends(get_settings)],
 ) -> TokenResponse:
-    result = await authenticate(session, payload.email, payload.password, settings)
+    result = await authenticate(
+        session,
+        payload.email,
+        payload.password,
+        settings,
+        company_slug=payload.company_slug,
+    )
     if result is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

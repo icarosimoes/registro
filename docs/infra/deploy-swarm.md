@@ -12,7 +12,7 @@
 
 ## Desenvolvimento
 
-Defina a conexão com o MySQL legado no shell ou em `.env` local e execute:
+O desenvolvimento usa o MySQL fictício do Compose:
 
 ```bash
 docker compose up --build
@@ -21,6 +21,7 @@ docker compose up --build
 Serviços:
 
 - web: `http://localhost:3000`
+- admin: `http://localhost:3001`
 - API: `http://localhost:8000`
 - OpenAPI local: `http://localhost:8000/docs`
 
@@ -42,6 +43,7 @@ Arquivo local `/opt/registro/.env.prod`, nunca versionado:
 ```env
 REGISTRO_WEB_HOST=registro.exemplo.com.br
 REGISTRO_API_HOST=api.registro.exemplo.com.br
+REGISTRO_ADMIN_HOST=admin.registro.exemplo.com.br
 REGISTRO_WEB_ORIGIN=https://registro.exemplo.com.br
 IMAGE_TAG=sha-<sha-completo>
 GHCR_PAT=...
@@ -69,6 +71,7 @@ Nunca usar apenas `latest` em produção. O CI deve publicar e o deploy deve inf
 docker service ls
 docker service ps registro_api
 docker service ps registro_web
+docker service ps registro_admin
 docker service logs --tail 100 registro_api
 curl -fsS "https://${REGISTRO_API_HOST}/api/v1/health"
 ```
@@ -78,6 +81,7 @@ curl -fsS "https://${REGISTRO_API_HOST}/api/v1/health"
 ```bash
 docker service rollback registro_api
 docker service rollback registro_web
+docker service rollback registro_admin
 ```
 
 Antes de migrations, mudanças críticas ou reboot da VPS, gerar e validar backup. Migrations futuras devem rodar uma única vez, em tarefa controlada no manager, nunca simultaneamente em todas as réplicas.

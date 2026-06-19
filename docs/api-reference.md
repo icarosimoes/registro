@@ -8,19 +8,26 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | --- | --- | --- | --- |
 | `GET` | `/health` | pública | processo FastAPI está vivo |
 | `GET` | `/health/ready` | pública | conexão do banco pronta ou não configurada |
-| `POST` | `/auth/login` | pública | JWT de acesso e perfil legado |
+| `POST` | `/auth/login` | pública | JWT tenant e perfil |
 | `GET` | `/auth/me` | Bearer | perfil revalidado no MySQL |
+| `POST` | `/platform/auth/login` | pública | JWT administrativo isolado |
+| `GET` | `/platform/metrics` | Platform Bearer | métricas SaaS agregadas |
+| `GET` | `/platform/tenants` | Platform Bearer | empresas e assinatura |
+| `GET` | `/platform/plans` | Platform Bearer | catálogo de planos |
 
 ### Login
 
 ```json
 {
   "email": "usuario@empresa.com.br",
-  "password": "senha"
+  "password": "senha",
+  "company_slug": "empresa-demo"
 }
 ```
 
-O token expõe `sub`, `company_id`, `role_id`, `permissions`, `type`, `iat` e `exp`. O algoritmo aceito é exclusivamente HS256. A senha nunca é devolvida ou registrada.
+`company_slug` é opcional quando o e-mail identifica uma única empresa. Se houver o mesmo e-mail em mais de um tenant, sua ausência recusa o login. O token expõe `sub`, `company_id`, `role_id`, `permissions`, `type`, `iat` e `exp`. O algoritmo aceito é exclusivamente HS256.
+
+O token da plataforma contém `type=platform_access` e não é aceito nas rotas tenant. O painel admin o mantém em cookie `httpOnly`; a API continua recebendo Bearer pela conexão server-side.
 
 ### Erros estruturados
 

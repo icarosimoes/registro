@@ -23,6 +23,11 @@ node_modules/
 *.tsbuildinfo
 npm-debug.log*
 
+# Banco local e dumps
+*.sql
+*.sql.gz
+backups/
+
 # IDE e sistema operacional
 .idea/
 .vscode/

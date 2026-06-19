@@ -6,6 +6,15 @@
 | --- | --- | --- | --- |
 | `/` | dashboard | protótipo responsivo | demonstração local |
 
+## Painel administrativo (`admin/`)
+
+| Rota | Estado | Dados |
+| --- | --- | --- |
+| `/login` | operacional | autenticação da plataforma |
+| `/dashboard` | operacional | métricas, tenants e planos da API |
+
+O admin é uma aplicação separada em `:3001`; a sessão usa cookie `httpOnly` e não compartilha o JWT do tenant.
+
 O dashboard atual valida o redesign: sidebar recolhível, topbar, busca, indicadores, tabela, mural e drawers. Os números e atividades ainda são demonstrativos e não devem orientar operação.
 
 ## Rotas planejadas

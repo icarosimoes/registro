@@ -64,6 +64,29 @@ services:
         - traefik.http.routers.registro-web.tls.certresolver=le
         - traefik.http.services.registro-web.loadbalancer.server.port=3000
 
+  admin:
+    image: ghcr.io/icarosimoes/registro/admin:${IMAGE_TAG:-latest}
+    environment:
+      API_URL: http://api:8000/api/v1
+    networks:
+      - registro-internal
+      - traefik-public
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.http.routers.registro-admin.rule=Host(`${REGISTRO_ADMIN_HOST}`)
+        - traefik.http.routers.registro-admin.entrypoints=websecure
+        - traefik.http.routers.registro-admin.tls.certresolver=le
+        - traefik.http.services.registro-admin.loadbalancer.server.port=3001
+
 networks:
   registro-internal:
     driver: overlay

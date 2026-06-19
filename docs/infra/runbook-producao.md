@@ -6,8 +6,8 @@
 | --- | --- |
 | diretório | `/opt/registro` |
 | stack | `registro` |
-| serviços | `registro_api`, `registro_web` |
-| imagens | `ghcr.io/icarosimoes/registro/api` e `/web` |
+| serviços | `registro_api`, `registro_web`, `registro_admin` |
+| imagens | `ghcr.io/icarosimoes/registro/api`, `/web` e `/admin` |
 | banco | MySQL externo |
 | proxy | Traefik na rede `traefik-public` |
 
@@ -26,12 +26,13 @@ Use o procedimento em `deploy-swarm.md`. Depois:
 docker service ls
 docker service ps registro_api --no-trunc
 docker service ps registro_web --no-trunc
+docker service ps registro_admin --no-trunc
 docker service logs --since 10m registro_api
 curl -fsS "https://${REGISTRO_API_HOST}/api/v1/health"
 curl -fsS "https://${REGISTRO_API_HOST}/api/v1/health/ready"
 ```
 
-Sucesso exige réplicas convergidas, health 200, readiness conectado e web respondendo. `health` sozinho não comprova acesso ao banco.
+Sucesso exige réplicas convergidas, health 200, readiness conectado, web e admin respondendo. `health` sozinho não comprova acesso ao banco.
 
 ## Incidente
 
@@ -46,10 +47,13 @@ Sucesso exige réplicas convergidas, health 200, readiness conectado e web respo
 ```bash
 docker service rollback registro_api
 docker service rollback registro_web
+docker service rollback registro_admin
 docker service ps registro_api --no-trunc
 ```
 
 Rollback de aplicação não desfaz dados. Mudança de schema precisa de plano próprio e backup restaurável.
+
+Alembic não roda automaticamente nas réplicas do Swarm. Cada migration de produção é uma tarefa única e controlada no manager, depois do backup e antes de liberar a versão que depende dela.
 
 ## Backup mínimo antes de mudança crítica
 

@@ -7,5 +7,6 @@ Regras adaptadas da referência Aloji em `/home/icarosimoes/dev/aloji/docs/agent
 - [Performance](jarvis-performance.md): Next.js, API e banco.
 - [Segurança](jarvis-seguranca.md): autenticação, secrets e supply chain.
 - [SaaS/multiempresa](jarvis-saas.md): `company_id` e futura RLS.
+- [Asaas](jarvis-asaas.md): cobrança, webhooks e reconciliação financeira.
 
-Não foram trazidos agentes de financeiro, Asaas, reservas, Channex ou CRM porque esses domínios não fazem parte do Registro hoje.
+Financeiro operacional, reservas, Channex e CRM continuam fora do escopo. Asaas entra somente como cobrança da plataforma SaaS e permanece desativado até existir uma decisão comercial e credenciais próprias.

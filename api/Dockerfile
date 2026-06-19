@@ -12,6 +12,8 @@ RUN addgroup --system registro \
 
 COPY pyproject.toml ./
 COPY app ./app
+COPY alembic.ini ./
+COPY alembic ./alembic
 RUN pip install .
 
 FROM base AS development
