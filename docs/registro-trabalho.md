@@ -63,3 +63,9 @@
 - Adicionado serviço admin à stack Swarm e mantido MySQL de produção externo.
 - Adaptados os agentes Jarvis SaaS e Asaas; integração de cobrança continua desativada.
 - Documentado o procedimento futuro de importação do dump Laravel.
+
+## 2026-06-19 — Entrada autenticada do tenant
+
+- A raiz do produto deixou de exibir diretamente o protótipo estático.
+- Criados login tenant, cookie `httpOnly`, revalidação em `/auth/me`, dashboard protegido e logout.
+- O protótipo visual foi preservado em `/design-preview`; seus indicadores continuam fictícios até os módulos operacionais serem conectados.

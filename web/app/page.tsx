@@ -1,5 +1,7 @@
-import { DashboardShell } from "@/components/dashboard-shell";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function HomePage() {
-  return <DashboardShell />;
+export default async function HomePage() {
+  const token = (await cookies()).get("tenant_token");
+  redirect(token ? "/dashboard" : "/login");
 }

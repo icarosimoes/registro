@@ -25,6 +25,8 @@ import {
   X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { logoutAction } from "@/app/actions";
+import type { TenantUser } from "@/lib/api";
 
 type TicketStatus = "Em andamento" | "Aguardando" | "Concluído";
 
@@ -60,11 +62,14 @@ const statusClass: Record<TicketStatus, string> = {
   Concluído: "status status-done",
 };
 
-export function DashboardShell() {
+export function DashboardShell({ user }: { user?: TenantUser }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [panel, setPanel] = useState<"notifications" | "profile" | null>(null);
   const [query, setQuery] = useState("");
+  const displayName = user?.name ?? "Ícaro Simoes";
+  const firstName = displayName.split(" ")[0];
+  const initials = displayName.split(" ").slice(0, 2).map((part) => part[0]).join("").toUpperCase();
 
   const filteredTickets = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("pt-BR");
@@ -130,7 +135,7 @@ export function DashboardShell() {
 
         <div className="top-actions">
           <button className="icon-button notification-button" onClick={() => togglePanel("notifications")} aria-label="Notificações"><Bell size={20} /><span>3</span></button>
-          <button className="avatar-button" onClick={() => togglePanel("profile")} aria-label="Menu do usuário">IS</button>
+          <button className="avatar-button" onClick={() => togglePanel("profile")} aria-label="Menu do usuário">{initials}</button>
         </div>
       </header>
 
@@ -138,7 +143,7 @@ export function DashboardShell() {
         <div className="page-heading">
           <div>
             <div className="eyebrow">Sexta-feira, 19 de junho</div>
-            <h1>Bom dia, Ícaro</h1>
+            <h1>Bom dia, {firstName}</h1>
             <p>Acompanhe o que precisa de atenção na operação.</p>
           </div>
           <button className="primary-button"><Plus size={18} /> Nova ocorrência</button>
@@ -195,7 +200,7 @@ export function DashboardShell() {
         <>
           <button className="panel-backdrop" aria-label="Fechar painel" onClick={() => setPanel(null)} />
           <aside className="context-drawer" aria-label={panel === "notifications" ? "Notificações" : "Perfil"}>
-            <div className="drawer-heading"><div><span>{panel === "notifications" ? "Central" : "Conta"}</span><h2>{panel === "notifications" ? "Notificações" : "Ícaro Simoes"}</h2></div><button className="icon-button" onClick={() => setPanel(null)} aria-label="Fechar"><X size={20} /></button></div>
+            <div className="drawer-heading"><div><span>{panel === "notifications" ? "Central" : "Conta"}</span><h2>{panel === "notifications" ? "Notificações" : displayName}</h2></div><button className="icon-button" onClick={() => setPanel(null)} aria-label="Fechar"><X size={20} /></button></div>
             {panel === "notifications" ? (
               <div className="notification-list">
                 <article><span className="notification-icon orange"><ClipboardCheck /></span><div><strong>2 inspeções vencem hoje</strong><p>Revise os responsáveis antes das 17h.</p><small>há 8 min</small></div></article>
@@ -204,8 +209,9 @@ export function DashboardShell() {
               </div>
             ) : (
               <div className="profile-content">
-                <div className="profile-card"><div className="profile-avatar">IS</div><strong>Ícaro Santos Simoes</strong><span>Administrador</span></div>
+                <div className="profile-card"><div className="profile-avatar">{initials}</div><strong>{displayName}</strong><span>{user?.role_name ?? "Demonstração"}</span></div>
                 <button><Users /> Minha conta</button><button><ShieldCheck /> Segurança e acesso</button><button><Settings /> Preferências</button>
+                {user ? <form action={logoutAction}><button className="logout-button" type="submit">Sair da conta</button></form> : null}
               </div>
             )}
           </aside>

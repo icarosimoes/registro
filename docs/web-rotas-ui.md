@@ -4,7 +4,10 @@
 
 | Rota | Tipo | Estado | Dados |
 | --- | --- | --- | --- |
-| `/` | dashboard | protótipo responsivo | demonstração local |
+| `/` | entrada | redireciona conforme cookie tenant | sessão server-side |
+| `/login` | autenticação tenant | operacional | API `/auth/login` |
+| `/dashboard` | dashboard autenticado | protótipo conectado à sessão | usuário real + dados demonstrativos |
+| `/design-preview` | referência visual | protótipo livre | demonstração local |
 
 ## Painel administrativo (`admin/`)
 
