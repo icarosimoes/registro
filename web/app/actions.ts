@@ -166,3 +166,107 @@ export async function deleteOccurrenceAction(id: number): Promise<MutationResult
   }
   return { ok: true };
 }
+
+export interface UserPayload {
+  name: string;
+  email: string;
+  password?: string;
+  role_id?: number | null;
+  active?: boolean;
+}
+
+export async function createUserAction(body: UserPayload): Promise<MutationResult> {
+  const response = await authedFetch("/users", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    if (response.status === 409) return { ok: false, error: "E-mail já cadastrado." };
+    return { ok: false, error: "Erro ao criar usuário." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateUserAction(id: number, body: Partial<UserPayload>): Promise<MutationResult> {
+  const response = await authedFetch(`/users/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar usuário." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteUserAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/users/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    if (response.status === 400) return { ok: false, error: "Não é possível excluir seu próprio usuário." };
+    return { ok: false, error: "Erro ao excluir usuário." };
+  }
+  return { ok: true };
+}
+
+export interface RegistryPayload {
+  name: string;
+  category: string;
+}
+
+export async function createRegistryAction(body: RegistryPayload): Promise<MutationResult> {
+  const response = await authedFetch("/registries", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar cadastro." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateRegistryAction(id: number, body: { name: string }, category: string): Promise<MutationResult> {
+  const response = await authedFetch(`/registries/${id}?category=${encodeURIComponent(category)}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar cadastro." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteRegistryAction(id: number, category: string): Promise<MutationResult> {
+  const response = await authedFetch(`/registries/${id}?category=${encodeURIComponent(category)}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir cadastro." };
+  }
+  return { ok: true };
+}
+
+export interface ModuleRecordPayload {
+  title: string;
+  description?: string;
+  category?: string;
+  status?: string;
+  owner_user_id?: number;
+}
+
+export async function createModuleRecordAction(moduleSlug: string, body: ModuleRecordPayload): Promise<MutationResult> {
+  const response = await authedFetch(`/modules/${moduleSlug}`, { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar registro." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateModuleRecordAction(moduleSlug: string, id: number, body: Partial<ModuleRecordPayload>): Promise<MutationResult> {
+  const response = await authedFetch(`/modules/${moduleSlug}/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar registro." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteModuleRecordAction(moduleSlug: string, id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/modules/${moduleSlug}/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir registro." };
+  }
+  return { ok: true };
+}

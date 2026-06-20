@@ -103,6 +103,19 @@ class AuditEvent(Base, TenantMixin):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
+class ModuleRecord(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "module_records"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    module: Mapped[str] = mapped_column(String(80), index=True)
+    title: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    category: Mapped[str | None] = mapped_column(String(120))
+    status: Mapped[str] = mapped_column(String(60), default="Em andamento")
+    owner_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
 class LegacyImportRun(Base):
     __tablename__ = "legacy_import_runs"
 

@@ -6,17 +6,18 @@
 | --- | --- | --- | --- |
 | `/` | entrada | redireciona conforme cookie tenant | sessão server-side |
 | `/login` | autenticação tenant | operacional | API `/auth/login` |
-| `/dashboard` | dashboard autenticado | operacional | usuário real + indicadores demonstrativos |
+| `/dashboard` | dashboard autenticado | operacional | métricas reais via API `/dashboard/metrics` |
 | `/design-preview` | referência visual | protótipo livre | demonstração local |
 | `/ocorrencias` | lista e CRUD | CRUD via API + mutações server-side | API `occurrences` isolada por tenant |
-| `/reunioes` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
-| `/relatorios-turno` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
-| `/inspecoes` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
-| `/diarios-obra` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
-| `/manutencao` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
+| `/reunioes` | lista e CRUD | CRUD via API + mutações server-side | API `modules/reunioes` isolada por tenant |
+| `/relatorios-turno` | lista e CRUD | CRUD via API + mutações server-side | API `modules/relatorios-turno` isolada por tenant |
+| `/inspecoes` | lista e CRUD | CRUD via API + mutações server-side | API `modules/inspecoes` isolada por tenant |
+| `/diarios-obra` | lista e CRUD | CRUD via API + mutações server-side | API `modules/diarios-obra` isolada por tenant |
+| `/manutencao` | lista e CRUD | CRUD via API + mutações server-side | API `modules/manutencao` isolada por tenant |
 | `/solicitacoes-fiscais` | lista, formulário condicional, SLA, anexos e tratativa | CRUD via API + mutações server-side | API `fiscal_requests` isolada por tenant |
-| `/cadastros`, `/usuarios` | listas e CRUD | operacional no navegador | dados fictícios por tenant |
-| `/mural` | cartões e CRUD | operacional no navegador | dados fictícios por tenant |
+| `/cadastros` | lista e CRUD | CRUD via API + mutações server-side | API `registries` (setores, locais e funções) isolada por tenant |
+| `/usuarios` | lista e CRUD | CRUD via API + mutações server-side | API `users` isolada por tenant |
+| `/mural` | cartões e CRUD | CRUD via API + mutações server-side | API `modules/mural` isolada por tenant |
 | `/configuracoes`, `/minha-conta` | formulários | operacional local | preferências do navegador |
 
 ## Painel administrativo (`admin/`)
@@ -28,16 +29,58 @@
 
 O admin é uma aplicação separada em `:3001`; a sessão usa cookie `httpOnly` e não compartilha o JWT do tenant.
 
-O dashboard e os módulos validam o fluxo completo do redesign. Ocorrências e solicitações fiscais possuem CRUD completo via API com mutações server-side e auditoria automática. Ocorrências usam paginação server-side (20 por página) com busca via query params na URL. Os demais módulos permanecem fictícios e persistem localmente por `company_id`.
+Todos os módulos operacionais possuem CRUD completo via API com mutações server-side, paginação server-side (20 por página) e busca via query params na URL. O dashboard exibe métricas agregadas em tempo real (ocorrências abertas, solicitações fiscais, concluídos no mês, equipe ativa e atividades recentes). Módulos genéricos (reuniões, inspeções, etc.) usam a tabela `module_records`; usuários e cadastros usam as tabelas nativas.
 
-## Integração planejada com a API
+## Integração com a API
 
-| Prioridade | Rota | Domínio |
+Todas as rotas operacionais estão integradas com a API. A tabela abaixo lista o endpoint correspondente:
+
+| Rota | Endpoint API |
+| --- | --- |
+| `/dashboard` | `GET /dashboard/metrics` |
+| `/ocorrencias` | `GET/POST/PATCH/DELETE /occurrences` |
+| `/solicitacoes-fiscais` | `GET/POST/PATCH/DELETE /fiscal-requests` |
+| `/usuarios` | `GET/POST/PATCH/DELETE /users` |
+| `/cadastros` | `GET/POST/PATCH/DELETE /registries` |
+| `/reunioes` | `GET/POST/PATCH/DELETE /modules/reunioes` |
+| `/relatorios-turno` | `GET/POST/PATCH/DELETE /modules/relatorios-turno` |
+| `/inspecoes` | `GET/POST/PATCH/DELETE /modules/inspecoes` |
+| `/diarios-obra` | `GET/POST/PATCH/DELETE /modules/diarios-obra` |
+| `/manutencao` | `GET/POST/PATCH/DELETE /modules/manutencao` |
+| `/mural` | `GET/POST/PATCH/DELETE /modules/mural` |
+
+## Workspace tabs (removido)
+
+O componente `WorkspaceTabs` (abas dinâmicas no topbar estilo browser tabs) foi removido da UI em 2026-06-20. O código e o CSS foram arquivados em `aloji/docs/agentes/jarvis-workspace-tabs.md` para reutilização em outros projetos da Solid.
+
+## Layout unificado — `AppLayout`
+
+Desde 2026-06-20, todas as telas usam um shell único (`components/app-layout.tsx`) que fornece:
+
+| Elemento | Detalhe |
+| --- | --- |
+| Sidebar | Colapsável, navegação unificada, active state por `usePathname()` |
+| Ações flutuantes | Sino (notificações) + avatar (perfil) posicionados fixos no canto superior direito, sem barra |
+| Menu mobile | Hamburger fixo no canto superior esquerdo (≤ 860px) |
+| Drawers | Notificações e perfil (com logout) em todas as telas |
+
+`DashboardShell` e `OperationalModule` agora renderizam apenas o conteúdo interno. A sidebar, os drawers e as ações de topo são responsabilidade do `AppLayout` que envolve os dois nas páginas.
+
+## Design tokens
+
+O `globals.css` utiliza um sistema de design tokens para garantir consistência visual em todas as telas. Os tokens disponíveis são:
+
+| Categoria | Tokens | Exemplo |
 | --- | --- | --- |
-| P1 | `/usuarios`, `/cadastros` | acesso, ACL e cadastros reais |
-| P2 | `/manutencao` | manutenção corretiva e preventiva |
-| P3 | `/reunioes`, `/relatorios-turno` | atas e turno |
-| P4 | `/inspecoes`, `/diarios-obra` | suites, auditoria e obra |
+| Cores | `--blue`, `--blue-hover`, `--blue-soft`, `--blue-focus`, `--orange`, `--green`, `--purple`, `--ink`, `--muted`, `--label`, `--hover`, `--field-bg`, `--field-border`, `--red`, `--yellow` | `color: var(--label)` |
+| Espaçamento | `--sp-1` (4px) a `--sp-7` (32px) | `padding: var(--sp-4)` |
+| Raios | `--radius-sm` (7px), `--radius-md` (9px), `--radius-lg` (14px), `--radius-xl` (18px), `--radius-pill` (999px) | `border-radius: var(--radius-md)` |
+| Sombras | `--shadow-sm`, `--shadow-md`, `--shadow-lg`, `--shadow-xl`, `--shadow-button`, `--shadow-drawer`, `--shadow-modal` | `box-shadow: var(--shadow-md)` |
+| Tipografia | `--font-xs` (10px), `--font-sm` (12px), `--font-base` (13px), `--font-md` (16px), `--font-lg` (20px), `--font-xl` (31px) | `font-size: var(--font-base)` |
+| Componentes | `--btn-height` (40px), `--btn-icon-size` (36px), `--input-height` (44px), `--sidebar-width` (248px), `--topbar-height` (68px, usado na brand-row da sidebar) | `height: var(--btn-height)` |
+| Transição | `--transition` (.2s ease) | `transition: background var(--transition)` |
+
+Todo novo CSS deve usar esses tokens em vez de valores hardcoded.
 
 ## Padrão obrigatório de tela
 

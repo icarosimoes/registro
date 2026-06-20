@@ -28,7 +28,8 @@ Company
   ├── AuditReport ──► item1 / item2 / item3
   ├── WorkDiary ──► activities / teams / equipment / observations
   ├── AuditEvent (imutável por empresa)
-  └── FiscalRequest (persistente) ──► attachments / recipients (planejado)
+  ├── FiscalRequest (persistente) ──► attachments / recipients (planejado)
+  └── ModuleRecord (genérico: reuniões, inspeções, turnos, obra, manutenção, mural)
 ```
 
 ## Agregados principais
@@ -45,6 +46,7 @@ Company
 | Inspeções | suites, vistorias, auditorias e itens | versões V1/V2, evidências e exportações |
 | Diário de obra | `work_diaries` e tabelas filhas | equipes, atividades, equipamentos e anexos |
 | Solicitações fiscais | `fiscal_requests` | tenant, tipo, título, descrição, protocolo único, origin, status, `requester_user_id`, `responsible_user_id`, `sla_deadline`, `chess_user_id`, `reservation_number` e `payload` JSON |
+| Módulos genéricos | `module_records` | tenant, `module` (slug), `title`, `description`, `category`, `status`, `owner_user_id` e soft delete. Compartilhado por reuniões, relatórios de turno, inspeções, diário de obra, manutenção e mural |
 | Auditoria | `audit_events` | imutável por tenant, `user_id`, `entity_type`, `entity_id`, `event_type`, `diff` JSON com antes/depois por campo |
 
 ## Convenções de dados

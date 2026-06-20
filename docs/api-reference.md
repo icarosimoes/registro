@@ -21,6 +21,19 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `POST` | `/fiscal-requests` | Tenant Bearer | cria solicitação fiscal |
 | `PATCH` | `/fiscal-requests/{id}` | Tenant Bearer | atualiza solicitação fiscal |
 | `DELETE` | `/fiscal-requests/{id}` | Tenant Bearer | exclui solicitação fiscal |
+| `GET` | `/dashboard/metrics` | Tenant Bearer | métricas agregadas do dashboard |
+| `GET` | `/users` | Tenant Bearer | usuários paginados do tenant |
+| `POST` | `/users` | Tenant Bearer | cria usuário |
+| `PATCH` | `/users/{id}` | Tenant Bearer | atualiza usuário |
+| `DELETE` | `/users/{id}` | Tenant Bearer | soft delete de usuário |
+| `GET` | `/registries` | Tenant Bearer | cadastros (setores, locais e funções) |
+| `POST` | `/registries` | Tenant Bearer | cria cadastro |
+| `PATCH` | `/registries/{id}?category=` | Tenant Bearer | atualiza cadastro |
+| `DELETE` | `/registries/{id}?category=` | Tenant Bearer | soft delete de cadastro |
+| `GET` | `/modules/{slug}` | Tenant Bearer | registros genéricos paginados |
+| `POST` | `/modules/{slug}` | Tenant Bearer | cria registro genérico |
+| `PATCH` | `/modules/{slug}/{id}` | Tenant Bearer | atualiza registro genérico |
+| `DELETE` | `/modules/{slug}/{id}` | Tenant Bearer | soft delete de registro genérico |
 | `POST` | `/platform/auth/login` | pública | JWT administrativo isolado |
 | `GET` | `/platform/metrics` | Platform Bearer | métricas SaaS agregadas |
 | `GET` | `/platform/tenants` | Platform Bearer | empresas e assinatura |
@@ -162,5 +175,105 @@ O `payload` de solicitações fiscais valida automaticamente:
 | `taxpayerEmail` | formato básico de e-mail; normalizado para lowercase e trim |
 
 Valores inválidos retornam `422`.
+
+### Dashboard
+
+`GET /dashboard/metrics` retorna indicadores agregados em tempo real do tenant:
+
+```json
+{
+  "open_occurrences": 12,
+  "my_occurrences": 3,
+  "open_fiscal": 4,
+  "completed_month": 28,
+  "active_users": 26,
+  "active_sectors": 5,
+  "recent": [
+    { "id": 1048, "title": "...", "area": "Governança", "owner": "Marina Costa", "status": "Em andamento", "updated_at": "..." }
+  ]
+}
+```
+
+| Campo | Descrição |
+| --- | --- |
+| `open_occurrences` | ocorrências com status 1 (em andamento) ou 3 (aguardando) |
+| `my_occurrences` | subconjunto de `open_occurrences` atribuídas ao usuário logado |
+| `open_fiscal` | solicitações fiscais com status diferente de "Concluído" |
+| `completed_month` | ocorrências concluídas (status 2) no mês corrente |
+| `active_users` | usuários ativos e não excluídos do tenant |
+| `active_sectors` | setores não excluídos do tenant |
+| `recent` | últimas 10 ocorrências ordenadas por `updated_at` |
+
+### Usuários
+
+O CRUD de usuários está operacional. Todas as rotas exigem Tenant Bearer e isolam por `company_id`.
+
+#### `GET /users`
+
+Lista usuários do tenant com paginação e busca. Aceita `page`, `page_size` e `search` (busca por nome ou e-mail). Responde `{items, total, page, page_size}`. Cada item inclui `id`, `name`, `email`, `role_name`, `active` e `updated_at`.
+
+#### `POST /users`
+
+Cria um usuário. Requer `name`, `email` e `password`. Opcionais: `role_id` e `active`. A senha é armazenada com hash bcrypt. Retorna `409` se o e-mail já existir no tenant.
+
+#### `PATCH /users/{id}`
+
+Atualiza campos do usuário. Aceita qualquer subconjunto de `name`, `email`, `password`, `role_id` e `active`. Se `password` for enviada, gera novo hash bcrypt.
+
+#### `DELETE /users/{id}`
+
+Exclusão lógica — preenche `deleted_at` e desativa o usuário. Retorna `400` se o usuário tentar excluir a si mesmo.
+
+### Cadastros (Registries)
+
+Endpoint unificado para setores, locais e funções. O campo `category` identifica o tipo: `"Setor"`, `"Local"` ou `"Função"`.
+
+#### `GET /registries`
+
+Lista todos os cadastros do tenant combinados em uma única listagem, com paginação e busca por nome. Responde `{items, total, page, page_size}`.
+
+#### `POST /registries`
+
+Cria um cadastro. Requer `name` e `category`. A `category` deve ser `"Setor"`, `"Local"` ou `"Função"`; valores inválidos retornam `400`.
+
+#### `PATCH /registries/{id}?category=Setor`
+
+Atualiza o nome do cadastro. O `category` é obrigatório como query parameter para identificar a tabela correta.
+
+#### `DELETE /registries/{id}?category=Setor`
+
+Exclusão lógica do cadastro. O `category` é obrigatório como query parameter.
+
+### Módulos genéricos
+
+Endpoint unificado para módulos operacionais que compartilham a mesma estrutura: reuniões, relatórios de turno, inspeções, diário de obra, manutenção e mural. O `{slug}` identifica o módulo.
+
+Slugs válidos: `reunioes`, `relatorios-turno`, `inspecoes`, `diarios-obra`, `manutencao`, `mural`.
+
+#### `GET /modules/{slug}`
+
+Lista registros do módulo com paginação e busca. Aceita `page`, `page_size` e `search`. Responde `{items, total, page, page_size}`. Cada item inclui `id`, `title`, `description`, `category`, `owner` (nome do usuário), `status` e `updated_at`.
+
+#### `POST /modules/{slug}`
+
+Cria um registro. Requer `title`. Opcionais: `description`, `category`, `status` (padrão: "Em andamento") e `owner_user_id` (padrão: usuário logado).
+
+#### `PATCH /modules/{slug}/{id}`
+
+Atualiza campos do registro. Aceita qualquer subconjunto de `title`, `description`, `category`, `status` e `owner_user_id`.
+
+#### `DELETE /modules/{slug}/{id}`
+
+Exclusão lógica — preenche `deleted_at`. Retorna `404` se o registro não existir, já estiver excluído ou pertencer a outro tenant/módulo.
+
+### Auditoria de novos endpoints
+
+Toda mutação nos novos endpoints (usuários, cadastros e módulos genéricos) gera `AuditEvent`:
+
+| `entity_type` | `event_type` | Quando |
+| --- | --- | --- |
+| `user` | `create` / `update` / `delete` | CRUD de usuários |
+| `registry` | `create` / `delete` | CRUD de cadastros |
+| `{module_slug}` | `create` / `update` / `delete` | CRUD de módulos genéricos |
 
 Não existem endpoints de anexos ou notificações. Essas funcionalidades permanecem planejadas.

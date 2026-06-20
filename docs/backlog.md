@@ -21,11 +21,13 @@
 
 ## P2 — identidade, ACL e cadastros
 
-- [ ] Usuários, perfis e permissões com paridade de leitura.
-- [ ] Setores, locais e funções (CRUD via API para lookup tables de ocorrências).
+- [x] Usuários: CRUD via API com listagem, criação (bcrypt), atualização, soft delete e paginação server-side.
+- [x] Setores, locais e funções: CRUD unificado via `/registries` com paginação e busca.
 - [ ] Procedimentos e anexos.
 - [x] Timeline de alterações nos registros operacionais (front local, todas as telas).
 - [x] Tabela de auditoria na API (`audit_events`) para persistir o histórico de alterações com `user_id`, `company_id` e diff JSON.
+- [x] Padronizar design tokens no `globals.css` (espaçamento, cores, raios, sombras, tipografia, transições).
+- [x] Unificar `DashboardShell` e `OperationalModule` em um `AppLayout` compartilhado, eliminando sidebar/topbar/navegação duplicados.
 - [ ] Componentes reutilizáveis de lista, formulário, estado vazio e confirmação.
 - [ ] Persistir comentários e alterações da tratativa na API; remover o histórico operacional do `localStorage`.
 - [ ] Tornar a auditoria imutável, com ator, tenant, data UTC, tipo de evento e diferenças estruturadas.
@@ -38,9 +40,12 @@
 - [x] Evoluir ocorrências para paginação e busca server-side sob demanda, com navegação via query params na URL.
 - [x] Remover a precedência de dados antigos do `localStorage` sobre ocorrências retornadas pela API.
 - [x] Implementar mutações de ocorrências na API com autorização e isolamento por empresa.
+- [x] Dashboard com métricas reais agregadas do banco (ocorrências, fiscais, equipe, atividades recentes).
+- [x] Todos os módulos operacionais conectados à API com CRUD completo e paginação server-side.
+- [x] Tabela genérica `module_records` para módulos sem tabela própria (reuniões, inspeções, turnos, obra, manutenção, mural).
 - [ ] Ocorrências: comentários, participantes, anexos, clone e PDF.
-- [ ] Reuniões, participantes, assuntos, anexos, início e ata PDF.
-- [ ] Relatórios de turno e Excel.
+- [ ] Reuniões: promover para tabela própria com participantes, assuntos, anexos, início e ata PDF.
+- [ ] Relatórios de turno: promover para tabela própria com Excel.
 
 ## P3B — solicitações fiscais
 
@@ -100,13 +105,13 @@
 
 1. **Armazenamento de anexos** (P3B) — substituir Base64/localStorage por upload para disco/S3 com metadados no banco. Necessário antes de uso real das solicitações fiscais.
 
-2. **Cadastros reais via API** (P2) — CRUD de setores, locais e funções. São lookup tables usadas nas ocorrências e permitem que o formulário de ocorrências ofereça selects reais em vez de texto livre.
+2. **SLA no servidor** (P3B) — mover o cálculo de prazo do cliente para a API, com timezone e calendário útil. A integração Chess Hotel já envia `sla_deadline` de 24h; o servidor precisa de política real.
 
-3. **SLA no servidor** (P3B) — mover o cálculo de prazo do cliente para a API, com timezone e calendário útil. A integração Chess Hotel já envia `sla_deadline` de 24h; o servidor precisa de política real.
+3. **Persistir tratativas na API** (P2) — usar `audit_events` para alimentar a timeline do frontend, removendo a dependência do `localStorage` para comentários e alterações.
 
-4. **Persistir tratativas na API** (P2) — usar `audit_events` para alimentar a timeline do frontend, removendo a dependência do `localStorage` para comentários e alterações.
+4. **Notificações da integração Chess Hotel** — quando uma solicitação fiscal é criada pelo Chess, notificar o financeiro no Registro (badge, e-mail ou webhook interno).
 
-5. **Notificações da integração Chess Hotel** — quando uma solicitação fiscal é criada pelo Chess, notificar o financeiro no Registro (badge, e-mail ou webhook interno).
+5. **Promover módulos genéricos** — quando reuniões, inspeções ou diário de obra precisarem de campos específicos, criar tabelas dedicadas preservando os dados da `module_records`.
 
 ### Estruturais
 

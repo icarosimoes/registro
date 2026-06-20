@@ -1,20 +1,24 @@
 "use client";
 
-import { createFiscalRequestAction, createOccurrenceAction, deleteFiscalRequestAction, deleteOccurrenceAction, logoutAction, updateFiscalRequestAction, updateOccurrenceAction } from "@/app/actions";
-import type { TenantUser } from "@/lib/api";
-import { moduleDefinitions, navigationModules, type HistoryEntry, type ModuleDefinition, type ModuleRecord } from "@/lib/module-definitions";
 import {
-  Bell, Building2, ChevronLeft, ChevronRight, ClipboardCheck, Download, FileClock,
-  FileText, HardHat, Home, Menu, MessageSquare, Paperclip, Pencil, Plus, Receipt, RefreshCw, Search,
-  Send, Settings, ShieldCheck, Trash2, Users, Wrench, X,
+  createFiscalRequestAction, createOccurrenceAction, deleteFiscalRequestAction, deleteOccurrenceAction,
+  updateFiscalRequestAction, updateOccurrenceAction,
+  createUserAction, updateUserAction, deleteUserAction,
+  createRegistryAction, updateRegistryAction, deleteRegistryAction,
+  createModuleRecordAction, updateModuleRecordAction, deleteModuleRecordAction,
+} from "@/app/actions";
+import type { TenantUser } from "@/lib/api";
+import { type HistoryEntry, type ModuleDefinition, type ModuleRecord } from "@/lib/module-definitions";
+import {
+  ChevronLeft, ChevronRight, Download, FileClock,
+  MessageSquare, Paperclip, Pencil, Plus, RefreshCw, Search,
+  Send, Trash2, X,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FiscalRequestForm } from "./fiscal-request-form";
 import { SlaIndicator } from "./sla-indicator";
 
-const icons: Record<string, typeof FileClock> = { ocorrencias: FileClock, reunioes: Users, "relatorios-turno": FileText, inspecoes: ClipboardCheck, "diarios-obra": HardHat, manutencao: Wrench, "solicitacoes-fiscais": Receipt };
 const pageSize = 5;
 
 function statusClass(status: string) {
@@ -27,8 +31,11 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const storageKey = `registro:${user.company_id}:${definition.slug}`;
   const isFiscal = definition.slug === "solicitacoes-fiscais";
   const isOcorrencias = definition.slug === "ocorrencias";
+  const isUsers = definition.slug === "usuarios";
+  const isCadastros = definition.slug === "cadastros";
+  const isGenericModule = ["reunioes", "relatorios-turno", "inspecoes", "diarios-obra", "manutencao", "mural"].includes(definition.slug);
   const isApiBacked = definition.source === "api";
-  const canMutate = !isApiBacked || isFiscal || isOcorrencias;
+  const canMutate = true;
   const searchParams = useSearchParams();
   const router = useRouter();
   const sp = definition.serverPagination;
@@ -37,7 +44,6 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const [query, setQuery] = useState(sp?.search ?? "");
   const [status, setStatus] = useState("Todos");
   const [page, setPage] = useState(sp?.page ?? 1);
-  const [mobileMenu, setMobileMenu] = useState(false);
   const [editing, setEditing] = useState<ModuleRecord | "new" | null>(null);
   const [selected, setSelected] = useState<ModuleRecord | null>(null);
   const [toast, setToast] = useState("");
@@ -146,22 +152,52 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       description: String(formData.get("description") ?? ""),
     };
 
-    if (isOcorrencias && isApiBacked) {
-      const statusMap: Record<string, number> = { "Em andamento": 1, "Concluido": 2, "Aguardando": 3 };
-      const apiBody = {
-        title: fields.title,
-        description: fields.description || undefined,
-        status: statusMap[fields.status] ?? 1,
-      };
-      if (current) {
-        const result = await updateOccurrenceAction(current.id, apiBody);
-        if (!result.ok) { setToast(result.error ?? "Erro ao atualizar."); return; }
+    if (isApiBacked) {
+      let result: { ok: boolean; error?: string };
+
+      if (isOcorrencias) {
+        const statusMap: Record<string, number> = { "Em andamento": 1, "Concluido": 2, "Aguardando": 3 };
+        const apiBody = {
+          title: fields.title,
+          description: fields.description || undefined,
+          status: statusMap[fields.status] ?? 1,
+        };
+        result = current
+          ? await updateOccurrenceAction(current.id, apiBody)
+          : await createOccurrenceAction(apiBody);
+      } else if (isUsers) {
+        const password = String(formData.get("password") ?? "");
+        if (current) {
+          const body: Record<string, unknown> = { name: fields.title, email: fields.owner, active: fields.status === "Ativo" };
+          if (password) body.password = password;
+          result = await updateUserAction(current.id, body);
+        } else {
+          if (!password) { setToast("Senha é obrigatória para novos usuários."); return; }
+          result = await createUserAction({ name: fields.title, email: fields.owner, password, active: fields.status === "Ativo" });
+        }
+      } else if (isCadastros) {
+        if (current) {
+          result = await updateRegistryAction(current.id, { name: fields.title }, current.category);
+        } else {
+          result = await createRegistryAction({ name: fields.title, category: fields.category });
+        }
+      } else if (isGenericModule) {
+        const apiBody = {
+          title: fields.title,
+          description: fields.description || undefined,
+          category: fields.category || undefined,
+          status: fields.status,
+        };
+        result = current
+          ? await updateModuleRecordAction(definition.slug, current.id, apiBody)
+          : await createModuleRecordAction(definition.slug, apiBody);
       } else {
-        const result = await createOccurrenceAction(apiBody);
-        if (!result.ok) { setToast(result.error ?? "Erro ao criar."); return; }
+        result = { ok: false, error: "Módulo não suportado." };
       }
+
+      if (!result.ok) { setToast(result.error ?? "Erro ao salvar."); window.setTimeout(() => setToast(""), 2600); return; }
       setEditing(null);
-      setToast(`${definition.singular} ${current ? "atualizada" : "criada"} com sucesso.`);
+      setToast(`${definition.singular} ${current ? "atualizado" : "criado"} com sucesso.`);
       window.setTimeout(() => setToast(""), 2600);
       router.refresh();
       return;
@@ -246,13 +282,17 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
 
   async function remove(record: ModuleRecord) {
     if (!window.confirm(`Excluir "${record.title}"? Esta ação não pode ser desfeita.`)) return;
-    if (isApiBacked && (isFiscal || isOcorrencias)) {
-      const result = isFiscal
-        ? await deleteFiscalRequestAction(record.id)
-        : await deleteOccurrenceAction(record.id);
-      if (!result.ok) { setToast(result.error ?? "Erro ao excluir."); return; }
+    if (isApiBacked) {
+      let result: { ok: boolean; error?: string };
+      if (isFiscal) result = await deleteFiscalRequestAction(record.id);
+      else if (isOcorrencias) result = await deleteOccurrenceAction(record.id);
+      else if (isUsers) result = await deleteUserAction(record.id);
+      else if (isCadastros) result = await deleteRegistryAction(record.id, record.category);
+      else if (isGenericModule) result = await deleteModuleRecordAction(definition.slug, record.id);
+      else result = { ok: false, error: "Módulo não suportado." };
+      if (!result.ok) { setToast(result.error ?? "Erro ao excluir."); window.setTimeout(() => setToast(""), 2600); return; }
       setSelected(null);
-      setToast(`${definition.singular} excluida.`);
+      setToast(`${definition.singular} excluído.`);
       window.setTimeout(() => setToast(""), 2600);
       router.refresh();
       return;
@@ -269,35 +309,43 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     setToast("Arquivo CSV gerado.");
   }
 
-  const initials = user.name.split(" ").slice(0, 2).map((part) => part[0]).join("").toUpperCase();
-
-  return <div className="module-shell">
-    <aside className={`module-sidebar ${mobileMenu ? "is-open" : ""}`}>
-      <Link href="/dashboard" className="module-brand"><span>R</span><div><strong>Registro</strong><small>Gestão operacional</small></div></Link>
-      <nav>
-        <Link href="/dashboard" className="module-nav-item"><Home size={18}/>Visão geral</Link>
-        {navigationModules.map((slug) => { const item = moduleDefinitions[slug]; const Icon = icons[slug as keyof typeof icons]; return <Link key={slug} href={`/${slug}`} className={`module-nav-item ${definition.slug === slug ? "active" : ""}`}><Icon size={18}/>{item.title}</Link>; })}
-        <span className="module-nav-label">Administração</span>
-        <Link href="/cadastros" className={`module-nav-item ${definition.slug === "cadastros" ? "active" : ""}`}><Building2 size={18}/>Cadastros</Link>
-        <Link href="/usuarios" className={`module-nav-item ${definition.slug === "usuarios" ? "active" : ""}`}><ShieldCheck size={18}/>Usuários e acesso</Link>
-        <Link href="/mural" className={`module-nav-item ${definition.slug === "mural" ? "active" : ""}`}><Bell size={18}/>Mural de avisos</Link>
-      </nav>
-      <Link href="/configuracoes" className={`module-nav-item module-settings ${definition.slug === "configuracoes" ? "active" : ""}`}><Settings size={18}/>Configurações</Link>
-    </aside>
-    {mobileMenu ? <button className="backdrop" aria-label="Fechar menu" onClick={() => setMobileMenu(false)}/> : null}
-    <header className="module-topbar"><button className="icon-button mobile-menu" onClick={() => setMobileMenu(true)}><Menu/></button><div><span>Empresa demonstração</span><strong>{definition.title}</strong></div><Link href="/minha-conta" className="module-user"><span>{initials}</span><div><strong>{user.name}</strong><small>{user.role_name}</small></div></Link></header>
-    <main className="module-main">
-      <header className="module-heading"><div><p className="eyebrow">Operação</p><h1>{definition.title}</h1><p>{definition.description}</p>{isApiBacked && !isFiscal && !isOcorrencias ? <small className="api-readonly-notice">Dados da API em modo de leitura até a liberação dos endpoints de mutação.</small> : null}</div>{canMutate && definition.layout !== "settings" && definition.layout !== "profile" ? <button className="primary-button" onClick={() => setEditing("new")}><Plus size={18}/>{definition.action}</button> : null}</header>
+  return <>
+      <header className="module-heading"><div><p className="eyebrow">Operação</p><h1>{definition.title}</h1><p>{definition.description}</p></div>{canMutate && definition.layout !== "settings" && definition.layout !== "profile" ? <button className="primary-button" onClick={() => setEditing("new")}><Plus size={18}/>{definition.action}</button> : null}</header>
 
       {definition.layout === "settings" ? <SettingsForm storageKey={storageKey} onSaved={() => setToast("Configurações salvas com sucesso.")}/> : definition.layout === "profile" ? <ProfileForm user={user} onSaved={() => setToast("Perfil atualizado localmente.")}/> : <section className="module-panel">
-        <div className="module-toolbar"><label><Search size={18}/><input value={query} onChange={(event) => handleServerSearch(event.target.value)} placeholder={`Buscar em ${definition.title.toLocaleLowerCase("pt-BR")}`}/></label>{!sp ? <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}>{statuses.map((item) => <option key={item}>{item}</option>)}</select> : null}{canMutate && !sp ? <button onClick={() => { setRecords(definition.records); localStorage.removeItem(storageKey); setToast("Dados fictícios restaurados."); }} title="Restaurar dados"><RefreshCw size={17}/></button> : null}<button onClick={exportCsv}><Download size={17}/> Exportar</button></div>
+        <div className="module-toolbar"><label><Search size={18}/><input value={query} onChange={(event) => handleServerSearch(event.target.value)} placeholder={`Buscar em ${definition.title.toLocaleLowerCase("pt-BR")}`}/></label>{!sp ? <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}>{statuses.map((item) => <option key={item}>{item}</option>)}</select> : null}{!isApiBacked && !sp ? <button onClick={() => { setRecords(definition.records); localStorage.removeItem(storageKey); setToast("Dados fictícios restaurados."); }} title="Restaurar dados"><RefreshCw size={17}/></button> : null}<button onClick={exportCsv}><Download size={17}/> Exportar</button></div>
         {!ready ? <div className="module-state">Carregando registros…</div> : !visible.length ? <div className="module-state"><Search size={30}/><strong>Nenhum resultado</strong><span>Ajuste os filtros ou crie um novo registro.</span></div> : definition.layout === "cards" ? <div className="notice-grid">{visible.map((record) => <article key={record.id} onClick={() => setSelected(record)}><span>{record.category}</span><h2>{record.title}</h2><p>{record.description}</p><footer><small>{record.owner} · {record.updatedAt}</small><i className={statusClass(record.status)}>{record.status}</i></footer></article>)}</div> : <div className="module-table-wrap"><table><thead><tr><th>ID</th><th>{definition.singular}</th>{isFiscal && <th>UH</th>}<th>Categoria</th><th>Responsável</th><th>Status</th>{isFiscal && <th>SLA</th>}<th>Atualização</th>{canMutate ? <th>Ações</th> : null}</tr></thead><tbody>{visible.map((record) => <tr key={record.id} onClick={() => setSelected(record)}><td className="protocol">#{record.id}</td><td><strong>{record.title}</strong></td>{isFiscal && <td>{record.apartment ?? "—"}</td>}<td>{record.category}</td><td>{record.owner}</td><td><span className={statusClass(record.status)}>{record.status}</span></td>{isFiscal && <td>{record.slaDeadline ? <SlaIndicator deadline={record.slaDeadline}/> : "—"}</td>}<td className="muted">{record.updatedAt}</td>{canMutate ? <td><div className="row-actions"><button onClick={(event) => { event.stopPropagation(); setEditing(record); }} aria-label="Editar"><Pencil size={16}/></button><button onClick={(event) => { event.stopPropagation(); remove(record); }} aria-label="Excluir"><Trash2 size={16}/></button></div></td> : null}</tr>)}</tbody></table></div>}
         <footer className="module-pagination"><span>{totalItems} registro(s)</span><div><button disabled={page <= 1} onClick={() => handleServerPage(page - 1)}><ChevronLeft/></button><span>Pagina {Math.min(page, pages)} de {pages}</span><button disabled={page >= pages} onClick={() => handleServerPage(page + 1)}><ChevronRight/></button></div></footer>
       </section>}
-    </main>
 
     {editing ? <div className="modal-layer" role="presentation"><section className={`record-modal${editing !== "new" && editing.history?.length ? " has-timeline" : ""}${isFiscal ? " fiscal-modal" : ""}`} role="dialog" aria-modal="true"><header><div><span>{editing === "new" ? "Novo registro" : `#${editing.id}`}</span><h2>{editing === "new" ? definition.action : `Editar ${definition.singular}`}</h2></div><button className="icon-button" onClick={() => setEditing(null)}><X/></button></header>
-      {isFiscal ? <FiscalRequestForm record={editing} userName={user.name} onSave={saveFiscalRecord} onCancel={() => setEditing(null)}/> : <form action={saveRecord}><label>Título<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label><div className="form-grid"><label>Categoria<input name="category" required defaultValue={editing === "new" ? "Geral" : editing.category}/></label><label>Status<select name="status" defaultValue={editing === "new" ? "Em andamento" : editing.status}><option>Em andamento</option><option>Aguardando</option><option>Agendada</option><option>Ativo</option><option>Publicado</option><option>Rascunho</option><option>Concluído</option></select></label></div><label>Responsável<input name="owner" required defaultValue={editing === "new" ? user.name : editing.owner}/></label><label>Notificar<input name="notifyUsers" placeholder="Nomes separados por vírgula" defaultValue={editing === "new" ? "" : (editing.notifyUsers ?? []).join(", ")}/><small className="field-hint">Pessoas ou grupos que serão notificados sobre atualizações.</small></label><label>Descrição<textarea name="description" rows={4} defaultValue={editing === "new" ? "" : editing.description}/></label><footer><button type="button" onClick={() => setEditing(null)}>Cancelar</button><button type="submit">Salvar</button></footer></form>}
+      {isFiscal ? <FiscalRequestForm record={editing} userName={user.name} onSave={saveFiscalRecord} onCancel={() => setEditing(null)}/> : <form action={saveRecord}>
+      {isUsers ? <>
+        <label>Nome<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
+        <label>E-mail<input name="owner" type="email" required defaultValue={editing === "new" ? "" : editing.owner}/></label>
+        <label>Senha{editing !== "new" && <small className="field-hint"> (deixe vazio para manter a atual)</small>}<input name="password" type="password" {...(editing === "new" ? { required: true } : {})} placeholder={editing === "new" ? "" : "••••••••"}/></label>
+        <div className="form-grid">
+          <label>Cargo<input name="category" defaultValue={editing === "new" ? "" : editing.category}/></label>
+          <label>Status<select name="status" defaultValue={editing === "new" ? "Ativo" : editing.status}><option>Ativo</option><option>Inativo</option></select></label>
+        </div>
+      </> : isCadastros ? <>
+        <label>Nome<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
+        <div className="form-grid">
+          <label>Tipo<select name="category" defaultValue={editing === "new" ? "Setor" : editing.category}><option>Setor</option><option>Local</option><option>Função</option></select></label>
+          <label>Status<select name="status" defaultValue="Ativo"><option>Ativo</option></select></label>
+        </div>
+      </> : <>
+        <label>Título<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
+        <div className="form-grid">
+          <label>Categoria<input name="category" required defaultValue={editing === "new" ? "Geral" : editing.category}/></label>
+          <label>Status<select name="status" defaultValue={editing === "new" ? "Em andamento" : editing.status}><option>Em andamento</option><option>Aguardando</option><option>Agendada</option><option>Ativo</option><option>Publicado</option><option>Rascunho</option><option>Concluído</option></select></label>
+        </div>
+        <label>Responsável<input name="owner" required defaultValue={editing === "new" ? user.name : editing.owner}/></label>
+        {!isApiBacked && <label>Notificar<input name="notifyUsers" placeholder="Nomes separados por vírgula" defaultValue={editing === "new" ? "" : (editing.notifyUsers ?? []).join(", ")}/><small className="field-hint">Pessoas ou grupos que serão notificados sobre atualizações.</small></label>}
+        <label>Descrição<textarea name="description" rows={4} defaultValue={editing === "new" ? "" : editing.description}/></label>
+      </>}
+      <footer><button type="button" onClick={() => setEditing(null)}>Cancelar</button><button type="submit">Salvar</button></footer>
+    </form>}
       {editing !== "new" && editing.history?.length ? <div className="modal-timeline"><h3><MessageSquare size={15}/>Tratativa</h3><div className="timeline-thread">{editing.history.map((entry, i) => {
         const entryInitials = entry.user.split(" ").slice(0, 2).map((p) => p[0]).join("").toUpperCase();
         return <article key={i} className={`thread-entry thread-${entry.type}`}>
@@ -354,7 +402,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       {canMutate ? <footer><button onClick={() => setEditing(selected)}><Pencil size={16}/>Editar</button><button onClick={() => remove(selected)}><Trash2 size={16}/>Excluir</button></footer> : null}
     </aside></> : null}
     {toast ? <div className="module-toast" role="status">{toast}</div> : null}
-  </div>;
+  </>;
 }
 
 function CommentInput({ onSend }: { onSend: (message: string) => void }) {
@@ -370,5 +418,5 @@ function SettingsForm({ storageKey, onSaved }: { storageKey: string; onSaved: ()
 }
 
 function ProfileForm({ user, onSaved }: { user: TenantUser; onSaved: () => void }) {
-  return <form className="settings-form profile-form" action={onSaved}><section><h2>Dados pessoais</h2><p>Os dados são demonstrativos até existir o endpoint de atualização.</p><label>Nome completo<input name="name" defaultValue={user.name}/></label><label>E-mail<input name="email" type="email" defaultValue={user.email}/></label><label>Cargo<input name="role" value={user.role_name ?? ""} readOnly/></label></section><button className="primary-button" type="submit">Salvar perfil</button><button className="secondary-button" formAction={logoutAction}>Sair da conta</button></form>;
+  return <form className="settings-form profile-form" action={onSaved}><section><h2>Dados pessoais</h2><p>Os dados são demonstrativos até existir o endpoint de atualização.</p><label>Nome completo<input name="name" defaultValue={user.name}/></label><label>E-mail<input name="email" type="email" defaultValue={user.email}/></label><label>Cargo<input name="role" value={user.role_name ?? ""} readOnly/></label></section><button className="primary-button" type="submit">Salvar perfil</button></form>;
 }

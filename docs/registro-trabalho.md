@@ -163,3 +163,45 @@
 - Integração Chess Hotel expandida: resolução de usuário por e-mail, cálculo de SLA (24h), tracking de solicitações com histórico de auditoria, e URL de acompanhamento.
 - Criado CI mínimo em `.github/workflows/ci.yml` com 3 jobs: Ruff (lint + format), pytest (com MySQL service), TypeScript typecheck.
 - Documentação atualizada em `api-reference.md`, `domain-model.md`, `web-rotas-ui.md`, `mapa.md`, `backlog.md` e `registro-trabalho.md`.
+
+## 2026-06-20 — Dados reais em todas as telas
+
+- Removidos todos os dados hardcoded e mock do dashboard e módulos operacionais.
+- Criado endpoint `GET /dashboard/metrics` com métricas agregadas em tempo real: ocorrências abertas, solicitações fiscais pendentes, concluídos no mês, equipe ativa, setores e últimas 10 atividades.
+- Dashboard atualizado para exibir data/saudação dinâmicas e indicadores reais do banco.
+- Criado CRUD completo de usuários (`GET/POST/PATCH/DELETE /users`) com listagem paginada, criação com hash bcrypt, atualização (inclusive senha), soft delete e proteção contra auto-exclusão.
+- Criado CRUD unificado de cadastros (`GET/POST/PATCH/DELETE /registries`) combinando setores, locais e funções em uma única listagem com busca.
+- Criada tabela `module_records` (migration `0009`) para módulos genéricos sem tabela própria.
+- Criado CRUD de módulos genéricos (`GET/POST/PATCH/DELETE /modules/{slug}`) para reuniões, relatórios de turno, inspeções, diário de obra, manutenção e mural.
+- Todos os novos endpoints incluem auditoria via `audit_events`, isolamento por `company_id` e paginação server-side.
+- Frontend atualizado: todas as telas buscam dados reais da API, formulários adaptados por tipo (usuários com campo de senha, cadastros com seletor de tipo, etc.).
+- Eliminados botão "Restaurar dados fictícios" e aviso de "modo leitura" para módulos API-backed.
+- Documentação atualizada em `api-reference.md`, `domain-model.md`, `web-rotas-ui.md`, `mapa.md`, `backlog.md` e `registro-trabalho.md`.
+
+## 2026-06-20 — Padronização de design tokens
+
+- Criado sistema de design tokens no `globals.css` com 40+ variáveis CSS organizadas por categoria.
+- **Cores**: eliminados ~15 hexadecimais hardcoded; criadas variáveis `--blue-hover`, `--blue-focus`, `--label`, `--placeholder`, `--hover`, `--field-bg`, `--field-border`, `--red`, `--red-soft`, `--yellow`, `--yellow-soft`.
+- **Espaçamento**: escala de 7 níveis (`--sp-1` 4px a `--sp-7` 32px), substituindo gaps inconsistentes de 14/15/16/18/20/22px.
+- **Raios**: 5 tokens (`--radius-sm` 7px, `--radius-md` 9px, `--radius-lg` 14px, `--radius-xl` 18px, `--radius-pill` 999px), unificando 8 valores diferentes.
+- **Sombras**: 7 tokens semânticos (`--shadow-sm` a `--shadow-modal`), consolidando ~10 combinações de box-shadow.
+- **Tipografia**: 6 tokens de tamanho (`--font-xs` 10px a `--font-xl` 31px).
+- **Componentes**: `--btn-height` 40px, `--btn-icon-size` 36px, `--input-height` 44px.
+- **Transição**: unificada em `--transition: .2s ease` (antes misturava .15s e .22s).
+- Font-weights reduzidos de 6 valores (650/700/750/800/850/900) para 4 (600/700/800).
+- Cores de label unificadas: `#445066`/`#4d586b`/`#4a566b` → `var(--label)`.
+- Hover states unificados: `#f0f3f8`/`#f3f6fa` → `var(--hover)`.
+- Status color `#1763c6` → `var(--blue)` consistente.
+- Adicionadas transitions em elementos interativos que não tinham (nav-items, icon-buttons, etc.).
+- Layout e visual permanecem idênticos — apenas valores foram unificados para manutenção.
+
+## 2026-06-20 — Remoção de componentes e unificação de layout
+
+- Removido componente `WorkspaceTabs` (abas dinâmicas no topbar) da UI do Registro.
+- Código e CSS do componente arquivados em `aloji/docs/agentes/jarvis-workspace-tabs.md` para reutilização em outros projetos.
+- Removida barra superior (topbar) de todas as telas. Sino e avatar agora flutuam no canto superior direito sem barra visual (`.top-float` + `.top-float-actions` com `position: fixed`).
+- Criado `AppLayout` (`components/app-layout.tsx`) como shell unificado para dashboard e módulos.
+- Sidebar, navegação, collapse, drawers de notificação/perfil e menu mobile agora são compartilhados via `AppLayout`.
+- `DashboardShell` e `OperationalModule` simplificados para renderizar apenas conteúdo interno (sem sidebar, topbar ou drawers de perfil).
+- Removidos ~120 linhas de CSS duplicado (`.module-shell`, `.module-sidebar`, `.module-brand`, `.module-nav-item`, `.module-topbar`, `.module-user`, `.topbar`).
+- Busca do dashboard movida para a barra de ferramentas da tabela de atividades recentes (`.table-search`).
