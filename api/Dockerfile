@@ -3,7 +3,9 @@ FROM python:3.12.11-slim-bookworm AS base
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    MYPY_CACHE_DIR=/tmp/.mypy_cache \
+    RUFF_CACHE_DIR=/tmp/.ruff_cache
 
 WORKDIR /app
 

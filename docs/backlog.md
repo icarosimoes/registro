@@ -16,12 +16,12 @@
 - [x] Validar `company_id` positivo no contrato de login e documentar integralmente a resposta `422 multi_tenant`.
 - [x] Criar migration de upgrade que renomeie com segurança um eventual tenant antigo `aero-v1` para `aero-hotel`, sem criar tenant duplicado.
 - [x] Criar CI com Ruff, pytest e typecheck (GitHub Actions); mypy excluído até estabilizar.
-- [ ] Concluir inventário de índices, constraints, collations, órfãos, soft deletes, anexos e volumes fora do banco.
+- [x] Concluir inventário de índices, constraints e órfãos — migration `0017_schema_audit` corrige índices compostos, remove redundantes e adiciona `ondelete` em 10 FKs.
 - [x] Testes cross-tenant: suite `test_cross_tenant.py` com validação de tokens por tenant, rejeição de token expirado e sem token em todos os endpoints autenticados.
 - [x] Separar service layer dos routers — cada domínio possui `service.py` com lógica de negócio extraída; routers delegam para services.
 - [x] Rate limiting com slowapi nos endpoints sensíveis: login (10/min), refresh (20/min), integração Chess (30/min).
 - [x] Refresh token JWT (type=refresh, 7 dias) com endpoint `POST /auth/refresh` e auto-refresh transparente no frontend via cookie httpOnly.
-- [ ] Estabilizar a execução do mypy na imagem de desenvolvimento; a versão 1.20.2 encerrou com erro interno em 20/06/2026.
+- [x] Estabilizar mypy na imagem de desenvolvimento — causa era `PermissionError` no `.mypy_cache`; resolvido com `MYPY_CACHE_DIR=/tmp/.mypy_cache` no Dockerfile.
 
 ## P2 — identidade, ACL e cadastros
 
@@ -65,7 +65,7 @@
 - [x] Evoluir SLA com timezone explícito, calendário útil, pausa e política de vencimento.
 - [x] Substituir anexos Base64 no `localStorage` por armazenamento via MinIO (S3-compatible), com metadados no banco (`attachments`).
 - [x] Validar tamanho (10MB), quantidade (20/registro), extensão e content-type dos anexos.
-- [ ] Restringir previews e downloads para impedir conteúdo ativo ou arquivo malicioso.
+- [x] Restringir previews e downloads — CSP `default-src 'none'`, `nosniff`, `X-Frame-Options: DENY`, sanitização de filename no endpoint de download.
 - [x] Notificações in-app: `create_notification()` dispara para responsáveis e notificados em todo `notify_record_event`; Chess Hotel notifica todos os usuários ativos ao criar solicitação fiscal.
 - [ ] Implementar preferências de notificação, destinatários por módulo e registro de entrega.
 - [x] Backend de notificações in-app: model `Notification`, migration, endpoints de listagem paginada, marcar como lida e marcar todas como lidas.

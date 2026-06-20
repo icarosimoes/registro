@@ -27,6 +27,15 @@ Toda consulta de negócio deve receber a empresa da sessão, nunca do corpo envi
 - Não adicionar pacote recém-publicado sem necessidade e revisão.
 - Imagens Docker usam runtime com patch explícito; tags de aplicação em produção usam SHA imutável.
 
+## Anexos
+
+Downloads servidos via `StreamingResponse` com `Content-Disposition: attachment` e headers de segurança:
+- `Content-Security-Policy: default-src 'none'; style-src 'unsafe-inline'` — impede execução de scripts, iframes e recursos externos.
+- `X-Content-Type-Options: nosniff` — impede sniffing de MIME pelo navegador.
+- `X-Frame-Options: DENY` — impede embedding em iframes.
+- `Cache-Control: no-store` — impede cache de anexos sensíveis.
+- Filename sanitizado: path traversal (`../`, `\`) e caracteres especiais removidos.
+
 ## Dados e logs
 
 Nunca registrar senha, JWT, URL completa de banco, dados pessoais desnecessários ou conteúdo de anexos. Erros públicos usam códigos estáveis e mensagens sem detalhes internos.

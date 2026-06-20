@@ -5,6 +5,7 @@ from sqlalchemy import (
     Date,
     DateTime,
     ForeignKey,
+    Index,
     Integer,
     String,
     Text,
@@ -71,11 +72,21 @@ class Occurrence(Base, TenantMixin, LegacyEntityMixin, TimestampMixin):
     status: Mapped[int] = mapped_column(Integer, default=1, index=True)
     legacy_type_id: Mapped[int | None] = mapped_column(Integer)
     legacy_receiver_user_id: Mapped[int | None] = mapped_column(Integer)
-    location_id: Mapped[int | None] = mapped_column(ForeignKey("locations.id"))
-    sector_id: Mapped[int | None] = mapped_column(ForeignKey("sectors.id"))
-    owner_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
-    created_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
-    updated_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    location_id: Mapped[int | None] = mapped_column(
+        ForeignKey("locations.id", ondelete="SET NULL"),
+    )
+    sector_id: Mapped[int | None] = mapped_column(
+        ForeignKey("sectors.id", ondelete="SET NULL"),
+    )
+    owner_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    created_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    updated_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
     notify_user_ids: Mapped[list | None] = mapped_column(JSON)
     file: Mapped[str | None] = mapped_column(Text)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
@@ -83,6 +94,9 @@ class Occurrence(Base, TenantMixin, LegacyEntityMixin, TimestampMixin):
 
 class FiscalRequest(Base, TenantMixin, TimestampMixin):
     __tablename__ = "fiscal_requests"
+    __table_args__ = (
+        Index("ix_fiscal_requests_company_status", "company_id", "status"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     protocol: Mapped[str] = mapped_column(String(40), unique=True)
@@ -91,8 +105,12 @@ class FiscalRequest(Base, TenantMixin, TimestampMixin):
     apartment: Mapped[str | None] = mapped_column(String(40))
     requester: Mapped[str] = mapped_column(String(160))
     requester_email: Mapped[str | None] = mapped_column(String(255), index=True)
-    requester_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), index=True)
-    responsible_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), index=True)
+    requester_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True,
+    )
+    responsible_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True,
+    )
     chess_user_id: Mapped[str | None] = mapped_column(String(80))
     reservation_number: Mapped[str | None] = mapped_column(String(80))
     sla_deadline: Mapped[datetime | None] = mapped_column(DateTime)
@@ -106,11 +124,14 @@ class FiscalRequest(Base, TenantMixin, TimestampMixin):
 
 class AuditEvent(Base, TenantMixin):
     __tablename__ = "audit_events"
+    __table_args__ = (
+        Index("ix_audit_events_company_entity", "company_id", "entity_type", "entity_id"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    entity_type: Mapped[str] = mapped_column(String(80), index=True)
-    entity_id: Mapped[int] = mapped_column(Integer, index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    entity_type: Mapped[str] = mapped_column(String(80))
+    entity_id: Mapped[int] = mapped_column(Integer)
     event_type: Mapped[str] = mapped_column(String(40))
     diff: Mapped[dict | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
@@ -126,8 +147,12 @@ class ModuleRecord(Base, TenantMixin, TimestampMixin):
     description: Mapped[str | None] = mapped_column(Text)
     category: Mapped[str | None] = mapped_column(String(120))
     status: Mapped[str] = mapped_column(String(60), default="Em andamento")
-    owner_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
-    created_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    owner_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    created_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
     notify_user_ids: Mapped[list | None] = mapped_column(JSON)
     payload: Mapped[dict | None] = mapped_column(JSON)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
@@ -135,9 +160,12 @@ class ModuleRecord(Base, TenantMixin, TimestampMixin):
 
 class Notification(Base, TenantMixin):
     __tablename__ = "notifications"
+    __table_args__ = (
+        Index("ix_notifications_user_unread", "user_id", "read_at"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     title: Mapped[str] = mapped_column(String(255))
     body: Mapped[str | None] = mapped_column(Text)
     category: Mapped[str] = mapped_column(String(60), default="info", index=True)
@@ -149,10 +177,13 @@ class Notification(Base, TenantMixin):
 
 class Attachment(Base, TenantMixin):
     __tablename__ = "attachments"
+    __table_args__ = (
+        Index("ix_attachments_company_entity", "company_id", "entity_type", "entity_id"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    entity_type: Mapped[str] = mapped_column(String(80), index=True)
-    entity_id: Mapped[int] = mapped_column(Integer, index=True)
+    entity_type: Mapped[str] = mapped_column(String(80))
+    entity_id: Mapped[int] = mapped_column(Integer)
     filename: Mapped[str] = mapped_column(String(255))
     content_type: Mapped[str] = mapped_column(String(120))
     size_bytes: Mapped[int] = mapped_column(Integer)

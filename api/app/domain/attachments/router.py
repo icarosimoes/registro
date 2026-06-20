@@ -1,3 +1,4 @@
+import re
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile
@@ -16,6 +17,14 @@ from app.domain.attachments.service import (
     list_attachments,
 )
 from app.domain.auth.repository import AuthenticatedUser
+
+_UNSAFE_FILENAME_RE = re.compile(r'[^\w\s\-\.\(\)]', re.UNICODE)
+
+
+def _sanitize_filename(name: str) -> str:
+    name = name.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
+    name = _UNSAFE_FILENAME_RE.sub("_", name).strip(". ")
+    return name or "download"
 
 router = APIRouter(tags=["attachments"])
 
@@ -93,11 +102,16 @@ async def download_attachment(
     if record is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
     buf, content_type = download_file(record.storage_key)
+    safe_name = _sanitize_filename(record.filename)
     return StreamingResponse(
         buf,
         media_type=content_type,
         headers={
-            "Content-Disposition": f'attachment; filename="{record.filename}"',
+            "Content-Disposition": f'attachment; filename="{safe_name}"',
+            "X-Content-Type-Options": "nosniff",
+            "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'",
+            "X-Frame-Options": "DENY",
+            "Cache-Control": "no-store",
         },
     )
 
