@@ -40,6 +40,7 @@ class UserSummary(BaseModel):
     id: int
     name: str
     email: str
+    phone: str | None = None
     role_name: str | None
     active: bool
     updated_at: datetime
@@ -55,6 +56,7 @@ class UserListResponse(BaseModel):
 class UserCreate(BaseModel):
     name: str
     email: str
+    phone: str | None = None
     password: str
     role_id: int | None = None
     active: bool = True
@@ -63,6 +65,7 @@ class UserCreate(BaseModel):
 class UserUpdate(BaseModel):
     name: str | None = None
     email: str | None = None
+    phone: str | None = None
     password: str | None = None
     role_id: int | None = None
     active: bool | None = None
@@ -94,7 +97,7 @@ async def list_users(
     return UserListResponse(
         items=[
             UserSummary(
-                id=u.id, name=u.name, email=u.email,
+                id=u.id, name=u.name, email=u.email, phone=u.phone,
                 role_name=role_name, active=u.active,
                 updated_at=u.updated_at,
             )
@@ -102,6 +105,28 @@ async def list_users(
         ],
         total=total, page=page, page_size=page_size,
     )
+
+
+class UserOption(BaseModel):
+    id: int
+    name: str
+    email: str
+
+
+@router.get("/search", response_model=list[UserOption])
+async def search_users(
+    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+    q: str = "",
+) -> list[UserOption]:
+    filters = [User.company_id == user.company_id, User.deleted_at.is_(None), User.active.is_(True)]
+    if q.strip():
+        pattern = f"%{q.strip()}%"
+        filters.append(or_(User.name.ilike(pattern), User.email.ilike(pattern)))
+    rows = (
+        await session.execute(select(User).where(*filters).order_by(User.name).limit(10))
+    ).scalars().all()
+    return [UserOption(id=u.id, name=u.name, email=u.email) for u in rows]
 
 
 @router.post("", response_model=UserSummary, status_code=201)
@@ -125,6 +150,7 @@ async def create_user(
         company_id=user.company_id,
         name=body.name,
         email=body.email.lower(),
+        phone=body.phone,
         password=password_hash,
         role_id=body.role_id,
         active=body.active,
@@ -139,7 +165,7 @@ async def create_user(
     if record.role_id:
         role_name = await session.scalar(select(Role.name).where(Role.id == record.role_id))
     return UserSummary(
-        id=record.id, name=record.name, email=record.email,
+        id=record.id, name=record.name, email=record.email, phone=record.phone,
         role_name=role_name, active=record.active, updated_at=record.updated_at,
     )
 
@@ -187,7 +213,7 @@ async def update_user(
     if record.role_id:
         role_name = await session.scalar(select(Role.name).where(Role.id == record.role_id))
     return UserSummary(
-        id=record.id, name=record.name, email=record.email,
+        id=record.id, name=record.name, email=record.email, phone=record.phone,
         role_name=role_name, active=record.active, updated_at=record.updated_at,
     )
 

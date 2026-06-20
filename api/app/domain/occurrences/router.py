@@ -19,6 +19,7 @@ from app.domain.occurrences.schemas import (
     OccurrenceSummary,
     OccurrenceUpdate,
 )
+from app.integrations.notifications import notify_record_event
 from app.models import Location, Occurrence, Sector, User
 
 router = APIRouter(prefix="/occurrences", tags=["occurrences"])
@@ -127,6 +128,7 @@ async def create_occurrence(
         owner_user_id=body.owner_user_id,
         created_by_user_id=user.id,
         updated_by_user_id=user.id,
+        notify_user_ids=body.notify_user_ids,
     )
     session.add(record)
     await session.commit()
@@ -134,6 +136,11 @@ async def create_occurrence(
     await record_event(session, company_id=user.company_id, user_id=user.id,
                        entity_type="occurrence", entity_id=record.id, event_type="create")
     await session.commit()
+    await notify_record_event(
+        session, company_id=user.company_id, actor_name=user.name, actor_email=user.email,
+        event="create", title=record.title, module="Ocorrências",
+        owner_user_id=body.owner_user_id, notify_user_ids=body.notify_user_ids,
+    )
     return await _to_summary(record, session)
 
 
@@ -154,17 +161,25 @@ async def update_occurrence(
     if record is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
     updates = body.model_dump(exclude_none=True)
-    before = {k: str(getattr(record, k)) for k in updates}
+    before = {k: str(getattr(record, k)) for k in updates if k != "notify_user_ids"}
     for field, value in updates.items():
         setattr(record, field, value)
     record.updated_by_user_id = user.id
-    diff = compute_diff(before, {k: str(v) for k, v in updates.items()})
+    diff = compute_diff(before, {k: str(v) for k, v in updates.items() if k != "notify_user_ids"})
     if diff:
         await record_event(session, company_id=user.company_id, user_id=user.id,
                            entity_type="occurrence", entity_id=record.id,
                            event_type="update", diff=diff)
     await session.commit()
     await session.refresh(record)
+    if diff:
+        detail = "; ".join(f"{k}: {v}" for k, v in diff.items())
+        await notify_record_event(
+            session, company_id=user.company_id, actor_name=user.name, actor_email=user.email,
+            event="update", title=record.title, module="Ocorrências",
+            owner_user_id=record.owner_user_id, created_by_user_id=record.created_by_user_id,
+            notify_user_ids=record.notify_user_ids, detail=detail,
+        )
     return await _to_summary(record, session)
 
 

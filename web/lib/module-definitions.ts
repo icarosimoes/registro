@@ -29,6 +29,9 @@ export type ModuleRecord = {
   slaDeadline?: string;
   apartment?: string;
   notifyUsers?: string[];
+  notifyUserObjects?: { id: number; name: string }[];
+  notifyUserIds?: number[];
+  phone?: string;
 };
 
 export type ModuleDefinition = {

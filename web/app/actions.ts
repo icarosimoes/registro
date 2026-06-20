@@ -129,6 +129,7 @@ export interface OccurrencePayload {
   sector_id?: number;
   location_id?: number;
   owner_user_id?: number;
+  notify_user_ids?: number[];
 }
 
 export async function createOccurrenceAction(body: OccurrencePayload): Promise<MutationResult> {
@@ -170,6 +171,7 @@ export async function deleteOccurrenceAction(id: number): Promise<MutationResult
 export interface UserPayload {
   name: string;
   email: string;
+  phone?: string;
   password?: string;
   role_id?: number | null;
   active?: boolean;
@@ -242,6 +244,7 @@ export interface ModuleRecordPayload {
   category?: string;
   status?: string;
   owner_user_id?: number;
+  notify_user_ids?: number[];
 }
 
 export async function createModuleRecordAction(moduleSlug: string, body: ModuleRecordPayload): Promise<MutationResult> {
@@ -269,4 +272,64 @@ export async function deleteModuleRecordAction(moduleSlug: string, id: number): 
     return { ok: false, error: "Erro ao excluir registro." };
   }
   return { ok: true };
+}
+
+export interface EvolutionSettings {
+  has_credentials: boolean;
+  api_url?: string | null;
+  instance?: string | null;
+}
+
+export async function getEvolutionSettings(): Promise<EvolutionSettings> {
+  const response = await authedFetch("/settings/evolution");
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { has_credentials: false };
+  }
+  return response.json();
+}
+
+export async function saveEvolutionSettings(body: { api_url: string; api_key: string; instance: string }): Promise<MutationResult> {
+  const response = await authedFetch("/settings/evolution", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao salvar configurações da Evolution." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export interface BrevoSettings {
+  has_credentials: boolean;
+  from_address?: string | null;
+  from_name?: string | null;
+}
+
+export async function getBrevoSettings(): Promise<BrevoSettings> {
+  const response = await authedFetch("/settings/brevo");
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { has_credentials: false };
+  }
+  return response.json();
+}
+
+export async function saveBrevoSettings(body: { api_key: string; from_address: string; from_name: string }): Promise<MutationResult> {
+  const response = await authedFetch("/settings/brevo", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao salvar configurações do Brevo." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export interface UserOption {
+  id: number;
+  name: string;
+  email: string;
+}
+
+export async function searchUsers(q: string): Promise<UserOption[]> {
+  const response = await authedFetch(`/users/search?q=${encodeURIComponent(q)}`);
+  if (!response.ok) return [];
+  return response.json();
 }

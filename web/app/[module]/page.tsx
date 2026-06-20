@@ -89,6 +89,7 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
         id: number;
         name: string;
         email: string;
+        phone: string | null;
         role_name: string | null;
         active: boolean;
         updated_at: string;
@@ -107,6 +108,7 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
             title: item.name,
             category: item.role_name ?? "Sem cargo",
             owner: item.email,
+            phone: item.phone ?? undefined,
             status: item.active ? "Ativo" : "Inativo",
             updatedAt: new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
           })),

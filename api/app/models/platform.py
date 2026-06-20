@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Any
 
-from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, String
+from sqlalchemy import JSON, Boolean, Date, DateTime, ForeignKey, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TenantMixin, TimestampMixin
@@ -63,6 +63,15 @@ class Invoice(Base, TenantMixin, TimestampMixin):
     status: Mapped[str] = mapped_column(String(20), default="pending", index=True)
     due_date: Mapped[date] = mapped_column(Date)
     payment_date: Mapped[date | None] = mapped_column(Date)
+
+
+class CompanySetting(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "company_settings"
+    __table_args__ = (UniqueConstraint("company_id", "key", name="uq_company_settings_company_key"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    key: Mapped[str] = mapped_column(String(120), index=True)
+    value: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
 
 
 class PlatformAuditLog(Base):

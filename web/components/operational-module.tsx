@@ -6,7 +6,10 @@ import {
   createUserAction, updateUserAction, deleteUserAction,
   createRegistryAction, updateRegistryAction, deleteRegistryAction,
   createModuleRecordAction, updateModuleRecordAction, deleteModuleRecordAction,
+  getEvolutionSettings, saveEvolutionSettings,
+  getBrevoSettings, saveBrevoSettings, searchUsers,
 } from "@/app/actions";
+import type { EvolutionSettings, BrevoSettings, UserOption } from "@/app/actions";
 import type { TenantUser } from "@/lib/api";
 import { type HistoryEntry, type ModuleDefinition, type ModuleRecord } from "@/lib/module-definitions";
 import {
@@ -20,6 +23,72 @@ import { FiscalRequestForm } from "./fiscal-request-form";
 import { SlaIndicator } from "./sla-indicator";
 
 const pageSize = 5;
+
+function formatPhone(v: string): string {
+  const d = v.replace(/\D/g, "").slice(0, 11);
+  if (d.length <= 2) return d.length ? `(${d}` : "";
+  if (d.length <= 7) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+function UserAutocomplete({ name, defaultValue, placeholder, required }: { name: string; defaultValue?: string; placeholder?: string; required?: boolean }) {
+  const [query, setQuery] = useState(defaultValue ?? "");
+  const [options, setOptions] = useState<UserOption[]>([]);
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  function handleChange(v: string) {
+    setQuery(v);
+    setSelectedId(null);
+    clearTimeout(timer.current);
+    if (v.trim().length < 2) { setOptions([]); setOpen(false); return; }
+    timer.current = setTimeout(() => {
+      searchUsers(v).then((r) => { setOptions(r); setOpen(r.length > 0); });
+    }, 250);
+  }
+
+  return <div className="autocomplete-wrap">
+    <input name={`${name}_display`} value={query} onChange={(e) => handleChange(e.target.value)} onFocus={() => { if (options.length) setOpen(true); }} onBlur={() => setTimeout(() => setOpen(false), 200)} placeholder={placeholder} required={required} autoComplete="off"/>
+    <input type="hidden" name={name} value={selectedId ?? query}/>
+    {open && <ul className="autocomplete-list">{options.map((u) => <li key={u.id} onMouseDown={() => { setQuery(u.name); setSelectedId(u.id); setOpen(false); }}><strong>{u.name}</strong><small>{u.email}</small></li>)}</ul>}
+  </div>;
+}
+
+function UserMultiSelect({ name, defaultValues }: { name: string; defaultValues?: { id: number; name: string }[] }) {
+  const [selected, setSelected] = useState<{ id: number; name: string }[]>(defaultValues ?? []);
+  const [query, setQuery] = useState("");
+  const [options, setOptions] = useState<UserOption[]>([]);
+  const [open, setOpen] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  function handleChange(v: string) {
+    setQuery(v);
+    clearTimeout(timer.current);
+    if (v.trim().length < 2) { setOptions([]); setOpen(false); return; }
+    timer.current = setTimeout(() => {
+      searchUsers(v).then((r) => { setOptions(r.filter((u) => !selected.some((s) => s.id === u.id))); setOpen(r.length > 0); });
+    }, 250);
+  }
+
+  function add(u: UserOption) {
+    setSelected((prev) => [...prev, { id: u.id, name: u.name }]);
+    setQuery("");
+    setOptions([]);
+    setOpen(false);
+  }
+
+  function remove(id: number) {
+    setSelected((prev) => prev.filter((u) => u.id !== id));
+  }
+
+  return <div className="autocomplete-wrap">
+    <input type="hidden" name={name} value={JSON.stringify(selected.map((u) => u.id))}/>
+    {selected.length > 0 && <div className="notify-chips">{selected.map((u) => <span key={u.id} className="notify-chip">{u.name}<button type="button" onClick={() => remove(u.id)} aria-label="Remover">×</button></span>)}</div>}
+    <input value={query} onChange={(e) => handleChange(e.target.value)} onFocus={() => { if (options.length) setOpen(true); }} onBlur={() => setTimeout(() => setOpen(false), 200)} placeholder="Buscar usuário..." autoComplete="off"/>
+    {open && <ul className="autocomplete-list">{options.map((u) => <li key={u.id} onMouseDown={() => add(u)}><strong>{u.name}</strong><small>{u.email}</small></li>)}</ul>}
+  </div>;
+}
 
 function statusClass(status: string) {
   if (["Concluído", "Ativo", "Publicado"].includes(status)) return "status status-done";
@@ -155,25 +224,31 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     if (isApiBacked) {
       let result: { ok: boolean; error?: string };
 
+      const notifyRaw = String(formData.get("notifyUsers") ?? "[]");
+      let notifyIds: number[] = [];
+      try { notifyIds = JSON.parse(notifyRaw); } catch { /* empty */ }
+
       if (isOcorrencias) {
         const statusMap: Record<string, number> = { "Em andamento": 1, "Concluido": 2, "Aguardando": 3 };
         const apiBody = {
           title: fields.title,
           description: fields.description || undefined,
           status: statusMap[fields.status] ?? 1,
+          notify_user_ids: notifyIds.length ? notifyIds : undefined,
         };
         result = current
           ? await updateOccurrenceAction(current.id, apiBody)
           : await createOccurrenceAction(apiBody);
       } else if (isUsers) {
         const password = String(formData.get("password") ?? "");
+        const phone = String(formData.get("phone") ?? "").replace(/\D/g, "") || undefined;
         if (current) {
-          const body: Record<string, unknown> = { name: fields.title, email: fields.owner, active: fields.status === "Ativo" };
+          const body: Record<string, unknown> = { name: fields.title, email: fields.owner, phone, active: fields.status === "Ativo" };
           if (password) body.password = password;
           result = await updateUserAction(current.id, body);
         } else {
           if (!password) { setToast("Senha é obrigatória para novos usuários."); return; }
-          result = await createUserAction({ name: fields.title, email: fields.owner, password, active: fields.status === "Ativo" });
+          result = await createUserAction({ name: fields.title, email: fields.owner, phone, password, active: fields.status === "Ativo" });
         }
       } else if (isCadastros) {
         if (current) {
@@ -187,6 +262,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
           description: fields.description || undefined,
           category: fields.category || undefined,
           status: fields.status,
+          notify_user_ids: notifyIds.length ? notifyIds : undefined,
         };
         result = current
           ? await updateModuleRecordAction(definition.slug, current.id, apiBody)
@@ -314,7 +390,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
 
       {definition.layout === "settings" ? <SettingsForm storageKey={storageKey} onSaved={() => setToast("Configurações salvas com sucesso.")}/> : definition.layout === "profile" ? <ProfileForm user={user} onSaved={() => setToast("Perfil atualizado localmente.")}/> : <section className="module-panel">
         <div className="module-toolbar"><label><Search size={18}/><input value={query} onChange={(event) => handleServerSearch(event.target.value)} placeholder={`Buscar em ${definition.title.toLocaleLowerCase("pt-BR")}`}/></label>{!sp ? <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}>{statuses.map((item) => <option key={item}>{item}</option>)}</select> : null}{!isApiBacked && !sp ? <button onClick={() => { setRecords(definition.records); localStorage.removeItem(storageKey); setToast("Dados fictícios restaurados."); }} title="Restaurar dados"><RefreshCw size={17}/></button> : null}<button onClick={exportCsv}><Download size={17}/> Exportar</button></div>
-        {!ready ? <div className="module-state">Carregando registros…</div> : !visible.length ? <div className="module-state"><Search size={30}/><strong>Nenhum resultado</strong><span>Ajuste os filtros ou crie um novo registro.</span></div> : definition.layout === "cards" ? <div className="notice-grid">{visible.map((record) => <article key={record.id} onClick={() => setSelected(record)}><span>{record.category}</span><h2>{record.title}</h2><p>{record.description}</p><footer><small>{record.owner} · {record.updatedAt}</small><i className={statusClass(record.status)}>{record.status}</i></footer></article>)}</div> : <div className="module-table-wrap"><table><thead><tr><th>ID</th><th>{definition.singular}</th>{isFiscal && <th>UH</th>}<th>Categoria</th><th>Responsável</th><th>Status</th>{isFiscal && <th>SLA</th>}<th>Atualização</th>{canMutate ? <th>Ações</th> : null}</tr></thead><tbody>{visible.map((record) => <tr key={record.id} onClick={() => setSelected(record)}><td className="protocol">#{record.id}</td><td><strong>{record.title}</strong></td>{isFiscal && <td>{record.apartment ?? "—"}</td>}<td>{record.category}</td><td>{record.owner}</td><td><span className={statusClass(record.status)}>{record.status}</span></td>{isFiscal && <td>{record.slaDeadline ? <SlaIndicator deadline={record.slaDeadline}/> : "—"}</td>}<td className="muted">{record.updatedAt}</td>{canMutate ? <td><div className="row-actions"><button onClick={(event) => { event.stopPropagation(); setEditing(record); }} aria-label="Editar"><Pencil size={16}/></button><button onClick={(event) => { event.stopPropagation(); remove(record); }} aria-label="Excluir"><Trash2 size={16}/></button></div></td> : null}</tr>)}</tbody></table></div>}
+        {!ready ? <div className="module-state">Carregando registros…</div> : !visible.length ? <div className="module-state"><Search size={30}/><strong>Nenhum resultado</strong><span>Ajuste os filtros ou crie um novo registro.</span></div> : definition.layout === "cards" ? <div className="notice-grid">{visible.map((record) => <article key={record.id} onClick={() => isUsers ? setEditing(record) : setSelected(record)}><span>{record.category}</span><h2>{record.title}</h2><p>{record.description}</p><footer><small>{record.owner} · {record.updatedAt}</small><i className={statusClass(record.status)}>{record.status}</i></footer></article>)}</div> : <div className="module-table-wrap"><table><thead><tr><th>ID</th><th>{definition.singular}</th>{isFiscal && <th>UH</th>}<th>Categoria</th><th>Responsável</th><th>Status</th>{isFiscal && <th>SLA</th>}<th>Atualização</th>{canMutate ? <th>Ações</th> : null}</tr></thead><tbody>{visible.map((record) => <tr key={record.id} onClick={() => isUsers ? setEditing(record) : setSelected(record)}><td className="protocol">#{record.id}</td><td><strong>{record.title}</strong></td>{isFiscal && <td>{record.apartment ?? "—"}</td>}<td>{record.category}</td><td>{record.owner}</td><td><span className={statusClass(record.status)}>{record.status}</span></td>{isFiscal && <td>{record.slaDeadline ? <SlaIndicator deadline={record.slaDeadline}/> : "—"}</td>}<td className="muted">{record.updatedAt}</td>{canMutate ? <td><div className="row-actions"><button onClick={(event) => { event.stopPropagation(); setEditing(record); }} aria-label="Editar"><Pencil size={16}/></button><button onClick={(event) => { event.stopPropagation(); remove(record); }} aria-label="Excluir"><Trash2 size={16}/></button></div></td> : null}</tr>)}</tbody></table></div>}
         <footer className="module-pagination"><span>{totalItems} registro(s)</span><div><button disabled={page <= 1} onClick={() => handleServerPage(page - 1)}><ChevronLeft/></button><span>Pagina {Math.min(page, pages)} de {pages}</span><button disabled={page >= pages} onClick={() => handleServerPage(page + 1)}><ChevronRight/></button></div></footer>
       </section>}
 
@@ -323,6 +399,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       {isUsers ? <>
         <label>Nome<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
         <label>E-mail<input name="owner" type="email" required defaultValue={editing === "new" ? "" : editing.owner}/></label>
+        <label>Telefone<input name="phone" type="tel" placeholder="(00) 00000-0000" defaultValue={editing === "new" ? "" : formatPhone(editing.phone ?? "")} onChange={(e) => { e.target.value = formatPhone(e.target.value); }}/></label>
         <label>Senha{editing !== "new" && <small className="field-hint"> (deixe vazio para manter a atual)</small>}<input name="password" type="password" {...(editing === "new" ? { required: true } : {})} placeholder={editing === "new" ? "" : "••••••••"}/></label>
         <div className="form-grid">
           <label>Cargo<input name="category" defaultValue={editing === "new" ? "" : editing.category}/></label>
@@ -340,13 +417,13 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
           <label>Categoria<input name="category" required defaultValue={editing === "new" ? "Geral" : editing.category}/></label>
           <label>Status<select name="status" defaultValue={editing === "new" ? "Em andamento" : editing.status}><option>Em andamento</option><option>Aguardando</option><option>Agendada</option><option>Ativo</option><option>Publicado</option><option>Rascunho</option><option>Concluído</option></select></label>
         </div>
-        <label>Responsável<input name="owner" required defaultValue={editing === "new" ? user.name : editing.owner}/></label>
-        {!isApiBacked && <label>Notificar<input name="notifyUsers" placeholder="Nomes separados por vírgula" defaultValue={editing === "new" ? "" : (editing.notifyUsers ?? []).join(", ")}/><small className="field-hint">Pessoas ou grupos que serão notificados sobre atualizações.</small></label>}
+        <label>Responsável<UserAutocomplete name="owner" required defaultValue={editing === "new" ? user.name : editing.owner} placeholder="Buscar responsável..."/></label>
+        <label>Notificar<UserMultiSelect name="notifyUsers" defaultValues={editing !== "new" && editing.notifyUserObjects ? editing.notifyUserObjects : []}/><small className="field-hint">Pessoas que serão notificadas sobre atualizações.</small></label>
         <label>Descrição<textarea name="description" rows={4} defaultValue={editing === "new" ? "" : editing.description}/></label>
       </>}
       <footer><button type="button" onClick={() => setEditing(null)}>Cancelar</button><button type="submit">Salvar</button></footer>
     </form>}
-      {editing !== "new" && editing.history?.length ? <div className="modal-timeline"><h3><MessageSquare size={15}/>Tratativa</h3><div className="timeline-thread">{editing.history.map((entry, i) => {
+      {!isUsers && editing !== "new" && editing.history?.length ? <div className="modal-timeline"><h3><MessageSquare size={15}/>Tratativa</h3><div className="timeline-thread">{editing.history.map((entry, i) => {
         const entryInitials = entry.user.split(" ").slice(0, 2).map((p) => p[0]).join("").toUpperCase();
         return <article key={i} className={`thread-entry thread-${entry.type}`}>
           <div className="thread-avatar">{entryInitials}</div>
@@ -381,7 +458,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
         <div><dt>Descrição</dt><dd>{selected.description || "Nenhuma descrição informada."}</dd></div>
         {isFiscal && selected.attachments && selected.attachments.length > 0 && <div><dt>Anexos</dt><dd><div className="attachment-grid drawer-attachments">{selected.attachments.map((att, i) => <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="attachment-preview">{att.type.startsWith("image/") ? <img src={att.url} alt={att.name}/> : <div className="attachment-file-icon"><Paperclip size={20}/></div>}<span className="attachment-name">{att.name}</span></a>)}</div></dd></div>}
       </dl>
-      <div className="record-timeline">
+      {!isUsers && <div className="record-timeline">
         <h3><MessageSquare size={15}/>Tratativa</h3>
         {selected.history && selected.history.length > 0 ? <div className="timeline-thread">
           {selected.history.map((entry, i) => {
@@ -398,7 +475,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
           })}
         </div> : <p className="thread-empty">Nenhuma interação registrada.</p>}
         {canMutate ? <CommentInput onSend={(msg) => addComment(selected, msg)}/> : <p className="thread-empty">Comentários serão liberados com a API de mutações.</p>}
-      </div>
+      </div>}
       {canMutate ? <footer><button onClick={() => setEditing(selected)}><Pencil size={16}/>Editar</button><button onClick={() => remove(selected)}><Trash2 size={16}/>Excluir</button></footer> : null}
     </aside></> : null}
     {toast ? <div className="module-toast" role="status">{toast}</div> : null}
@@ -414,7 +491,97 @@ function CommentInput({ onSend }: { onSend: (message: string) => void }) {
 }
 
 function SettingsForm({ storageKey, onSaved }: { storageKey: string; onSaved: () => void }) {
-  return <form className="settings-form" action={(data) => { localStorage.setItem(`${storageKey}:preferences`, JSON.stringify(Object.fromEntries(data))); onSaved(); }}><section><h2>Notificações</h2><p>Escolha como deseja acompanhar as atualizações.</p><label className="switch-row"><span><strong>Notificações no sistema</strong><small>Alertas de atividades e menções.</small></span><input name="in_app" type="checkbox" defaultChecked/></label><label className="switch-row"><span><strong>Resumo por e-mail</strong><small>Resumo diário das pendências.</small></span><input name="email_digest" type="checkbox" defaultChecked/></label></section><section><h2>Experiência</h2><p>Preferências aplicadas a este navegador.</p><label>Idioma<select name="language" defaultValue="pt-BR"><option value="pt-BR">Português (Brasil)</option><option value="en">English</option></select></label><label>Página inicial<select name="home" defaultValue="dashboard"><option value="dashboard">Visão geral</option><option value="ocorrencias">Ocorrências</option></select></label></section><button className="primary-button" type="submit">Salvar alterações</button></form>;
+  return <div className="settings-form">
+    <form action={(data) => { localStorage.setItem(`${storageKey}:preferences`, JSON.stringify(Object.fromEntries(data))); onSaved(); }}>
+      <section><h2>Notificações</h2><p>Escolha como deseja acompanhar as atualizações.</p><label className="switch-row"><span><strong>Notificações no sistema</strong><small>Alertas de atividades e menções.</small></span><input name="in_app" type="checkbox" defaultChecked/></label><label className="switch-row"><span><strong>Resumo por e-mail</strong><small>Resumo diário das pendências.</small></span><input name="email_digest" type="checkbox" defaultChecked/></label></section>
+      <section><h2>Experiência</h2><p>Preferências aplicadas a este navegador.</p><label>Idioma<select name="language" defaultValue="pt-BR"><option value="pt-BR">Português (Brasil)</option><option value="en">English</option></select></label><label>Página inicial<select name="home" defaultValue="dashboard"><option value="dashboard">Visão geral</option><option value="ocorrencias">Ocorrências</option></select></label></section>
+      <button className="primary-button" type="submit">Salvar alterações</button>
+    </form>
+    <BrevoSettingsSection/>
+    <EvolutionSettingsSection/>
+  </div>;
+}
+
+function BrevoSettingsSection() {
+  const [config, setConfig] = useState<BrevoSettings | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  useEffect(() => {
+    getBrevoSettings().then(setConfig).catch(() => setConfig({ has_credentials: false }));
+  }, []);
+
+  return <form className="settings-evolution" onSubmit={async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setFeedback(null);
+    const fd = new FormData(e.currentTarget);
+    const result = await saveBrevoSettings({
+      api_key: String(fd.get("brevo_api_key")),
+      from_address: String(fd.get("brevo_from_address")),
+      from_name: String(fd.get("brevo_from_name")),
+    });
+    setSaving(false);
+    if (result.ok) {
+      setConfig({ has_credentials: true, from_address: String(fd.get("brevo_from_address")), from_name: String(fd.get("brevo_from_name")) });
+      setFeedback("Configuração salva com sucesso.");
+    } else {
+      setFeedback(result.error ?? "Erro ao salvar.");
+    }
+  }}>
+    <section>
+      <h2>E-mail (Brevo)</h2>
+      <p>Configure o envio de e-mails transacionais para notificações de chamados e atualizações.</p>
+      {config?.has_credentials && !feedback && <p className="settings-connected">Conectado{config.from_address ? ` — ${config.from_address}` : ""}</p>}
+      {feedback && <p className={feedback.includes("sucesso") ? "settings-connected" : "settings-error"}>{feedback}</p>}
+      <div className="form-grid">
+        <label>E-mail remetente<input name="brevo_from_address" type="email" required placeholder="noreply@suaempresa.com" defaultValue={config?.from_address ?? ""}/></label>
+        <label>Nome remetente<input name="brevo_from_name" type="text" required placeholder="Registro" defaultValue={config?.from_name ?? ""}/></label>
+      </div>
+      <label>API Key<input name="brevo_api_key" type="password" required placeholder={config?.has_credentials ? "Configurada — preencha para trocar" : "xkeysib-..."}/><small className="field-hint">Brevo → SMTP & API → API Keys</small></label>
+    </section>
+    <button className="primary-button" type="submit" disabled={saving}>{saving ? "Salvando..." : "Salvar e-mail"}</button>
+  </form>;
+}
+
+function EvolutionSettingsSection() {
+  const [config, setConfig] = useState<EvolutionSettings | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  useEffect(() => {
+    getEvolutionSettings().then(setConfig).catch(() => setConfig({ has_credentials: false }));
+  }, []);
+
+  return <form className="settings-evolution" onSubmit={async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setFeedback(null);
+    const fd = new FormData(e.currentTarget);
+    const result = await saveEvolutionSettings({
+      api_url: String(fd.get("evo_api_url")),
+      api_key: String(fd.get("evo_api_key")),
+      instance: String(fd.get("evo_instance")),
+    });
+    setSaving(false);
+    if (result.ok) {
+      setConfig({ has_credentials: true, api_url: String(fd.get("evo_api_url")), instance: String(fd.get("evo_instance")) });
+      setFeedback("Configuração salva com sucesso.");
+    } else {
+      setFeedback(result.error ?? "Erro ao salvar.");
+    }
+  }}>
+    <section>
+      <h2>WhatsApp (Evolution API)</h2>
+      <p>Configure a conexão com a Evolution API para enviar notificações via WhatsApp.</p>
+      {config?.has_credentials && !feedback && <p className="settings-connected">Conectado{config.api_url ? ` — ${config.api_url}` : ""}</p>}
+      {feedback && <p className={feedback.includes("sucesso") ? "settings-connected" : "settings-error"}>{feedback}</p>}
+      <label>URL da instância<input name="evo_api_url" type="url" required placeholder="https://evo.suaempresa.com" defaultValue={config?.api_url ?? ""}/></label>
+      <label>API Key<input name="evo_api_key" type="password" required placeholder="Chave de autenticação"/><small className="field-hint">Evolution → Manager → Global API Key ou API Key da instância</small></label>
+      <label>Nome da instância<input name="evo_instance" type="text" required placeholder="aero-default" defaultValue={config?.instance ?? ""}/><small className="field-hint">Nome exato da instância criada no painel da Evolution API</small></label>
+    </section>
+    <button className="primary-button" type="submit" disabled={saving}>{saving ? "Salvando..." : "Salvar conexão"}</button>
+  </form>;
 }
 
 function ProfileForm({ user, onSaved }: { user: TenantUser; onSaved: () => void }) {

@@ -14,6 +14,7 @@ from app.domain.modules.router import router as modules_router
 from app.domain.occurrences.router import router as occurrences_router
 from app.domain.platform.router import router as platform_router
 from app.domain.registries.router import router as registries_router
+from app.domain.settings.router import router as settings_router
 from app.domain.users.router import router as users_router
 
 settings = get_settings()
@@ -48,4 +49,5 @@ app.include_router(fiscal_requests_router, prefix=settings.api_prefix)
 app.include_router(users_router, prefix=settings.api_prefix)
 app.include_router(registries_router, prefix=settings.api_prefix)
 app.include_router(modules_router, prefix=settings.api_prefix)
+app.include_router(settings_router, prefix=settings.api_prefix)
 app.include_router(platform_router, prefix=settings.api_prefix)

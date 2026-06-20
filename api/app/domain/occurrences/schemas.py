@@ -32,6 +32,7 @@ class OccurrenceCreate(BaseModel):
     sector_id: int | None = None
     location_id: int | None = None
     owner_user_id: int | None = None
+    notify_user_ids: list[int] | None = None
 
 
 class OccurrenceUpdate(BaseModel):
@@ -43,3 +44,4 @@ class OccurrenceUpdate(BaseModel):
     sector_id: int | None = None
     location_id: int | None = None
     owner_user_id: int | None = None
+    notify_user_ids: list[int] | None = None

@@ -66,6 +66,7 @@ class Occurrence(Base, TenantMixin, LegacyEntityMixin, TimestampMixin):
     owner_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
     created_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
     updated_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    notify_user_ids: Mapped[list | None] = mapped_column(JSON)
     file: Mapped[str | None] = mapped_column(Text)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
 
@@ -113,6 +114,8 @@ class ModuleRecord(Base, TenantMixin, TimestampMixin):
     category: Mapped[str | None] = mapped_column(String(120))
     status: Mapped[str] = mapped_column(String(60), default="Em andamento")
     owner_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    created_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
+    notify_user_ids: Mapped[list | None] = mapped_column(JSON)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
 
 

@@ -14,6 +14,7 @@ from app.core.config import Settings, get_settings
 from app.core.dependencies import require_session
 from app.core.security import decode_access_token
 from app.domain.auth.repository import AuthenticatedUser, find_active_user_by_id
+from app.integrations.notifications import notify_record_event
 from app.models import ModuleRecord, User
 
 router = APIRouter(prefix="/modules", tags=["modules"])
@@ -60,6 +61,7 @@ class ModuleRecordCreate(BaseModel):
     category: str | None = None
     status: str = "Em andamento"
     owner_user_id: int | None = None
+    notify_user_ids: list[int] | None = None
 
 
 class ModuleRecordUpdate(BaseModel):
@@ -68,6 +70,7 @@ class ModuleRecordUpdate(BaseModel):
     category: str | None = None
     status: str | None = None
     owner_user_id: int | None = None
+    notify_user_ids: list[int] | None = None
 
 
 @router.get("/{module_slug}", response_model=ModuleRecordListResponse)
@@ -131,6 +134,8 @@ async def create_record(
         category=body.category,
         status=body.status,
         owner_user_id=owner_id,
+        created_by_user_id=user.id,
+        notify_user_ids=body.notify_user_ids,
     )
     session.add(record)
     await session.commit()
@@ -138,6 +143,11 @@ async def create_record(
     await record_event(session, company_id=user.company_id, user_id=user.id,
                        entity_type=module_slug, entity_id=record.id, event_type="create")
     await session.commit()
+    await notify_record_event(
+        session, company_id=user.company_id, actor_name=user.name, actor_email=user.email,
+        event="create", title=record.title, module=module_slug,
+        owner_user_id=owner_id, notify_user_ids=body.notify_user_ids,
+    )
     owner_name = await session.scalar(select(User.name).where(User.id == owner_id))
     return ModuleRecordSummary(
         id=record.id, title=record.title, description=record.description,
@@ -167,16 +177,24 @@ async def update_record(
     if record is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
     updates = body.model_dump(exclude_none=True)
-    before = {k: str(getattr(record, k)) for k in updates}
+    before = {k: str(getattr(record, k)) for k in updates if k != "notify_user_ids"}
     for field, value in updates.items():
         setattr(record, field, value)
-    diff = compute_diff(before, {k: str(v) for k, v in updates.items()})
+    diff = compute_diff(before, {k: str(v) for k, v in updates.items() if k != "notify_user_ids"})
     if diff:
         await record_event(session, company_id=user.company_id, user_id=user.id,
                            entity_type=module_slug, entity_id=record.id,
                            event_type="update", diff=diff)
     await session.commit()
     await session.refresh(record)
+    if diff:
+        detail = "; ".join(f"{k}: {v}" for k, v in diff.items())
+        await notify_record_event(
+            session, company_id=user.company_id, actor_name=user.name, actor_email=user.email,
+            event="update", title=record.title, module=module_slug,
+            owner_user_id=record.owner_user_id, created_by_user_id=record.created_by_user_id,
+            notify_user_ids=record.notify_user_ids, detail=detail,
+        )
     owner_name = await session.scalar(select(User.name).where(User.id == record.owner_user_id)) if record.owner_user_id else None
     return ModuleRecordSummary(
         id=record.id, title=record.title, description=record.description,

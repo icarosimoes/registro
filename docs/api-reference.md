@@ -34,6 +34,11 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `POST` | `/modules/{slug}` | Tenant Bearer | cria registro genérico |
 | `PATCH` | `/modules/{slug}/{id}` | Tenant Bearer | atualiza registro genérico |
 | `DELETE` | `/modules/{slug}/{id}` | Tenant Bearer | soft delete de registro genérico |
+| `GET` | `/users/search?q=` | Tenant Bearer | autocomplete de usuários ativos (max 10) |
+| `GET` | `/settings/evolution` | Tenant Bearer | configuração da Evolution API |
+| `POST` | `/settings/evolution` | Tenant Bearer | salva configuração da Evolution API |
+| `GET` | `/settings/brevo` | Tenant Bearer | configuração do Brevo (e-mail) |
+| `POST` | `/settings/brevo` | Tenant Bearer | salva configuração do Brevo |
 | `POST` | `/platform/auth/login` | pública | JWT administrativo isolado |
 | `GET` | `/platform/metrics` | Platform Bearer | métricas SaaS agregadas |
 | `GET` | `/platform/tenants` | Platform Bearer | empresas e assinatura |

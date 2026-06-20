@@ -57,6 +57,7 @@ class User(Base, TenantMixin, TimestampMixin):
     role_id: Mapped[int | None] = mapped_column(ForeignKey("roles.id", ondelete="SET NULL"))
     name: Mapped[str] = mapped_column(String(160))
     email: Mapped[str] = mapped_column(String(255), index=True)
+    phone: Mapped[str | None] = mapped_column(String(20))
     password: Mapped[str] = mapped_column(String(255))
     active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
     email_verified_at: Mapped[datetime | None] = mapped_column(DateTime)

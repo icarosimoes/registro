@@ -11,12 +11,13 @@ from app.models.operations import (
     Procedure,
     Sector,
 )
-from app.models.platform import Invoice, Plan, PlatformAuditLog, PlatformUser, Subscription
+from app.models.platform import CompanySetting, Invoice, Plan, PlatformAuditLog, PlatformUser, Subscription
 
 __all__ = [
     "AuditEvent",
     "Base",
     "Company",
+    "CompanySetting",
     "Invoice",
     "Function",
     "FiscalRequest",
