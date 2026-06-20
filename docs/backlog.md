@@ -14,7 +14,7 @@
 - [x] Adicionar testes de login para e-mail único, senha inválida, e-mail em múltiplos tenants e seleção explícita de tenant.
 - [x] Validar `company_id` positivo no contrato de login e documentar integralmente a resposta `422 multi_tenant`.
 - [ ] Concluir inventário de índices, constraints, collations, órfãos, soft deletes, anexos e volumes fora do banco.
-- [ ] Criar migration de upgrade que renomeie com segurança um eventual tenant antigo `aero-v1` para `aero-hotel`, sem criar tenant duplicado.
+- [x] Criar migration de upgrade que renomeie com segurança um eventual tenant antigo `aero-v1` para `aero-hotel`, sem criar tenant duplicado.
 - [ ] Ampliar testes cross-tenant para cada domínio novo.
 - [ ] Criar CI com Ruff, mypy, pytest, typecheck, build e auditorias.
 - [ ] Estabilizar a execução do mypy na imagem de desenvolvimento; a versão 1.20.2 encerrou com erro interno em 20/06/2026.
