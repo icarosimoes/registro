@@ -26,8 +26,8 @@ from app.models import (
     User,
 )
 
-SOURCE = "aero-v1"
-TENANT_SLUG = "aero-v1"
+SOURCE = "aero-hotel"
+TENANT_SLUG = "aero-hotel"
 
 
 def permission_code(controller: str, action: str) -> str:
@@ -45,7 +45,7 @@ async def get_or_create_tenant(session: AsyncSession) -> Company:
     if company:
         return company
     company = Company(
-        name=os.getenv("LEGACY_TENANT_NAME", "Aero Hotel — V1"),
+        name=os.getenv("LEGACY_TENANT_NAME", "Aero Hotel"),
         slug=TENANT_SLUG,
         email=os.getenv("LEGACY_TENANT_EMAIL", "legado@registro.local"),
         status="active",

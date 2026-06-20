@@ -2,9 +2,9 @@
 
 import { logoutAction } from "@/app/actions";
 import type { TenantUser } from "@/lib/api";
-import { moduleDefinitions, navigationModules, type ModuleDefinition, type ModuleRecord } from "@/lib/module-definitions";
+import { moduleDefinitions, navigationModules, type HistoryEntry, type ModuleDefinition, type ModuleRecord } from "@/lib/module-definitions";
 import {
-  Bell, Building2, ChevronLeft, ChevronRight, ClipboardCheck, Download, FileClock,
+  Bell, Building2, ChevronLeft, ChevronRight, ClipboardCheck, Clock, Download, FileClock,
   FileText, HardHat, Home, Menu, Pencil, Plus, RefreshCw, Search, Settings,
   ShieldCheck, Trash2, Users, Wrench, X,
 } from "lucide-react";
@@ -59,13 +59,41 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const visible = filtered.slice((Math.min(page, pages) - 1) * pageSize, Math.min(page, pages) * pageSize);
 
+  function formatNow() {
+    return new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  }
+
+  function diffChanges(before: ModuleRecord, after: { title: string; category: string; owner: string; status: string; description: string }): string {
+    const labels: Record<string, string> = { title: "Título", category: "Categoria", owner: "Responsável", status: "Status", description: "Descrição" };
+    const parts: string[] = [];
+    for (const key of Object.keys(labels) as (keyof typeof labels)[]) {
+      const old = (before as Record<string, unknown>)[key] ?? "";
+      const cur = (after as Record<string, unknown>)[key] ?? "";
+      if (String(old) !== String(cur)) parts.push(`${labels[key]}: "${old}" → "${cur}"`);
+    }
+    return parts.join("; ");
+  }
+
   function saveRecord(formData: FormData) {
     const current = editing === "new" ? null : editing;
-    const record: ModuleRecord = {
-      id: current?.id ?? Math.max(0, ...records.map((item) => item.id)) + 1,
+    const now = formatNow();
+    const fields = {
       title: String(formData.get("title")), category: String(formData.get("category")),
       owner: String(formData.get("owner")), status: String(formData.get("status")),
-      description: String(formData.get("description") ?? ""), updatedAt: "agora",
+      description: String(formData.get("description") ?? ""),
+    };
+
+    const entry: HistoryEntry = {
+      action: current ? "Editou" : "Criou",
+      user: user.name,
+      date: now,
+      changes: current ? diffChanges(current, fields) : undefined,
+    };
+
+    const prevHistory = current?.history ?? [];
+    const record: ModuleRecord = {
+      id: current?.id ?? Math.max(0, ...records.map((item) => item.id)) + 1,
+      ...fields, updatedAt: now, history: [entry, ...prevHistory],
     };
     const next = current ? records.map((item) => item.id === current.id ? record : item) : [record, ...records];
     persist(next, `${definition.singular} ${current ? "atualizado" : "criado"} com sucesso.`);
@@ -114,7 +142,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     </main>
 
     {editing ? <div className="modal-layer" role="presentation"><section className="record-modal" role="dialog" aria-modal="true"><header><div><span>{editing === "new" ? "Novo registro" : `#${editing.id}`}</span><h2>{editing === "new" ? definition.action : `Editar ${definition.singular}`}</h2></div><button className="icon-button" onClick={() => setEditing(null)}><X/></button></header><form action={saveRecord}><label>Título<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label><div className="form-grid"><label>Categoria<input name="category" required defaultValue={editing === "new" ? "Geral" : editing.category}/></label><label>Status<select name="status" defaultValue={editing === "new" ? "Em andamento" : editing.status}><option>Em andamento</option><option>Aguardando</option><option>Agendada</option><option>Ativo</option><option>Publicado</option><option>Rascunho</option><option>Concluído</option></select></label></div><label>Responsável<input name="owner" required defaultValue={editing === "new" ? user.name : editing.owner}/></label><label>Descrição<textarea name="description" rows={4} defaultValue={editing === "new" ? "" : editing.description}/></label><footer><button type="button" onClick={() => setEditing(null)}>Cancelar</button><button type="submit">Salvar</button></footer></form></section></div> : null}
-    {selected && !editing ? <><button className="panel-backdrop" onClick={() => setSelected(null)} aria-label="Fechar detalhes"/><aside className="record-drawer"><header><div><span>#{selected.id} · {selected.category}</span><h2>{selected.title}</h2></div><button className="icon-button" onClick={() => setSelected(null)}><X/></button></header><dl><div><dt>Status</dt><dd><span className={statusClass(selected.status)}>{selected.status}</span></dd></div><div><dt>Responsável</dt><dd>{selected.owner}</dd></div><div><dt>Atualização</dt><dd>{selected.updatedAt}</dd></div><div><dt>Descrição</dt><dd>{selected.description || "Nenhuma descrição informada."}</dd></div></dl><footer><button onClick={() => setEditing(selected)}><Pencil size={16}/>Editar</button><button onClick={() => remove(selected)}><Trash2 size={16}/>Excluir</button></footer></aside></> : null}
+    {selected && !editing ? <><button className="panel-backdrop" onClick={() => setSelected(null)} aria-label="Fechar detalhes"/><aside className="record-drawer"><header><div><span>#{selected.id} · {selected.category}</span><h2>{selected.title}</h2></div><button className="icon-button" onClick={() => setSelected(null)}><X/></button></header><dl><div><dt>Status</dt><dd><span className={statusClass(selected.status)}>{selected.status}</span></dd></div><div><dt>Responsável</dt><dd>{selected.owner}</dd></div><div><dt>Atualização</dt><dd>{selected.updatedAt}</dd></div><div><dt>Descrição</dt><dd>{selected.description || "Nenhuma descrição informada."}</dd></div></dl>{selected.history && selected.history.length > 0 ? <div className="record-timeline"><h3><Clock size={15}/>Histórico de alterações</h3><ol>{selected.history.map((entry, i) => <li key={i}><div className="timeline-dot"/><div className="timeline-content"><strong>{entry.user}</strong> <span className="timeline-action">{entry.action.toLowerCase()}</span><time>{entry.date}</time>{entry.changes ? <p className="timeline-changes">{entry.changes}</p> : null}</div></li>)}</ol></div> : null}<footer><button onClick={() => setEditing(selected)}><Pencil size={16}/>Editar</button><button onClick={() => remove(selected)}><Trash2 size={16}/>Excluir</button></footer></aside></> : null}
     {toast ? <div className="module-toast" role="status">{toast}</div> : null}
   </div>;
 }

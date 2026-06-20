@@ -35,7 +35,7 @@ Company
 | --- | --- | --- |
 | Identidade e acesso | `users`, `roles`, `acls`, `modules`, `role_acl`, `companies` | bcrypt Laravel, status, soft delete, empresa e ACL |
 | Plataforma SaaS | `platform_users`, `plans`, `subscriptions`, `invoices`, `platform_audit_logs` | sessão isolada, centavos, estado explícito e auditoria |
-| Núcleo V1 importado | `sectors`, `locations`, `functions`, `procedures`, `occurrences` | tenant sintético, `legacy_id`, soft delete e relações remapeadas |
+| Núcleo V1 importado | `sectors`, `locations`, `functions`, `procedures`, `occurrences` | tenant `aero-hotel` (Aero Hotel), `legacy_id`, soft delete e relações remapeadas |
 | Cadastros | `sectors`, `locals`, `funcs`, `procedures`, `procedure_files` | empresa, anexos e exclusão lógica quando existente |
 | Ocorrências | `occurrences`, comentários e participantes | histórico, responsáveis, anexos e exportação |
 | Reuniões | `meetings`, assuntos, pautas e participantes | início da reunião, ata, anexos e PDF |
@@ -53,3 +53,4 @@ Company
 - Dinheiro, se surgir em módulos futuros, usa centavos inteiros ou `Decimal`, nunca `float`.
 - Usuário da plataforma nunca possui `company_id`; acesso cross-tenant é uma capacidade administrativa separada.
 - IDs externos do Asaas são opcionais e únicos quando preenchidos; o Registro mantém suas próprias chaves.
+- Toda mutação em registros operacionais deve gerar uma entrada de histórico com usuário, data/hora e campos alterados. No front, o histórico fica em `history[]` dentro do registro; na API, será persistido em tabela de auditoria isolada por empresa.

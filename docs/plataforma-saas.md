@@ -23,7 +23,7 @@ Essas credenciais são somente locais. Em produção o seed exige senhas forneci
 
 ## Isolamento
 
-O login tenant aceita `company_slug` para desambiguar e-mails repetidos. O JWT carrega `company_id`, e a consulta revalida usuário, empresa, status e exclusão lógica. O token administrativo usa outro tipo, outro endpoint e outra tabela; não pode ser usado em `/auth/me`.
+O login tenant recebe apenas e-mail e senha. Se o e-mail pertencer a um único tenant, entra direto. Se pertencer a mais de um, a API retorna `422 multi_tenant` com a lista de empresas para o front exibir um seletor; o segundo envio inclui `company_id`. O JWT carrega `company_id`, e a consulta revalida usuário, empresa, status e exclusão lógica. O token administrativo usa outro tipo, outro endpoint e outra tabela; não pode ser usado em `/auth/me`.
 
 No MySQL, cada repository filtra `company_id` explicitamente. Na futura migração para PostgreSQL será adicionada RLS como terceira camada, sem remover o filtro da aplicação.
 

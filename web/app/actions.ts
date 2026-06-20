@@ -5,19 +5,42 @@ import { redirect } from "next/navigation";
 
 const apiUrl = process.env.API_URL ?? "http://localhost:8000/api/v1";
 
-export async function loginAction(formData: FormData) {
+interface LoginResult {
+  ok: boolean;
+  error?: string;
+  multi_tenant?: boolean;
+  tenants?: { id: number; name: string }[];
+}
+
+export async function loginAction(
+  email: string,
+  password: string,
+  companyId?: number,
+): Promise<LoginResult> {
+  const body: Record<string, unknown> = { email, password };
+  if (companyId) body.company_id = companyId;
+
   const response = await fetch(`${apiUrl}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: formData.get("email"),
-      password: formData.get("password"),
-      company_slug: formData.get("company_slug"),
-    }),
+    body: JSON.stringify(body),
     cache: "no-store",
   });
 
-  if (!response.ok) redirect("/login?error=1");
+  if (response.status === 422) {
+    const data = await response.json();
+    if (data.detail?.code === "multi_tenant") {
+      return {
+        ok: false,
+        multi_tenant: true,
+        tenants: data.detail.tenants,
+      };
+    }
+  }
+
+  if (!response.ok) {
+    return { ok: false, error: "E-mail ou senha inválidos." };
+  }
 
   const data = (await response.json()) as { access_token: string; expires_in: number };
   (await cookies()).set("tenant_token", data.access_token, {
@@ -27,7 +50,7 @@ export async function loginAction(formData: FormData) {
     path: "/",
     maxAge: data.expires_in,
   });
-  redirect("/dashboard");
+  return { ok: true };
 }
 
 export async function logoutAction() {

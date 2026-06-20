@@ -1,3 +1,10 @@
+export type HistoryEntry = {
+  action: string;
+  user: string;
+  date: string;
+  changes?: string;
+};
+
 export type ModuleRecord = {
   id: number;
   title: string;
@@ -6,6 +13,7 @@ export type ModuleRecord = {
   status: string;
   updatedAt: string;
   description?: string;
+  history?: HistoryEntry[];
 };
 
 export type ModuleDefinition = {

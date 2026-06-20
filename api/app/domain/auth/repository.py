@@ -34,11 +34,11 @@ def map_user(user: User) -> AuthenticatedUser:
     )
 
 
-async def find_active_user_by_email(
+async def find_active_users_by_email(
     session: AsyncSession,
     email: str,
-    company_slug: str | None = None,
-) -> AuthenticatedUser | None:
+    company_id: int | None = None,
+) -> list[AuthenticatedUser]:
     query = (
         select(User)
         .join(Company)
@@ -51,12 +51,29 @@ async def find_active_user_by_email(
             Company.deleted_at.is_(None),
         )
     )
-    if company_slug:
-        query = query.where(Company.slug == company_slug)
-    users = (await session.execute(query.limit(2))).scalars().all()
-    if len(users) != 1:
-        return None
-    return map_user(users[0])
+    if company_id:
+        query = query.where(User.company_id == company_id)
+    users = (await session.execute(query)).scalars().all()
+    return [map_user(u) for u in users]
+
+
+async def find_tenant_names_by_email(
+    session: AsyncSession,
+    email: str,
+) -> list[tuple[int, str]]:
+    query = (
+        select(Company.id, Company.name)
+        .join(User, User.company_id == Company.id)
+        .where(
+            User.email == email.lower(),
+            User.active.is_(True),
+            User.deleted_at.is_(None),
+            Company.status == "active",
+            Company.deleted_at.is_(None),
+        )
+    )
+    rows = (await session.execute(query)).all()
+    return [(row[0], row[1]) for row in rows]
 
 
 async def find_active_user_by_id(

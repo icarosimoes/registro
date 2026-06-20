@@ -10,13 +10,13 @@ from app.core.dependencies import require_session
 from app.core.security import decode_access_token
 from app.domain.auth.repository import find_active_user_by_id
 from app.domain.auth.schemas import LoginRequest, TokenResponse, UserResponse
-from app.domain.auth.service import authenticate, to_response
+from app.domain.auth.service import MultiTenantResult, authenticate, to_response
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login")
 async def login(
     payload: LoginRequest,
     session: Annotated[AsyncSession, Depends(require_session)],
@@ -27,12 +27,21 @@ async def login(
         payload.email,
         payload.password,
         settings,
-        company_slug=payload.company_slug,
+        company_id=payload.company_id,
     )
     if result is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail={"code": "invalid_credentials", "message": "E-mail ou senha inválidos"},
+        )
+    if isinstance(result, MultiTenantResult):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "multi_tenant",
+                "message": "Selecione a empresa",
+                "tenants": [{"id": t.id, "name": t.name} for t in result.tenants],
+            },
         )
     return result
 

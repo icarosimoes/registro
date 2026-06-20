@@ -1,9 +1,15 @@
+from dataclasses import dataclass
+
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
 from app.core.security import create_access_token, verify_laravel_password
-from app.domain.auth.repository import AuthenticatedUser, find_active_user_by_email
-from app.domain.auth.schemas import TokenResponse, UserResponse
+from app.domain.auth.repository import (
+    AuthenticatedUser,
+    find_active_users_by_email,
+    find_tenant_names_by_email,
+)
+from app.domain.auth.schemas import TenantOption, TokenResponse, UserResponse
 
 
 def to_response(user: AuthenticatedUser) -> UserResponse:
@@ -18,16 +24,33 @@ def to_response(user: AuthenticatedUser) -> UserResponse:
     )
 
 
+@dataclass
+class MultiTenantResult:
+    tenants: list[TenantOption]
+
+
 async def authenticate(
     session: AsyncSession,
     email: str,
     password: str,
     settings: Settings,
-    company_slug: str | None = None,
-) -> TokenResponse | None:
-    user = await find_active_user_by_email(session, email, company_slug)
-    if user is None or not verify_laravel_password(password, user.password_hash):
+    company_id: int | None = None,
+) -> TokenResponse | MultiTenantResult | None:
+    users = await find_active_users_by_email(session, email, company_id)
+
+    if len(users) > 1:
+        tenants = await find_tenant_names_by_email(session, email)
+        return MultiTenantResult(
+            tenants=[TenantOption(id=tid, name=tname) for tid, tname in tenants],
+        )
+
+    if not users:
         return None
+
+    user = users[0]
+    if not verify_laravel_password(password, user.password_hash):
+        return None
+
     token = create_access_token(
         subject=user.id,
         company_id=user.company_id,

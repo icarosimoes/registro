@@ -81,7 +81,25 @@
 
 - Restaurado `aero-2026-06-19.sql` em staging MySQL separada com 66 tabelas.
 - Identificado que `companies` está vazia e os usuários da V1 possuem `company_id` nulo.
-- Criado tenant sintético `aero-v1`, preservando hashes Laravel e IDs antigos em `legacy_id`.
+- Criado tenant sintético `aero-hotel`, preservando hashes Laravel e IDs antigos em `legacy_id`.
 - Importados 59 usuários, 17 setores, 69 locais, 13 funções, 6 procedimentos e 375 ocorrências.
 - Criada migration `20260619_0002`, importador idempotente por checksum e `GET /occurrences`.
 - Validada paridade de 375 ocorrências; a API retorna 317 registros não excluídos.
+
+## 2026-06-19 — Tenant Aero Hotel e login sem slug
+
+- Tenant V1 renomeado de `aero-v1` para `aero-hotel` (nome "Aero Hotel") no código, base e documentação.
+- Documentado plano de produção: dump fresco da V1 em operação será reimportado pelo mesmo ETL idempotente.
+- Login removeu campo `company_slug`; agora aceita apenas e-mail e senha.
+- Se o e-mail pertence a um único tenant, entra direto. Se pertence a mais de um, API retorna `422 multi_tenant` com lista de empresas e o front exibe seletor.
+- Front de login convertido para Client Component com seletor de tenant dinâmico.
+- Padrão alinhado com o Aloji.
+
+## 2026-06-19 — Timeline de alterações
+
+- Adicionado tipo `HistoryEntry` ao `ModuleRecord`: registra ação, usuário, data/hora e diferenças campo a campo.
+- Toda criação ou edição grava uma entrada automática no histórico do registro, com nome do usuário logado e timestamp.
+- Edições registram as diferenças detalhadas (campo: valor anterior → valor novo) para título, categoria, responsável, status e descrição.
+- Timeline exibida no drawer de detalhes de todas as telas operacionais: ocorrências, reuniões, relatórios de turno, inspeções, diário de obra, manutenção, cadastros, usuários e mural.
+- Visual com linha vertical, dots azuis e cards de alteração, seguindo o padrão do sistema.
+- Dados persistidos no `localStorage` por tenant; futuramente serão gravados pela API com auditoria real.

@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, field_validator
 class LoginRequest(BaseModel):
     email: str = Field(min_length=3, max_length=255)
     password: str = Field(min_length=1, max_length=72)
-    company_slug: str | None = Field(default=None, min_length=2, max_length=100)
+    company_id: int | None = None
 
     @field_validator("email")
     @classmethod
@@ -14,10 +14,10 @@ class LoginRequest(BaseModel):
             raise ValueError("e-mail inválido")
         return normalized
 
-    @field_validator("company_slug")
-    @classmethod
-    def normalize_company_slug(cls, value: str | None) -> str | None:
-        return value.strip().lower() if value else None
+
+class TenantOption(BaseModel):
+    id: int
+    name: str
 
 
 class UserResponse(BaseModel):

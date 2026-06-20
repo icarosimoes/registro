@@ -26,7 +26,9 @@
 - [ ] Usuários, perfis e permissões com paridade de leitura.
 - [ ] Setores, locais e funções.
 - [ ] Procedimentos e anexos.
+- [x] Timeline de alterações nos registros operacionais (front local, todas as telas).
 - [ ] Componentes reutilizáveis de lista, formulário, estado vazio e confirmação.
+- [ ] Tabela de auditoria na API para persistir o histórico de alterações com `user_id` e `company_id`.
 
 ## P3 — operação
 
