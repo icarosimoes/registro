@@ -15,6 +15,7 @@
 | `/diarios-obra` | lista e CRUD | CRUD via API + mutações server-side | API `modules/diarios-obra` isolada por tenant |
 | `/manutencao` | lista e CRUD | CRUD via API + mutações server-side | API `modules/manutencao` isolada por tenant |
 | `/solicitacoes-fiscais` | lista, formulário condicional, SLA, anexos e tratativa | CRUD via API + mutações server-side | API `fiscal_requests` isolada por tenant |
+| `/procedimentos` | lista, CRUD e anexos | CRUD via API + upload/download de anexos | API `procedures` + `attachments` isolada por tenant |
 | `/cadastros` | lista e CRUD | CRUD via API + mutações server-side | API `registries` (setores, locais e funções) isolada por tenant |
 | `/usuarios` | lista e CRUD | CRUD via API + mutações server-side | API `users` isolada por tenant |
 | `/mural` | cartões e CRUD | CRUD via API + mutações server-side | API `modules/mural` isolada por tenant |
@@ -41,6 +42,7 @@ Todas as rotas operacionais estão integradas com a API. A tabela abaixo lista o
 | `/ocorrencias` | `GET/POST/PATCH/DELETE /occurrences` |
 | `/solicitacoes-fiscais` | `GET/POST/PATCH/DELETE /fiscal-requests` |
 | `/usuarios` | `GET/POST/PATCH/DELETE /users` |
+| `/procedimentos` | `GET/POST/PATCH/DELETE /procedures` + `POST/GET/DELETE /attachments` |
 | `/cadastros` | `GET/POST/PATCH/DELETE /registries` |
 | `/reunioes` | `GET/POST/PATCH/DELETE /modules/reunioes` |
 | `/relatorios-turno` | `GET/POST/PATCH/DELETE /modules/relatorios-turno` |
@@ -97,11 +99,11 @@ Cada entrada possui:
 
 | Campo | Conteúdo |
 | --- | --- |
-| `type` | `comment` (mensagem livre), `change` (edição de campos) ou `create` (criação do registro) |
+| `type` | `comment` (mensagem livre), `change` (edição de campos), `create` (criação), `delete` (exclusão), `attachment_add` (anexo adicionado) ou `attachment_remove` (anexo removido) |
 | `user` | Nome do usuário que realizou |
 | `date` | Data e hora no formato `dd/mm/aaaa hh:mm` |
-| `message` | Texto do comentário (em `comment` e `create`) |
-| `changes` | Diferenças campo a campo, separadas por `;` (só em `change`) |
+| `message` | Texto do comentário (em `comment`), mensagem de sistema (em `create`, `delete`, `attachment_add`, `attachment_remove`) |
+| `changes` | Diferenças campo a campo (só em `change`) |
 
 Visual por tipo:
 
@@ -110,8 +112,10 @@ Visual por tipo:
 | `comment` | azul (iniciais) | balão de mensagem com texto livre |
 | `change` | roxo (iniciais) | chips listando cada campo alterado com valor anterior e novo |
 | `create` | verde (iniciais) | mensagem em itálico indicando a criação |
+| `delete` | vermelho (iniciais) | mensagem indicando exclusão |
+| `attachment_add` / `attachment_remove` | azul (iniciais) | mensagem com nome do arquivo anexado ou removido |
 
-A timeline é comum a todas as telas que usam o `OperationalModule`. A API já grava `AuditEvent` para cada mutação em ocorrências e solicitações fiscais com diff JSON. A próxima etapa é alimentar a timeline do frontend com esses eventos, removendo a dependência do `localStorage`.
+A timeline é alimentada pela API (`GET /timeline/{entity_type}/{entity_id}`) que lê de `audit_events`. Módulos API-backed consomem a timeline da API; módulos locais (fallback) usam `localStorage`.
 
 ## Solicitações fiscais
 
@@ -127,8 +131,5 @@ A integração Chess Hotel cria solicitações via `POST /integrations/chess-hot
 
 ### Limitações remanescentes
 
-- o SLA da integração Chess Hotel calcula 24h corridas; o servidor ainda não aplica calendário útil ou timezone;
-- anexos são Data URLs/Base64 sem limite de tamanho, quantidade ou validação real de MIME — não são persistidos na API;
 - nomes informados em “Notificar” não correspondem a IDs e não disparam notificações;
-- tratativas (comentários e alterações) ainda ficam no `localStorage` — a API já grava `audit_events`, mas o frontend ainda não os consome;
-- alterações específicas do formulário fiscal ainda não aparecem integralmente na timeline.
+- alterações específicas do formulário fiscal (campos do payload como taxpayerDoc, invoiceNumber) ainda não aparecem como diff detalhado na timeline — o diff registra a mudança do objeto `payload` como um todo.

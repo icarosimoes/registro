@@ -157,6 +157,31 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
       } catch (error) {
         if (error instanceof Error && error.message === "unauthorized") throw error;
       }
+    } else if (module === "procedimentos") {
+      type ProcedureItem = { id: number; name: string; link: string | null; file: string | null; updated_at: string };
+      type ProcedurePage = { items: ProcedureItem[]; total: number; page: number; page_size: number };
+      try {
+        const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
+        const search = query.search ?? "";
+        const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+        const data = await tenantFetch<ProcedurePage>(`/procedures?page=${pg}&page_size=20${searchParam}`);
+        hydratedDefinition = {
+          ...definition,
+          source: "api",
+          records: data.items.map((item) => ({
+            id: item.id,
+            title: item.name,
+            category: "Procedimento",
+            owner: "Administração",
+            status: "Ativo",
+            description: item.link ?? undefined,
+            updatedAt: new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
+          })),
+          serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
+        };
+      } catch (error) {
+        if (error instanceof Error && error.message === "unauthorized") throw error;
+      }
     } else if (GENERIC_MODULES.has(module)) {
       type ModuleRecordItem = {
         id: number;

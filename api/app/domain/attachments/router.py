@@ -123,7 +123,7 @@ async def delete_attachment_endpoint(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
     deleted = await delete_attachment(
-        session, user.company_id, attachment_id,
+        session, user.company_id, attachment_id, user_id=user.id,
     )
     if not deleted:
         raise HTTPException(status_code=404, detail={"code": "not_found"})

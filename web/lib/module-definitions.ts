@@ -116,6 +116,15 @@ export const moduleDefinitions: Record<string, ModuleDefinition> = {
       { id: 488, title: "Teste do gerador", category: "Preventiva", owner: "Ana Souza", status: "Concluído", updatedAt: "16/06/2026" },
     ],
   },
+  procedimentos: {
+    slug: "procedimentos", title: "Procedimentos", singular: "procedimento", action: "Novo procedimento",
+    description: "Gerencie documentos operacionais, SOPs e manuais da empresa.",
+    records: [
+      { id: 1, title: "Check-in / Check-out", category: "Recepção", owner: "Administração", status: "Ativo", updatedAt: today },
+      { id: 2, title: "Procedimento de governança", category: "Governança", owner: "Administração", status: "Ativo", updatedAt: today },
+      { id: 3, title: "Manutenção preventiva", category: "Manutenção", owner: "Administração", status: "Ativo", updatedAt: today },
+    ],
+  },
   cadastros: {
     slug: "cadastros", title: "Cadastros", singular: "cadastro", action: "Novo cadastro",
     description: "Gerencie setores, locais, funções e procedimentos.",

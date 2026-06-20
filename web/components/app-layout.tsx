@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Bell, Building2, ClipboardCheck, FileClock, FileText, HardHat, Home,
+  Bell, BookOpen, Building2, ClipboardCheck, FileClock, FileText, HardHat, Home,
   Menu, MessageSquareText, PanelLeftClose, PanelLeftOpen, Receipt,
   Settings, ShieldCheck, Users, Wrench, X,
 } from "lucide-react";
@@ -24,6 +24,7 @@ const navOperation = [
 ];
 
 const navAdmin = [
+  { slug: "procedimentos", label: "Procedimentos", icon: BookOpen, href: "/procedimentos" },
   { slug: "cadastros", label: "Cadastros", icon: Building2, href: "/cadastros" },
   { slug: "usuarios", label: "Usuários e acesso", icon: ShieldCheck, href: "/usuarios" },
   { slug: "mural", label: "Mural de avisos", icon: Bell, href: "/mural" },

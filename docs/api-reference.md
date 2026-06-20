@@ -52,6 +52,8 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `GET` | `/attachments?entity_type=&entity_id=` | Tenant Bearer | lista anexos de uma entidade |
 | `GET` | `/attachments/{id}/download` | Tenant Bearer | download do arquivo |
 | `DELETE` | `/attachments/{id}` | Tenant Bearer | exclui anexo (S3 + banco) |
+| `GET` | `/timeline/{entity_type}/{entity_id}` | Tenant Bearer | timeline de alterações do registro |
+| `POST` | `/timeline/{entity_type}/{entity_id}/comment` | Tenant Bearer | adiciona comentário ao registro |
 | `POST` | `/platform/auth/login` | pública | JWT administrativo isolado |
 | `GET` | `/platform/metrics` | Platform Bearer | métricas SaaS agregadas |
 | `GET` | `/platform/tenants` | Platform Bearer | empresas e assinatura |
@@ -206,9 +208,34 @@ Verifica se um e-mail do Chess corresponde a um usuário ativo no tenant do Regi
 
 Lista as últimas 50 solicitações do usuário (por `requester_user_id`) com histórico de auditoria e status de tracking. Retorna o perfil do usuário e array de `FiscalRequestTracking` com protocolo, status, responsável, SLA, flag de conclusão, URL e histórico de eventos.
 
+### Timeline
+
+A timeline agrega eventos de auditoria de um registro e os apresenta como thread de conversa. Lê da tabela `audit_events` e resolve o nome do ator via join com `users`.
+
+#### `GET /timeline/{entity_type}/{entity_id}`
+
+Retorna todos os eventos do registro em ordem cronológica. Cada item inclui `id`, `event_type`, `user` (nome), `message` (para comentários e anexos), `changes` (para updates) e `created_at`.
+
+Entity types válidos: `occurrence`, `fiscal_request`, `procedure`, `reunioes`, `relatorios-turno`, `inspecoes`, `diarios-obra`, `manutencao`, `mural`.
+
+Tipos de evento renderizados:
+
+| `event_type` | Exibição |
+| --- | --- |
+| `create` | "Criou o registro" |
+| `update` | Diff campo a campo |
+| `delete` | "Excluiu o registro" |
+| `comment` | Mensagem livre do usuário |
+| `attachment_add` | "Anexou \"{filename}\"" |
+| `attachment_remove` | "Removeu anexo \"{filename}\"" |
+
+#### `POST /timeline/{entity_type}/{entity_id}/comment`
+
+Adiciona comentário ao registro. Body: `{ "message": "texto" }`. Dispara notificação para o dono e criador do registro (ocorrências e solicitações fiscais). Responde `201` com o comentário criado.
+
 ### Auditoria
 
-Toda mutação em ocorrências e solicitações fiscais gera um `AuditEvent` com `company_id`, `user_id`, `entity_type`, `entity_id`, `event_type` e `diff` JSON. O diff registra campo a campo o valor anterior e o novo, apenas quando há mudança. Eventos de create e delete não possuem diff.
+Toda mutação em ocorrências, solicitações fiscais, procedimentos e anexos gera um `AuditEvent` com `company_id`, `user_id`, `entity_type`, `entity_id`, `event_type` e `diff` JSON. O diff registra campo a campo o valor anterior e o novo, apenas quando há mudança. Eventos de create e delete não possuem diff. A tabela `audit_events` é imutável por design (sem `updated_at`/`deleted_at`, `created_at` com `server_default=func.now()`).
 
 | `entity_type` | `event_type` | Quando |
 | --- | --- | --- |
@@ -219,6 +246,8 @@ Toda mutação em ocorrências e solicitações fiscais gera um `AuditEvent` com
 | `fiscal_request` | `create_from_chess` | POST /integrations/chess-hotel/tickets |
 | `fiscal_request` | `update` | PATCH /fiscal-requests/{id}, apenas se houve diff |
 | `fiscal_request` | `delete` | DELETE /fiscal-requests/{id} |
+| `{entity_type}` | `attachment_add` | POST /attachments — registra filename, content_type e size_bytes |
+| `{entity_type}` | `attachment_remove` | DELETE /attachments/{id} — registra filename |
 
 ### Validação de campos fiscais
 
@@ -410,7 +439,7 @@ Download do arquivo com `Content-Disposition: attachment`. Isolado por `company_
 
 #### `DELETE /attachments/{id}`
 
-Exclui o anexo do MinIO e do banco. Responde `204`. Retorna `404` se o anexo não existir ou pertencer a outro tenant.
+Exclui o anexo do MinIO e do banco. Registra evento de auditoria `attachment_remove` com o nome do arquivo. Responde `204`. Retorna `404` se o anexo não existir ou pertencer a outro tenant.
 
 ### Infraestrutura: MinIO
 

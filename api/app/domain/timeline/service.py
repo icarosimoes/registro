@@ -10,12 +10,14 @@ from app.models import (
     FiscalRequest,
     ModuleRecord,
     Occurrence,
+    Procedure,
     User,
 )
 
 VALID_ENTITY_TYPES = {
     "occurrence",
     "fiscal_request",
+    "procedure",
     "reunioes",
     "relatorios-turno",
     "inspecoes",
@@ -27,6 +29,7 @@ VALID_ENTITY_TYPES = {
 ENTITY_MODEL_MAP: dict[str, Any] = {
     "occurrence": Occurrence,
     "fiscal_request": FiscalRequest,
+    "procedure": Procedure,
 }
 
 MODULE_SLUG_ENTITY_TYPES = {
@@ -87,6 +90,10 @@ async def get_timeline(
         changes = None
         if event.event_type == "comment":
             message = event.diff.get("message") if event.diff else None
+        elif event.event_type == "attachment_add":
+            message = f"Anexou \"{event.diff.get('filename', '?')}\"" if event.diff else None
+        elif event.event_type == "attachment_remove":
+            message = f"Removeu anexo \"{event.diff.get('filename', '?')}\"" if event.diff else None
         elif event.diff:
             changes = event.diff
         items.append(

@@ -6,6 +6,7 @@ import {
   createUserAction, updateUserAction, deleteUserAction,
   createRegistryAction, updateRegistryAction, deleteRegistryAction,
   createModuleRecordAction, updateModuleRecordAction, deleteModuleRecordAction,
+  createProcedureAction, updateProcedureAction, deleteProcedureAction,
   getEvolutionSettings, saveEvolutionSettings,
   getBrevoSettings, saveBrevoSettings, searchUsers,
   fetchTimeline, addCommentAction,
@@ -17,7 +18,7 @@ import { type HistoryEntry, type ModuleDefinition, type ModuleRecord } from "@/l
 import {
   ChevronLeft, ChevronRight, Download, FileClock,
   MessageSquare, Paperclip, Pencil, Plus, RefreshCw, Search,
-  Send, Trash2, X,
+  Send, Trash2, Upload, X,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -101,6 +102,7 @@ function statusClass(status: string) {
 const SLUG_TO_ENTITY_TYPE: Record<string, string> = {
   "ocorrencias": "occurrence",
   "solicitacoes-fiscais": "fiscal_request",
+  "procedimentos": "procedure",
   "reunioes": "reunioes",
   "relatorios-turno": "relatorios-turno",
   "inspecoes": "inspecoes",
@@ -115,7 +117,9 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const isOcorrencias = definition.slug === "ocorrencias";
   const isUsers = definition.slug === "usuarios";
   const isCadastros = definition.slug === "cadastros";
+  const isProcedimentos = definition.slug === "procedimentos";
   const isGenericModule = ["reunioes", "relatorios-turno", "inspecoes", "diarios-obra", "manutencao", "mural"].includes(definition.slug);
+  const hasAttachments = isFiscal || isProcedimentos;
   const isApiBacked = definition.source === "api";
   const entityType = SLUG_TO_ENTITY_TYPE[definition.slug];
   const canMutate = true;
@@ -157,15 +161,15 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   useEffect(() => {
     if (!selected || !isApiBacked || !entityType) { setTimeline([]); setSelectedAttachments([]); return; }
     fetchTimeline(entityType, selected.id).then(setTimeline).catch(() => setTimeline([]));
-    if (isFiscal) {
-      fetchAttachments("fiscal_request", selected.id).then(setSelectedAttachments).catch(() => setSelectedAttachments([]));
+    if (hasAttachments && entityType) {
+      fetchAttachments(entityType, selected.id).then(setSelectedAttachments).catch(() => setSelectedAttachments([]));
     }
-  }, [selected, isApiBacked, entityType, isFiscal]);
+  }, [selected, isApiBacked, entityType, hasAttachments]);
 
   useEffect(() => {
-    if (!editing || editing === "new" || !isFiscal || !isApiBacked) return;
-    fetchAttachments("fiscal_request", editing.id).then(setSelectedAttachments).catch(() => setSelectedAttachments([]));
-  }, [editing, isFiscal, isApiBacked]);
+    if (!editing || editing === "new" || !hasAttachments || !isApiBacked || !entityType) return;
+    fetchAttachments(entityType, editing.id).then(setSelectedAttachments).catch(() => setSelectedAttachments([]));
+  }, [editing, hasAttachments, isApiBacked, entityType]);
 
   useEffect(() => {
     if (!isApiBacked) return;
@@ -251,7 +255,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     };
 
     if (isApiBacked) {
-      let result: { ok: boolean; error?: string };
+      let result: { ok: boolean; error?: string; data?: Record<string, unknown> };
 
       const notifyRaw = String(formData.get("notifyUsers") ?? "[]");
       let notifyIds: number[] = [];
@@ -289,6 +293,26 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
           result = await updateRegistryAction(current.id, { name: fields.title }, current.category);
         } else {
           result = await createRegistryAction({ name: fields.title, category: fields.category });
+        }
+      } else if (isProcedimentos) {
+        const link = String(formData.get("link") ?? "") || undefined;
+        const pendingFiles: File[] = [];
+        const fileInput = formData.getAll("attachmentFiles");
+        for (const f of fileInput) {
+          if (f instanceof File && f.size > 0) pendingFiles.push(f);
+        }
+        if (current) {
+          result = await updateProcedureAction(current.id, { name: fields.title, link });
+        } else {
+          result = await createProcedureAction({ name: fields.title, link });
+        }
+        if (result.ok && pendingFiles.length > 0) {
+          const entityId = current?.id ?? (result.data as Record<string, number>)?.id;
+          if (entityId) {
+            for (const file of pendingFiles) {
+              await uploadAttachmentAction("procedure", entityId, file);
+            }
+          }
         }
       } else if (isGenericModule) {
         const ownerRaw = String(formData.get("owner") ?? "");
@@ -417,6 +441,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       else if (isOcorrencias) result = await deleteOccurrenceAction(record.id);
       else if (isUsers) result = await deleteUserAction(record.id);
       else if (isCadastros) result = await deleteRegistryAction(record.id, record.category);
+      else if (isProcedimentos) result = await deleteProcedureAction(record.id);
       else if (isGenericModule) result = await deleteModuleRecordAction(definition.slug, record.id);
       else result = { ok: false, error: "Módulo não suportado." };
       if (!result.ok) { setToast(result.error ?? "Erro ao excluir."); window.setTimeout(() => setToast(""), 2600); return; }
@@ -463,6 +488,22 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
         <div className="form-grid">
           <label>Tipo<select name="category" defaultValue={editing === "new" ? "Setor" : editing.category}><option>Setor</option><option>Local</option><option>Função</option></select></label>
           <label>Status<select name="status" defaultValue="Ativo"><option>Ativo</option></select></label>
+        </div>
+      </> : isProcedimentos ? <>
+        <label>Nome<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
+        <label>Link externo<input name="link" type="url" placeholder="https://..." defaultValue={editing === "new" ? "" : editing.description ?? ""}/></label>
+        <input type="hidden" name="category" value="Procedimento"/>
+        <input type="hidden" name="owner" value="Administração"/>
+        <input type="hidden" name="status" value="Ativo"/>
+        <input type="hidden" name="description" value=""/>
+        <div>
+          <label style={{ marginBottom: 8 }}>Anexos</label>
+          <div className="drop-zone" onClick={() => { const inp = document.getElementById("proc-file-input") as HTMLInputElement; inp?.click(); }}>
+            <Upload size={22}/>
+            <span>Arraste arquivos ou clique para selecionar</span>
+            <input id="proc-file-input" name="attachmentFiles" type="file" multiple style={{ display: "none" }} onChange={(e) => { if (e.target.files) { const dt = new DataTransfer(); for (const f of Array.from(e.target.files)) dt.items.add(f); e.target.files = dt.files; } }}/>
+          </div>
+          {editing !== "new" && selectedAttachments.length > 0 && <div className="attachment-grid">{selectedAttachments.map((att) => <div key={att.id} className="attachment-preview"><button type="button" className="attachment-remove" onClick={() => { deleteAttachmentAction(att.id); setSelectedAttachments((prev) => prev.filter((a) => a.id !== att.id)); }}><X size={14}/></button><div className="attachment-file-icon"><Paperclip size={20}/></div><span className="attachment-name">{att.filename}</span></div>)}</div>}
         </div>
       </> : <>
         <label>Título<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
@@ -511,8 +552,9 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
         {isFiscal && selected.cancellationReason && <div><dt>Motivo do cancelamento</dt><dd>{selected.cancellationReason}</dd></div>}
         {isFiscal && selected.correction && <div><dt>Correção necessária</dt><dd>{selected.correction}</dd></div>}
         <div><dt>Atualização</dt><dd>{selected.updatedAt}</dd></div>
-        <div><dt>Descrição</dt><dd>{selected.description || "Nenhuma descrição informada."}</dd></div>
-        {isFiscal && selectedAttachments.length > 0 && <div><dt>Anexos</dt><dd><div className="attachment-grid drawer-attachments">{selectedAttachments.map((att) => <a key={att.id} href={`/api/attachments/${att.id}/download`} target="_blank" rel="noopener noreferrer" className="attachment-preview"><div className="attachment-file-icon"><Paperclip size={20}/></div><span className="attachment-name">{att.filename}</span></a>)}</div></dd></div>}
+        {isProcedimentos && selected.description && <div><dt>Link</dt><dd><a href={selected.description} target="_blank" rel="noopener noreferrer">{selected.description}</a></dd></div>}
+        {!isProcedimentos && <div><dt>Descrição</dt><dd>{selected.description || "Nenhuma descrição informada."}</dd></div>}
+        {hasAttachments && selectedAttachments.length > 0 && <div><dt>Anexos</dt><dd><div className="attachment-grid drawer-attachments">{selectedAttachments.map((att) => <a key={att.id} href={`/api/attachments/${att.id}/download`} target="_blank" rel="noopener noreferrer" className="attachment-preview"><div className="attachment-file-icon"><Paperclip size={20}/></div><span className="attachment-name">{att.filename}</span></a>)}</div></dd></div>}
       </dl>
       {!isUsers && <div className="record-timeline">
         <h3><MessageSquare size={15}/>Tratativa</h3>
@@ -520,12 +562,14 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
           {timeline.map((entry) => {
             const entryInitials = entry.user.split(" ").slice(0, 2).map((p) => p[0]).join("").toUpperCase();
             const dateStr = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(entry.created_at));
-            return <article key={entry.id} className={`thread-entry thread-${entry.event_type === "comment" ? "comment" : entry.event_type.startsWith("create") ? "create" : "change"}`}>
+            return <article key={entry.id} className={`thread-entry thread-${entry.event_type === "comment" || entry.event_type.startsWith("attachment") ? "comment" : entry.event_type.startsWith("create") ? "create" : "change"}`}>
               <div className="thread-avatar">{entryInitials}</div>
               <div className="thread-body">
                 <div className="thread-header"><strong>{entry.user}</strong><time>{dateStr}</time></div>
                 {entry.event_type === "comment" && entry.message ? <p className="thread-message">{entry.message}</p> : null}
+                {entry.event_type.startsWith("attachment") && entry.message ? <p className="thread-system">{entry.message}</p> : null}
                 {entry.event_type.startsWith("create") ? <p className="thread-system">Criou o registro</p> : null}
+                {entry.event_type === "delete" ? <p className="thread-system">Excluiu o registro</p> : null}
                 {entry.changes ? <div className="thread-changes">{Object.entries(entry.changes).map(([k, v]) => <span key={k}>{k}: &quot;{(v as {from: string}).from}&quot; → &quot;{(v as {to: string}).to}&quot;</span>)}</div> : null}
               </div>
             </article>;

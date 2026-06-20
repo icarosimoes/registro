@@ -337,6 +337,41 @@ export async function deleteModuleRecordAction(moduleSlug: string, id: number): 
   return { ok: true };
 }
 
+// --- Procedures ---
+
+export interface ProcedurePayload {
+  name: string;
+  link?: string | null;
+  file?: string | null;
+}
+
+export async function createProcedureAction(body: ProcedurePayload): Promise<MutationResult> {
+  const response = await authedFetch("/procedures", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar procedimento." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateProcedureAction(id: number, body: Partial<ProcedurePayload>): Promise<MutationResult> {
+  const response = await authedFetch(`/procedures/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar procedimento." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteProcedureAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/procedures/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir procedimento." };
+  }
+  return { ok: true };
+}
+
 export interface TimelineEntry {
   id: number;
   event_type: string;
