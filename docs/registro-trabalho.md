@@ -95,11 +95,41 @@
 - Front de login convertido para Client Component com seletor de tenant dinâmico.
 - Padrão alinhado com o Aloji.
 
-## 2026-06-19 — Timeline de alterações
+## 2026-06-19 — Tratativa (timeline de conversa)
 
-- Adicionado tipo `HistoryEntry` ao `ModuleRecord`: registra ação, usuário, data/hora e diferenças campo a campo.
-- Toda criação ou edição grava uma entrada automática no histórico do registro, com nome do usuário logado e timestamp.
-- Edições registram as diferenças detalhadas (campo: valor anterior → valor novo) para título, categoria, responsável, status e descrição.
-- Timeline exibida no drawer de detalhes de todas as telas operacionais: ocorrências, reuniões, relatórios de turno, inspeções, diário de obra, manutenção, cadastros, usuários e mural.
-- Visual com linha vertical, dots azuis e cards de alteração, seguindo o padrão do sistema.
+- `HistoryEntry` agora possui `type` (`comment`, `change`, `create`) e campo `message` para comentários livres.
+- Comentários podem ser adicionados diretamente no drawer de detalhes via campo de texto e botão enviar.
+- Criações, edições e comentários aparecem em ordem cronológica como uma conversa de ticket.
+- Avatares coloridos por tipo: azul (comentário), roxo (alteração de campos), verde (criação).
+- Alterações exibem chips detalhando cada campo modificado com valor anterior e novo.
+- Timeline visível tanto no drawer de detalhes (com campo de comentário) quanto no modal de edição (somente leitura).
+- Modal de edição alarga automaticamente quando o registro possui histórico.
+- Presente em todas as telas operacionais: ocorrências, reuniões, relatórios de turno, inspeções, diário de obra, manutenção, cadastros, usuários e mural.
 - Dados persistidos no `localStorage` por tenant; futuramente serão gravados pela API com auditoria real.
+
+## 2026-06-20 — Revisão técnica e governança documental
+
+- Revisadas as alterações recentes de autenticação, tenant Aero Hotel, timeline e solicitações fiscais.
+- Confirmados os quatro serviços locais ativos no Docker: API, web, admin e MySQL.
+- Executados `npm run typecheck`, build de produção do Next.js e testes da API no container; frontend aprovado e 7 testes da API aprovados.
+- Confirmados no banco local o tenant `aero-hotel`, 60 usuários vinculados e 375 ocorrências importadas.
+- Identificado que o login multitenant revela a lista de empresas antes de validar a senha; correção e testes foram priorizados no backlog.
+- Identificado que a interface carrega apenas 100 ocorrências e pode substituir os dados da API por uma cópia antiga do `localStorage`.
+- Identificado que tratativas, edições, comentários e o módulo fiscal ainda não possuem persistência na API.
+- Registradas pendências de anexos, SLA, notificações, validação fiscal, auditoria, cross-tenant, documentação e CI.
+- Definido formalmente que toda informação pertinente ao desenvolvimento e ao sistema deve ser documentada em `/docs`.
+- Atualizados `backlog.md`, `memoria-projeto.md` e o padrão documental com essa regra permanente.
+
+## 2026-06-20 — Autenticação multitenant e ocorrências
+
+- Corrigido o fluxo multitenant para validar hashes antes de retornar opções de empresa.
+- Removida a segunda consulta que listava tenants apenas pelo e-mail; as opções agora derivam exclusivamente dos usuários autenticados.
+- Adicionado `company_name` ao resultado interno de autenticação e ordenação determinística por empresa.
+- Adicionada validação positiva para `company_id`.
+- Criados cinco testes de serviço/contrato de autenticação; suíte total validada com 12 testes e Ruff sem erros.
+- A página de ocorrências passou a buscar a primeira página e carregar em paralelo as páginas restantes da API.
+- Ocorrências vindas da API não consultam nem gravam dados operacionais no `localStorage`.
+- Ações de criação, edição, exclusão e comentário ficam ocultas para ocorrências reais até a API de mutações existir; a tela informa o modo leitura.
+- Restaurados `.idea/` e `.vscode/` no `.gitignore`.
+- Validação final: 12 testes da API, Ruff, TypeScript e build Next.js aprovados; os quatro serviços Docker permaneceram ativos e a API saudável.
+- O mypy 1.20.2 da imagem encerrou com erro interno da própria ferramenta, sem produzir diagnóstico do código; estabilização registrada no backlog.

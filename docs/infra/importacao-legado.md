@@ -14,7 +14,7 @@ O dump `docs/aero-2026-06-19.sql` foi restaurado em `registro_v1` e seu núcleo 
 | procedimentos | 6 | `registro.procedures` |
 | ocorrências | 375 | `registro.occurrences` |
 
-A tabela de empresas da V1 está vazia e todos os usuários possuem `company_id` nulo. O importador associa esses dados ao tenant sintético `aero-hotel`, mantém os IDs antigos em `legacy_id` e preserva os hashes bcrypt Laravel. Usuários ativos podem entrar com a senha da V1 informando o slug `aero-hotel`.
+A tabela de empresas da V1 está vazia e todos os usuários possuem `company_id` nulo. O importador associa esses dados ao tenant sintético `aero-hotel`, mantém os IDs antigos em `legacy_id` e preserva os hashes bcrypt Laravel. Usuários ativos entram com e-mail e senha da V1; não existe campo de slug na interface. Se o mesmo e-mail estiver ativo em mais de um tenant, a interface solicita a escolha da empresa.
 
 Para navegação local existe um usuário adicional, fora dos 59 importados: `v1-demo@registro.local` / `Registro@123`. Ele não é criado se `LEGACY_DEMO_PASSWORD` não for informado ao importador.
 

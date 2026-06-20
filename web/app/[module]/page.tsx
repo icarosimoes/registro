@@ -13,11 +13,24 @@ export default async function ModulePage({ params }: { params: Promise<{ module:
     let hydratedDefinition = definition;
     if (module === "ocorrencias") {
       try {
-        const response = await tenantFetch<{ items: Array<{ id: number; legacy_id: number; title: string; description: string | null; category: string; owner: string; status: string; updated_at: string }> }>("/occurrences?page_size=100");
-        if (response.items.length) {
-          hydratedDefinition = {
-            ...definition,
-            records: response.items.map((item) => ({
+        type OccurrencePage = {
+          items: Array<{ id: number; legacy_id: number; title: string; description: string | null; category: string; owner: string; status: string; updated_at: string }>;
+          total: number;
+          page: number;
+          page_size: number;
+        };
+        const firstPage = await tenantFetch<OccurrencePage>("/occurrences?page=1&page_size=100");
+        const pageCount = Math.ceil(firstPage.total / firstPage.page_size);
+        const remainingPages = await Promise.all(
+          Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) =>
+            tenantFetch<OccurrencePage>(`/occurrences?page=${index + 2}&page_size=100`),
+          ),
+        );
+        const items = [firstPage, ...remainingPages].flatMap((page) => page.items);
+        hydratedDefinition = {
+          ...definition,
+          source: "api",
+          records: items.map((item) => ({
               id: item.id,
               title: item.title,
               description: item.description ?? undefined,
@@ -25,9 +38,8 @@ export default async function ModulePage({ params }: { params: Promise<{ module:
               owner: item.owner,
               status: item.status,
               updatedAt: new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
-            })),
-          };
-        }
+          })),
+        };
       } catch (error) {
         if (error instanceof Error && error.message === "unauthorized") throw error;
       }

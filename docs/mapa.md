@@ -1,18 +1,19 @@
 # Mapa do sistema
 
-## Estado em 19/06/2026
+## Estado em 20/06/2026
 
 | Área | Estado | Fonte de dados |
 | --- | --- | --- |
 | Docker local | operacional | Compose |
-| FastAPI | health, autenticação tenant e API da plataforma | MySQL 8.4 local |
-| Next.js | dashboard responsivo demonstrativo | dados mockados |
+| FastAPI | health, autenticação tenant/plataforma e leitura de ocorrências | MySQL 8.4 local |
+| Next.js | portal autenticado, módulos operacionais e dashboard | ocorrências via API; demais módulos locais/mockados |
 | Painel admin | login isolado, métricas, tenants e planos | API da plataforma |
 | SaaS | tenants, planos, assinaturas e faturas | dados fictícios |
 | Asaas | contrato e regras preparados | integração desativada |
 | Laravel V1 | 66 tabelas restauradas em staging | dump local |
 | Swarm | stack e runbook preparados | GHCR + secrets externos |
 | PostgreSQL | planejado após equivalência | ainda não existe |
+| Solicitações fiscais | protótipo funcional no frontend | `localStorage`; backend planejado |
 
 ## Caminhos
 
@@ -47,7 +48,10 @@ IDs e relacionamentos existentes, hashes Laravel, status/soft delete, `company_i
 ## Bloqueios atuais
 
 - falta inventário dos anexos/volumes fora do banco;
-- dashboard ainda não consome dados reais;
+- dashboard ainda não consome indicadores reais;
+- ocorrências ainda precisam de paginação/busca server-side sob demanda para volumes altos;
+- tratativas, mutações e solicitações fiscais ainda não são persistidas na API;
+- anexos fiscais ainda usam Base64 no navegador, sem política de tamanho, tipo ou armazenamento;
 - falta normalizar os demais domínios preservados na staging;
 - falta decidir credenciais, ambiente sandbox e política comercial do Asaas;
 - falta CI no repositório.

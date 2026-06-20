@@ -38,4 +38,4 @@ Esta pasta é a fonte de verdade técnica, funcional e operacional do Registro. 
 
 ## Regra de atualização
 
-Toda mudança em contrato de API, schema, autenticação, menu, CRUD, deploy, secrets ou operação deve atualizar o documento correspondente e o `registro-trabalho.md` no mesmo commit.
+Toda informação pertinente ao desenvolvimento ou ao sistema deve permanecer em `/docs`. Mudanças em contrato de API, schema, autenticação, menu, CRUD, deploy, secrets ou operação devem atualizar o documento correspondente e o `registro-trabalho.md` durante o mesmo trabalho e, quando houver commit, no mesmo commit. Decisões duráveis também atualizam `memoria-projeto.md`; riscos e pendências atualizam `backlog.md`.

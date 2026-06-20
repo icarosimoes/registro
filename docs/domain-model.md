@@ -26,7 +26,8 @@ Company
   ├── CheckSuite ──► CheckSuiteItem
   ├── ApartmentInspection ──► items / attachments / types
   ├── AuditReport ──► item1 / item2 / item3
-  └── WorkDiary ──► activities / teams / equipment / observations
+  ├── WorkDiary ──► activities / teams / equipment / observations
+  └── FiscalRequest ──► attachments / timeline / recipients (planejado)
 ```
 
 ## Agregados principais
@@ -42,6 +43,7 @@ Company
 | Turnos | `shift_reports` e tabelas filhas | aprovação/teste, anexos e Excel |
 | Inspeções | suites, vistorias, auditorias e itens | versões V1/V2, evidências e exportações |
 | Diário de obra | `work_diaries` e tabelas filhas | equipes, atividades, equipamentos e anexos |
+| Solicitações fiscais | frontend local; tabelas novas planejadas | tenant, tipo, reserva/nota, tomador, SLA, responsável, anexos, destinatários e auditoria |
 
 ## Convenções de dados
 
@@ -54,3 +56,4 @@ Company
 - Usuário da plataforma nunca possui `company_id`; acesso cross-tenant é uma capacidade administrativa separada.
 - IDs externos do Asaas são opcionais e únicos quando preenchidos; o Registro mantém suas próprias chaves.
 - Toda mutação em registros operacionais deve gerar uma entrada de histórico com usuário, data/hora e campos alterados. No front, o histórico fica em `history[]` dentro do registro; na API, será persistido em tabela de auditoria isolada por empresa.
+- Solicitações fiscais ainda não possuem modelo persistente. O modelo futuro deve usar referências por ID para responsável e destinatários, SLA calculado no servidor e anexos fora do payload principal, com metadados, checksum e autorização por tenant.

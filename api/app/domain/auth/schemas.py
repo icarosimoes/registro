@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field, field_validator
 class LoginRequest(BaseModel):
     email: str = Field(min_length=3, max_length=255)
     password: str = Field(min_length=1, max_length=72)
-    company_id: int | None = None
+    company_id: int | None = Field(default=None, gt=0)
 
     @field_validator("email")
     @classmethod

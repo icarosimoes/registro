@@ -14,6 +14,7 @@ class AuthenticatedUser:
     email: str
     password_hash: str
     company_id: int
+    company_name: str
     role_id: int | None
     role_name: str | None
     permissions: list[str]
@@ -26,6 +27,7 @@ def map_user(user: User) -> AuthenticatedUser:
         email=user.email,
         password_hash=user.password,
         company_id=user.company_id,
+        company_name=user.company.name,
         role_id=user.role_id,
         role_name=user.role.name if user.role else None,
         permissions=sorted(permission.code for permission in user.role.permissions)
@@ -42,7 +44,10 @@ async def find_active_users_by_email(
     query = (
         select(User)
         .join(Company)
-        .options(selectinload(User.role).selectinload(Role.permissions))
+        .options(
+            selectinload(User.company),
+            selectinload(User.role).selectinload(Role.permissions),
+        )
         .where(
             User.email == email.lower(),
             User.active.is_(True),
@@ -53,27 +58,9 @@ async def find_active_users_by_email(
     )
     if company_id:
         query = query.where(User.company_id == company_id)
+    query = query.order_by(User.company_id, User.id)
     users = (await session.execute(query)).scalars().all()
     return [map_user(u) for u in users]
-
-
-async def find_tenant_names_by_email(
-    session: AsyncSession,
-    email: str,
-) -> list[tuple[int, str]]:
-    query = (
-        select(Company.id, Company.name)
-        .join(User, User.company_id == Company.id)
-        .where(
-            User.email == email.lower(),
-            User.active.is_(True),
-            User.deleted_at.is_(None),
-            Company.status == "active",
-            Company.deleted_at.is_(None),
-        )
-    )
-    rows = (await session.execute(query)).all()
-    return [(row[0], row[1]) for row in rows]
 
 
 async def find_active_user_by_id(
@@ -84,7 +71,10 @@ async def find_active_user_by_id(
     query = (
         select(User)
         .join(Company)
-        .options(selectinload(User.role).selectinload(Role.permissions))
+        .options(
+            selectinload(User.company),
+            selectinload(User.role).selectinload(Role.permissions),
+        )
         .where(
             User.id == user_id,
             User.company_id == company_id,

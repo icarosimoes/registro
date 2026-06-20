@@ -74,3 +74,40 @@ O schema legado já possui `company_id`, mas ainda não foi comprovado que todas
 - O painel administrativo é outra aplicação Next.js, publicada em domínio próprio no Swarm.
 - Planos, assinaturas, faturas e auditoria formam o núcleo comercial; o Asaas permanece desativado até sandbox, credenciais e política comercial.
 - O dump legado será restaurado em base temporária e importado por processo repetível, nunca diretamente sobre o banco novo.
+
+## 2026-06-20 — Governança documental obrigatória
+
+Decisão: o diretório `/docs` é a memória oficial e a fonte de verdade técnica, funcional, operacional e histórica do Registro.
+
+- Toda informação pertinente ao desenvolvimento ou ao funcionamento do sistema deve ser registrada em `/docs`.
+- Mudanças de código, banco, contrato, interface, segurança, tenant, deploy, integração, migração ou operação devem atualizar a documentação correspondente durante o mesmo trabalho.
+- `backlog.md` registra trabalho pendente, prioridade, riscos encontrados e critérios de conclusão.
+- `memoria-projeto.md` registra decisões duráveis, contexto e restrições que não podem depender apenas do histórico do chat ou do conhecimento de uma pessoa.
+- `registro-trabalho.md` registra cronologicamente o que foi executado, validado, alterado ou identificado.
+- Documentos de arquitetura, domínio, API, UI e infraestrutura devem refletir o estado implementado; funcionalidades futuras precisam ser marcadas explicitamente como planejadas.
+- Correções e descobertas relevantes devem ser documentadas mesmo quando não forem implementadas imediatamente.
+- Nenhuma credencial, secret, dump, dado pessoal desnecessário ou informação sensível deve ser copiada para a documentação versionada.
+
+Essa regra passa a integrar a Definition of Done: código sem a atualização documental pertinente não é considerado concluído.
+
+## 2026-06-20 — Revisão técnica do estado atual
+
+- O ambiente Docker local foi validado com API, web, admin e MySQL ativos.
+- O frontend passou em `typecheck` e build de produção; a API passou em 7 testes dentro do container.
+- O tenant `Aero Hotel` (`aero-hotel`) possui 60 usuários e 375 ocorrências importadas no banco local.
+- Foi identificado risco no login multitenant: a lista de empresas é produzida antes da validação da senha.
+- A interface de ocorrências busca no máximo 100 registros e dados antigos do `localStorage` podem prevalecer sobre a API.
+- Tratativas, mutações operacionais e solicitações fiscais ainda são persistidas somente no navegador.
+- Anexos fiscais ainda usam Data URL/Base64 sem limites ou validação adequada e precisam migrar para armazenamento controlado pela API.
+- O backlog foi atualizado com as correções de autenticação, paginação, persistência, auditoria, anexos, SLA, testes, documentação e higiene do repositório.
+
+## 2026-06-20 — Correção do primeiro bloco crítico
+
+- O login multitenant passou a validar a senha antes de retornar qualquer empresa.
+- Quando diferentes tenants possuem o mesmo e-mail, somente usuários cuja senha confere participam da seleção; senha inválida não revela tenants.
+- `company_id` opcional passou a aceitar somente inteiros positivos.
+- Foram adicionados testes para tenant único, senha inválida, múltiplos tenants, senhas diferentes e seleção explícita; a suíte passou a 12 testes.
+- Ocorrências passaram a consumir todas as páginas disponíveis da API, eliminando o corte nos primeiros 100 registros.
+- Dados reais de ocorrências não são mais substituídos por cópias antigas do `localStorage`.
+- Como mutações ainda não existem na API, ocorrências reais ficam em modo leitura e a interface comunica essa limitação.
+- Para crescimento de volume, permanece planejada paginação e busca server-side sob demanda, sem hidratar todo o conjunto no Next.js.

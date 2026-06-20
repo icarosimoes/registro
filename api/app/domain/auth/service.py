@@ -7,7 +7,6 @@ from app.core.security import create_access_token, verify_laravel_password
 from app.domain.auth.repository import (
     AuthenticatedUser,
     find_active_users_by_email,
-    find_tenant_names_by_email,
 )
 from app.domain.auth.schemas import TenantOption, TokenResponse, UserResponse
 
@@ -37,19 +36,22 @@ async def authenticate(
     company_id: int | None = None,
 ) -> TokenResponse | MultiTenantResult | None:
     users = await find_active_users_by_email(session, email, company_id)
+    authenticated_users = [
+        user for user in users if verify_laravel_password(password, user.password_hash)
+    ]
 
-    if len(users) > 1:
-        tenants = await find_tenant_names_by_email(session, email)
+    if len(authenticated_users) > 1:
         return MultiTenantResult(
-            tenants=[TenantOption(id=tid, name=tname) for tid, tname in tenants],
+            tenants=[
+                TenantOption(id=user.company_id, name=user.company_name)
+                for user in authenticated_users
+            ],
         )
 
-    if not users:
+    if not authenticated_users:
         return None
 
-    user = users[0]
-    if not verify_laravel_password(password, user.password_hash):
-        return None
+    user = authenticated_users[0]
 
     token = create_access_token(
         subject=user.id,

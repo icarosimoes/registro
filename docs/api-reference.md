@@ -28,6 +28,8 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 
 `company_id` é opcional. Se o e-mail pertencer a um único tenant, o login resolve automaticamente. Se pertencer a mais de um, a API retorna `422` com `code: "multi_tenant"` e a lista de empresas disponíveis; o front exibe um seletor e reenvia com `company_id`. O token expõe `sub`, `company_id`, `role_id`, `permissions`, `type`, `iat` e `exp`. O algoritmo aceito é exclusivamente HS256.
 
+No fluxo multitenant, a senha é validada antes da resposta de seleção. A API retorna somente os tenants cujos usuários possuem credencial compatível; senha inválida responde `401` sem revelar empresas. `company_id`, quando informado, deve ser um inteiro positivo.
+
 O token da plataforma contém `type=platform_access` e não é aceito nas rotas tenant. O painel admin o mantém em cookie `httpOnly`; a API continua recebendo Bearer pela conexão server-side.
 
 ### Erros estruturados
@@ -51,3 +53,5 @@ O token da plataforma contém `type=platform_access` e não é aceito nas rotas 
 ## Contrato de listas
 
 `GET /occurrences` responde `{items, total, page, page_size}` e aceita `page`, `page_size` e `search`. Demais listas seguirão o mesmo contrato. Mutações não serão publicadas antes de autorização, validação e teste de isolamento por empresa.
+
+Não existem endpoints de solicitações fiscais, tratativas, anexos ou notificações. As telas correspondentes são protótipos locais e não representam persistência de produção.
