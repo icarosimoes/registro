@@ -1,0 +1,203 @@
+from datetime import datetime
+
+from sqlalchemy import func, or_, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.audit import compute_diff, record_event
+from app.integrations.notifications import notify_record_event
+from app.models import Location, Occurrence, Sector, User
+
+STATUS_LABELS = {1: "Em andamento", 2: "Concluído", 3: "Aguardando"}
+
+
+def status_label(value: int) -> str:
+    return STATUS_LABELS.get(value, f"Status {value}")
+
+
+async def _resolve_names(
+    session: AsyncSession, occurrence: Occurrence
+) -> tuple[str | None, str | None, str | None]:
+    sector_name = (
+        await session.scalar(select(Sector.name).where(Sector.id == occurrence.sector_id))
+        if occurrence.sector_id
+        else None
+    )
+    location_name = (
+        await session.scalar(select(Location.name).where(Location.id == occurrence.location_id))
+        if occurrence.location_id
+        else None
+    )
+    owner_name = (
+        await session.scalar(select(User.name).where(User.id == occurrence.owner_user_id))
+        if occurrence.owner_user_id
+        else None
+    )
+    return sector_name, location_name, owner_name
+
+
+async def list_occurrences(
+    session: AsyncSession,
+    company_id: int,
+    page: int,
+    page_size: int,
+    search: str | None = None,
+) -> tuple[list[tuple], int]:
+    filters = [Occurrence.company_id == company_id, Occurrence.deleted_at.is_(None)]
+    if search:
+        pattern = f"%{search.strip()}%"
+        filters.append(or_(Occurrence.title.ilike(pattern), Occurrence.description.ilike(pattern)))
+    total = await session.scalar(select(func.count(Occurrence.id)).where(*filters)) or 0
+    rows = (
+        await session.execute(
+            select(Occurrence, Sector.name, Location.name, User.name)
+            .outerjoin(Sector, Sector.id == Occurrence.sector_id)
+            .outerjoin(Location, Location.id == Occurrence.location_id)
+            .outerjoin(User, User.id == Occurrence.owner_user_id)
+            .where(*filters)
+            .order_by(Occurrence.updated_at.desc(), Occurrence.id.desc())
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+        )
+    ).all()
+    return rows, total
+
+
+async def create_occurrence(
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    user_name: str,
+    user_email: str,
+    *,
+    title: str,
+    description: str | None,
+    unit: str | None,
+    deadline,
+    status: int,
+    sector_id: int | None,
+    location_id: int | None,
+    owner_user_id: int | None,
+    notify_user_ids: list[int] | None,
+) -> tuple[Occurrence, tuple[str | None, str | None, str | None]]:
+    record = Occurrence(
+        company_id=company_id,
+        title=title,
+        description=description,
+        unit=unit,
+        deadline=deadline,
+        status=status,
+        sector_id=sector_id,
+        location_id=location_id,
+        owner_user_id=owner_user_id,
+        created_by_user_id=user_id,
+        updated_by_user_id=user_id,
+        notify_user_ids=notify_user_ids,
+    )
+    session.add(record)
+    await session.commit()
+    await session.refresh(record)
+    await record_event(
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="occurrence",
+        entity_id=record.id,
+        event_type="create",
+    )
+    await session.commit()
+    await notify_record_event(
+        session,
+        company_id=company_id,
+        actor_name=user_name,
+        actor_email=user_email,
+        event="create",
+        title=record.title,
+        module="Ocorrências",
+        owner_user_id=owner_user_id,
+        notify_user_ids=notify_user_ids,
+    )
+    names = await _resolve_names(session, record)
+    return record, names
+
+
+async def update_occurrence(
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    user_name: str,
+    user_email: str,
+    occurrence_id: int,
+    updates: dict,
+) -> tuple[Occurrence, tuple[str | None, str | None, str | None]] | None:
+    record = await session.scalar(
+        select(Occurrence).where(
+            Occurrence.id == occurrence_id,
+            Occurrence.company_id == company_id,
+            Occurrence.deleted_at.is_(None),
+        )
+    )
+    if record is None:
+        return None
+    before = {k: str(getattr(record, k)) for k in updates if k != "notify_user_ids"}
+    for field, value in updates.items():
+        setattr(record, field, value)
+    record.updated_by_user_id = user_id
+    diff = compute_diff(before, {k: str(v) for k, v in updates.items() if k != "notify_user_ids"})
+    if diff:
+        await record_event(
+            session,
+            company_id=company_id,
+            user_id=user_id,
+            entity_type="occurrence",
+            entity_id=record.id,
+            event_type="update",
+            diff=diff,
+        )
+    await session.commit()
+    await session.refresh(record)
+    if diff:
+        detail = "; ".join(f"{k}: {v}" for k, v in diff.items())
+        await notify_record_event(
+            session,
+            company_id=company_id,
+            actor_name=user_name,
+            actor_email=user_email,
+            event="update",
+            title=record.title,
+            module="Ocorrências",
+            owner_user_id=record.owner_user_id,
+            created_by_user_id=record.created_by_user_id,
+            notify_user_ids=record.notify_user_ids,
+            detail=detail,
+        )
+    names = await _resolve_names(session, record)
+    return record, names
+
+
+async def delete_occurrence(
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    occurrence_id: int,
+) -> bool:
+    record = await session.scalar(
+        select(Occurrence).where(
+            Occurrence.id == occurrence_id,
+            Occurrence.company_id == company_id,
+            Occurrence.deleted_at.is_(None),
+        )
+    )
+    if record is None:
+        return False
+    record.deleted_at = datetime.now()
+    record.updated_by_user_id = user_id
+    await record_event(
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="occurrence",
+        entity_id=record.id,
+        event_type="delete",
+    )
+    await session.commit()
+    return True

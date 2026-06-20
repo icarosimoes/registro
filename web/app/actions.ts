@@ -42,30 +42,93 @@ export async function loginAction(
     return { ok: false, error: "E-mail ou senha inválidos." };
   }
 
-  const data = (await response.json()) as { access_token: string; expires_in: number };
-  (await cookies()).set("tenant_token", data.access_token, {
+  const data = (await response.json()) as {
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+  };
+  const jar = await cookies();
+  jar.set("tenant_token", data.access_token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
     path: "/",
     maxAge: data.expires_in,
   });
+  jar.set("tenant_refresh_token", data.refresh_token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  });
   return { ok: true };
 }
 
 export async function logoutAction() {
-  (await cookies()).delete("tenant_token");
+  const jar = await cookies();
+  jar.delete("tenant_token");
+  jar.delete("tenant_refresh_token");
   redirect("/login");
 }
 
+async function tryRefresh(): Promise<string | null> {
+  const jar = await cookies();
+  const refreshToken = jar.get("tenant_refresh_token")?.value;
+  if (!refreshToken) return null;
+
+  const response = await fetch(`${apiUrl}/auth/refresh`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ refresh_token: refreshToken }),
+    cache: "no-store",
+  });
+  if (!response.ok) return null;
+
+  const data = (await response.json()) as {
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+  };
+  jar.set("tenant_token", data.access_token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: data.expires_in,
+  });
+  jar.set("tenant_refresh_token", data.refresh_token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 7,
+  });
+  return data.access_token;
+}
+
 async function authedFetch(path: string, init?: RequestInit): Promise<Response> {
-  const token = (await cookies()).get("tenant_token")?.value;
-  if (!token) throw new Error("unauthorized");
-  return fetch(`${apiUrl}${path}`, {
+  const jar = await cookies();
+  let token = jar.get("tenant_token")?.value;
+  if (!token) {
+    token = await tryRefresh() ?? undefined;
+    if (!token) throw new Error("unauthorized");
+  }
+  const response = await fetch(`${apiUrl}${path}`, {
     ...init,
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", ...init?.headers },
     cache: "no-store",
   });
+  if (response.status === 401) {
+    const newToken = await tryRefresh();
+    if (!newToken) throw new Error("unauthorized");
+    return fetch(`${apiUrl}${path}`, {
+      ...init,
+      headers: { Authorization: `Bearer ${newToken}`, "Content-Type": "application/json", ...init?.headers },
+      cache: "no-store",
+    });
+  }
+  return response;
 }
 
 export interface FiscalRequestPayload {
@@ -272,6 +335,79 @@ export async function deleteModuleRecordAction(moduleSlug: string, id: number): 
     return { ok: false, error: "Erro ao excluir registro." };
   }
   return { ok: true };
+}
+
+export interface TimelineEntry {
+  id: number;
+  event_type: string;
+  user: string;
+  message: string | null;
+  changes: Record<string, { from: string; to: string }> | null;
+  created_at: string;
+}
+
+export async function fetchTimeline(entityType: string, entityId: number): Promise<TimelineEntry[]> {
+  const response = await authedFetch(`/timeline/${entityType}/${entityId}`);
+  if (!response.ok) return [];
+  const data = await response.json();
+  return data.items ?? [];
+}
+
+export async function addCommentAction(entityType: string, entityId: number, message: string): Promise<MutationResult> {
+  const response = await authedFetch(`/timeline/${entityType}/${entityId}/comment`, {
+    method: "POST",
+    body: JSON.stringify({ message }),
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao adicionar comentário." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export interface NotificationItem {
+  id: number;
+  title: string;
+  body: string | null;
+  category: string;
+  entity_type: string | null;
+  entity_id: number | null;
+  read_at: string | null;
+  created_at: string;
+}
+
+export interface NotificationListResult {
+  items: NotificationItem[];
+  total: number;
+  unread: number;
+  page: number;
+  page_size: number;
+}
+
+export async function fetchNotifications(page = 1, unreadOnly = false): Promise<NotificationListResult> {
+  const params = new URLSearchParams({ page: String(page), page_size: "20" });
+  if (unreadOnly) params.set("unread_only", "true");
+  const response = await authedFetch(`/notifications?${params}`);
+  if (!response.ok) return { items: [], total: 0, unread: 0, page: 1, page_size: 20 };
+  return response.json();
+}
+
+export async function markNotificationRead(id: number): Promise<void> {
+  await authedFetch(`/notifications/${id}/read`, { method: "PATCH" });
+}
+
+export async function markAllNotificationsRead(): Promise<void> {
+  await authedFetch("/notifications/read-all", { method: "POST" });
+}
+
+export async function updateProfileAction(body: { name?: string; phone?: string; password?: string }): Promise<MutationResult> {
+  const response = await authedFetch("/users/me", { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    if (response.status === 422) return { ok: false, error: "Nenhum campo alterado." };
+    return { ok: false, error: "Erro ao atualizar perfil." };
+  }
+  return { ok: true, data: await response.json() };
 }
 
 export interface EvolutionSettings {

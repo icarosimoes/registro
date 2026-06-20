@@ -15,6 +15,8 @@ async def record_event(
     event_type: str,
     diff: dict[str, Any] | None = None,
 ) -> None:
+    if event_type == "update" and not diff:
+        return
     session.add(AuditEvent(
         company_id=company_id,
         user_id=user_id,

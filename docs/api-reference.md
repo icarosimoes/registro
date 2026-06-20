@@ -8,20 +8,22 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | --- | --- | --- | --- |
 | `GET` | `/health` | pública | processo FastAPI está vivo |
 | `GET` | `/health/ready` | pública | conexão do banco pronta ou não configurada |
-| `POST` | `/auth/login` | pública | JWT tenant e perfil |
+| `POST` | `/auth/login` | pública (10/min) | JWT access + refresh e perfil |
+| `POST` | `/auth/refresh` | pública (20/min) | renova tokens via refresh token |
 | `GET` | `/auth/me` | Bearer | perfil revalidado no MySQL |
 | `GET` | `/occurrences` | Tenant Bearer | ocorrências paginadas e isoladas por empresa |
 | `POST` | `/occurrences` | Tenant Bearer | cria ocorrência |
 | `PATCH` | `/occurrences/{id}` | Tenant Bearer | atualiza ocorrência |
 | `DELETE` | `/occurrences/{id}` | Tenant Bearer | soft delete de ocorrência |
-| `POST` | `/integrations/chess-hotel/users/resolve` | `X-Registro-Key` | resolve usuário Chess no Registro por e-mail |
-| `POST` | `/integrations/chess-hotel/tickets` | `X-Registro-Key` | cria solicitação fiscal via integração Chess Hotel |
+| `POST` | `/integrations/chess-hotel/users/resolve` | `X-Registro-Key` (30/min) | resolve usuário Chess no Registro por e-mail |
+| `POST` | `/integrations/chess-hotel/tickets` | `X-Registro-Key` (30/min) | cria solicitação fiscal via integração Chess Hotel |
 | `GET` | `/integrations/chess-hotel/tickets` | `X-Registro-Key` | lista solicitações do usuário Chess com tracking |
-| `GET` | `/fiscal-requests` | Tenant Bearer | solicitações fiscais do tenant |
+| `GET` | `/fiscal-requests` | Tenant Bearer | solicitações fiscais paginadas do tenant |
 | `POST` | `/fiscal-requests` | Tenant Bearer | cria solicitação fiscal |
 | `PATCH` | `/fiscal-requests/{id}` | Tenant Bearer | atualiza solicitação fiscal |
 | `DELETE` | `/fiscal-requests/{id}` | Tenant Bearer | exclui solicitação fiscal |
 | `GET` | `/dashboard/metrics` | Tenant Bearer | métricas agregadas do dashboard |
+| `PATCH` | `/users/me` | Tenant Bearer | edição de perfil do próprio usuário |
 | `GET` | `/users` | Tenant Bearer | usuários paginados do tenant |
 | `POST` | `/users` | Tenant Bearer | cria usuário |
 | `PATCH` | `/users/{id}` | Tenant Bearer | atualiza usuário |
@@ -35,6 +37,13 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `PATCH` | `/modules/{slug}/{id}` | Tenant Bearer | atualiza registro genérico |
 | `DELETE` | `/modules/{slug}/{id}` | Tenant Bearer | soft delete de registro genérico |
 | `GET` | `/users/search?q=` | Tenant Bearer | autocomplete de usuários ativos (max 10) |
+| `GET` | `/procedures` | Tenant Bearer | procedimentos paginados do tenant |
+| `POST` | `/procedures` | Tenant Bearer | cria procedimento |
+| `PATCH` | `/procedures/{id}` | Tenant Bearer | atualiza procedimento |
+| `DELETE` | `/procedures/{id}` | Tenant Bearer | soft delete de procedimento |
+| `GET` | `/notifications` | Tenant Bearer | notificações in-app paginadas do usuário |
+| `PATCH` | `/notifications/{id}/read` | Tenant Bearer | marca notificação como lida |
+| `POST` | `/notifications/read-all` | Tenant Bearer | marca todas as notificações como lidas |
 | `GET` | `/settings/evolution` | Tenant Bearer | configuração da Evolution API |
 | `POST` | `/settings/evolution` | Tenant Bearer | salva configuração da Evolution API |
 | `GET` | `/settings/brevo` | Tenant Bearer | configuração do Brevo (e-mail) |
@@ -54,11 +63,32 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 }
 ```
 
-`company_id` é opcional. Se o e-mail pertencer a um único tenant, o login resolve automaticamente. Se pertencer a mais de um, a API retorna `422` com `code: "multi_tenant"` e a lista de empresas disponíveis; o front exibe um seletor e reenvia com `company_id`. O token expõe `sub`, `company_id`, `role_id`, `permissions`, `type`, `iat` e `exp`. O algoritmo aceito é exclusivamente HS256.
+`company_id` é opcional. Se o e-mail pertencer a um único tenant, o login resolve automaticamente. Se pertencer a mais de um, a API retorna `422` com `code: "multi_tenant"` e a lista de empresas disponíveis; o front exibe um seletor e reenvia com `company_id`. O access token expõe `sub`, `company_id`, `role_id`, `permissions`, `type=access`, `iat` e `exp`. O algoritmo aceito é exclusivamente HS256.
 
 No fluxo multitenant, a senha é validada antes da resposta de seleção. A API retorna somente os tenants cujos usuários possuem credencial compatível; senha inválida responde `401` sem revelar empresas. `company_id`, quando informado, deve ser um inteiro positivo.
 
 O token da plataforma contém `type=platform_access` e não é aceito nas rotas tenant. O painel admin o mantém em cookie `httpOnly`; a API continua recebendo Bearer pela conexão server-side.
+
+### Refresh token
+
+O login retorna `access_token` (curta duração, padrão 30min) e `refresh_token` (longa duração, padrão 7 dias, `type=refresh`). O frontend armazena ambos em cookies `httpOnly`. Quando o access token expira (401), o frontend chama `POST /auth/refresh` com o refresh token para obter novos tokens sem pedir a senha novamente. O refresh token contém apenas `sub` e `company_id` (sem permissions) — ao renovar, a API revalida o usuário no banco e gera tokens atualizados.
+
+### Rate limiting
+
+Endpoints sensíveis possuem rate limiting por IP via slowapi:
+
+| Endpoint | Limite |
+| --- | --- |
+| `POST /auth/login` | 10 req/min |
+| `POST /auth/refresh` | 20 req/min |
+| `POST /integrations/chess-hotel/users/resolve` | 30 req/min |
+| `POST /integrations/chess-hotel/tickets` | 30 req/min |
+
+Exceder o limite retorna `429 Too Many Requests`.
+
+### Arquitetura: service layer
+
+Cada domínio possui um `service.py` com a lógica de negócio separada do router. Os routers lidam apenas com parsing HTTP, validação de input e mapeamento de resposta. Os services recebem session e parâmetros tipados, facilitando reuso (ex: `fiscal_requests.service.create_from_chess()` pode ser chamado por qualquer integração) e testes unitários sem dependência de FastAPI.
 
 ### Erros estruturados
 
@@ -80,7 +110,7 @@ O token da plataforma contém `type=platform_access` e não é aceito nas rotas 
 
 ## Contrato de listas
 
-`GET /occurrences` responde `{items, total, page, page_size}` e aceita `page`, `page_size` e `search`. Demais listas seguirão o mesmo contrato.
+Todas as listas paginadas respondem `{items, total, page, page_size}` e aceitam `page`, `page_size` e `search` (quando aplicável). Endpoints que seguem este contrato: `/occurrences`, `/fiscal-requests`, `/users`, `/registries`, `/modules/{slug}`, `/procedures` e `/notifications`.
 
 ### Ocorrências
 
@@ -255,6 +285,8 @@ Endpoint unificado para módulos operacionais que compartilham a mesma estrutura
 
 Slugs válidos: `reunioes`, `relatorios-turno`, `inspecoes`, `diarios-obra`, `manutencao`, `mural`.
 
+Registros importados da V1 possuem `legacy_id` e `payload` JSON com dados ricos (subjects, participants, frequencies, items de conferência, etc.) preservados da estrutura original.
+
 #### `GET /modules/{slug}`
 
 Lista registros do módulo com paginação e busca. Aceita `page`, `page_size` e `search`. Responde `{items, total, page, page_size}`. Cada item inclui `id`, `title`, `description`, `category`, `owner` (nome do usuário), `status` e `updated_at`.
@@ -281,4 +313,53 @@ Toda mutação nos novos endpoints (usuários, cadastros e módulos genéricos) 
 | `registry` | `create` / `delete` | CRUD de cadastros |
 | `{module_slug}` | `create` / `update` / `delete` | CRUD de módulos genéricos |
 
-Não existem endpoints de anexos ou notificações. Essas funcionalidades permanecem planejadas.
+### Perfil do usuário
+
+#### `PATCH /users/me`
+
+Permite ao usuário autenticado editar seu próprio perfil. Aceita `name`, `phone` e `password`. Não permite alterar `email`, `role_id` ou `active` — essas alterações exigem o endpoint administrativo `PATCH /users/{id}`. Se `password` for enviada, gera novo hash bcrypt. Retorna `422` se nenhum campo for enviado.
+
+### Procedimentos
+
+O CRUD de procedimentos está operacional. Todas as rotas exigem Tenant Bearer e isolam por `company_id`.
+
+#### `GET /procedures`
+
+Lista procedimentos do tenant com paginação e busca por nome. Aceita `page`, `page_size` e `search`. Responde `{items, total, page, page_size}`. Cada item inclui `id`, `name`, `link`, `file` e `updated_at`.
+
+#### `POST /procedures`
+
+Cria um procedimento. Requer `name`. Opcionais: `link` e `file`.
+
+#### `PATCH /procedures/{id}`
+
+Atualiza campos do procedimento. Aceita qualquer subconjunto de `name`, `link` e `file`.
+
+#### `DELETE /procedures/{id}`
+
+Exclusão lógica — preenche `deleted_at`. Retorna `404` se o registro não existir, já estiver excluído ou pertencer a outro tenant.
+
+### Notificações in-app
+
+Notificações persistentes por usuário com suporte a leitura e contagem de não lidas.
+
+#### `GET /notifications`
+
+Lista notificações do usuário autenticado com paginação. Aceita `page`, `page_size` e `unread_only` (boolean). Responde `{items, total, unread, page, page_size}`. Cada item inclui `id`, `title`, `body`, `category`, `entity_type`, `entity_id`, `read_at` e `created_at`. O campo `unread` sempre indica o total de não lidas (independente do filtro).
+
+#### `PATCH /notifications/{id}/read`
+
+Marca uma notificação como lida. Idempotente — se já lida, retorna sem alterar. Retorna `404` se a notificação não pertencer ao usuário.
+
+#### `POST /notifications/read-all`
+
+Marca todas as notificações não lidas do usuário como lidas. Responde `204`.
+
+### Auditoria dos novos endpoints
+
+| `entity_type` | `event_type` | Quando |
+| --- | --- | --- |
+| `procedure` | `create` / `update` / `delete` | CRUD de procedimentos |
+| `user` | `update_profile` | PATCH /users/me |
+
+Não existem endpoints de anexos. Essa funcionalidade permanece planejada.

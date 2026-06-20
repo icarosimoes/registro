@@ -56,6 +56,9 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
         apartment: string | null;
         requester: string;
         description?: string | null;
+        reservation_number?: string | null;
+        sla_deadline?: string | null;
+        sla_status?: string | null;
         status: string;
         payload: Record<string, unknown>;
         created_at: string;
@@ -83,6 +86,9 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
             status: item.status,
             requestType: item.request_type,
             apartment: item.apartment ?? undefined,
+            reservationNumber: item.reservation_number ?? (item.payload.reservationNumber as string | undefined),
+            slaDeadline: item.sla_deadline ?? undefined,
+            slaStatus: item.sla_status ?? undefined,
             description: item.description || String(item.payload.observations ?? item.payload.description ?? ""),
             updatedAt: new Intl.DateTimeFormat("pt-BR", {
               dateStyle: "short",

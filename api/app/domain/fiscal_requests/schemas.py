@@ -119,8 +119,13 @@ class FiscalRequestSummary(BaseModel):
     id: int
     protocol: str
     request_type: str
+    title: str | None = None
     apartment: str | None
     requester: str
+    description: str | None = None
+    reservation_number: str | None = None
+    sla_deadline: datetime | None = None
+    sla_status: str | None = None
     status: str
     payload: dict[str, Any]
     created_at: datetime
@@ -129,3 +134,6 @@ class FiscalRequestSummary(BaseModel):
 
 class FiscalRequestListResponse(BaseModel):
     items: list[FiscalRequestSummary]
+    total: int
+    page: int
+    page_size: int

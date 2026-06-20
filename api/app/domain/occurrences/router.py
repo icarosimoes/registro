@@ -1,75 +1,37 @@
 from typing import Annotated
 
-import jwt
 from fastapi import APIRouter, Depends, HTTPException, Query
-from fastapi.security import OAuth2PasswordBearer
-from datetime import datetime
-
-from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.audit import compute_diff, record_event
-from app.core.config import Settings, get_settings
+from app.core.auth import current_user
 from app.core.dependencies import require_session
-from app.core.security import decode_access_token
-from app.domain.auth.repository import AuthenticatedUser, find_active_user_by_id
+from app.domain.auth.repository import AuthenticatedUser
 from app.domain.occurrences.schemas import (
     OccurrenceCreate,
     OccurrenceListResponse,
     OccurrenceSummary,
     OccurrenceUpdate,
 )
-from app.integrations.notifications import notify_record_event
-from app.models import Location, Occurrence, Sector, User
+from app.domain.occurrences.service import (
+    create_occurrence,
+    delete_occurrence,
+    list_occurrences,
+    status_label,
+    update_occurrence,
+)
 
 router = APIRouter(prefix="/occurrences", tags=["occurrences"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
-
-
-async def current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
-    session: Annotated[AsyncSession, Depends(require_session)],
-    settings: Annotated[Settings, Depends(get_settings)],
-) -> AuthenticatedUser:
-    try:
-        claims = decode_access_token(token, settings.jwt_secret)
-        user = await find_active_user_by_id(session, int(claims["sub"]), int(claims["company_id"]))
-    except (jwt.InvalidTokenError, KeyError, TypeError, ValueError) as exc:
-        raise HTTPException(status_code=401, detail={"code": "invalid_token"}) from exc
-    if user is None:
-        raise HTTPException(status_code=401, detail={"code": "inactive_user"})
-    return user
-
-
-def status_label(value: int) -> str:
-    return {1: "Em andamento", 2: "Concluído", 3: "Aguardando"}.get(value, f"Status {value}")
 
 
 @router.get("", response_model=OccurrenceListResponse)
-async def list_occurrences(
+async def list_occurrences_endpoint(
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
     search: str | None = None,
 ) -> OccurrenceListResponse:
-    filters = [Occurrence.company_id == user.company_id, Occurrence.deleted_at.is_(None)]
-    if search:
-        pattern = f"%{search.strip()}%"
-        filters.append(or_(Occurrence.title.ilike(pattern), Occurrence.description.ilike(pattern)))
-    total = await session.scalar(select(func.count(Occurrence.id)).where(*filters)) or 0
-    rows = (
-        await session.execute(
-            select(Occurrence, Sector.name, Location.name, User.name)
-            .outerjoin(Sector, Sector.id == Occurrence.sector_id)
-            .outerjoin(Location, Location.id == Occurrence.location_id)
-            .outerjoin(User, User.id == Occurrence.owner_user_id)
-            .where(*filters)
-            .order_by(Occurrence.updated_at.desc(), Occurrence.id.desc())
-            .offset((page - 1) * page_size)
-            .limit(page_size)
-        )
-    ).all()
+    rows, total = await list_occurrences(session, user.company_id, page, page_size, search)
     return OccurrenceListResponse(
         items=[
             OccurrenceSummary(
@@ -92,32 +54,18 @@ async def list_occurrences(
     )
 
 
-async def _to_summary(occurrence: Occurrence, session: AsyncSession) -> OccurrenceSummary:
-    sector_name = await session.scalar(select(Sector.name).where(Sector.id == occurrence.sector_id)) if occurrence.sector_id else None
-    location_name = await session.scalar(select(Location.name).where(Location.id == occurrence.location_id)) if occurrence.location_id else None
-    owner_name = await session.scalar(select(User.name).where(User.id == occurrence.owner_user_id)) if occurrence.owner_user_id else None
-    return OccurrenceSummary(
-        id=occurrence.id,
-        legacy_id=occurrence.legacy_id,
-        title=occurrence.title,
-        description=occurrence.description,
-        category=sector_name or "Sem setor",
-        location=location_name,
-        owner=owner_name or "Não atribuído",
-        status=status_label(occurrence.status),
-        deadline=occurrence.deadline,
-        updated_at=occurrence.updated_at,
-    )
-
-
 @router.post("", response_model=OccurrenceSummary, status_code=201)
-async def create_occurrence(
+async def create_occurrence_endpoint(
     body: OccurrenceCreate,
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> OccurrenceSummary:
-    record = Occurrence(
-        company_id=user.company_id,
+    record, (sector_name, location_name, owner_name) = await create_occurrence(
+        session,
+        user.company_id,
+        user.id,
+        user.name,
+        user.email,
         title=body.title,
         description=body.description,
         unit=body.unit,
@@ -126,80 +74,56 @@ async def create_occurrence(
         sector_id=body.sector_id,
         location_id=body.location_id,
         owner_user_id=body.owner_user_id,
-        created_by_user_id=user.id,
-        updated_by_user_id=user.id,
         notify_user_ids=body.notify_user_ids,
     )
-    session.add(record)
-    await session.commit()
-    await session.refresh(record)
-    await record_event(session, company_id=user.company_id, user_id=user.id,
-                       entity_type="occurrence", entity_id=record.id, event_type="create")
-    await session.commit()
-    await notify_record_event(
-        session, company_id=user.company_id, actor_name=user.name, actor_email=user.email,
-        event="create", title=record.title, module="Ocorrências",
-        owner_user_id=body.owner_user_id, notify_user_ids=body.notify_user_ids,
+    return OccurrenceSummary(
+        id=record.id,
+        legacy_id=record.legacy_id,
+        title=record.title,
+        description=record.description,
+        category=sector_name or "Sem setor",
+        location=location_name,
+        owner=owner_name or "Não atribuído",
+        status=status_label(record.status),
+        deadline=record.deadline,
+        updated_at=record.updated_at,
     )
-    return await _to_summary(record, session)
 
 
 @router.patch("/{occurrence_id}", response_model=OccurrenceSummary)
-async def update_occurrence(
+async def update_occurrence_endpoint(
     occurrence_id: int,
     body: OccurrenceUpdate,
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> OccurrenceSummary:
-    record = await session.scalar(
-        select(Occurrence).where(
-            Occurrence.id == occurrence_id,
-            Occurrence.company_id == user.company_id,
-            Occurrence.deleted_at.is_(None),
-        )
-    )
-    if record is None:
-        raise HTTPException(status_code=404, detail={"code": "not_found"})
     updates = body.model_dump(exclude_none=True)
-    before = {k: str(getattr(record, k)) for k in updates if k != "notify_user_ids"}
-    for field, value in updates.items():
-        setattr(record, field, value)
-    record.updated_by_user_id = user.id
-    diff = compute_diff(before, {k: str(v) for k, v in updates.items() if k != "notify_user_ids"})
-    if diff:
-        await record_event(session, company_id=user.company_id, user_id=user.id,
-                           entity_type="occurrence", entity_id=record.id,
-                           event_type="update", diff=diff)
-    await session.commit()
-    await session.refresh(record)
-    if diff:
-        detail = "; ".join(f"{k}: {v}" for k, v in diff.items())
-        await notify_record_event(
-            session, company_id=user.company_id, actor_name=user.name, actor_email=user.email,
-            event="update", title=record.title, module="Ocorrências",
-            owner_user_id=record.owner_user_id, created_by_user_id=record.created_by_user_id,
-            notify_user_ids=record.notify_user_ids, detail=detail,
-        )
-    return await _to_summary(record, session)
+    result = await update_occurrence(
+        session, user.company_id, user.id, user.name, user.email, occurrence_id, updates
+    )
+    if result is None:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+    record, (sector_name, location_name, owner_name) = result
+    return OccurrenceSummary(
+        id=record.id,
+        legacy_id=record.legacy_id,
+        title=record.title,
+        description=record.description,
+        category=sector_name or "Sem setor",
+        location=location_name,
+        owner=owner_name or "Não atribuído",
+        status=status_label(record.status),
+        deadline=record.deadline,
+        updated_at=record.updated_at,
+    )
 
 
 @router.delete("/{occurrence_id}", status_code=204)
-async def delete_occurrence(
+async def delete_occurrence_endpoint(
     occurrence_id: int,
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
-    record = await session.scalar(
-        select(Occurrence).where(
-            Occurrence.id == occurrence_id,
-            Occurrence.company_id == user.company_id,
-            Occurrence.deleted_at.is_(None),
-        )
-    )
-    if record is None:
+    deleted = await delete_occurrence(session, user.company_id, user.id, occurrence_id)
+    if not deleted:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
-    record.deleted_at = datetime.now()
-    record.updated_by_user_id = user.id
-    await record_event(session, company_id=user.company_id, user_id=user.id,
-                       entity_type="occurrence", entity_id=record.id, event_type="delete")
-    await session.commit()

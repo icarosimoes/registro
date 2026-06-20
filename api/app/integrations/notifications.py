@@ -1,4 +1,4 @@
-"""Dispara notificações por email (Brevo) ao criar/atualizar registros."""
+"""Dispara notificações por email (Brevo) e in-app ao criar/atualizar registros."""
 
 import asyncio
 import logging
@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.settings.router import get_company_setting
 from app.integrations.brevo import send_email
-from app.models import User
+from app.models import Notification, User
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +42,28 @@ def _build_html(action: str, title: str, module: str, actor: str, detail: str | 
     """
 
 
+async def create_notification(
+    session: AsyncSession,
+    *,
+    company_id: int,
+    user_id: int,
+    title: str,
+    body: str | None = None,
+    category: str = "info",
+    entity_type: str | None = None,
+    entity_id: int | None = None,
+) -> None:
+    session.add(Notification(
+        company_id=company_id,
+        user_id=user_id,
+        title=title,
+        body=body,
+        category=category,
+        entity_type=entity_type,
+        entity_id=entity_id,
+    ))
+
+
 async def notify_record_event(
     session: AsyncSession,
     *,
@@ -55,23 +77,15 @@ async def notify_record_event(
     created_by_user_id: int | None = None,
     notify_user_ids: list[int] | None = None,
     detail: str | None = None,
+    entity_type: str | None = None,
+    entity_id: int | None = None,
 ) -> None:
-    brevo = await get_company_setting(session, company_id, "brevo")
-    api_key = brevo.get("api_key")
-    if not api_key:
-        return
-
-    from_address = brevo.get("from_address", "noreply@registro.app")
-    from_name = brevo.get("from_name", "Registro")
-
     action_labels = {
         "create": "Novo registro criado",
         "update": "Registro atualizado",
         "comment": "Novo comentário",
     }
     action_label = action_labels.get(event, event)
-    html = _build_html(action_label, title, module, actor_name, detail)
-    subject = f"[Registro] {action_label}: {title}"
 
     recipient_ids: set[int] = set()
     if owner_user_id:
@@ -83,11 +97,39 @@ async def notify_record_event(
 
     recipients = await _resolve_users(session, list(recipient_ids))
 
-    tasks = []
+    notification_body = f"{actor_name} · {module}"
+    if detail:
+        notification_body += f"\n{detail}"
     for r in recipients:
         if r["email"] == actor_email:
             continue
-        tasks.append(send_email(
+        await create_notification(
+            session,
+            company_id=company_id,
+            user_id=r["id"],
+            title=f"{action_label}: {title}",
+            body=notification_body,
+            category=event,
+            entity_type=entity_type,
+            entity_id=entity_id,
+        )
+    await session.flush()
+
+    brevo = await get_company_setting(session, company_id, "brevo")
+    api_key = brevo.get("api_key")
+    if not api_key:
+        return
+
+    from_address = brevo.get("from_address", "noreply@registro.app")
+    from_name = brevo.get("from_name", "Registro")
+    html = _build_html(action_label, title, module, actor_name, detail)
+    subject = f"[Registro] {action_label}: {title}"
+
+    email_tasks = []
+    for r in recipients:
+        if r["email"] == actor_email:
+            continue
+        email_tasks.append(send_email(
             api_key=api_key,
             from_address=from_address,
             from_name=from_name,
@@ -98,5 +140,5 @@ async def notify_record_event(
             reply_to=actor_email,
         ))
 
-    if tasks:
-        await asyncio.gather(*tasks, return_exceptions=True)
+    if email_tasks:
+        await asyncio.gather(*email_tasks, return_exceptions=True)

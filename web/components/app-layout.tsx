@@ -10,6 +10,7 @@ import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { logoutAction } from "@/app/actions";
 import type { TenantUser } from "@/lib/api";
+import { NotificationPanel, NotificationBadge } from "./notification-panel";
 
 const navOperation = [
   { slug: "dashboard", label: "Visão geral", icon: Home, href: "/dashboard" },
@@ -81,7 +82,7 @@ export function AppLayout({ user, children }: { user: TenantUser; children: Reac
       <div className="top-float">
         <button className="icon-button mobile-menu-btn" onClick={() => setMobileMenu(true)} aria-label="Abrir menu"><Menu size={21} /></button>
         <div className="top-float-actions">
-          <button className="icon-button notification-button" onClick={() => togglePanel("notifications")} aria-label="Notificações"><Bell size={20} /></button>
+          <button className="icon-button notification-button" onClick={() => togglePanel("notifications")} aria-label="Notificações"><Bell size={20} /><NotificationBadge /></button>
           <button className="avatar-button" onClick={() => togglePanel("profile")} aria-label="Menu do usuário">{initials}</button>
         </div>
       </div>
@@ -100,9 +101,7 @@ export function AppLayout({ user, children }: { user: TenantUser; children: Reac
               <button className="icon-button" onClick={() => setPanel(null)} aria-label="Fechar"><X size={20} /></button>
             </div>
             {panel === "notifications" ? (
-              <div className="notification-list">
-                <article><span className="notification-icon blue"><MessageSquareText /></span><div><strong>Notificações</strong><p>Seus alertas aparecerão aqui.</p></div></article>
-              </div>
+              <NotificationPanel />
             ) : (
               <div className="profile-content">
                 <div className="profile-card"><div className="profile-avatar">{initials}</div><strong>{displayName}</strong><span>{user.role_name ?? "Demonstração"}</span></div>

@@ -1,0 +1,186 @@
+from typing import Any
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.audit import record_event
+from app.integrations.notifications import notify_record_event
+from app.models import (
+    AuditEvent,
+    FiscalRequest,
+    ModuleRecord,
+    Occurrence,
+    User,
+)
+
+VALID_ENTITY_TYPES = {
+    "occurrence",
+    "fiscal_request",
+    "reunioes",
+    "relatorios-turno",
+    "inspecoes",
+    "diarios-obra",
+    "manutencao",
+    "mural",
+}
+
+ENTITY_MODEL_MAP: dict[str, Any] = {
+    "occurrence": Occurrence,
+    "fiscal_request": FiscalRequest,
+}
+
+MODULE_SLUG_ENTITY_TYPES = {
+    "reunioes",
+    "relatorios-turno",
+    "inspecoes",
+    "diarios-obra",
+    "manutencao",
+    "mural",
+}
+
+
+async def verify_entity_access(
+    session: AsyncSession, entity_type: str, entity_id: int, company_id: int
+) -> bool:
+    if entity_type in ENTITY_MODEL_MAP:
+        model = ENTITY_MODEL_MAP[entity_type]
+        filters = [model.id == entity_id, model.company_id == company_id]
+        if hasattr(model, "deleted_at"):
+            filters.append(model.deleted_at.is_(None))
+        exists = await session.scalar(select(model.id).where(*filters))
+    elif entity_type in MODULE_SLUG_ENTITY_TYPES:
+        exists = await session.scalar(
+            select(ModuleRecord.id).where(
+                ModuleRecord.id == entity_id,
+                ModuleRecord.company_id == company_id,
+                ModuleRecord.module == entity_type,
+                ModuleRecord.deleted_at.is_(None),
+            )
+        )
+    else:
+        return False
+    return exists is not None
+
+
+async def get_timeline(
+    session: AsyncSession,
+    company_id: int,
+    entity_type: str,
+    entity_id: int,
+) -> list[dict]:
+    rows = (
+        await session.execute(
+            select(AuditEvent, User.name)
+            .join(User, User.id == AuditEvent.user_id)
+            .where(
+                AuditEvent.company_id == company_id,
+                AuditEvent.entity_type == entity_type,
+                AuditEvent.entity_id == entity_id,
+            )
+            .order_by(AuditEvent.created_at.asc(), AuditEvent.id.asc())
+        )
+    ).all()
+
+    items = []
+    for event, user_name in rows:
+        message = None
+        changes = None
+        if event.event_type == "comment":
+            message = event.diff.get("message") if event.diff else None
+        elif event.diff:
+            changes = event.diff
+        items.append(
+            {
+                "id": event.id,
+                "event_type": event.event_type,
+                "user": user_name,
+                "message": message,
+                "changes": changes,
+                "created_at": event.created_at,
+            }
+        )
+    return items
+
+
+async def add_comment(
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    user_name: str,
+    user_email: str,
+    entity_type: str,
+    entity_id: int,
+    message: str,
+) -> dict:
+    await record_event(
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type=entity_type,
+        entity_id=entity_id,
+        event_type="comment",
+        diff={"message": message},
+    )
+    await session.commit()
+
+    event = await session.scalar(
+        select(AuditEvent)
+        .where(
+            AuditEvent.company_id == company_id,
+            AuditEvent.entity_type == entity_type,
+            AuditEvent.entity_id == entity_id,
+            AuditEvent.event_type == "comment",
+        )
+        .order_by(AuditEvent.id.desc())
+        .limit(1)
+    )
+
+    module_labels = {
+        "occurrence": "Ocorrências",
+        "fiscal_request": "Solicitações Fiscais",
+    }
+    module_label = module_labels.get(entity_type, entity_type)
+
+    if entity_type == "occurrence":
+        record = await session.scalar(select(Occurrence).where(Occurrence.id == entity_id))
+        if record:
+            await notify_record_event(
+                session,
+                company_id=company_id,
+                actor_name=user_name,
+                actor_email=user_email,
+                event="comment",
+                title=record.title,
+                module=module_label,
+                owner_user_id=record.owner_user_id,
+                created_by_user_id=record.created_by_user_id,
+                notify_user_ids=record.notify_user_ids,
+                detail=message,
+            )
+    elif entity_type == "fiscal_request":
+        record = await session.scalar(
+            select(FiscalRequest).where(FiscalRequest.id == entity_id)
+        )
+        if record:
+            await notify_record_event(
+                session,
+                company_id=company_id,
+                actor_name=user_name,
+                actor_email=user_email,
+                event="comment",
+                title=record.title or record.request_type,
+                module=module_label,
+                owner_user_id=record.responsible_user_id,
+                created_by_user_id=record.requester_user_id,
+                detail=message,
+            )
+
+    from datetime import datetime
+
+    return {
+        "id": event.id if event else 0,
+        "event_type": "comment",
+        "user": user_name,
+        "message": message,
+        "created_at": event.created_at if event else datetime.now(),
+    }

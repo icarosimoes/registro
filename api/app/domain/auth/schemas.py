@@ -24,6 +24,7 @@ class UserResponse(BaseModel):
     id: int
     name: str
     email: str
+    phone: str | None = None
     company_id: int
     role_id: int | None
     role_name: str | None
@@ -32,6 +33,7 @@ class UserResponse(BaseModel):
 
 class TokenResponse(BaseModel):
     access_token: str
+    refresh_token: str
     token_type: str = "bearer"
     expires_in: int
     user: UserResponse

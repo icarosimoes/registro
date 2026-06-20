@@ -20,6 +20,7 @@ def user(*, user_id: int, company_id: int, company_name: str, password: str) -> 
         id=user_id,
         name=f"Usuário {user_id}",
         email="multi@example.com",
+        phone=None,
         password_hash=password_hash(password),
         company_id=company_id,
         company_name=company_name,

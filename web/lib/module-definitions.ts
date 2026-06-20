@@ -34,6 +34,7 @@ export type ModuleRecord = {
   phone?: string;
   deadline?: string;
   location?: string;
+  slaStatus?: string;
 };
 
 export type ModuleDefinition = {

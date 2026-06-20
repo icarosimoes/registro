@@ -1,41 +1,22 @@
+from datetime import datetime
 from typing import Annotated
 
-import jwt
 from fastapi import APIRouter, Depends, HTTPException, Query
-from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
-from datetime import datetime
-
-from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.audit import compute_diff, record_event
-from app.core.config import Settings, get_settings
+from app.core.auth import current_user
 from app.core.dependencies import require_session
-from app.core.security import decode_access_token
-from app.domain.auth.repository import AuthenticatedUser, find_active_user_by_id
-from app.integrations.notifications import notify_record_event
-from app.models import ModuleRecord, User
+from app.domain.auth.repository import AuthenticatedUser
+from app.domain.modules.service import (
+    VALID_MODULES,
+    create_record,
+    delete_record,
+    list_records,
+    update_record,
+)
 
 router = APIRouter(prefix="/modules", tags=["modules"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
-
-VALID_MODULES = {"reunioes", "relatorios-turno", "inspecoes", "diarios-obra", "manutencao", "mural"}
-
-
-async def current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
-    session: Annotated[AsyncSession, Depends(require_session)],
-    settings: Annotated[Settings, Depends(get_settings)],
-) -> AuthenticatedUser:
-    try:
-        claims = decode_access_token(token, settings.jwt_secret)
-        user = await find_active_user_by_id(session, int(claims["sub"]), int(claims["company_id"]))
-    except (jwt.InvalidTokenError, KeyError, TypeError, ValueError) as exc:
-        raise HTTPException(status_code=401, detail={"code": "invalid_token"}) from exc
-    if user is None:
-        raise HTTPException(status_code=401, detail={"code": "inactive_user"})
-    return user
 
 
 class ModuleRecordSummary(BaseModel):
@@ -73,8 +54,13 @@ class ModuleRecordUpdate(BaseModel):
     notify_user_ids: list[int] | None = None
 
 
+def _validate_module(module_slug: str) -> None:
+    if module_slug not in VALID_MODULES:
+        raise HTTPException(status_code=404, detail={"code": "invalid_module"})
+
+
 @router.get("/{module_slug}", response_model=ModuleRecordListResponse)
-async def list_records(
+async def list_records_endpoint(
     module_slug: str,
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
@@ -82,27 +68,8 @@ async def list_records(
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
     search: str | None = None,
 ) -> ModuleRecordListResponse:
-    if module_slug not in VALID_MODULES:
-        raise HTTPException(status_code=404, detail={"code": "invalid_module"})
-    filters = [
-        ModuleRecord.company_id == user.company_id,
-        ModuleRecord.module == module_slug,
-        ModuleRecord.deleted_at.is_(None),
-    ]
-    if search:
-        pattern = f"%{search.strip()}%"
-        filters.append(or_(ModuleRecord.title.ilike(pattern), ModuleRecord.description.ilike(pattern)))
-    total = await session.scalar(select(func.count(ModuleRecord.id)).where(*filters)) or 0
-    rows = (
-        await session.execute(
-            select(ModuleRecord, User.name)
-            .outerjoin(User, User.id == ModuleRecord.owner_user_id)
-            .where(*filters)
-            .order_by(ModuleRecord.updated_at.desc())
-            .offset((page - 1) * page_size)
-            .limit(page_size)
-        )
-    ).all()
+    _validate_module(module_slug)
+    rows, total = await list_records(session, user.company_id, module_slug, page, page_size, search)
     return ModuleRecordListResponse(
         items=[
             ModuleRecordSummary(
@@ -117,38 +84,18 @@ async def list_records(
 
 
 @router.post("/{module_slug}", response_model=ModuleRecordSummary, status_code=201)
-async def create_record(
+async def create_record_endpoint(
     module_slug: str,
     body: ModuleRecordCreate,
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> ModuleRecordSummary:
-    if module_slug not in VALID_MODULES:
-        raise HTTPException(status_code=404, detail={"code": "invalid_module"})
-    owner_id = body.owner_user_id or user.id
-    record = ModuleRecord(
-        company_id=user.company_id,
-        module=module_slug,
-        title=body.title,
-        description=body.description,
-        category=body.category,
-        status=body.status,
-        owner_user_id=owner_id,
-        created_by_user_id=user.id,
-        notify_user_ids=body.notify_user_ids,
+    _validate_module(module_slug)
+    record, owner_name = await create_record(
+        session, user.company_id, user.id, user.name, user.email, module_slug,
+        title=body.title, description=body.description, category=body.category,
+        status=body.status, owner_user_id=body.owner_user_id, notify_user_ids=body.notify_user_ids,
     )
-    session.add(record)
-    await session.commit()
-    await session.refresh(record)
-    await record_event(session, company_id=user.company_id, user_id=user.id,
-                       entity_type=module_slug, entity_id=record.id, event_type="create")
-    await session.commit()
-    await notify_record_event(
-        session, company_id=user.company_id, actor_name=user.name, actor_email=user.email,
-        event="create", title=record.title, module=module_slug,
-        owner_user_id=owner_id, notify_user_ids=body.notify_user_ids,
-    )
-    owner_name = await session.scalar(select(User.name).where(User.id == owner_id))
     return ModuleRecordSummary(
         id=record.id, title=record.title, description=record.description,
         category=record.category, owner=owner_name or "Não atribuído",
@@ -157,45 +104,22 @@ async def create_record(
 
 
 @router.patch("/{module_slug}/{record_id}", response_model=ModuleRecordSummary)
-async def update_record(
+async def update_record_endpoint(
     module_slug: str,
     record_id: int,
     body: ModuleRecordUpdate,
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> ModuleRecordSummary:
-    if module_slug not in VALID_MODULES:
-        raise HTTPException(status_code=404, detail={"code": "invalid_module"})
-    record = await session.scalar(
-        select(ModuleRecord).where(
-            ModuleRecord.id == record_id,
-            ModuleRecord.company_id == user.company_id,
-            ModuleRecord.module == module_slug,
-            ModuleRecord.deleted_at.is_(None),
-        )
-    )
-    if record is None:
-        raise HTTPException(status_code=404, detail={"code": "not_found"})
+    _validate_module(module_slug)
     updates = body.model_dump(exclude_none=True)
-    before = {k: str(getattr(record, k)) for k in updates if k != "notify_user_ids"}
-    for field, value in updates.items():
-        setattr(record, field, value)
-    diff = compute_diff(before, {k: str(v) for k, v in updates.items() if k != "notify_user_ids"})
-    if diff:
-        await record_event(session, company_id=user.company_id, user_id=user.id,
-                           entity_type=module_slug, entity_id=record.id,
-                           event_type="update", diff=diff)
-    await session.commit()
-    await session.refresh(record)
-    if diff:
-        detail = "; ".join(f"{k}: {v}" for k, v in diff.items())
-        await notify_record_event(
-            session, company_id=user.company_id, actor_name=user.name, actor_email=user.email,
-            event="update", title=record.title, module=module_slug,
-            owner_user_id=record.owner_user_id, created_by_user_id=record.created_by_user_id,
-            notify_user_ids=record.notify_user_ids, detail=detail,
-        )
-    owner_name = await session.scalar(select(User.name).where(User.id == record.owner_user_id)) if record.owner_user_id else None
+    result = await update_record(
+        session, user.company_id, user.id, user.name, user.email,
+        module_slug, record_id, updates,
+    )
+    if result is None:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+    record, owner_name = result
     return ModuleRecordSummary(
         id=record.id, title=record.title, description=record.description,
         category=record.category, owner=owner_name or "Não atribuído",
@@ -204,25 +128,13 @@ async def update_record(
 
 
 @router.delete("/{module_slug}/{record_id}", status_code=204)
-async def delete_record(
+async def delete_record_endpoint(
     module_slug: str,
     record_id: int,
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
-    if module_slug not in VALID_MODULES:
-        raise HTTPException(status_code=404, detail={"code": "invalid_module"})
-    record = await session.scalar(
-        select(ModuleRecord).where(
-            ModuleRecord.id == record_id,
-            ModuleRecord.company_id == user.company_id,
-            ModuleRecord.module == module_slug,
-            ModuleRecord.deleted_at.is_(None),
-        )
-    )
-    if record is None:
+    _validate_module(module_slug)
+    deleted = await delete_record(session, user.company_id, user.id, module_slug, record_id)
+    if not deleted:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
-    record.deleted_at = datetime.now()
-    await record_event(session, company_id=user.company_id, user_id=user.id,
-                       entity_type=module_slug, entity_id=record.id, event_type="delete")
-    await session.commit()

@@ -57,6 +57,31 @@ def create_platform_token(
     )
 
 
+def create_refresh_token(
+    *,
+    subject: int,
+    company_id: int,
+    secret: str,
+    days: int,
+) -> str:
+    now = datetime.now(UTC)
+    payload: dict[str, Any] = {
+        "sub": str(subject),
+        "company_id": company_id,
+        "type": "refresh",
+        "iat": now,
+        "exp": now + timedelta(days=days),
+    }
+    return jwt.encode(payload, secret, algorithm=ALGORITHM)
+
+
+def decode_refresh_token(token: str, secret: str) -> dict[str, Any]:
+    payload: dict[str, Any] = jwt.decode(token, secret, algorithms=[ALGORITHM])
+    if payload.get("type") != "refresh":
+        raise jwt.InvalidTokenError("tipo de token inválido")
+    return payload
+
+
 def decode_access_token(token: str, secret: str) -> dict[str, Any]:
     payload: dict[str, Any] = jwt.decode(token, secret, algorithms=[ALGORITHM])
     if payload.get("type") != "access":

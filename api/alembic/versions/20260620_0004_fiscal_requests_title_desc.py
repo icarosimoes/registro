@@ -12,10 +12,8 @@ depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
-    op.add_column("fiscal_requests", sa.Column("title", sa.String(255)))
-    op.add_column("fiscal_requests", sa.Column("description", sa.Text()))
+    pass
 
 
 def downgrade() -> None:
-    op.drop_column("fiscal_requests", "description")
-    op.drop_column("fiscal_requests", "title")
+    pass

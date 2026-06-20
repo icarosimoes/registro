@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
-from app.core.security import create_access_token, verify_laravel_password
+from app.core.security import create_access_token, create_refresh_token, verify_laravel_password
 from app.domain.auth.repository import (
     AuthenticatedUser,
     find_active_users_by_email,
@@ -16,6 +16,7 @@ def to_response(user: AuthenticatedUser) -> UserResponse:
         id=user.id,
         name=user.name,
         email=user.email,
+        phone=user.phone,
         company_id=user.company_id,
         role_id=user.role_id,
         role_name=user.role_name,
@@ -53,7 +54,7 @@ async def authenticate(
 
     user = authenticated_users[0]
 
-    token = create_access_token(
+    access = create_access_token(
         subject=user.id,
         company_id=user.company_id,
         role_id=user.role_id,
@@ -61,8 +62,15 @@ async def authenticate(
         secret=settings.jwt_secret,
         minutes=settings.access_token_minutes,
     )
+    refresh = create_refresh_token(
+        subject=user.id,
+        company_id=user.company_id,
+        secret=settings.jwt_secret,
+        days=settings.refresh_token_days,
+    )
     return TokenResponse(
-        access_token=token,
+        access_token=access,
+        refresh_token=refresh,
         expires_in=settings.access_token_minutes * 60,
         user=to_response(user),
     )

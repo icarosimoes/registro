@@ -8,8 +8,9 @@ import {
   createModuleRecordAction, updateModuleRecordAction, deleteModuleRecordAction,
   getEvolutionSettings, saveEvolutionSettings,
   getBrevoSettings, saveBrevoSettings, searchUsers,
+  fetchTimeline, addCommentAction,
 } from "@/app/actions";
-import type { EvolutionSettings, BrevoSettings, UserOption } from "@/app/actions";
+import type { EvolutionSettings, BrevoSettings, UserOption, TimelineEntry } from "@/app/actions";
 import type { TenantUser } from "@/lib/api";
 import { type HistoryEntry, type ModuleDefinition, type ModuleRecord } from "@/lib/module-definitions";
 import {
@@ -96,6 +97,17 @@ function statusClass(status: string) {
   return "status status-progress";
 }
 
+const SLUG_TO_ENTITY_TYPE: Record<string, string> = {
+  "ocorrencias": "occurrence",
+  "solicitacoes-fiscais": "fiscal_request",
+  "reunioes": "reunioes",
+  "relatorios-turno": "relatorios-turno",
+  "inspecoes": "inspecoes",
+  "diarios-obra": "diarios-obra",
+  "manutencao": "manutencao",
+  "mural": "mural",
+};
+
 export function OperationalModule({ definition, user }: { definition: ModuleDefinition; user: TenantUser }) {
   const storageKey = `registro:${user.company_id}:${definition.slug}`;
   const isFiscal = definition.slug === "solicitacoes-fiscais";
@@ -104,6 +116,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const isCadastros = definition.slug === "cadastros";
   const isGenericModule = ["reunioes", "relatorios-turno", "inspecoes", "diarios-obra", "manutencao", "mural"].includes(definition.slug);
   const isApiBacked = definition.source === "api";
+  const entityType = SLUG_TO_ENTITY_TYPE[definition.slug];
   const canMutate = true;
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -115,6 +128,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const [page, setPage] = useState(sp?.page ?? 1);
   const [editing, setEditing] = useState<ModuleRecord | "new" | null>(null);
   const [selected, setSelected] = useState<ModuleRecord | null>(null);
+  const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
   const [toast, setToast] = useState("");
 
   useEffect(() => {
@@ -137,6 +151,11 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     const record = records.find((item) => `REG-${String(item.id).padStart(6, "0")}` === protocol);
     if (record) setSelected(record);
   }, [isFiscal, records, searchParams]);
+
+  useEffect(() => {
+    if (!selected || !isApiBacked || !entityType) { setTimeline([]); return; }
+    fetchTimeline(entityType, selected.id).then(setTimeline).catch(() => setTimeline([]));
+  }, [selected, isApiBacked, entityType]);
 
   useEffect(() => {
     if (!isApiBacked) return;
@@ -354,8 +373,16 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     setEditing(null);
   }
 
-  function addComment(record: ModuleRecord, message: string) {
+  async function addComment(record: ModuleRecord, message: string) {
     if (!message.trim()) return;
+    if (isApiBacked && entityType) {
+      const result = await addCommentAction(entityType, record.id, message.trim());
+      if (!result.ok) { setToast(result.error ?? "Erro ao comentar."); return; }
+      setToast("Comentário adicionado.");
+      window.setTimeout(() => setToast(""), 2600);
+      fetchTimeline(entityType, record.id).then(setTimeline);
+      return;
+    }
     const now = formatNow();
     const entry: HistoryEntry = { type: "comment", user: user.name, date: now, message: message.trim() };
     const updated = { ...record, updatedAt: now, history: [...(record.history ?? []), entry] };
@@ -396,7 +423,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   return <>
       <header className="module-heading"><div><p className="eyebrow">Operação</p><h1>{definition.title}</h1><p>{definition.description}</p></div>{canMutate && definition.layout !== "settings" && definition.layout !== "profile" ? <button className="primary-button" onClick={() => setEditing("new")}><Plus size={18}/>{definition.action}</button> : null}</header>
 
-      {definition.layout === "settings" ? <SettingsForm storageKey={storageKey} onSaved={() => setToast("Configurações salvas com sucesso.")}/> : definition.layout === "profile" ? <ProfileForm user={user} onSaved={() => setToast("Perfil atualizado localmente.")}/> : <section className="module-panel">
+      {definition.layout === "settings" ? <SettingsForm storageKey={storageKey} onSaved={() => setToast("Configurações salvas com sucesso.")}/> : definition.layout === "profile" ? <ProfileForm user={user} onSaved={(msg) => { setToast(msg); window.setTimeout(() => setToast(""), 2600); }}/> : <section className="module-panel">
         <div className="module-toolbar"><label><Search size={18}/><input value={query} onChange={(event) => handleServerSearch(event.target.value)} placeholder={`Buscar em ${definition.title.toLocaleLowerCase("pt-BR")}`}/></label>{!sp ? <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}>{statuses.map((item) => <option key={item}>{item}</option>)}</select> : null}{!isApiBacked && !sp ? <button onClick={() => { setRecords(definition.records); localStorage.removeItem(storageKey); setToast("Dados fictícios restaurados."); }} title="Restaurar dados"><RefreshCw size={17}/></button> : null}<button onClick={exportCsv}><Download size={17}/> Exportar</button></div>
         {!ready ? <div className="module-state">Carregando registros…</div> : !visible.length ? <div className="module-state"><Search size={30}/><strong>Nenhum resultado</strong><span>Ajuste os filtros ou crie um novo registro.</span></div> : definition.layout === "cards" ? <div className="notice-grid">{visible.map((record) => <article key={record.id} onClick={() => isUsers ? setEditing(record) : setSelected(record)}><span>{record.category}</span><h2>{record.title}</h2><p>{record.description}</p><footer><small>{record.owner} · {record.updatedAt}</small><i className={statusClass(record.status)}>{record.status}</i></footer></article>)}</div> : <div className="module-table-wrap"><table><thead><tr><th>ID</th><th>{definition.singular}</th>{isFiscal && <th>UH</th>}<th>Categoria</th><th>Responsável</th><th>Status</th>{isFiscal && <th>SLA</th>}<th>Atualização</th>{canMutate ? <th>Ações</th> : null}</tr></thead><tbody>{visible.map((record) => <tr key={record.id} onClick={() => isUsers ? setEditing(record) : setSelected(record)}><td className="protocol">#{record.id}</td><td><strong>{record.title}</strong></td>{isFiscal && <td>{record.apartment ?? "—"}</td>}<td>{record.category}</td><td>{record.owner}</td><td><span className={statusClass(record.status)}>{record.status}</span></td>{isFiscal && <td>{record.slaDeadline ? <SlaIndicator deadline={record.slaDeadline}/> : "—"}</td>}<td className="muted">{record.updatedAt}</td>{canMutate ? <td><div className="row-actions"><button onClick={(event) => { event.stopPropagation(); setEditing(record); }} aria-label="Editar"><Pencil size={16}/></button><button onClick={(event) => { event.stopPropagation(); remove(record); }} aria-label="Excluir"><Trash2 size={16}/></button></div></td> : null}</tr>)}</tbody></table></div>}
         <footer className="module-pagination"><span>{totalItems} registro(s)</span><div><button disabled={page <= 1} onClick={() => handleServerPage(page - 1)}><ChevronLeft/></button><span>Pagina {Math.min(page, pages)} de {pages}</span><button disabled={page >= pages} onClick={() => handleServerPage(page + 1)}><ChevronRight/></button></div></footer>
@@ -471,7 +498,21 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       </dl>
       {!isUsers && <div className="record-timeline">
         <h3><MessageSquare size={15}/>Tratativa</h3>
-        {selected.history && selected.history.length > 0 ? <div className="timeline-thread">
+        {isApiBacked && timeline.length > 0 ? <div className="timeline-thread">
+          {timeline.map((entry) => {
+            const entryInitials = entry.user.split(" ").slice(0, 2).map((p) => p[0]).join("").toUpperCase();
+            const dateStr = new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(entry.created_at));
+            return <article key={entry.id} className={`thread-entry thread-${entry.event_type === "comment" ? "comment" : entry.event_type.startsWith("create") ? "create" : "change"}`}>
+              <div className="thread-avatar">{entryInitials}</div>
+              <div className="thread-body">
+                <div className="thread-header"><strong>{entry.user}</strong><time>{dateStr}</time></div>
+                {entry.event_type === "comment" && entry.message ? <p className="thread-message">{entry.message}</p> : null}
+                {entry.event_type.startsWith("create") ? <p className="thread-system">Criou o registro</p> : null}
+                {entry.changes ? <div className="thread-changes">{Object.entries(entry.changes).map(([k, v]) => <span key={k}>{k}: &quot;{(v as {from: string}).from}&quot; → &quot;{(v as {to: string}).to}&quot;</span>)}</div> : null}
+              </div>
+            </article>;
+          })}
+        </div> : !isApiBacked && selected.history && selected.history.length > 0 ? <div className="timeline-thread">
           {selected.history.map((entry, i) => {
             const entryInitials = entry.user.split(" ").slice(0, 2).map((p) => p[0]).join("").toUpperCase();
             return <article key={i} className={`thread-entry thread-${entry.type}`}>
@@ -595,6 +636,34 @@ function EvolutionSettingsSection() {
   </form>;
 }
 
-function ProfileForm({ user, onSaved }: { user: TenantUser; onSaved: () => void }) {
-  return <form className="settings-form profile-form" action={onSaved}><section><h2>Dados pessoais</h2><p>Os dados são demonstrativos até existir o endpoint de atualização.</p><label>Nome completo<input name="name" defaultValue={user.name}/></label><label>E-mail<input name="email" type="email" defaultValue={user.email}/></label><label>Cargo<input name="role" value={user.role_name ?? ""} readOnly/></label></section><button className="primary-button" type="submit">Salvar perfil</button></form>;
+function ProfileForm({ user, onSaved }: { user: TenantUser; onSaved: (msg: string) => void }) {
+  const [saving, setSaving] = useState(false);
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setSaving(true);
+    const fd = new FormData(e.currentTarget);
+    const name = String(fd.get("name") ?? "").trim();
+    const phone = String(fd.get("phone") ?? "").replace(/\D/g, "") || undefined;
+    const password = String(fd.get("password") ?? "") || undefined;
+    const body: Record<string, string | undefined> = {};
+    if (name && name !== user.name) body.name = name;
+    if (phone) body.phone = phone;
+    if (password) body.password = password;
+    if (!Object.keys(body).length) { onSaved("Nenhum campo alterado."); setSaving(false); return; }
+    const { updateProfileAction } = await import("@/app/actions");
+    const result = await updateProfileAction(body);
+    setSaving(false);
+    if (result.ok) { onSaved("Perfil atualizado com sucesso."); } else { onSaved(result.error ?? "Erro ao salvar."); }
+  }
+  return <form className="settings-form profile-form" onSubmit={handleSubmit}>
+    <section>
+      <h2>Dados pessoais</h2>
+      <label>Nome completo<input name="name" defaultValue={user.name} required/></label>
+      <label>E-mail<input type="email" value={user.email} readOnly/><small className="field-hint">O e-mail não pode ser alterado por aqui.</small></label>
+      <label>Telefone<input name="phone" type="tel" placeholder="(00) 00000-0000" defaultValue={user.phone ?? ""} onChange={(e) => { e.target.value = formatPhone(e.target.value); }}/></label>
+      <label>Cargo<input value={user.role_name ?? ""} readOnly/></label>
+      <label>Nova senha<small className="field-hint"> (deixe vazio para manter a atual)</small><input name="password" type="password" placeholder="••••••••"/></label>
+    </section>
+    <button className="primary-button" type="submit" disabled={saving}>{saving ? "Salvando..." : "Salvar perfil"}</button>
+  </form>;
 }

@@ -108,6 +108,7 @@ class ModuleRecord(Base, TenantMixin, TimestampMixin):
     __tablename__ = "module_records"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    legacy_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
     module: Mapped[str] = mapped_column(String(80), index=True)
     title: Mapped[str] = mapped_column(String(255))
     description: Mapped[str | None] = mapped_column(Text)
@@ -116,7 +117,22 @@ class ModuleRecord(Base, TenantMixin, TimestampMixin):
     owner_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
     created_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
     notify_user_ids: Mapped[list | None] = mapped_column(JSON)
+    payload: Mapped[dict | None] = mapped_column(JSON)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class Notification(Base, TenantMixin):
+    __tablename__ = "notifications"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    title: Mapped[str] = mapped_column(String(255))
+    body: Mapped[str | None] = mapped_column(Text)
+    category: Mapped[str] = mapped_column(String(60), default="info", index=True)
+    entity_type: Mapped[str | None] = mapped_column(String(80))
+    entity_id: Mapped[int | None] = mapped_column(Integer)
+    read_at: Mapped[datetime | None] = mapped_column(DateTime)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
 class LegacyImportRun(Base):

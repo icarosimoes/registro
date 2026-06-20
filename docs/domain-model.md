@@ -28,6 +28,7 @@ Company
   ├── AuditReport ──► item1 / item2 / item3
   ├── WorkDiary ──► activities / teams / equipment / observations
   ├── AuditEvent (imutável por empresa)
+  ├── Notification (in-app por usuário)
   ├── FiscalRequest (persistente) ──► attachments / recipients (planejado)
   └── ModuleRecord (genérico: reuniões, inspeções, turnos, obra, manutenção, mural)
 ```
@@ -46,7 +47,8 @@ Company
 | Inspeções | suites, vistorias, auditorias e itens | versões V1/V2, evidências e exportações |
 | Diário de obra | `work_diaries` e tabelas filhas | equipes, atividades, equipamentos e anexos |
 | Solicitações fiscais | `fiscal_requests` | tenant, tipo, título, descrição, protocolo único, origin, status, `requester_user_id`, `responsible_user_id`, `sla_deadline`, `chess_user_id`, `reservation_number` e `payload` JSON |
-| Módulos genéricos | `module_records` | tenant, `module` (slug), `title`, `description`, `category`, `status`, `owner_user_id` e soft delete. Compartilhado por reuniões, relatórios de turno, inspeções, diário de obra, manutenção e mural |
+| Módulos genéricos | `module_records` | tenant, `module` (slug), `title`, `description`, `category`, `status`, `owner_user_id`, `legacy_id`, `payload` JSON e soft delete. Compartilhado por reuniões, relatórios de turno, inspeções, diário de obra, manutenção e mural. Registros importados da V1 preservam dados ricos (subjects, participants, frequencies, items) no `payload` |
+| Notificações | `notifications` | por tenant e usuário, `title`, `body`, `category`, `entity_type`/`entity_id` (link opcional ao registro), `read_at` para estado de leitura |
 | Auditoria | `audit_events` | imutável por tenant, `user_id`, `entity_type`, `entity_id`, `event_type`, `diff` JSON com antes/depois por campo |
 
 ## Convenções de dados
@@ -60,4 +62,6 @@ Company
 - Usuário da plataforma nunca possui `company_id`; acesso cross-tenant é uma capacidade administrativa separada.
 - IDs externos do Asaas são opcionais e únicos quando preenchidos; o Registro mantém suas próprias chaves.
 - Toda mutação em ocorrências e solicitações fiscais gera automaticamente um `AuditEvent` com `user_id`, `company_id`, `entity_type`, `entity_id`, `event_type` e `diff` JSON. O diff registra apenas campos que mudaram, com valor anterior e novo. No front, a timeline local (`history[]`) será substituída pela leitura dos `audit_events` da API.
-- Solicitações fiscais possuem modelo persistente (`fiscal_requests`) com `company_id`, `protocol`, `request_type`, `title`, `apartment`, `requester`, `requester_email`, `requester_user_id`, `responsible_user_id`, `chess_user_id`, `reservation_number`, `sla_deadline`, `description`, `origin`, `status` e `payload` JSON para campos específicos do tipo. O protocolo é gerado como `REG-{id:06d}`. O campo `origin` distingue registros criados pelo Registro (`registro`) dos criados pela integração Chess Hotel (`chess-hotel`). CPF/CNPJ e e-mail do tomador no `payload` são validados e normalizados na criação e atualização. Anexos e notificações permanecem planejados.
+- Solicitações fiscais possuem modelo persistente (`fiscal_requests`) com `company_id`, `protocol`, `request_type`, `title`, `apartment`, `requester`, `requester_email`, `requester_user_id`, `responsible_user_id`, `chess_user_id`, `reservation_number`, `sla_deadline`, `description`, `origin`, `status` e `payload` JSON para campos específicos do tipo. O protocolo é gerado como `REG-{id:06d}`. O campo `origin` distingue registros criados pelo Registro (`registro`) dos criados pela integração Chess Hotel (`chess-hotel`). CPF/CNPJ e e-mail do tomador no `payload` são validados e normalizados na criação e atualização. Anexos permanecem planejados.
+- Procedimentos possuem CRUD completo via `/procedures` com `name`, `link`, `file` e soft delete. Seguem o mesmo padrão de isolamento por `company_id` e auditoria dos demais módulos.
+- Notificações in-app são persistidas na tabela `notifications` com `company_id`, `user_id`, `title`, `body`, `category` (default `info`), `entity_type`/`entity_id` opcionais para link ao registro de origem, e `read_at` para estado de leitura. A criação programática é feita via `create_notification()` em `app/domain/notifications/service.py`.

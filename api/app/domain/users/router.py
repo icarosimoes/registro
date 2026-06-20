@@ -1,39 +1,24 @@
+from datetime import datetime
 from typing import Annotated
 
-import bcrypt
-import jwt
 from fastapi import APIRouter, Depends, HTTPException, Query
-from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
-from datetime import datetime
-
-from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.audit import compute_diff, record_event
-from app.core.config import Settings, get_settings
+from app.core.auth import current_user
 from app.core.dependencies import require_session
-from app.core.security import decode_access_token
-from app.domain.auth.repository import AuthenticatedUser, find_active_user_by_id
-from app.models import Role, User
+from app.domain.auth.repository import AuthenticatedUser
+from app.domain.users.service import (
+    create_user,
+    delete_user,
+    get_role_name,
+    list_users,
+    search_users,
+    update_profile,
+    update_user,
+)
 
 router = APIRouter(prefix="/users", tags=["users"])
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
-
-
-async def current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
-    session: Annotated[AsyncSession, Depends(require_session)],
-    settings: Annotated[Settings, Depends(get_settings)],
-) -> AuthenticatedUser:
-    try:
-        claims = decode_access_token(token, settings.jwt_secret)
-        user = await find_active_user_by_id(session, int(claims["sub"]), int(claims["company_id"]))
-    except (jwt.InvalidTokenError, KeyError, TypeError, ValueError) as exc:
-        raise HTTPException(status_code=401, detail={"code": "invalid_token"}) from exc
-    if user is None:
-        raise HTTPException(status_code=401, detail={"code": "inactive_user"})
-    return user
 
 
 class UserSummary(BaseModel):
@@ -71,40 +56,10 @@ class UserUpdate(BaseModel):
     active: bool | None = None
 
 
-@router.get("", response_model=UserListResponse)
-async def list_users(
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
-    session: Annotated[AsyncSession, Depends(require_session)],
-    page: Annotated[int, Query(ge=1)] = 1,
-    page_size: Annotated[int, Query(ge=1, le=100)] = 20,
-    search: str | None = None,
-) -> UserListResponse:
-    filters = [User.company_id == user.company_id, User.deleted_at.is_(None)]
-    if search:
-        pattern = f"%{search.strip()}%"
-        filters.append(or_(User.name.ilike(pattern), User.email.ilike(pattern)))
-    total = await session.scalar(select(func.count(User.id)).where(*filters)) or 0
-    rows = (
-        await session.execute(
-            select(User, Role.name)
-            .outerjoin(Role, Role.id == User.role_id)
-            .where(*filters)
-            .order_by(User.name)
-            .offset((page - 1) * page_size)
-            .limit(page_size)
-        )
-    ).all()
-    return UserListResponse(
-        items=[
-            UserSummary(
-                id=u.id, name=u.name, email=u.email, phone=u.phone,
-                role_name=role_name, active=u.active,
-                updated_at=u.updated_at,
-            )
-            for u, role_name in rows
-        ],
-        total=total, page=page, page_size=page_size,
-    )
+class ProfileUpdate(BaseModel):
+    name: str | None = None
+    phone: str | None = None
+    password: str | None = None
 
 
 class UserOption(BaseModel):
@@ -113,57 +68,70 @@ class UserOption(BaseModel):
     email: str
 
 
+@router.patch("/me", response_model=UserSummary)
+async def update_profile_endpoint(
+    body: ProfileUpdate,
+    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> UserSummary:
+    updates = body.model_dump(exclude_none=True)
+    if not updates:
+        raise HTTPException(status_code=422, detail={"code": "no_fields"})
+    record = await update_profile(session, user.id, user.company_id, updates)
+    if record is None:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+    role_name = await get_role_name(session, record.role_id)
+    return UserSummary(
+        id=record.id, name=record.name, email=record.email, phone=record.phone,
+        role_name=role_name, active=record.active, updated_at=record.updated_at,
+    )
+
+
+@router.get("", response_model=UserListResponse)
+async def list_users_endpoint(
+    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1, le=100)] = 20,
+    search: str | None = None,
+) -> UserListResponse:
+    rows, total = await list_users(session, user.company_id, page, page_size, search)
+    return UserListResponse(
+        items=[
+            UserSummary(
+                id=u.id, name=u.name, email=u.email, phone=u.phone,
+                role_name=role_name, active=u.active, updated_at=u.updated_at,
+            )
+            for u, role_name in rows
+        ],
+        total=total, page=page, page_size=page_size,
+    )
+
+
 @router.get("/search", response_model=list[UserOption])
-async def search_users(
+async def search_users_endpoint(
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
     q: str = "",
 ) -> list[UserOption]:
-    filters = [User.company_id == user.company_id, User.deleted_at.is_(None), User.active.is_(True)]
-    if q.strip():
-        pattern = f"%{q.strip()}%"
-        filters.append(or_(User.name.ilike(pattern), User.email.ilike(pattern)))
-    rows = (
-        await session.execute(select(User).where(*filters).order_by(User.name).limit(10))
-    ).scalars().all()
-    return [UserOption(id=u.id, name=u.name, email=u.email) for u in rows]
+    users = await search_users(session, user.company_id, q)
+    return [UserOption(id=u.id, name=u.name, email=u.email) for u in users]
 
 
 @router.post("", response_model=UserSummary, status_code=201)
-async def create_user(
+async def create_user_endpoint(
     body: UserCreate,
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> UserSummary:
-    existing = await session.scalar(
-        select(User.id).where(
-            User.company_id == user.company_id,
-            User.email == body.email.lower(),
-            User.deleted_at.is_(None),
-        )
+    record = await create_user(
+        session, user.company_id, user.id,
+        name=body.name, email=body.email, phone=body.phone,
+        password=body.password, role_id=body.role_id, active=body.active,
     )
-    if existing:
+    if record is None:
         raise HTTPException(status_code=409, detail={"code": "email_exists"})
-
-    password_hash = bcrypt.hashpw(body.password.encode(), bcrypt.gensalt()).decode()
-    record = User(
-        company_id=user.company_id,
-        name=body.name,
-        email=body.email.lower(),
-        phone=body.phone,
-        password=password_hash,
-        role_id=body.role_id,
-        active=body.active,
-    )
-    session.add(record)
-    await session.commit()
-    await session.refresh(record)
-    await record_event(session, company_id=user.company_id, user_id=user.id,
-                       entity_type="user", entity_id=record.id, event_type="create")
-    await session.commit()
-    role_name = None
-    if record.role_id:
-        role_name = await session.scalar(select(Role.name).where(Role.id == record.role_id))
+    role_name = await get_role_name(session, record.role_id)
     return UserSummary(
         id=record.id, name=record.name, email=record.email, phone=record.phone,
         role_name=role_name, active=record.active, updated_at=record.updated_at,
@@ -171,47 +139,17 @@ async def create_user(
 
 
 @router.patch("/{user_id}", response_model=UserSummary)
-async def update_user(
+async def update_user_endpoint(
     user_id: int,
     body: UserUpdate,
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> UserSummary:
-    record = await session.scalar(
-        select(User).where(
-            User.id == user_id,
-            User.company_id == user.company_id,
-            User.deleted_at.is_(None),
-        )
-    )
+    updates = body.model_dump(exclude_none=True)
+    record = await update_user(session, user.company_id, user.id, user_id, updates)
     if record is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
-
-    updates = body.model_dump(exclude_none=True)
-    if "password" in updates:
-        updates["password"] = bcrypt.hashpw(updates["password"].encode(), bcrypt.gensalt()).decode()
-
-    before = {}
-    for k in updates:
-        if k == "password":
-            before[k] = "***"
-        else:
-            before[k] = str(getattr(record, k))
-
-    for field, value in updates.items():
-        setattr(record, field, value)
-
-    after = {k: "***" if k == "password" else str(v) for k, v in updates.items()}
-    diff = compute_diff(before, after)
-    if diff:
-        await record_event(session, company_id=user.company_id, user_id=user.id,
-                           entity_type="user", entity_id=record.id,
-                           event_type="update", diff=diff)
-    await session.commit()
-    await session.refresh(record)
-    role_name = None
-    if record.role_id:
-        role_name = await session.scalar(select(Role.name).where(Role.id == record.role_id))
+    role_name = await get_role_name(session, record.role_id)
     return UserSummary(
         id=record.id, name=record.name, email=record.email, phone=record.phone,
         role_name=role_name, active=record.active, updated_at=record.updated_at,
@@ -219,24 +157,13 @@ async def update_user(
 
 
 @router.delete("/{user_id}", status_code=204)
-async def delete_user(
+async def delete_user_endpoint(
     user_id: int,
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
     if user_id == user.id:
         raise HTTPException(status_code=400, detail={"code": "cannot_delete_self"})
-    record = await session.scalar(
-        select(User).where(
-            User.id == user_id,
-            User.company_id == user.company_id,
-            User.deleted_at.is_(None),
-        )
-    )
-    if record is None:
+    deleted = await delete_user(session, user.company_id, user.id, user_id)
+    if not deleted:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
-    record.deleted_at = datetime.now()
-    record.active = False
-    await record_event(session, company_id=user.company_id, user_id=user.id,
-                       entity_type="user", entity_id=record.id, event_type="delete")
-    await session.commit()

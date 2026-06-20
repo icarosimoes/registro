@@ -12,6 +12,7 @@ class AuthenticatedUser:
     id: int
     name: str
     email: str
+    phone: str | None
     password_hash: str
     company_id: int
     company_name: str
@@ -25,6 +26,7 @@ def map_user(user: User) -> AuthenticatedUser:
         id=user.id,
         name=user.name,
         email=user.email,
+        phone=user.phone,
         password_hash=user.password,
         company_id=user.company_id,
         company_name=user.company.name,

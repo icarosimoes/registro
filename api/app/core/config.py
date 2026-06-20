@@ -19,6 +19,7 @@ class Settings(BaseSettings):
     jwt_secret: str = "registro-development-only-change-me"
     jwt_secret_file: str | None = None
     access_token_minutes: int = 30
+    refresh_token_days: int = 7
     chess_hotel_integration_key: str = "chess-hotel-development"
     chess_hotel_integration_key_file: str | None = None
     chess_hotel_company_slug: str = "aero-hotel"
