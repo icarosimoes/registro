@@ -24,6 +24,13 @@ class Settings(BaseSettings):
     chess_hotel_integration_key_file: str | None = None
     chess_hotel_company_slug: str = "aero-hotel"
     registro_web_url: str = "http://localhost:3000"
+    s3_endpoint_url: str = "http://localhost:9000"
+    s3_access_key: str = "registro"
+    s3_secret_key: str = "registro-dev-secret"
+    s3_bucket: str = "registro-attachments"
+    s3_public_url: str = "http://localhost:9000"
+    attachment_max_size_mb: int = 10
+    attachment_max_per_entity: int = 20
 
     @field_validator("web_origins", mode="before")
     @classmethod

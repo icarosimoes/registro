@@ -19,6 +19,23 @@ services:
       timeout: 5s
       retries: 20
 
+  minio:
+    image: minio/minio:latest
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-registro}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-registro-dev-secret}
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - registro-minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   api:
     build:
       context: ./api
@@ -34,6 +51,11 @@ services:
       JWT_SECRET: ${JWT_SECRET:-registro-development-only-change-me}
       SEED_DEFAULT_PASSWORD: ${SEED_DEFAULT_PASSWORD:-Registro@123}
       PLATFORM_ADMIN_PASSWORD: ${PLATFORM_ADMIN_PASSWORD:-RegistroAdmin@123}
+      S3_ENDPOINT_URL: ${S3_ENDPOINT_URL:-http://minio:9000}
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-registro}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-registro-dev-secret}
+      S3_BUCKET: ${S3_BUCKET:-registro-attachments}
+      S3_PUBLIC_URL: ${S3_PUBLIC_URL:-http://localhost:9000}
     extra_hosts:
       - host.docker.internal:host-gateway
     ports:
@@ -45,6 +67,8 @@ services:
     command: ["sh", "-c", "alembic upgrade head && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
     depends_on:
       mysql:
+        condition: service_healthy
+      minio:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=3)"]
@@ -85,3 +109,4 @@ services:
 
 volumes:
   registro-mysql-data:
+  registro-minio-data:

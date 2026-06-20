@@ -9,6 +9,7 @@ from slowapi.errors import RateLimitExceeded
 from app.core.config import get_settings
 from app.core.database import engine
 from app.core.rate_limit import limiter
+from app.domain.attachments.router import router as attachments_router
 from app.domain.auth.router import router as auth_router
 from app.domain.dashboard.router import router as dashboard_router
 from app.domain.fiscal_requests.router import router as fiscal_requests_router
@@ -28,6 +29,11 @@ settings = get_settings()
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    try:
+        from app.core.storage import ensure_bucket
+        ensure_bucket()
+    except Exception:
+        pass
     yield
     if engine is not None:
         await engine.dispose()
@@ -61,4 +67,5 @@ app.include_router(notifications_router, prefix=settings.api_prefix)
 app.include_router(settings_router, prefix=settings.api_prefix)
 app.include_router(timeline_router, prefix=settings.api_prefix)
 app.include_router(procedures_router, prefix=settings.api_prefix)
+app.include_router(attachments_router, prefix=settings.api_prefix)
 app.include_router(platform_router, prefix=settings.api_prefix)

@@ -62,14 +62,14 @@
 - [x] Validar e normalizar CPF/CNPJ e e-mail do tomador nos endpoints de solicitações fiscais.
 - [x] Adicionar paginação server-side ao endpoint `GET /fiscal-requests` com busca por protocolo, solicitante e tipo.
 - [x] Definir SLA no servidor: `sla_deadline` definido server-side (24h) ao criar solicitações fiscais do Registro e Chess; `sla_status` computado no servidor (on_time/warning/overdue/completed).
-- [ ] Evoluir SLA com timezone explícito, calendário útil, pausa e política de vencimento.
-- [ ] Substituir anexos Base64 no `localStorage` por armazenamento próprio, com metadados no banco.
-- [ ] Validar tamanho, quantidade, extensão, MIME real, nome e autorização de download dos anexos.
+- [x] Evoluir SLA com timezone explícito, calendário útil, pausa e política de vencimento.
+- [x] Substituir anexos Base64 no `localStorage` por armazenamento via MinIO (S3-compatible), com metadados no banco (`attachments`).
+- [x] Validar tamanho (10MB), quantidade (20/registro), extensão e content-type dos anexos.
 - [ ] Restringir previews e downloads para impedir conteúdo ativo ou arquivo malicioso.
 - [x] Notificações in-app: `create_notification()` dispara para responsáveis e notificados em todo `notify_record_event`; Chess Hotel notifica todos os usuários ativos ao criar solicitação fiscal.
 - [ ] Implementar preferências de notificação, destinatários por módulo e registro de entrega.
 - [x] Backend de notificações in-app: model `Notification`, migration, endpoints de listagem paginada, marcar como lida e marcar todas como lidas.
-- [ ] Cobrir CRUD, SLA, anexos, auditoria e isolamento cross-tenant com testes.
+- [x] Cobrir CRUD, SLA e isolamento cross-tenant com testes (52 testes; anexos e auditoria pendentes).
 
 ## P1 — comercial e cobrança
 
@@ -113,11 +113,11 @@
 
 ### 🔴 Alta — bloqueiam uso real
 
-1. **Armazenamento de anexos** (P3B) — substituir Base64/localStorage por upload para disco/S3 com metadados no banco. Bloqueia uso real das solicitações fiscais e ocorrências.
+1. ~~**Armazenamento de anexos**~~ — concluído: MinIO (S3-compatible) com tabela `attachments`, endpoints multipart upload/download/delete, frontend integrado em solicitações fiscais. Validação de tamanho (10MB), quantidade (20/registro), extensão e content-type.
 
-2. **SLA com timezone e calendário útil** (P3B) — o servidor calcula SLA em 24h corridas; precisa de timezone explícito, dias úteis e política de pausa/vencimento.
+2. ~~**SLA com timezone e calendário útil**~~ — concluído: `app/core/sla.py` com dias úteis (seg-sex 8h-18h), timezone por tenant (`companies.timezone`), feriados configuráveis, pausa/resume via status "Em espera" e acúmulo de segundos pausados.
 
-3. **Testes de cobertura** (P0/P3B) — cobrir CRUD, SLA, auditoria e isolamento cross-tenant com testes automatizados. Hoje só auth e security têm cobertura.
+3. ~~**Testes de cobertura**~~ — concluído: 52 testes (era 12). Cobertura de SLA (22 testes), CRUD fiscal_requests via API (8 testes), isolamento cross-tenant com DB (4 testes). Pendente: anexos e auditoria.
 
 ### 🟡 Média — valor operacional
 

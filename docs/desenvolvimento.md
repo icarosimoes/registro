@@ -3,7 +3,7 @@
 ## Pré-requisitos
 
 - Docker Engine com Compose v2.
-- Portas 3000, 3001, 8000 e 3307 livres.
+- Portas 3000, 3001, 8000, 3307, 9000 e 9001 livres.
 
 ## Configuração
 
@@ -20,7 +20,7 @@ O Compose cria `registro_dev`, executa a migration Alembic e aplica seed fictíc
 ```bash
 docker compose up --build -d
 docker compose ps
-docker compose logs -f mysql api web admin
+docker compose logs -f mysql minio api web admin
 docker compose down
 ```
 

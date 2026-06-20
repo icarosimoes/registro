@@ -15,6 +15,7 @@ class Company(Base, TimestampMixin):
     email: Mapped[str | None] = mapped_column(String(255))
     document: Mapped[str | None] = mapped_column(String(20), unique=True)
     status: Mapped[str] = mapped_column(String(20), default="active", index=True)
+    timezone: Mapped[str] = mapped_column(String(60), default="America/Sao_Paulo")
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
 
 

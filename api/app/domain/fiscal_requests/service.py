@@ -1,4 +1,4 @@
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from uuid import uuid4
 
 from sqlalchemy import func, or_, select
@@ -6,25 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import compute_diff, record_event
 from app.core.config import Settings
+from app.core.sla import calculate_business_deadline, pause_sla, resume_sla
 from app.integrations.notifications import create_notification
 from app.models import AuditEvent, Company, FiscalRequest, User
-
-SLA_HOURS = 24
-
-
-def compute_sla_status(deadline: datetime | None, status: str) -> str | None:
-    if deadline is None:
-        return None
-    if status.casefold() in {"concluído", "concluido", "cancelado"}:
-        return "completed"
-    now = datetime.now(UTC)
-    dl = deadline.replace(tzinfo=UTC) if deadline.tzinfo is None else deadline
-    remaining = (dl - now).total_seconds()
-    if remaining <= 0:
-        return "overdue"
-    if remaining <= 3600 * 4:
-        return "warning"
-    return "on_time"
 
 
 async def get_integration_company_id(session: AsyncSession, settings: Settings) -> int | None:
@@ -95,6 +79,11 @@ async def build_tracking_item(
     }
 
 
+async def _get_company_timezone(session: AsyncSession, company_id: int) -> str:
+    tz = await session.scalar(select(Company.timezone).where(Company.id == company_id))
+    return tz or "America/Sao_Paulo"
+
+
 async def create_from_chess(
     session: AsyncSession,
     settings: Settings,
@@ -109,7 +98,8 @@ async def create_from_chess(
     origin: str,
     payload: dict,
 ) -> FiscalRequest:
-    sla_deadline = (datetime.now(UTC) + timedelta(hours=24)).replace(tzinfo=None)
+    timezone = await _get_company_timezone(session, company_id)
+    sla_deadline = calculate_business_deadline(datetime.now(UTC), timezone=timezone)
     record = FiscalRequest(
         company_id=company_id,
         protocol=f"TMP-{uuid4().hex}",
@@ -207,7 +197,8 @@ async def create_fiscal_request(
     status: str,
     payload: dict,
 ) -> FiscalRequest:
-    sla_deadline = (datetime.now(UTC) + timedelta(hours=SLA_HOURS)).replace(tzinfo=None)
+    timezone = await _get_company_timezone(session, company_id)
+    sla_deadline = calculate_business_deadline(datetime.now(UTC), timezone=timezone)
     record = FiscalRequest(
         company_id=company_id,
         protocol=f"TMP-{uuid4().hex}",
@@ -257,6 +248,14 @@ async def update_fiscal_request(
         record.responsible_user_id = user_id
         before["responsible_user_id"] = None
         updates["responsible_user_id"] = user_id
+
+    new_status = updates.get("status")
+    if new_status:
+        if new_status.casefold() == "em espera" and record.sla_paused_at is None:
+            pause_sla(record)
+        elif new_status.casefold() != "em espera" and record.sla_paused_at is not None:
+            resume_sla(record)
+
     for field, value in updates.items():
         setattr(record, field, value)
     diff = compute_diff(before, {k: str(v) for k, v in updates.items()})

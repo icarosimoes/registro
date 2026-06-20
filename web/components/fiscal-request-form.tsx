@@ -3,6 +3,7 @@
 import { Paperclip, Upload, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ModuleRecord } from "@/lib/module-definitions";
+import type { AttachmentItem } from "@/app/actions";
 
 const requestTypes = [
   "Dados do tomador incorretos",
@@ -11,15 +12,7 @@ const requestTypes = [
   "Cancelamento de nota emitida",
 ] as const;
 
-type Attachment = { name: string; url: string; type: string };
-
-function fileToAttachment(file: File): Promise<Attachment> {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve({ name: file.name, url: reader.result as string, type: file.type });
-    reader.readAsDataURL(file);
-  });
-}
+type LocalFile = { file: File; preview: string };
 
 function formatSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`;
@@ -27,16 +20,24 @@ function formatSize(bytes: number) {
   return `${(bytes / 1_048_576).toFixed(1)} MB`;
 }
 
+export interface FiscalSaveData extends Partial<ModuleRecord> {
+  pendingFiles?: File[];
+}
+
 export function FiscalRequestForm({
   record,
   userName,
+  existingAttachments,
   onSave,
   onCancel,
+  onDeleteAttachment,
 }: {
   record: ModuleRecord | "new";
   userName: string;
-  onSave: (data: Partial<ModuleRecord>) => void;
+  existingAttachments?: AttachmentItem[];
+  onSave: (data: FiscalSaveData) => void;
   onCancel: () => void;
+  onDeleteAttachment?: (id: number) => void;
 }) {
   const isNew = record === "new";
   const existing = isNew ? null : record;
@@ -57,20 +58,41 @@ export function FiscalRequestForm({
   const [owner, setOwner] = useState(existing?.owner ?? userName);
   const [title, setTitle] = useState(existing?.title ?? "");
   const [notifyUsersRaw, setNotifyUsersRaw] = useState((existing?.notifyUsers ?? []).join(", "));
-  const [attachments, setAttachments] = useState<Attachment[]>(existing?.attachments ?? []);
+  const [localFiles, setLocalFiles] = useState<LocalFile[]>([]);
+  const [savedAttachments, setSavedAttachments] = useState<AttachmentItem[]>(
+    existingAttachments ?? [],
+  );
   const [dragActive, setDragActive] = useState(false);
 
   const dropRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const addFiles = useCallback(async (files: FileList | File[]) => {
-    const items = await Promise.all(Array.from(files).map(fileToAttachment));
-    setAttachments((prev) => [...prev, ...items]);
+  const addFiles = useCallback((files: FileList | File[]) => {
+    const items = Array.from(files).map((file) => ({
+      file,
+      preview: file.type.startsWith("image/") ? URL.createObjectURL(file) : "",
+    }));
+    setLocalFiles((prev) => [...prev, ...items]);
   }, []);
 
-  const removeAttachment = (index: number) => {
-    setAttachments((prev) => prev.filter((_, i) => i !== index));
+  const removeLocalFile = (index: number) => {
+    setLocalFiles((prev) => {
+      const item = prev[index];
+      if (item.preview) URL.revokeObjectURL(item.preview);
+      return prev.filter((_, i) => i !== index);
+    });
   };
+
+  const removeSavedAttachment = (id: number) => {
+    setSavedAttachments((prev) => prev.filter((a) => a.id !== id));
+    onDeleteAttachment?.(id);
+  };
+
+  useEffect(() => {
+    return () => {
+      localFiles.forEach((f) => { if (f.preview) URL.revokeObjectURL(f.preview); });
+    };
+  }, []);
 
   useEffect(() => {
     function handlePaste(e: ClipboardEvent) {
@@ -135,9 +157,9 @@ export function FiscalRequestForm({
       taxpayerEmail,
       cancellationReason,
       correction,
-      attachments,
       slaDeadline,
       notifyUsers: notifyUsersRaw.split(",").map((s) => s.trim()).filter(Boolean),
+      pendingFiles: localFiles.map((f) => f.file),
     });
   }
 
@@ -173,6 +195,7 @@ export function FiscalRequestForm({
           Status
           <select value={status} onChange={(e) => setStatus(e.target.value)}>
             <option>Em andamento</option>
+            <option>Em espera</option>
             <option>Aguardando</option>
             <option>Concluído</option>
           </select>
@@ -279,21 +302,32 @@ export function FiscalRequestForm({
           />
         </div>
 
-        {attachments.length > 0 && (
+        {(savedAttachments.length > 0 || localFiles.length > 0) && (
           <div className="attachment-grid">
-            {attachments.map((att, i) => (
-              <div key={i} className="attachment-preview">
-                <button type="button" className="attachment-remove" onClick={() => removeAttachment(i)}>
+            {savedAttachments.map((att) => (
+              <div key={`saved-${att.id}`} className="attachment-preview">
+                <button type="button" className="attachment-remove" onClick={() => removeSavedAttachment(att.id)}>
                   <X size={14} />
                 </button>
-                {att.type.startsWith("image/") ? (
-                  <img src={att.url} alt={att.name} />
+                <div className="attachment-file-icon">
+                  <Paperclip size={20} />
+                </div>
+                <span className="attachment-name">{att.filename}</span>
+              </div>
+            ))}
+            {localFiles.map((lf, i) => (
+              <div key={`local-${i}`} className="attachment-preview">
+                <button type="button" className="attachment-remove" onClick={() => removeLocalFile(i)}>
+                  <X size={14} />
+                </button>
+                {lf.preview ? (
+                  <img src={lf.preview} alt={lf.file.name} />
                 ) : (
                   <div className="attachment-file-icon">
                     <Paperclip size={20} />
                   </div>
                 )}
-                <span className="attachment-name">{att.name}</span>
+                <span className="attachment-name">{lf.file.name}</span>
               </div>
             ))}
           </div>

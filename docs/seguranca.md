@@ -18,7 +18,7 @@
 
 ## Multiempresa
 
-Toda consulta de negócio deve receber a empresa da sessão, nunca do corpo enviado pelo cliente. Testes cross-tenant são obrigatórios. RLS só será adotado após o PostgreSQL e não substitui filtros de aplicação e autorização.
+Toda consulta de negócio deve receber a empresa da sessão, nunca do corpo enviado pelo cliente. Testes cross-tenant são obrigatórios — `test_cross_tenant.py` (tokens e endpoints) e `test_cross_tenant_crud.py` (CRUD isolado com banco real) garantem que tenant A não vê, edita ou exclui dados de tenant B. RLS só será adotado após o PostgreSQL e não substitui filtros de aplicação e autorização.
 
 ## Supply chain
 

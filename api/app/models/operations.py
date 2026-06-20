@@ -1,6 +1,16 @@
 from datetime import date, datetime
 
-from sqlalchemy import JSON, Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint, func
+from sqlalchemy import (
+    JSON,
+    Date,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, TenantMixin, TimestampMixin
@@ -86,6 +96,8 @@ class FiscalRequest(Base, TenantMixin, TimestampMixin):
     chess_user_id: Mapped[str | None] = mapped_column(String(80))
     reservation_number: Mapped[str | None] = mapped_column(String(80))
     sla_deadline: Mapped[datetime | None] = mapped_column(DateTime)
+    sla_paused_at: Mapped[datetime | None] = mapped_column(DateTime)
+    sla_paused_seconds: Mapped[int] = mapped_column(Integer, default=0)
     description: Mapped[str | None] = mapped_column(Text)
     origin: Mapped[str] = mapped_column(String(80), default="chess-hotel")
     status: Mapped[str] = mapped_column(String(40), default="Em andamento", index=True)
@@ -133,6 +145,24 @@ class Notification(Base, TenantMixin):
     entity_id: Mapped[int | None] = mapped_column(Integer)
     read_at: Mapped[datetime | None] = mapped_column(DateTime)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class Attachment(Base, TenantMixin):
+    __tablename__ = "attachments"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    entity_type: Mapped[str] = mapped_column(String(80), index=True)
+    entity_id: Mapped[int] = mapped_column(Integer, index=True)
+    filename: Mapped[str] = mapped_column(String(255))
+    content_type: Mapped[str] = mapped_column(String(120))
+    size_bytes: Mapped[int] = mapped_column(Integer)
+    storage_key: Mapped[str] = mapped_column(String(500), unique=True)
+    uploaded_by_user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id"),
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(),
+    )
 
 
 class LegacyImportRun(Base):

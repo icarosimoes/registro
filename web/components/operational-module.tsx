@@ -9,8 +9,9 @@ import {
   getEvolutionSettings, saveEvolutionSettings,
   getBrevoSettings, saveBrevoSettings, searchUsers,
   fetchTimeline, addCommentAction,
+  uploadAttachmentAction, fetchAttachments, deleteAttachmentAction,
 } from "@/app/actions";
-import type { EvolutionSettings, BrevoSettings, UserOption, TimelineEntry } from "@/app/actions";
+import type { EvolutionSettings, BrevoSettings, UserOption, TimelineEntry, AttachmentItem } from "@/app/actions";
 import type { TenantUser } from "@/lib/api";
 import { type HistoryEntry, type ModuleDefinition, type ModuleRecord } from "@/lib/module-definitions";
 import {
@@ -20,7 +21,7 @@ import {
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FiscalRequestForm } from "./fiscal-request-form";
+import { FiscalRequestForm, type FiscalSaveData } from "./fiscal-request-form";
 import { SlaIndicator } from "./sla-indicator";
 
 const pageSize = 5;
@@ -129,6 +130,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const [editing, setEditing] = useState<ModuleRecord | "new" | null>(null);
   const [selected, setSelected] = useState<ModuleRecord | null>(null);
   const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
+  const [selectedAttachments, setSelectedAttachments] = useState<AttachmentItem[]>([]);
   const [toast, setToast] = useState("");
 
   useEffect(() => {
@@ -153,9 +155,17 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   }, [isFiscal, records, searchParams]);
 
   useEffect(() => {
-    if (!selected || !isApiBacked || !entityType) { setTimeline([]); return; }
+    if (!selected || !isApiBacked || !entityType) { setTimeline([]); setSelectedAttachments([]); return; }
     fetchTimeline(entityType, selected.id).then(setTimeline).catch(() => setTimeline([]));
-  }, [selected, isApiBacked, entityType]);
+    if (isFiscal) {
+      fetchAttachments("fiscal_request", selected.id).then(setSelectedAttachments).catch(() => setSelectedAttachments([]));
+    }
+  }, [selected, isApiBacked, entityType, isFiscal]);
+
+  useEffect(() => {
+    if (!editing || editing === "new" || !isFiscal || !isApiBacked) return;
+    fetchAttachments("fiscal_request", editing.id).then(setSelectedAttachments).catch(() => setSelectedAttachments([]));
+  }, [editing, isFiscal, isApiBacked]);
 
   useEffect(() => {
     if (!isApiBacked) return;
@@ -321,14 +331,16 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     setEditing(null);
   }
 
-  async function saveFiscalRecord(data: Partial<ModuleRecord>) {
+  async function saveFiscalRecord(data: FiscalSaveData) {
     const current = editing === "new" ? null : editing;
+    const pendingFiles = data.pendingFiles ?? [];
 
     if (isApiBacked) {
       const payload: Record<string, unknown> = {};
       for (const key of ["requestType", "reservationNumber", "invoiceNumber", "checkoutDate", "taxpayerDoc", "taxpayerName", "taxpayerAddress", "taxpayerEmail", "cancellationReason", "correction", "slaDeadline"] as const) {
         if (data[key]) payload[key] = data[key];
       }
+      let entityId = current?.id;
       if (current) {
         const result = await updateFiscalRequestAction(current.id, {
           request_type: data.requestType ?? data.category,
@@ -351,6 +363,12 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
           payload,
         });
         if (!result.ok) { setToast(result.error ?? "Erro ao criar."); return; }
+        entityId = (result.data as Record<string, number>)?.id;
+      }
+      if (entityId && pendingFiles.length > 0) {
+        for (const file of pendingFiles) {
+          await uploadAttachmentAction("fiscal_request", entityId, file);
+        }
       }
       setEditing(null);
       setToast(`${definition.singular} ${current ? "atualizada" : "criada"} com sucesso.`);
@@ -430,7 +448,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       </section>}
 
     {editing ? <div className="modal-layer" role="presentation"><section className={`record-modal${editing !== "new" && editing.history?.length ? " has-timeline" : ""}${isFiscal ? " fiscal-modal" : ""}`} role="dialog" aria-modal="true"><header><div><span>{editing === "new" ? "Novo registro" : `#${editing.id}`}</span><h2>{editing === "new" ? definition.action : `Editar ${definition.singular}`}</h2></div><button className="icon-button" onClick={() => setEditing(null)}><X/></button></header>
-      {isFiscal ? <FiscalRequestForm record={editing} userName={user.name} onSave={saveFiscalRecord} onCancel={() => setEditing(null)}/> : <form action={saveRecord}>
+      {isFiscal ? <FiscalRequestForm record={editing} userName={user.name} existingAttachments={editing !== "new" ? selectedAttachments : []} onSave={saveFiscalRecord} onCancel={() => setEditing(null)} onDeleteAttachment={(id) => { deleteAttachmentAction(id); setSelectedAttachments((prev) => prev.filter((a) => a.id !== id)); }}/> : <form action={saveRecord}>
       {isUsers ? <>
         <label>Nome<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
         <label>E-mail<input name="owner" type="email" required defaultValue={editing === "new" ? "" : editing.owner}/></label>
@@ -494,7 +512,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
         {isFiscal && selected.correction && <div><dt>Correção necessária</dt><dd>{selected.correction}</dd></div>}
         <div><dt>Atualização</dt><dd>{selected.updatedAt}</dd></div>
         <div><dt>Descrição</dt><dd>{selected.description || "Nenhuma descrição informada."}</dd></div>
-        {isFiscal && selected.attachments && selected.attachments.length > 0 && <div><dt>Anexos</dt><dd><div className="attachment-grid drawer-attachments">{selected.attachments.map((att, i) => <a key={i} href={att.url} target="_blank" rel="noopener noreferrer" className="attachment-preview">{att.type.startsWith("image/") ? <img src={att.url} alt={att.name}/> : <div className="attachment-file-icon"><Paperclip size={20}/></div>}<span className="attachment-name">{att.name}</span></a>)}</div></dd></div>}
+        {isFiscal && selectedAttachments.length > 0 && <div><dt>Anexos</dt><dd><div className="attachment-grid drawer-attachments">{selectedAttachments.map((att) => <a key={att.id} href={`/api/attachments/${att.id}/download`} target="_blank" rel="noopener noreferrer" className="attachment-preview"><div className="attachment-file-icon"><Paperclip size={20}/></div><span className="attachment-name">{att.filename}</span></a>)}</div></dd></div>}
       </dl>
       {!isUsers && <div className="record-timeline">
         <h3><MessageSquare size={15}/>Tratativa</h3>

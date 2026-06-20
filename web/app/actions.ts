@@ -410,6 +410,100 @@ export async function updateProfileAction(body: { name?: string; phone?: string;
   return { ok: true, data: await response.json() };
 }
 
+// --- Attachments ---
+
+export interface AttachmentItem {
+  id: number;
+  entity_type: string;
+  entity_id: number;
+  filename: string;
+  content_type: string;
+  size_bytes: number;
+  uploaded_by_user_id: number;
+  created_at: string;
+}
+
+export async function uploadAttachmentAction(
+  entityType: string,
+  entityId: number,
+  file: File,
+): Promise<MutationResult> {
+  const jar = await cookies();
+  let token = jar.get("tenant_token")?.value;
+  if (!token) {
+    token = (await tryRefresh()) ?? undefined;
+    if (!token) throw new Error("unauthorized");
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+  const params = new URLSearchParams({
+    entity_type: entityType,
+    entity_id: String(entityId),
+  });
+
+  let response = await fetch(
+    `${apiUrl}/attachments?${params}`,
+    {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+      cache: "no-store",
+    },
+  );
+
+  if (response.status === 401) {
+    const newToken = await tryRefresh();
+    if (!newToken) throw new Error("unauthorized");
+    response = await fetch(`${apiUrl}/attachments?${params}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${newToken}` },
+      body: formData,
+      cache: "no-store",
+    });
+  }
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => ({}));
+    return {
+      ok: false,
+      error: data?.detail?.message ?? "Erro ao enviar anexo.",
+    };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function fetchAttachments(
+  entityType: string,
+  entityId: number,
+): Promise<AttachmentItem[]> {
+  const params = new URLSearchParams({
+    entity_type: entityType,
+    entity_id: String(entityId),
+  });
+  const response = await authedFetch(`/attachments?${params}`);
+  if (!response.ok) return [];
+  const data = await response.json();
+  return data.items ?? [];
+}
+
+export async function deleteAttachmentAction(
+  id: number,
+): Promise<MutationResult> {
+  const response = await authedFetch(`/attachments/${id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir anexo." };
+  }
+  return { ok: true };
+}
+
+export function getAttachmentDownloadUrl(id: number): string {
+  return `${apiUrl}/attachments/${id}/download`;
+}
+
 export interface EvolutionSettings {
   has_credentials: boolean;
   api_url?: string | null;

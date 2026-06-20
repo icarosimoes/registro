@@ -1,9 +1,10 @@
 from app.models.base import Base
 from app.models.identity import Company, Permission, Role, User, role_permissions
 from app.models.operations import (
+    Attachment,
     AuditEvent,
-    Function,
     FiscalRequest,
+    Function,
     LegacyImportRun,
     Location,
     ModuleRecord,
@@ -12,9 +13,17 @@ from app.models.operations import (
     Procedure,
     Sector,
 )
-from app.models.platform import CompanySetting, Invoice, Plan, PlatformAuditLog, PlatformUser, Subscription
+from app.models.platform import (
+    CompanySetting,
+    Invoice,
+    Plan,
+    PlatformAuditLog,
+    PlatformUser,
+    Subscription,
+)
 
 __all__ = [
+    "Attachment",
     "AuditEvent",
     "Base",
     "Company",

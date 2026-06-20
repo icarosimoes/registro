@@ -5,11 +5,10 @@ resources belonging to tenant B through any API endpoint.
 """
 
 import pytest
-from httpx import ASGITransport, AsyncClient
 
 from app.core.security import create_access_token
+from tests.conftest import JWT_SECRET
 
-JWT_SECRET = "test-secret-with-at-least-32-characters-here"
 TENANT_A = 10
 TENANT_B = 20
 
@@ -35,22 +34,6 @@ def token_b():
     return token_for(TENANT_B, user_id=2)
 
 
-@pytest.fixture()
-def app(monkeypatch):
-    monkeypatch.setenv("JWT_SECRET", JWT_SECRET)
-    monkeypatch.setenv("DATABASE_URL", "sqlite+aiosqlite:///:memory:")
-
-    from app.main import app as fastapi_app
-    return fastapi_app
-
-
-@pytest.fixture()
-async def client(app):
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as c:
-        yield c
-
-
 def auth(token: str) -> dict[str, str]:
     return {"Authorization": f"Bearer {token}"}
 
@@ -70,8 +53,9 @@ async def test_token_carries_correct_company_id():
 
 @pytest.mark.asyncio
 async def test_token_with_wrong_secret_is_rejected():
-    from app.core.security import decode_access_token
     import jwt as pyjwt
+
+    from app.core.security import decode_access_token
     tok = token_for(TENANT_A)
     with pytest.raises(pyjwt.InvalidSignatureError):
         decode_access_token(tok, "wrong-secret-that-is-also-long-enough")
@@ -106,8 +90,12 @@ ENDPOINTS_GET = [
 
 ENDPOINTS_POST = [
     ("/api/v1/occurrences", {"title": "Cross-tenant test", "status": 1}),
-    ("/api/v1/users", {"name": "Ghost", "email": "ghost@test.com", "password": "test1234"}),
-    ("/api/v1/fiscal-requests", {"request_type": "Test", "title": "T", "requester": "X", "payload": {}}),
+    ("/api/v1/users", {
+        "name": "Ghost", "email": "ghost@test.com", "password": "test1234",
+    }),
+    ("/api/v1/fiscal-requests", {
+        "request_type": "Test", "title": "T", "requester": "X", "payload": {},
+    }),
     ("/api/v1/modules/reunioes", {"title": "Meeting"}),
 ]
 

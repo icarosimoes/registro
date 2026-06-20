@@ -7,6 +7,7 @@ from app.core.auth import current_user
 from app.core.config import Settings, get_settings
 from app.core.dependencies import require_session
 from app.core.rate_limit import limiter
+from app.core.sla import compute_sla_status
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.fiscal_requests.schemas import (
     ChessUserResolve,
@@ -23,7 +24,6 @@ from app.domain.fiscal_requests.schemas import (
 )
 from app.domain.fiscal_requests.service import (
     build_tracking_item,
-    compute_sla_status,
     create_fiscal_request,
     create_from_chess,
     delete_fiscal_request,
@@ -68,7 +68,9 @@ def _to_summary(record) -> FiscalRequestSummary:
         description=record.description,
         reservation_number=record.reservation_number,
         sla_deadline=record.sla_deadline,
-        sla_status=compute_sla_status(record.sla_deadline, record.status),
+        sla_status=compute_sla_status(
+            record.sla_deadline, record.status, record.sla_paused_at, record.sla_paused_seconds
+        ),
         status=record.status,
         payload=record.payload,
         created_at=record.created_at,
