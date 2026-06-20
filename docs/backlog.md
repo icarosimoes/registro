@@ -18,6 +18,9 @@
 - [x] Criar CI com Ruff, pytest e typecheck (GitHub Actions); mypy excluído até estabilizar.
 - [ ] Concluir inventário de índices, constraints, collations, órfãos, soft deletes, anexos e volumes fora do banco.
 - [x] Testes cross-tenant: suite `test_cross_tenant.py` com validação de tokens por tenant, rejeição de token expirado e sem token em todos os endpoints autenticados.
+- [x] Separar service layer dos routers — cada domínio possui `service.py` com lógica de negócio extraída; routers delegam para services.
+- [x] Rate limiting com slowapi nos endpoints sensíveis: login (10/min), refresh (20/min), integração Chess (30/min).
+- [x] Refresh token JWT (type=refresh, 7 dias) com endpoint `POST /auth/refresh` e auto-refresh transparente no frontend via cookie httpOnly.
 - [ ] Estabilizar a execução do mypy na imagem de desenvolvimento; a versão 1.20.2 encerrou com erro interno em 20/06/2026.
 
 ## P2 — identidade, ACL e cadastros
@@ -106,27 +109,41 @@
 - [x] Restaurar `.idea/` e `.vscode/` no `.gitignore`.
 - [ ] Manter `docs/v1/`, dumps SQL, credenciais, secrets e arquivos locais fora do Git e das imagens Docker.
 
-## Sugestões de próximos passos
+## Sugestões de próximos passos (prioridade)
 
-### Valor operacional
+### 🔴 Alta — bloqueiam uso real
 
-1. **Armazenamento de anexos** (P3B) — substituir Base64/localStorage por upload para disco/S3 com metadados no banco. Necessário antes de uso real das solicitações fiscais.
+1. **Armazenamento de anexos** (P3B) — substituir Base64/localStorage por upload para disco/S3 com metadados no banco. Bloqueia uso real das solicitações fiscais e ocorrências.
 
-2. **SLA no servidor** (P3B) — mover o cálculo de prazo do cliente para a API, com timezone e calendário útil. A integração Chess Hotel já envia `sla_deadline` de 24h; o servidor precisa de política real.
+2. **SLA com timezone e calendário útil** (P3B) — o servidor calcula SLA em 24h corridas; precisa de timezone explícito, dias úteis e política de pausa/vencimento.
 
-3. ~~**Persistir tratativas na API** (P2)~~ — feito: endpoints `GET/POST /timeline/{entity_type}/{entity_id}`, frontend consome da API.
+3. **Testes de cobertura** (P0/P3B) — cobrir CRUD, SLA, auditoria e isolamento cross-tenant com testes automatizados. Hoje só auth e security têm cobertura.
 
-4. ~~**Notificações da integração Chess Hotel**~~ — feito: `create_notification()` dispara para todos os usuários ativos ao criar solicitação fiscal via Chess; `notify_record_event` agora cria notificações in-app além de e-mail.
+### 🟡 Média — valor operacional
 
-4b. **Integração Evolution (WhatsApp)** — credenciais são salvas via `/settings/evolution`, mas nenhum código consome essas credenciais para enviar mensagens. Implementar envio real ou remover a configuração.
+4. **Componentes reutilizáveis** (P2) — lista, formulário, estado vazio e confirmação. Reduz duplicação no frontend.
 
-5. **Promover módulos genéricos** — quando reuniões, inspeções ou diário de obra precisarem de campos específicos, criar tabelas dedicadas preservando os dados da `module_records`.
+5. **Integração Evolution (WhatsApp)** — credenciais são salvas via `/settings/evolution`, mas nenhum código envia mensagens. Implementar envio real ou remover a configuração.
 
-### Estruturais
+6. **Promover módulos genéricos** — quando reuniões, inspeções ou diário de obra precisarem de campos específicos, criar tabelas dedicadas preservando os dados da `module_records`.
 
-6. ~~**Testes cross-tenant** (P0)~~ — feito: suite `test_cross_tenant.py` validando token isolation, rejeição sem auth e token expirado.
+7. **Preferências de notificação** — destinatários por módulo, frequência e registro de entrega.
 
-7. ~~**Extrair `current_user` para dependência compartilhada**~~ — feito: movido para `app/core/auth.py`, removidas 5 cópias e 4 imports cruzados.
+### 🟢 Baixa — preparação futura
+
+8. **Comercial e cobrança** (P1) — CRUD de tenants/planos, Asaas sandbox, webhook e reconciliação.
+
+9. **Corte do Laravel** (P5) — retirar domínio a domínio, congelar MySQL, ensaiar PostgreSQL.
+
+### Já concluídos (removidos das sugestões)
+
+- ~~Persistir tratativas na API~~ — endpoints `GET/POST /timeline/{entity_type}/{entity_id}`
+- ~~Notificações Chess Hotel~~ — `create_notification()` + `notify_record_event`
+- ~~Testes cross-tenant~~ — suite `test_cross_tenant.py`
+- ~~Extrair `current_user`~~ — movido para `app/core/auth.py`
+- ~~Service layer~~ — `service.py` por domínio
+- ~~Rate limiting~~ — slowapi nos endpoints sensíveis
+- ~~Refresh token~~ — JWT refresh + auto-refresh no frontend
 
 ## Definition of Done por módulo
 
