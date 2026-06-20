@@ -32,6 +32,8 @@ export type ModuleRecord = {
   notifyUserObjects?: { id: number; name: string }[];
   notifyUserIds?: number[];
   phone?: string;
+  deadline?: string;
+  location?: string;
 };
 
 export type ModuleDefinition = {

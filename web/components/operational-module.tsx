@@ -230,10 +230,15 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
 
       if (isOcorrencias) {
         const statusMap: Record<string, number> = { "Em andamento": 1, "Concluido": 2, "Aguardando": 3 };
+        const ownerRaw = String(formData.get("owner") ?? "");
+        const ownerId = /^\d+$/.test(ownerRaw) ? Number(ownerRaw) : undefined;
+        const deadlineRaw = String(formData.get("deadline") ?? "");
         const apiBody = {
           title: fields.title,
           description: fields.description || undefined,
           status: statusMap[fields.status] ?? 1,
+          owner_user_id: ownerId,
+          deadline: deadlineRaw || undefined,
           notify_user_ids: notifyIds.length ? notifyIds : undefined,
         };
         result = current
@@ -257,11 +262,14 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
           result = await createRegistryAction({ name: fields.title, category: fields.category });
         }
       } else if (isGenericModule) {
+        const ownerRaw = String(formData.get("owner") ?? "");
+        const ownerId = /^\d+$/.test(ownerRaw) ? Number(ownerRaw) : undefined;
         const apiBody = {
           title: fields.title,
           description: fields.description || undefined,
           category: fields.category || undefined,
           status: fields.status,
+          owner_user_id: ownerId,
           notify_user_ids: notifyIds.length ? notifyIds : undefined,
         };
         result = current
@@ -418,6 +426,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
           <label>Status<select name="status" defaultValue={editing === "new" ? "Em andamento" : editing.status}><option>Em andamento</option><option>Aguardando</option><option>Agendada</option><option>Ativo</option><option>Publicado</option><option>Rascunho</option><option>Concluído</option></select></label>
         </div>
         <label>Responsável<UserAutocomplete name="owner" required defaultValue={editing === "new" ? user.name : editing.owner} placeholder="Buscar responsável..."/></label>
+        {isOcorrencias && <label>Prazo<input name="deadline" type="date" defaultValue={editing !== "new" && editing.deadline ? editing.deadline : ""}/></label>}
         <label>Notificar<UserMultiSelect name="notifyUsers" defaultValues={editing !== "new" && editing.notifyUserObjects ? editing.notifyUserObjects : []}/><small className="field-hint">Pessoas que serão notificadas sobre atualizações.</small></label>
         <label>Descrição<textarea name="description" rows={4} defaultValue={editing === "new" ? "" : editing.description}/></label>
       </>}
@@ -441,6 +450,8 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       <dl>
         <div><dt>Status</dt><dd><span className={statusClass(selected.status)}>{selected.status}</span></dd></div>
         <div><dt>Responsável</dt><dd>{selected.owner}</dd></div>
+        {isOcorrencias && selected.location && <div><dt>Local</dt><dd>{selected.location}</dd></div>}
+        {isOcorrencias && selected.deadline && <div><dt>Prazo</dt><dd>{new Intl.DateTimeFormat("pt-BR").format(new Date(selected.deadline))}</dd></div>}
         {selected.notifyUsers && selected.notifyUsers.length > 0 && <div><dt>Notificar</dt><dd><div className="notify-chips">{selected.notifyUsers.map((name, i) => <span key={i} className="notify-chip">{name}</span>)}</div></dd></div>}
         {isFiscal && selected.slaDeadline && <div><dt>SLA</dt><dd><SlaIndicator deadline={selected.slaDeadline}/></dd></div>}
         {isFiscal && selected.apartment && <div><dt>UH (Apartamento)</dt><dd>{selected.apartment}</dd></div>}

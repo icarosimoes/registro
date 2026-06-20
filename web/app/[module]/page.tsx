@@ -19,7 +19,7 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
     if (module === "ocorrencias") {
       try {
         type OccurrencePage = {
-          items: Array<{ id: number; legacy_id: number; title: string; description: string | null; category: string; owner: string; status: string; updated_at: string }>;
+          items: Array<{ id: number; legacy_id: number; title: string; description: string | null; category: string; location: string | null; owner: string; status: string; deadline: string | null; updated_at: string }>;
           total: number;
           page: number;
           page_size: number;
@@ -36,8 +36,10 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
               title: item.title,
               description: item.description ?? undefined,
               category: item.category,
+              location: item.location ?? undefined,
               owner: item.owner,
               status: item.status,
+              deadline: item.deadline ?? undefined,
               updatedAt: new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
           })),
           serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
@@ -59,9 +61,16 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
         created_at: string;
         updated_at: string;
       };
-      type FiscalRequestPage = { items: FiscalRequestItem[] };
+      type FiscalRequestPage = { items: FiscalRequestItem[]; total: number; page: number; page_size: number };
       try {
-        const response = await tenantFetch<FiscalRequestPage>("/fiscal-requests");
+        const page = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
+        const pageSize = 20;
+        const search = query.search ?? "";
+        const params = new URLSearchParams();
+        params.set("page", String(page));
+        params.set("page_size", String(pageSize));
+        if (search) params.set("search", search);
+        const response = await tenantFetch<FiscalRequestPage>(`/fiscal-requests?${params}`);
         hydratedDefinition = {
           ...definition,
           source: "api",
@@ -80,6 +89,7 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
               timeStyle: "short",
             }).format(new Date(item.updated_at)),
           })),
+          serverPagination: { total: response.total, page: response.page, pageSize: response.page_size, search },
         };
       } catch (error) {
         if (error instanceof Error && error.message === "unauthorized") throw error;
