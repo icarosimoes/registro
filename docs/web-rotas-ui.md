@@ -28,7 +28,7 @@
 
 O admin é uma aplicação separada em `:3001`; a sessão usa cookie `httpOnly` e não compartilha o JWT do tenant.
 
-O dashboard e os módulos validam o fluxo completo do redesign. Ocorrências e solicitações fiscais possuem CRUD completo via API com mutações server-side. Ocorrências carregam todas as páginas disponíveis da API quando o tenant possui dados importados. Os demais módulos permanecem fictícios e persistem localmente por `company_id`.
+O dashboard e os módulos validam o fluxo completo do redesign. Ocorrências e solicitações fiscais possuem CRUD completo via API com mutações server-side e auditoria automática. Ocorrências usam paginação server-side (20 por página) com busca via query params na URL. Os demais módulos permanecem fictícios e persistem localmente por `company_id`.
 
 ## Integração planejada com a API
 
@@ -68,7 +68,7 @@ Visual por tipo:
 | `change` | roxo (iniciais) | chips listando cada campo alterado com valor anterior e novo |
 | `create` | verde (iniciais) | mensagem em itálico indicando a criação |
 
-A timeline é comum a todas as telas que usam o `OperationalModule`: ocorrências, reuniões, relatórios de turno, inspeções, diário de obra, manutenção, solicitações fiscais, cadastros, usuários e mural. Quando a API assumir as mutações, o histórico será gravado em tabela de auditoria com `user_id`, `company_id` e payload imutável.
+A timeline é comum a todas as telas que usam o `OperationalModule`. A API já grava `AuditEvent` para cada mutação em ocorrências e solicitações fiscais com diff JSON. A próxima etapa é alimentar a timeline do frontend com esses eventos, removendo a dependência do `localStorage`.
 
 ## Solicitações fiscais
 
@@ -84,9 +84,8 @@ A integração Chess Hotel cria solicitações via `POST /integrations/chess-hot
 
 ### Limitações remanescentes
 
-- o SLA é calculado no cliente como 24 horas corridas e ainda não representa calendário ou regra oficial;
+- o SLA da integração Chess Hotel calcula 24h corridas; o servidor ainda não aplica calendário útil ou timezone;
 - anexos são Data URLs/Base64 sem limite de tamanho, quantidade ou validação real de MIME — não são persistidos na API;
 - nomes informados em “Notificar” não correspondem a IDs e não disparam notificações;
-- campos fiscais ainda não possuem normalização ou validação de negócio;
-- tratativas (comentários e alterações) ainda ficam no `localStorage` e não são persistidas na API;
+- tratativas (comentários e alterações) ainda ficam no `localStorage` — a API já grava `audit_events`, mas o frontend ainda não os consome;
 - alterações específicas do formulário fiscal ainda não aparecem integralmente na timeline.

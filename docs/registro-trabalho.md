@@ -133,3 +133,33 @@
 - Restaurados `.idea/` e `.vscode/` no `.gitignore`.
 - Validação final: 12 testes da API, Ruff, TypeScript e build Next.js aprovados; os quatro serviços Docker permaneceram ativos e a API saudável.
 - O mypy 1.20.2 da imagem encerrou com erro interno da própria ferramenta, sem produzir diagnóstico do código; estabilização registrada no backlog.
+
+## 2026-06-20 — CRUD de solicitações fiscais e ocorrências
+
+- Criado modelo `FiscalRequest` com `company_id`, `protocol`, `request_type`, `title`, `description`, `apartment`, `requester`, `origin`, `status` e `payload` JSON.
+- Criadas migrations `0003` (tabela), `0004` (colunas `title`/`description`) e `0005` (`legacy_id` nullable em todas as tabelas legadas).
+- Criada migration `0006` para renomear tenant `aero-v1` para `aero-hotel` sem duplicar, cobrindo cenário de dump antigo.
+- Implementados endpoints `POST/GET/PATCH/DELETE /fiscal-requests` com Tenant Bearer e isolamento por `company_id`.
+- Implementado `POST /integrations/chess-hotel/tickets` com autenticação por header `X-Registro-Key` e resolução de tenant por slug.
+- Implementados endpoints `POST/PATCH/DELETE /occurrences` com soft delete, `created_by_user_id` e `updated_by_user_id`.
+- Criadas server actions no frontend (`createFiscalRequestAction`, `updateFiscalRequestAction`, `deleteFiscalRequestAction`, `createOccurrenceAction`, `updateOccurrenceAction`, `deleteOccurrenceAction`).
+- Frontend de ocorrências e solicitações fiscais agora permite criar, editar e excluir via API; mensagem de "modo leitura" removida.
+- Frontend de módulos API-backed recarrega dados a cada 15 segundos e em eventos de foco/visibilidade.
+- Componente `RegistroLauncher.vue` validado no Chess Hotel (localhost:8081) abrindo drawer de "Nova Solicitação Fiscal".
+- Documentados os novos endpoints, modelo de domínio atualizado e rotas web revisadas em `api-reference.md`, `domain-model.md`, `web-rotas-ui.md` e `chess-hotel-implementacao.md`.
+- Todos os endpoints testados end-to-end: create, update, delete, list, isolamento cross-tenant e integração Chess Hotel.
+
+## 2026-06-20 — Auditoria, paginação, validação e CI
+
+- Criada tabela `audit_events` (migration `0007`) com `company_id`, `user_id`, `entity_type`, `entity_id`, `event_type` e `diff` JSON.
+- Criado service `app/core/audit.py` com `record_event` e `compute_diff`; integrado em todos os endpoints de mutação de ocorrências e solicitações fiscais.
+- Diff registra campo a campo o valor anterior e novo, apenas quando há mudança; create e delete não possuem diff.
+- Evoluído o frontend de ocorrências para paginação server-side (20 por página) com busca via query params na URL e debounce de 400ms.
+- O server component busca uma única página da API em vez de carregar todas em paralelo.
+- Criado `app/core/validators.py` com validação de CPF (dígitos verificadores), CNPJ (dígitos verificadores) e e-mail básico.
+- CPF/CNPJ validados e normalizados no `payload` de solicitações fiscais (create e update); valores inválidos rejeitados com 422.
+- E-mail do tomador normalizado para lowercase e trim.
+- Adicionadas colunas `requester_email`, `requester_user_id`, `responsible_user_id`, `chess_user_id`, `reservation_number` e `sla_deadline` a `fiscal_requests` (migration `0008`).
+- Integração Chess Hotel expandida: resolução de usuário por e-mail, cálculo de SLA (24h), tracking de solicitações com histórico de auditoria, e URL de acompanhamento.
+- Criado CI mínimo em `.github/workflows/ci.yml` com 3 jobs: Ruff (lint + format), pytest (com MySQL service), TypeScript typecheck.
+- Documentação atualizada em `api-reference.md`, `domain-model.md`, `web-rotas-ui.md`, `mapa.md`, `backlog.md` e `registro-trabalho.md`.

@@ -8,6 +8,7 @@ from datetime import datetime
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.audit import compute_diff, record_event
 from app.core.config import Settings, get_settings
 from app.core.dependencies import require_session
 from app.core.security import decode_access_token
@@ -130,6 +131,9 @@ async def create_occurrence(
     session.add(record)
     await session.commit()
     await session.refresh(record)
+    await record_event(session, company_id=user.company_id, user_id=user.id,
+                       entity_type="occurrence", entity_id=record.id, event_type="create")
+    await session.commit()
     return await _to_summary(record, session)
 
 
@@ -150,9 +154,15 @@ async def update_occurrence(
     if record is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
     updates = body.model_dump(exclude_none=True)
+    before = {k: str(getattr(record, k)) for k in updates}
     for field, value in updates.items():
         setattr(record, field, value)
     record.updated_by_user_id = user.id
+    diff = compute_diff(before, {k: str(v) for k, v in updates.items()})
+    if diff:
+        await record_event(session, company_id=user.company_id, user_id=user.id,
+                           entity_type="occurrence", entity_id=record.id,
+                           event_type="update", diff=diff)
     await session.commit()
     await session.refresh(record)
     return await _to_summary(record, session)
@@ -175,4 +185,6 @@ async def delete_occurrence(
         raise HTTPException(status_code=404, detail={"code": "not_found"})
     record.deleted_at = datetime.now()
     record.updated_by_user_id = user.id
+    await record_event(session, company_id=user.company_id, user_id=user.id,
+                       entity_type="occurrence", entity_id=record.id, event_type="delete")
     await session.commit()

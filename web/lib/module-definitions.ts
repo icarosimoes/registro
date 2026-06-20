@@ -40,6 +40,12 @@ export type ModuleDefinition = {
   layout?: "table" | "cards" | "settings" | "profile";
   source?: "local" | "api";
   records: ModuleRecord[];
+  serverPagination?: {
+    total: number;
+    page: number;
+    pageSize: number;
+    search?: string;
+  };
 };
 
 const today = "19/06/2026";

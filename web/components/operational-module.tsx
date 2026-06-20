@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FiscalRequestForm } from "./fiscal-request-form";
 import { SlaIndicator } from "./sla-indicator";
 
@@ -31,11 +31,12 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const canMutate = !isApiBacked || isFiscal || isOcorrencias;
   const searchParams = useSearchParams();
   const router = useRouter();
+  const sp = definition.serverPagination;
   const [records, setRecords] = useState<ModuleRecord[]>(definition.records);
   const [ready, setReady] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(sp?.search ?? "");
   const [status, setStatus] = useState("Todos");
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(sp?.page ?? 1);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [editing, setEditing] = useState<ModuleRecord | "new" | null>(null);
   const [selected, setSelected] = useState<ModuleRecord | null>(null);
@@ -55,6 +56,28 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     if (canMutate && searchParams.get("new") === "1") setEditing("new");
   }, [canMutate, searchParams]);
 
+  useEffect(() => {
+    const protocol = searchParams.get("protocol");
+    if (!protocol || !isFiscal) return;
+    const record = records.find((item) => `REG-${String(item.id).padStart(6, "0")}` === protocol);
+    if (record) setSelected(record);
+  }, [isFiscal, records, searchParams]);
+
+  useEffect(() => {
+    if (!isApiBacked) return;
+
+    const refresh = () => router.refresh();
+    const interval = window.setInterval(refresh, 15_000);
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, [isApiBacked, router]);
+
   function persist(next: ModuleRecord[], message: string) {
     setRecords(next);
     window.localStorage.setItem(storageKey, JSON.stringify(next));
@@ -63,12 +86,37 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   }
 
   const statuses = useMemo(() => ["Todos", ...new Set(records.map((record) => record.status))], [records]);
-  const filtered = useMemo(() => records.filter((record) => {
-    const text = `${record.id} ${record.title} ${record.category} ${record.owner} ${record.status}`.toLocaleLowerCase("pt-BR");
-    return (!query || text.includes(query.toLocaleLowerCase("pt-BR"))) && (status === "Todos" || record.status === status);
-  }), [query, records, status]);
-  const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const visible = filtered.slice((Math.min(page, pages) - 1) * pageSize, Math.min(page, pages) * pageSize);
+  const filtered = useMemo(() => {
+    if (sp) return records;
+    return records.filter((record) => {
+      const text = `${record.id} ${record.title} ${record.category} ${record.owner} ${record.status}`.toLocaleLowerCase("pt-BR");
+      return (!query || text.includes(query.toLocaleLowerCase("pt-BR"))) && (status === "Todos" || record.status === status);
+    });
+  }, [query, records, status, sp]);
+  const totalItems = sp ? sp.total : filtered.length;
+  const effectivePageSize = sp ? sp.pageSize : pageSize;
+  const pages = Math.max(1, Math.ceil(totalItems / effectivePageSize));
+  const visible = sp ? filtered : filtered.slice((Math.min(page, pages) - 1) * pageSize, Math.min(page, pages) * pageSize);
+
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  function handleServerSearch(value: string) {
+    setQuery(value);
+    if (!sp) { setPage(1); return; }
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    searchTimeoutRef.current = setTimeout(() => {
+      const params = new URLSearchParams();
+      if (value) params.set("search", value);
+      router.push(`/${definition.slug}?${params.toString()}`);
+    }, 400);
+  }
+  function handleServerPage(newPage: number) {
+    setPage(newPage);
+    if (!sp) return;
+    const params = new URLSearchParams();
+    params.set("page", String(newPage));
+    if (query) params.set("search", query);
+    router.push(`/${definition.slug}?${params.toString()}`);
+  }
 
   function formatNow() {
     return new Date().toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
@@ -242,9 +290,9 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       <header className="module-heading"><div><p className="eyebrow">Operação</p><h1>{definition.title}</h1><p>{definition.description}</p>{isApiBacked && !isFiscal && !isOcorrencias ? <small className="api-readonly-notice">Dados da API em modo de leitura até a liberação dos endpoints de mutação.</small> : null}</div>{canMutate && definition.layout !== "settings" && definition.layout !== "profile" ? <button className="primary-button" onClick={() => setEditing("new")}><Plus size={18}/>{definition.action}</button> : null}</header>
 
       {definition.layout === "settings" ? <SettingsForm storageKey={storageKey} onSaved={() => setToast("Configurações salvas com sucesso.")}/> : definition.layout === "profile" ? <ProfileForm user={user} onSaved={() => setToast("Perfil atualizado localmente.")}/> : <section className="module-panel">
-        <div className="module-toolbar"><label><Search size={18}/><input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder={`Buscar em ${definition.title.toLocaleLowerCase("pt-BR")}`}/></label><select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}>{statuses.map((item) => <option key={item}>{item}</option>)}</select>{canMutate ? <button onClick={() => { setRecords(definition.records); localStorage.removeItem(storageKey); setToast("Dados fictícios restaurados."); }} title="Restaurar dados"><RefreshCw size={17}/></button> : null}<button onClick={exportCsv}><Download size={17}/> Exportar</button></div>
+        <div className="module-toolbar"><label><Search size={18}/><input value={query} onChange={(event) => handleServerSearch(event.target.value)} placeholder={`Buscar em ${definition.title.toLocaleLowerCase("pt-BR")}`}/></label>{!sp ? <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}>{statuses.map((item) => <option key={item}>{item}</option>)}</select> : null}{canMutate && !sp ? <button onClick={() => { setRecords(definition.records); localStorage.removeItem(storageKey); setToast("Dados fictícios restaurados."); }} title="Restaurar dados"><RefreshCw size={17}/></button> : null}<button onClick={exportCsv}><Download size={17}/> Exportar</button></div>
         {!ready ? <div className="module-state">Carregando registros…</div> : !visible.length ? <div className="module-state"><Search size={30}/><strong>Nenhum resultado</strong><span>Ajuste os filtros ou crie um novo registro.</span></div> : definition.layout === "cards" ? <div className="notice-grid">{visible.map((record) => <article key={record.id} onClick={() => setSelected(record)}><span>{record.category}</span><h2>{record.title}</h2><p>{record.description}</p><footer><small>{record.owner} · {record.updatedAt}</small><i className={statusClass(record.status)}>{record.status}</i></footer></article>)}</div> : <div className="module-table-wrap"><table><thead><tr><th>ID</th><th>{definition.singular}</th>{isFiscal && <th>UH</th>}<th>Categoria</th><th>Responsável</th><th>Status</th>{isFiscal && <th>SLA</th>}<th>Atualização</th>{canMutate ? <th>Ações</th> : null}</tr></thead><tbody>{visible.map((record) => <tr key={record.id} onClick={() => setSelected(record)}><td className="protocol">#{record.id}</td><td><strong>{record.title}</strong></td>{isFiscal && <td>{record.apartment ?? "—"}</td>}<td>{record.category}</td><td>{record.owner}</td><td><span className={statusClass(record.status)}>{record.status}</span></td>{isFiscal && <td>{record.slaDeadline ? <SlaIndicator deadline={record.slaDeadline}/> : "—"}</td>}<td className="muted">{record.updatedAt}</td>{canMutate ? <td><div className="row-actions"><button onClick={(event) => { event.stopPropagation(); setEditing(record); }} aria-label="Editar"><Pencil size={16}/></button><button onClick={(event) => { event.stopPropagation(); remove(record); }} aria-label="Excluir"><Trash2 size={16}/></button></div></td> : null}</tr>)}</tbody></table></div>}
-        <footer className="module-pagination"><span>{filtered.length} registro(s)</span><div><button disabled={page <= 1} onClick={() => setPage((value) => value - 1)}><ChevronLeft/></button><span>Página {Math.min(page, pages)} de {pages}</span><button disabled={page >= pages} onClick={() => setPage((value) => value + 1)}><ChevronRight/></button></div></footer>
+        <footer className="module-pagination"><span>{totalItems} registro(s)</span><div><button disabled={page <= 1} onClick={() => handleServerPage(page - 1)}><ChevronLeft/></button><span>Pagina {Math.min(page, pages)} de {pages}</span><button disabled={page >= pages} onClick={() => handleServerPage(page + 1)}><ChevronRight/></button></div></footer>
       </section>}
     </main>
 

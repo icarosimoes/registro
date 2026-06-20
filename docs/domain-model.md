@@ -27,7 +27,8 @@ Company
   ├── ApartmentInspection ──► items / attachments / types
   ├── AuditReport ──► item1 / item2 / item3
   ├── WorkDiary ──► activities / teams / equipment / observations
-  └── FiscalRequest (persistente) ──► attachments / timeline / recipients (planejado)
+  ├── AuditEvent (imutável por empresa)
+  └── FiscalRequest (persistente) ──► attachments / recipients (planejado)
 ```
 
 ## Agregados principais
@@ -43,7 +44,8 @@ Company
 | Turnos | `shift_reports` e tabelas filhas | aprovação/teste, anexos e Excel |
 | Inspeções | suites, vistorias, auditorias e itens | versões V1/V2, evidências e exportações |
 | Diário de obra | `work_diaries` e tabelas filhas | equipes, atividades, equipamentos e anexos |
-| Solicitações fiscais | `fiscal_requests` | tenant, tipo, título, descrição, reserva/nota/tomador em `payload` JSON, protocolo único, origin e status |
+| Solicitações fiscais | `fiscal_requests` | tenant, tipo, título, descrição, protocolo único, origin, status, `requester_user_id`, `responsible_user_id`, `sla_deadline`, `chess_user_id`, `reservation_number` e `payload` JSON |
+| Auditoria | `audit_events` | imutável por tenant, `user_id`, `entity_type`, `entity_id`, `event_type`, `diff` JSON com antes/depois por campo |
 
 ## Convenções de dados
 
@@ -55,5 +57,5 @@ Company
 - Dinheiro, se surgir em módulos futuros, usa centavos inteiros ou `Decimal`, nunca `float`.
 - Usuário da plataforma nunca possui `company_id`; acesso cross-tenant é uma capacidade administrativa separada.
 - IDs externos do Asaas são opcionais e únicos quando preenchidos; o Registro mantém suas próprias chaves.
-- Toda mutação em registros operacionais deve gerar uma entrada de histórico com usuário, data/hora e campos alterados. No front, o histórico fica em `history[]` dentro do registro; na API, será persistido em tabela de auditoria isolada por empresa.
-- Solicitações fiscais possuem modelo persistente (`fiscal_requests`) com `company_id`, `protocol`, `request_type`, `title`, `apartment`, `requester`, `description`, `origin`, `status` e `payload` JSON para campos específicos do tipo. O protocolo é gerado como `REG-{id:06d}`. O campo `origin` distingue registros criados pelo Registro (`registro`) dos criados pela integração Chess Hotel (`chess-hotel`). SLA, anexos, destinatários e auditoria permanecem planejados e devem usar referências por ID, cálculo no servidor e armazenamento fora do payload principal.
+- Toda mutação em ocorrências e solicitações fiscais gera automaticamente um `AuditEvent` com `user_id`, `company_id`, `entity_type`, `entity_id`, `event_type` e `diff` JSON. O diff registra apenas campos que mudaram, com valor anterior e novo. No front, a timeline local (`history[]`) será substituída pela leitura dos `audit_events` da API.
+- Solicitações fiscais possuem modelo persistente (`fiscal_requests`) com `company_id`, `protocol`, `request_type`, `title`, `apartment`, `requester`, `requester_email`, `requester_user_id`, `responsible_user_id`, `chess_user_id`, `reservation_number`, `sla_deadline`, `description`, `origin`, `status` e `payload` JSON para campos específicos do tipo. O protocolo é gerado como `REG-{id:06d}`. O campo `origin` distingue registros criados pelo Registro (`registro`) dos criados pela integração Chess Hotel (`chess-hotel`). CPF/CNPJ e e-mail do tomador no `payload` são validados e normalizados na criação e atualização. Anexos e notificações permanecem planejados.

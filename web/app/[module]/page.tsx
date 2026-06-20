@@ -3,8 +3,9 @@ import { currentTenantUser, tenantFetch } from "@/lib/api";
 import { moduleDefinitions } from "@/lib/module-definitions";
 import { notFound, redirect } from "next/navigation";
 
-export default async function ModulePage({ params }: { params: Promise<{ module: string }> }) {
+export default async function ModulePage({ params, searchParams }: { params: Promise<{ module: string }>; searchParams: Promise<Record<string, string | undefined>> }) {
   const { module } = await params;
+  const query = await searchParams;
   const definition = moduleDefinitions[module];
   if (!definition) notFound();
 
@@ -19,18 +20,14 @@ export default async function ModulePage({ params }: { params: Promise<{ module:
           page: number;
           page_size: number;
         };
-        const firstPage = await tenantFetch<OccurrencePage>("/occurrences?page=1&page_size=100");
-        const pageCount = Math.ceil(firstPage.total / firstPage.page_size);
-        const remainingPages = await Promise.all(
-          Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) =>
-            tenantFetch<OccurrencePage>(`/occurrences?page=${index + 2}&page_size=100`),
-          ),
-        );
-        const items = [firstPage, ...remainingPages].flatMap((page) => page.items);
+        const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
+        const search = query.search ?? "";
+        const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+        const data = await tenantFetch<OccurrencePage>(`/occurrences?page=${pg}&page_size=20${searchParam}`);
         hydratedDefinition = {
           ...definition,
           source: "api",
-          records: items.map((item) => ({
+          records: data.items.map((item) => ({
               id: item.id,
               title: item.title,
               description: item.description ?? undefined,
@@ -39,6 +36,7 @@ export default async function ModulePage({ params }: { params: Promise<{ module:
               status: item.status,
               updatedAt: new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
           })),
+          serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
         };
       } catch (error) {
         if (error instanceof Error && error.message === "unauthorized") throw error;
