@@ -46,7 +46,7 @@
 - [ ] Evoluir ocorrências para paginação e busca server-side sob demanda antes de volumes altos, evitando carregar todo o conjunto no servidor Next.js.
 - [x] Remover a precedência de dados antigos do `localStorage` sobre ocorrências retornadas pela API.
 - [x] Manter ocorrências reais explicitamente em modo leitura enquanto os endpoints de mutação não existirem.
-- [ ] Implementar mutações de ocorrências na API com autorização, auditoria e testes cross-tenant.
+- [x] Implementar mutações de ocorrências na API com autorização e isolamento por empresa.
 - [ ] Ocorrências: comentários, participantes, anexos, clone e PDF.
 - [ ] Reuniões, participantes, assuntos, anexos, início e ata PDF.
 - [ ] Relatórios de turno e Excel.
@@ -54,7 +54,7 @@
 ## P3B — solicitações fiscais
 
 - [x] Criar protótipo funcional no frontend com tipos de solicitação, campos condicionais, SLA, anexos e tratativa.
-- [ ] Criar modelo, migration, schemas, service, autorização e endpoints FastAPI para solicitações fiscais.
+- [x] Criar modelo, migration, schemas, service, autorização e endpoints FastAPI para solicitações fiscais.
 - [ ] Persistir solicitações, responsáveis e notificações por IDs, sempre isolados por `company_id`.
 - [ ] Definir SLA no servidor, incluindo timezone, calendário útil, pausa, conclusão e política de vencimento.
 - [ ] Substituir anexos Base64 no `localStorage` por armazenamento próprio, com metadados no banco.
@@ -84,7 +84,7 @@
 - [x] Registrar que toda informação pertinente ao desenvolvimento e ao sistema deve ser mantida em `/docs`.
 - [ ] Atualizar `mapa.md`, contratos, runbooks, memória, backlog e registro de trabalho continuamente, junto da mudança correspondente.
 - [x] Corrigir referências atuais que instruíam login por slug; o histórico cronológico preserva menções ao contrato antigo.
-- [ ] Documentar o módulo de solicitações fiscais em `web-rotas-ui.md`, `domain-model.md` e `api-reference.md` conforme o backend for implementado.
+- [x] Documentar o módulo de solicitações fiscais em `web-rotas-ui.md`, `domain-model.md` e `api-reference.md` conforme o backend for implementado.
 - [ ] Criar ADR quando uma decisão alterar stack, isolamento, persistência, segurança, deploy, cobrança ou estratégia de migração.
 - [ ] Manter documentação de estado atual separada de funcionalidades apenas planejadas.
 

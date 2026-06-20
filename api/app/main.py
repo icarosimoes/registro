@@ -8,6 +8,7 @@ from app.core.config import get_settings
 from app.core.database import engine
 from app.domain.auth.router import router as auth_router
 from app.domain.health.router import router as health_router
+from app.domain.fiscal_requests.router import router as fiscal_requests_router
 from app.domain.occurrences.router import router as occurrences_router
 from app.domain.platform.router import router as platform_router
 
@@ -33,9 +34,10 @@ app.add_middleware(
     allow_origins=settings.web_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
+    allow_headers=["Authorization", "Content-Type", "X-Request-ID", "X-Registro-Key"],
 )
 app.include_router(health_router, prefix=settings.api_prefix)
 app.include_router(auth_router, prefix=settings.api_prefix)
 app.include_router(occurrences_router, prefix=settings.api_prefix)
+app.include_router(fiscal_requests_router, prefix=settings.api_prefix)
 app.include_router(platform_router, prefix=settings.api_prefix)

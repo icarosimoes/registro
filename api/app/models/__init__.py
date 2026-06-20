@@ -2,6 +2,7 @@ from app.models.base import Base
 from app.models.identity import Company, Permission, Role, User, role_permissions
 from app.models.operations import (
     Function,
+    FiscalRequest,
     LegacyImportRun,
     Location,
     Occurrence,
@@ -15,6 +16,7 @@ __all__ = [
     "Company",
     "Invoice",
     "Function",
+    "FiscalRequest",
     "LegacyImportRun",
     "Location",
     "Occurrence",

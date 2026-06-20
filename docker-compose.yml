@@ -26,7 +26,9 @@ services:
     environment:
       APP_NAME: Registro API
       ENVIRONMENT: development
-      WEB_ORIGINS: http://localhost:3000,http://localhost:3001
+      WEB_ORIGINS: http://localhost:3000,http://localhost:3001,http://localhost:8081
+      CHESS_HOTEL_INTEGRATION_KEY: ${CHESS_HOTEL_INTEGRATION_KEY:-chess-hotel-development}
+      CHESS_HOTEL_COMPANY_SLUG: ${CHESS_HOTEL_COMPANY_SLUG:-aero-hotel}
       DATABASE_URL: ${DATABASE_URL:-mysql+asyncmy://registro:registro@mysql:3306/registro?charset=utf8mb4}
       JWT_SECRET: ${JWT_SECRET:-registro-development-only-change-me}
       SEED_DEFAULT_PASSWORD: ${SEED_DEFAULT_PASSWORD:-Registro@123}

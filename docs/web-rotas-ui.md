@@ -8,13 +8,13 @@
 | `/login` | autenticação tenant | operacional | API `/auth/login` |
 | `/dashboard` | dashboard autenticado | operacional | usuário real + indicadores demonstrativos |
 | `/design-preview` | referência visual | protótipo livre | demonstração local |
-| `/ocorrencias` | lista e CRUD demonstrativo | leitura API + mutações locais | V1 em `aero-hotel` |
+| `/ocorrencias` | lista e CRUD | CRUD via API + mutações server-side | API `occurrences` isolada por tenant |
 | `/reunioes` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
 | `/relatorios-turno` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
 | `/inspecoes` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
 | `/diarios-obra` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
 | `/manutencao` | lista e CRUD | operacional no navegador | dados fictícios por tenant |
-| `/solicitacoes-fiscais` | lista, formulário condicional, SLA, anexos e tratativa | protótipo operacional no navegador | dados fictícios e `localStorage` por tenant |
+| `/solicitacoes-fiscais` | lista, formulário condicional, SLA, anexos e tratativa | CRUD via API + mutações server-side | API `fiscal_requests` isolada por tenant |
 | `/cadastros`, `/usuarios` | listas e CRUD | operacional no navegador | dados fictícios por tenant |
 | `/mural` | cartões e CRUD | operacional no navegador | dados fictícios por tenant |
 | `/configuracoes`, `/minha-conta` | formulários | operacional local | preferências do navegador |
@@ -28,14 +28,14 @@
 
 O admin é uma aplicação separada em `:3001`; a sessão usa cookie `httpOnly` e não compartilha o JWT do tenant.
 
-O dashboard e os módulos validam o fluxo completo do redesign. Ocorrências carregam todas as páginas disponíveis da API quando o tenant possui dados importados, ignoram cópias anteriores do `localStorage` e ficam em modo leitura enquanto os endpoints de mutação não existem. Os demais módulos permanecem fictícios e persistem localmente por `company_id`.
+O dashboard e os módulos validam o fluxo completo do redesign. Ocorrências e solicitações fiscais possuem CRUD completo via API com mutações server-side. Ocorrências carregam todas as páginas disponíveis da API quando o tenant possui dados importados. Os demais módulos permanecem fictícios e persistem localmente por `company_id`.
 
 ## Integração planejada com a API
 
 | Prioridade | Rota | Domínio |
 | --- | --- | --- |
 | P1 | `/usuarios`, `/cadastros` | acesso, ACL e cadastros reais |
-| P2 | `/ocorrencias`, `/manutencao`, `/solicitacoes-fiscais` | operação inicial e fluxo recepção/financeiro |
+| P2 | `/manutencao` | manutenção corretiva e preventiva |
 | P3 | `/reunioes`, `/relatorios-turno` | atas e turno |
 | P4 | `/inspecoes`, `/diarios-obra` | suites, auditoria e obra |
 
@@ -74,13 +74,19 @@ A timeline é comum a todas as telas que usam o `OperationalModule`: ocorrência
 
 O protótipo atual atende solicitações da recepção para o financeiro: dados incorretos do tomador, nota travada, nota solicitada depois do check-out e cancelamento. O formulário apresenta campos condicionais de reserva, nota, CPF/CNPJ, tomador, correção, cancelamento, check-out, responsável e pessoas a notificar. A lista exibe UH, status e contagem regressiva de SLA.
 
-Estado atual e limitações:
+### Persistência
 
-- solicitações, tratativas e anexos ficam somente no `localStorage` do navegador;
+Solicitações fiscais possuem CRUD completo via API (`POST`, `GET`, `PATCH`, `DELETE /fiscal-requests`). A criação e edição passam por server actions (`createFiscalRequestAction`, `updateFiscalRequestAction`, `deleteFiscalRequestAction`) que chamam a API com o token do cookie `tenant_token`. Após cada mutação, a página revalida via `router.refresh()`.
+
+Campos específicos do tipo de solicitação (tomador, reserva, nota, CPF/CNPJ, correção, cancelamento, etc.) são enviados no campo `payload` como JSON.
+
+A integração Chess Hotel cria solicitações via `POST /integrations/chess-hotel/tickets` autenticado por header `X-Registro-Key`.
+
+### Limitações remanescentes
+
 - o SLA é calculado no cliente como 24 horas corridas e ainda não representa calendário ou regra oficial;
-- anexos são Data URLs/Base64 sem limite de tamanho, quantidade ou validação real de MIME;
+- anexos são Data URLs/Base64 sem limite de tamanho, quantidade ou validação real de MIME — não são persistidos na API;
 - nomes informados em “Notificar” não correspondem a IDs e não disparam notificações;
 - campos fiscais ainda não possuem normalização ou validação de negócio;
+- tratativas (comentários e alterações) ainda ficam no `localStorage` e não são persistidas na API;
 - alterações específicas do formulário fiscal ainda não aparecem integralmente na timeline.
-
-O backend planejado deve assumir autorização, persistência, SLA, armazenamento seguro de anexos, auditoria e notificações antes de uso produtivo.

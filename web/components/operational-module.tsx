@@ -1,6 +1,6 @@
 "use client";
 
-import { logoutAction } from "@/app/actions";
+import { createFiscalRequestAction, createOccurrenceAction, deleteFiscalRequestAction, deleteOccurrenceAction, logoutAction, updateFiscalRequestAction, updateOccurrenceAction } from "@/app/actions";
 import type { TenantUser } from "@/lib/api";
 import { moduleDefinitions, navigationModules, type HistoryEntry, type ModuleDefinition, type ModuleRecord } from "@/lib/module-definitions";
 import {
@@ -9,7 +9,7 @@ import {
   Send, Settings, ShieldCheck, Trash2, Users, Wrench, X,
 } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { FiscalRequestForm } from "./fiscal-request-form";
 import { SlaIndicator } from "./sla-indicator";
@@ -25,9 +25,12 @@ function statusClass(status: string) {
 
 export function OperationalModule({ definition, user }: { definition: ModuleDefinition; user: TenantUser }) {
   const storageKey = `registro:${user.company_id}:${definition.slug}`;
+  const isFiscal = definition.slug === "solicitacoes-fiscais";
+  const isOcorrencias = definition.slug === "ocorrencias";
   const isApiBacked = definition.source === "api";
-  const canMutate = !isApiBacked;
+  const canMutate = !isApiBacked || isFiscal || isOcorrencias;
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [records, setRecords] = useState<ModuleRecord[]>(definition.records);
   const [ready, setReady] = useState(false);
   const [query, setQuery] = useState("");
@@ -59,7 +62,6 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     window.setTimeout(() => setToast(""), 2600);
   }
 
-  const isFiscal = definition.slug === "solicitacoes-fiscais";
   const statuses = useMemo(() => ["Todos", ...new Set(records.map((record) => record.status))], [records]);
   const filtered = useMemo(() => records.filter((record) => {
     const text = `${record.id} ${record.title} ${record.category} ${record.owner} ${record.status}`.toLocaleLowerCase("pt-BR");
@@ -87,7 +89,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     return raw.split(",").map((s) => s.trim()).filter(Boolean);
   }
 
-  function saveRecord(formData: FormData) {
+  async function saveRecord(formData: FormData) {
     const current = editing === "new" ? null : editing;
     const now = formatNow();
     const fields = {
@@ -95,6 +97,27 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       owner: String(formData.get("owner")), status: String(formData.get("status")),
       description: String(formData.get("description") ?? ""),
     };
+
+    if (isOcorrencias && isApiBacked) {
+      const statusMap: Record<string, number> = { "Em andamento": 1, "Concluido": 2, "Aguardando": 3 };
+      const apiBody = {
+        title: fields.title,
+        description: fields.description || undefined,
+        status: statusMap[fields.status] ?? 1,
+      };
+      if (current) {
+        const result = await updateOccurrenceAction(current.id, apiBody);
+        if (!result.ok) { setToast(result.error ?? "Erro ao atualizar."); return; }
+      } else {
+        const result = await createOccurrenceAction(apiBody);
+        if (!result.ok) { setToast(result.error ?? "Erro ao criar."); return; }
+      }
+      setEditing(null);
+      setToast(`${definition.singular} ${current ? "atualizada" : "criada"} com sucesso.`);
+      window.setTimeout(() => setToast(""), 2600);
+      router.refresh();
+      return;
+    }
 
     const entry: HistoryEntry = current
       ? { type: "change", user: user.name, date: now, changes: diffChanges(current, fields) }
@@ -111,8 +134,44 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     setEditing(null);
   }
 
-  function saveFiscalRecord(data: Partial<ModuleRecord>) {
+  async function saveFiscalRecord(data: Partial<ModuleRecord>) {
     const current = editing === "new" ? null : editing;
+
+    if (isApiBacked) {
+      const payload: Record<string, unknown> = {};
+      for (const key of ["requestType", "reservationNumber", "invoiceNumber", "checkoutDate", "taxpayerDoc", "taxpayerName", "taxpayerAddress", "taxpayerEmail", "cancellationReason", "correction", "slaDeadline"] as const) {
+        if (data[key]) payload[key] = data[key];
+      }
+      if (current) {
+        const result = await updateFiscalRequestAction(current.id, {
+          request_type: data.requestType ?? data.category,
+          title: data.title,
+          apartment: data.apartment,
+          requester: data.owner,
+          description: data.description,
+          status: data.status,
+          payload,
+        });
+        if (!result.ok) { setToast(result.error ?? "Erro ao atualizar."); return; }
+      } else {
+        const result = await createFiscalRequestAction({
+          request_type: data.requestType ?? data.category ?? "",
+          title: data.title ?? "",
+          apartment: data.apartment,
+          requester: data.owner ?? user.name,
+          description: data.description,
+          status: data.status ?? "Em andamento",
+          payload,
+        });
+        if (!result.ok) { setToast(result.error ?? "Erro ao criar."); return; }
+      }
+      setEditing(null);
+      setToast(`${definition.singular} ${current ? "atualizada" : "criada"} com sucesso.`);
+      window.setTimeout(() => setToast(""), 2600);
+      router.refresh();
+      return;
+    }
+
     const now = formatNow();
     const entry: HistoryEntry = current
       ? { type: "change", user: user.name, date: now, changes: diffChanges(current, { title: data.title ?? "", category: data.category ?? "", owner: data.owner ?? "", status: data.status ?? "", description: data.description ?? "" }) }
@@ -137,8 +196,19 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     setSelected(updated);
   }
 
-  function remove(record: ModuleRecord) {
-    if (!window.confirm(`Excluir “${record.title}”? Esta ação não pode ser desfeita.`)) return;
+  async function remove(record: ModuleRecord) {
+    if (!window.confirm(`Excluir "${record.title}"? Esta ação não pode ser desfeita.`)) return;
+    if (isApiBacked && (isFiscal || isOcorrencias)) {
+      const result = isFiscal
+        ? await deleteFiscalRequestAction(record.id)
+        : await deleteOccurrenceAction(record.id);
+      if (!result.ok) { setToast(result.error ?? "Erro ao excluir."); return; }
+      setSelected(null);
+      setToast(`${definition.singular} excluida.`);
+      window.setTimeout(() => setToast(""), 2600);
+      router.refresh();
+      return;
+    }
     persist(records.filter((item) => item.id !== record.id), `${definition.singular} excluído.`);
     setSelected(null);
   }
@@ -169,7 +239,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     {mobileMenu ? <button className="backdrop" aria-label="Fechar menu" onClick={() => setMobileMenu(false)}/> : null}
     <header className="module-topbar"><button className="icon-button mobile-menu" onClick={() => setMobileMenu(true)}><Menu/></button><div><span>Empresa demonstração</span><strong>{definition.title}</strong></div><Link href="/minha-conta" className="module-user"><span>{initials}</span><div><strong>{user.name}</strong><small>{user.role_name}</small></div></Link></header>
     <main className="module-main">
-      <header className="module-heading"><div><p className="eyebrow">Operação</p><h1>{definition.title}</h1><p>{definition.description}</p>{isApiBacked ? <small className="api-readonly-notice">Dados da API em modo de leitura até a liberação dos endpoints de mutação.</small> : null}</div>{canMutate && definition.layout !== "settings" && definition.layout !== "profile" ? <button className="primary-button" onClick={() => setEditing("new")}><Plus size={18}/>{definition.action}</button> : null}</header>
+      <header className="module-heading"><div><p className="eyebrow">Operação</p><h1>{definition.title}</h1><p>{definition.description}</p>{isApiBacked && !isFiscal && !isOcorrencias ? <small className="api-readonly-notice">Dados da API em modo de leitura até a liberação dos endpoints de mutação.</small> : null}</div>{canMutate && definition.layout !== "settings" && definition.layout !== "profile" ? <button className="primary-button" onClick={() => setEditing("new")}><Plus size={18}/>{definition.action}</button> : null}</header>
 
       {definition.layout === "settings" ? <SettingsForm storageKey={storageKey} onSaved={() => setToast("Configurações salvas com sucesso.")}/> : definition.layout === "profile" ? <ProfileForm user={user} onSaved={() => setToast("Perfil atualizado localmente.")}/> : <section className="module-panel">
         <div className="module-toolbar"><label><Search size={18}/><input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder={`Buscar em ${definition.title.toLocaleLowerCase("pt-BR")}`}/></label><select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}>{statuses.map((item) => <option key={item}>{item}</option>)}</select>{canMutate ? <button onClick={() => { setRecords(definition.records); localStorage.removeItem(storageKey); setToast("Dados fictícios restaurados."); }} title="Restaurar dados"><RefreshCw size={17}/></button> : null}<button onClick={exportCsv}><Download size={17}/> Exportar</button></div>

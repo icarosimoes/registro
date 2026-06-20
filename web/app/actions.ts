@@ -57,3 +57,112 @@ export async function logoutAction() {
   (await cookies()).delete("tenant_token");
   redirect("/login");
 }
+
+async function authedFetch(path: string, init?: RequestInit): Promise<Response> {
+  const token = (await cookies()).get("tenant_token")?.value;
+  if (!token) throw new Error("unauthorized");
+  return fetch(`${apiUrl}${path}`, {
+    ...init,
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", ...init?.headers },
+    cache: "no-store",
+  });
+}
+
+export interface FiscalRequestPayload {
+  request_type: string;
+  title: string;
+  apartment?: string;
+  requester: string;
+  description?: string;
+  status?: string;
+  payload?: Record<string, unknown>;
+}
+
+interface MutationResult {
+  ok: boolean;
+  error?: string;
+  data?: Record<string, unknown>;
+}
+
+export async function createFiscalRequestAction(body: FiscalRequestPayload): Promise<MutationResult> {
+  const response = await authedFetch("/fiscal-requests", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar solicitação." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateFiscalRequestAction(
+  id: number,
+  body: Partial<FiscalRequestPayload>,
+): Promise<MutationResult> {
+  const response = await authedFetch(`/fiscal-requests/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar solicitação." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteFiscalRequestAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/fiscal-requests/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir solicitacao." };
+  }
+  return { ok: true };
+}
+
+export interface OccurrencePayload {
+  title: string;
+  description?: string;
+  unit?: string;
+  deadline?: string;
+  status?: number;
+  sector_id?: number;
+  location_id?: number;
+  owner_user_id?: number;
+}
+
+export async function createOccurrenceAction(body: OccurrencePayload): Promise<MutationResult> {
+  const response = await authedFetch("/occurrences", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar ocorrencia." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateOccurrenceAction(
+  id: number,
+  body: Partial<OccurrencePayload>,
+): Promise<MutationResult> {
+  const response = await authedFetch(`/occurrences/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar ocorrencia." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteOccurrenceAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/occurrences/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir ocorrencia." };
+  }
+  return { ok: true };
+}

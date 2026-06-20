@@ -1,13 +1,13 @@
 from datetime import date, datetime
 
-from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, TenantMixin, TimestampMixin
 
 
 class LegacyEntityMixin:
-    legacy_id: Mapped[int] = mapped_column(Integer)
+    legacy_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
 class Sector(Base, TenantMixin, LegacyEntityMixin, TimestampMixin):
@@ -68,6 +68,21 @@ class Occurrence(Base, TenantMixin, LegacyEntityMixin, TimestampMixin):
     updated_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"))
     file: Mapped[str | None] = mapped_column(Text)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class FiscalRequest(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "fiscal_requests"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    protocol: Mapped[str] = mapped_column(String(40), unique=True)
+    request_type: Mapped[str] = mapped_column(String(120), index=True)
+    title: Mapped[str | None] = mapped_column(String(255))
+    apartment: Mapped[str | None] = mapped_column(String(40))
+    requester: Mapped[str] = mapped_column(String(160))
+    description: Mapped[str | None] = mapped_column(Text)
+    origin: Mapped[str] = mapped_column(String(80), default="chess-hotel")
+    status: Mapped[str] = mapped_column(String(40), default="Em andamento", index=True)
+    payload: Mapped[dict] = mapped_column(JSON)
 
 
 class LegacyImportRun(Base):
