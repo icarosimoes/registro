@@ -29,22 +29,21 @@ jobs:
       run:
         working-directory: api
     services:
-      mysql:
-        image: mysql:8.4
+      postgres:
+        image: postgres:17-alpine
         env:
-          MYSQL_DATABASE: registro_test
-          MYSQL_USER: registro
-          MYSQL_PASSWORD: registro
-          MYSQL_ROOT_PASSWORD: registro-root
+          POSTGRES_DB: registro_test
+          POSTGRES_USER: registro
+          POSTGRES_PASSWORD: registro
         ports:
-          - 3306:3306
+          - 5432:5432
         options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -pregistro-root --silent"
+          --health-cmd="pg_isready -U registro -d registro_test"
           --health-interval=5s
           --health-timeout=5s
           --health-retries=20
     env:
-      DATABASE_URL: mysql+asyncmy://registro:registro@127.0.0.1:3306/registro_test?charset=utf8mb4
+      DATABASE_URL: postgresql+asyncpg://registro:registro@127.0.0.1:5432/registro_test
       JWT_SECRET: ci-test-secret-at-least-32-characters-long
       ENVIRONMENT: test
     steps:

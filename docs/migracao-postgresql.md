@@ -146,3 +146,42 @@ docker compose --profile mysql-import stop mysql
 - `docs/agentes/jarvis-saas.md` — PostgreSQL + RLS detalhado
 - `docs/agentes/jarvis-asaas.md` — integração implementada
 - `docs/migracao-postgresql.md` — guia completo de migração e importação
+
+## Auditoria pós-migração (2026-06-20)
+
+### Status: migração completa ✓
+
+Auditoria automatizada varreu todo o codebase em busca de resquícios MySQL e incompatibilidades PostgreSQL.
+
+### Problemas encontrados e corrigidos
+
+| # | Problema | Severidade | Correção |
+|---|---|---|---|
+| 1 | CI (GitHub Actions) rodava testes contra MySQL 8.4 com `asyncmy` | **Crítica** | Substituído por PostgreSQL 17 com `asyncpg` em `.github/workflows/ci.yml` |
+
+### Pontos verificados sem problemas
+
+- **Código de aplicação** (`api/app/`): zero referências MySQL — nenhum `asyncmy`, `LAST_INSERT_ID`, `IFNULL`, `ON DUPLICATE KEY`, backtick quoting, ou `sa.text("0")`/`sa.text("1")`
+- **SQLAlchemy models**: usam `func.now()` e `sa.true()` (abstrações portáveis)
+- **Raw SQL**: único uso é `SELECT 1` no health check (portável)
+- **Alembic migrations** (29 arquivos): nenhuma referência MySQL-específica
+- **`alembic.ini`**: connection string PostgreSQL
+- **`docker-compose.yml`**: PostgreSQL como serviço principal, MySQL só via profile `mysql-import`
+- **`pyproject.toml`**: `asyncpg` como dependência principal, `asyncmy` em optional `mysql-import`
+- **`.env.example`**: URLs PostgreSQL
+- **RLS**: `SET app.current_company_id` e `RESET` implementados corretamente em `auth.py` / `dependencies.py`
+- **`import_v1.py`**: corretamente usa quoting dinâmico (backtick para MySQL source, double quotes para PostgreSQL target)
+- **Testes unitários**: usam SQLite in-memory (não dependem de nenhum dos dois)
+
+### Referências MySQL restantes (esperadas e seguras)
+
+1. `api/app/import_v1.py` — script de importação V1, lê de MySQL e escreve em PostgreSQL
+2. `api/pyproject.toml` optional `[mysql-import]` — só instalado manualmente para importação
+3. `docker-compose.yml` service `mysql` — só sobe com `--profile mysql-import`
+4. `.env.example` — documenta variáveis `LEGACY_DATABASE_URL` para importação
+5. `docs/migracao-postgresql.md` — esta documentação
+
+### Recomendações futuras
+
+- Após concluir a importação V1 em produção, considerar remover o profile `mysql-import` e a dependência `asyncmy`
+- Manter `import_v1.py` como referência histórica, mas não é necessário para operação normal
