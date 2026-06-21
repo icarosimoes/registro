@@ -2,14 +2,14 @@
 
 ## O que é
 
-SaaS multitenant de gestão operacional hoteleira. Substitui um sistema legado Laravel/Vue (Chess Hotel) por uma stack moderna: **FastAPI + SQLAlchemy async (PostgreSQL)** no backend, **Next.js 15 (App Router, Server Actions)** no frontend.
+SaaS multitenant de gestão operacional hoteleira. Substitui um sistema legado Laravel/Vue (Chess Hotel) por uma stack moderna: **FastAPI + SQLAlchemy async (PostgreSQL)** no backend, **Next.js 16 (App Router, Server Actions)** no frontend.
 
 ## Stack
 
 | Camada | Tecnologia |
 |---|---|
 | API | Python 3.12, FastAPI, SQLAlchemy 2 async, Alembic, PyJWT, bcrypt, slowapi |
-| Web | Next.js 15, TypeScript, Tailwind CSS, App Router, Server Actions |
+| Web | Next.js 16, TypeScript, Tailwind CSS, App Router, Server Actions |
 | Admin | Next.js (painel plataforma SaaS) |
 | DB | PostgreSQL 17 (asyncpg) com RLS — MySQL disponível para import V1 |
 | Infra | Docker Compose (dev), Docker Swarm (prod planejado) |

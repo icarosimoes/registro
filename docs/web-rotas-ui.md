@@ -9,8 +9,8 @@
 | `/dashboard` | dashboard autenticado | operacional | métricas reais via API `/dashboard/metrics` |
 | `/design-preview` | referência visual | protótipo livre | demonstração local |
 | `/ocorrencias` | lista e CRUD | CRUD via API + mutações server-side | API `occurrences` isolada por tenant |
-| `/reunioes` | lista e CRUD | CRUD via API + mutações server-side | API `modules/reunioes` isolada por tenant |
-| `/relatorios-turno` | lista e CRUD | CRUD via API + mutações server-side | API `modules/relatorios-turno` isolada por tenant |
+| `/reunioes` | lista e CRUD | CRUD via API + mutações server-side | API `meetings` (tabela dedicada) isolada por tenant |
+| `/relatorios-turno` | lista e CRUD | CRUD via API + mutações server-side | API `shift-reports` (tabela dedicada) isolada por tenant |
 | `/inspecoes` | lista e CRUD | CRUD via API + mutações server-side | API `modules/inspecoes` isolada por tenant |
 | `/diarios-obra` | lista e CRUD | CRUD via API + mutações server-side | API `modules/diarios-obra` isolada por tenant |
 | `/manutencao` | lista e CRUD | CRUD via API + mutações server-side | API `modules/manutencao` isolada por tenant |
@@ -18,7 +18,7 @@
 | `/procedimentos` | lista, CRUD e anexos | CRUD via API + upload/download de anexos | API `procedures` + `attachments` isolada por tenant |
 | `/cadastros` | lista e CRUD | CRUD via API + mutações server-side | API `registries` (setores, locais e funções) isolada por tenant |
 | `/usuarios` | lista e CRUD | CRUD via API + mutações server-side | API `users` isolada por tenant |
-| `/mural` | cartões e CRUD | CRUD via API + mutações server-side | API `modules/mural` isolada por tenant |
+| `/mural` | cartões e CRUD | CRUD via API + mutações server-side | API `bulletin` (tabela dedicada) isolada por tenant |
 | `/ordens-servico` | Kanban com drag-and-drop | CRUD + transições via API + server actions | API `work-orders` isolada por tenant |
 | `/preventivas` | lista e CRUD | CRUD via API + geração automática de OS | API `preventive-plans` isolada por tenant |
 | `/checklists` | lista e CRUD | templates + execuções via API + geração automática | API `checklists/templates` + `checklists/executions` isolada por tenant |
@@ -35,7 +35,7 @@
 
 O admin é uma aplicação separada em `:3001`; a sessão usa cookie `httpOnly` e não compartilha o JWT do tenant.
 
-Todos os módulos operacionais possuem CRUD completo via API com mutações server-side, paginação server-side (20 por página) e busca via query params na URL. O dashboard exibe métricas agregadas em tempo real (ocorrências abertas, solicitações fiscais, concluídos no mês, equipe ativa e atividades recentes). Módulos genéricos (reuniões, inspeções, etc.) usam a tabela `module_records`; usuários e cadastros usam as tabelas nativas.
+Todos os módulos operacionais possuem CRUD completo via API com mutações server-side, paginação server-side (20 por página) e busca via query params na URL. O dashboard exibe métricas agregadas em tempo real (ocorrências abertas, solicitações fiscais, concluídos no mês, equipe ativa, KPIs avançados e atividades recentes). Reuniões, relatórios de turno e mural possuem endpoints dedicados (`/meetings`, `/shift-reports`, `/bulletin`). Módulos genéricos remanescentes (inspeções, diários de obra, manutenção) usam a tabela `module_records` via `/modules/{slug}`.
 
 ## Integração com a API
 
@@ -49,12 +49,12 @@ Todas as rotas operacionais estão integradas com a API. A tabela abaixo lista o
 | `/usuarios` | `GET/POST/PATCH/DELETE /users` |
 | `/procedimentos` | `GET/POST/PATCH/DELETE /procedures` + `POST/GET/DELETE /attachments` |
 | `/cadastros` | `GET/POST/PATCH/DELETE /registries` |
-| `/reunioes` | `GET/POST/PATCH/DELETE /modules/reunioes` |
-| `/relatorios-turno` | `GET/POST/PATCH/DELETE /modules/relatorios-turno` |
+| `/reunioes` | `GET/POST/PATCH/DELETE /meetings` + subjects + clone |
+| `/relatorios-turno` | `GET/POST/PATCH/DELETE /shift-reports` |
 | `/inspecoes` | `GET/POST/PATCH/DELETE /modules/inspecoes` |
 | `/diarios-obra` | `GET/POST/PATCH/DELETE /modules/diarios-obra` |
 | `/manutencao` | `GET/POST/PATCH/DELETE /modules/manutencao` |
-| `/mural` | `GET/POST/PATCH/DELETE /modules/mural` |
+| `/mural` | `GET/POST/PATCH/DELETE /bulletin` |
 | `/ordens-servico` | `GET/POST/PATCH/DELETE /work-orders` + `POST /work-orders/{id}/transition/{status}` |
 | `/preventivas` | `GET/POST/PATCH/DELETE /preventive-plans` + `POST /preventive-plans/generate` |
 | `/checklists` | `GET/POST/PATCH/DELETE /checklists/templates` + `GET /checklists/executions` + toggle/complete/generate |

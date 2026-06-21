@@ -89,6 +89,8 @@ Login: `demo@aerohotel.local` / `Registro@123` (tenant Aero Hotel, admin com wil
 
 ### Limitações conhecidas
 
-- Inspeções (4497) e manutenção (104) permanecem em `module_records` — frontend usa endpoints genéricos `/modules/{slug}`
-- Mural e diário de obra sem dados V1 (tabelas vazias)
+- Inspeções (4497) permanecem em `module_records` — frontend usa endpoint genérico `/modules/inspecoes`
+- Auditorias noturnas (104 registros) permanecem em `module_records` com slug `manutencao` — são dados legados, não manutenção real
+- Manutenção real usa tabela dedicada `maintenance_records` (endpoint `/maintenance`); mural usa `bulletin_posts` (endpoint `/bulletin`)
+- Diário de obra sem dados V1 (tabela vazia)
 - Solicitações fiscais sem dados V1 (apenas criáveis manualmente ou via integração Chess)
