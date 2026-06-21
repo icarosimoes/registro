@@ -31,6 +31,8 @@ from app.domain.settings.router import router as settings_router
 from app.domain.shift_reports.router import router as shift_reports_router
 from app.domain.timeline.router import router as timeline_router
 from app.domain.users.router import router as users_router
+from app.domain.bulletin.router import router as bulletin_router
+from app.domain.maintenance.router import router as maintenance_router
 from app.domain.work_diaries.router import router as work_diaries_router
 
 settings = get_settings()
@@ -86,4 +88,6 @@ app.include_router(inspection_suites_router, prefix=settings.api_prefix)
 app.include_router(apartment_inspections_router, prefix=settings.api_prefix)
 app.include_router(audit_reports_router, prefix=settings.api_prefix)
 app.include_router(work_diaries_router, prefix=settings.api_prefix)
+app.include_router(maintenance_router, prefix=settings.api_prefix)
+app.include_router(bulletin_router, prefix=settings.api_prefix)
 app.include_router(asaas_webhook_router, prefix=settings.api_prefix)

@@ -7,7 +7,7 @@ from app.core.audit import compute_diff, record_event
 from app.integrations.notifications import notify_record_event
 from app.models import ModuleRecord, User
 
-VALID_MODULES = {"inspecoes", "diarios-obra", "manutencao", "mural"}
+VALID_MODULES = {"inspecoes", "diarios-obra", "manutencao"}
 
 
 async def list_records(

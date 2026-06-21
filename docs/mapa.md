@@ -59,12 +59,29 @@ IDs e relacionamentos existentes, hashes Laravel, status/soft delete, `company_i
 
 Login: `demo@aerohotel.local` / `Registro@123` (tenant Aero Hotel, admin com wildcard `*`).
 
-## Bloqueios atuais
+## Funcionalidades implementadas vs planejadas
 
-- falta inventário dos anexos/volumes fora do banco (arquivos físicos da V1);
-- falta puxar dump MySQL atualizado do servidor V1 para corte final;
-- `import_v1.py` ainda escreve em `module_records` — migration `0030` corrige o gap, mas o script deveria gravar direto nas tabelas dedicadas;
-- integração Evolution (WhatsApp) tem configuração salva mas nenhum envio real implementado;
-- inspeções (4497) e manutenção (104) permanecem em `module_records` — frontend usa endpoints genéricos `/modules/{slug}`;
-- mural e diário de obra sem dados V1 (tabelas vazias);
-- solicitações fiscais sem dados V1 (apenas criáveis manualmente ou via integração Chess).
+### Implementado e operacional
+
+- Auth JWT multitenant com refresh, ACL e 35 permissões
+- Todos os domínios operacionais com CRUD completo (ocorrências, reuniões, turnos, inspeções, obra, fiscais)
+- Reuniões e turnos em tabelas dedicadas (`meetings`, `shift_reports`)
+- `import_v1.py` grava diretamente em tabelas dedicadas (reuniões, turnos)
+- Integração Evolution (WhatsApp) — configuração + envio real + status de conexão
+- Notificações multicanal: in-app + e-mail (Brevo) + WhatsApp (Evolution)
+- Anexos via MinIO com validação completa
+- Auditoria imutável com diff JSON
+- 70 testes automatizados (SLA, CRUD, cross-tenant, anexos, auditoria)
+- RLS em 24 tabelas PostgreSQL
+
+### Planejado / pendente de produção
+
+- Corte do Laravel — depende de dump atualizado + inventário de anexos físicos
+- Inventário de anexos/volumes fora do banco na V1
+- Dump MySQL atualizado do servidor V1
+
+### Limitações conhecidas
+
+- Inspeções (4497) e manutenção (104) permanecem em `module_records` — frontend usa endpoints genéricos `/modules/{slug}`
+- Mural e diário de obra sem dados V1 (tabelas vazias)
+- Solicitações fiscais sem dados V1 (apenas criáveis manualmente ou via integração Chess)

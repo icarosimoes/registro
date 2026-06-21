@@ -4,7 +4,7 @@ import { currentTenantUser, tenantFetch } from "@/lib/api";
 import { moduleDefinitions } from "@/lib/module-definitions";
 import { notFound, redirect } from "next/navigation";
 
-const GENERIC_MODULES = new Set(["inspecoes", "diarios-obra", "manutencao", "mural"]);
+const GENERIC_MODULES = new Set(["inspecoes", "diarios-obra", "manutencao"]);
 
 export default async function ModulePage({ params, searchParams }: { params: Promise<{ module: string }>; searchParams: Promise<Record<string, string | undefined>> }) {
   const { module } = await params;
@@ -243,6 +243,35 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
             updatedAt: item.shift_date
               ? new Intl.DateTimeFormat("pt-BR").format(new Date(item.shift_date))
               : new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
+          })),
+          serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
+        };
+      } catch (error) {
+        if (error instanceof Error && error.message === "unauthorized") throw error;
+      }
+    } else if (module === "mural") {
+      type BulletinItem = {
+        id: number; title: string; body: string | null;
+        pinned: boolean; author_name: string | null;
+        created_at: string; updated_at: string;
+      };
+      type BulletinPage = { items: BulletinItem[]; total: number; page: number; page_size: number };
+      try {
+        const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
+        const search = query.search ?? "";
+        const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+        const data = await tenantFetch<BulletinPage>(`/bulletin?page=${pg}&page_size=20${searchParam}`);
+        hydratedDefinition = {
+          ...definition,
+          source: "api",
+          records: data.items.map((item) => ({
+            id: item.id,
+            title: item.title,
+            description: item.body ?? undefined,
+            category: item.pinned ? "Fixado" : "Normal",
+            owner: item.author_name ?? "Sistema",
+            status: "Publicado",
+            updatedAt: new Intl.DateTimeFormat("pt-BR").format(new Date(item.created_at)),
           })),
           serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
         };

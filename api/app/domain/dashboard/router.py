@@ -16,6 +16,7 @@ router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 class RecentActivity(BaseModel):
     id: int
     title: str
+    module: str = ""
     area: str
     owner: str
     status: str

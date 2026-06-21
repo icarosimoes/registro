@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 type RecentActivity = {
   id: number;
   title: string;
+  module: string;
   area: string;
   owner: string;
   status: string;

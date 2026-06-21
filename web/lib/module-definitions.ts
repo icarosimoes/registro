@@ -38,6 +38,25 @@ export type ModuleRecord = {
   scheduledAt?: string;
   shiftDate?: string;
   shiftType?: string;
+  supervisor?: string;
+  occupation?: string;
+  average_daily?: string;
+  guests?: number;
+  uhs?: number;
+  maintenance_count?: number;
+  cleaning?: number;
+  walk_in?: number;
+  input_quantity?: number;
+  output_quantity?: number;
+  return_of_customers?: number;
+  observations?: string;
+  notes_ab?: string;
+  notes_reception?: string;
+  notes_reservations?: string;
+  notes_governance?: string;
+  notes_maintenance?: string;
+  notes_ti?: string;
+  notes_security?: string;
 };
 
 export type ModuleDefinition = {

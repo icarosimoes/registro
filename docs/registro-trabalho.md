@@ -1,5 +1,64 @@
 # Registro de trabalho
 
+## 2026-06-21 — Import V1 reescrito, Evolution WhatsApp, testes e relatórios de turno completos
+
+### import_v1.py reescrito para tabelas dedicadas
+
+- Reuniões: grava diretamente em `meetings` + `meeting_participants` + `meeting_subjects` (antes escrevia em `module_records`).
+- Relatórios de turno: grava diretamente em `shift_reports` com campos estruturados (antes escrevia em `module_records`).
+- Participantes convidados e registrados mapeados para `meeting_participants`.
+- Pautas (subjects + new_subjects) unificadas em `meeting_subjects`.
+- Meetings e ShiftReport agora incluem `LegacyEntityMixin` (campo `legacy_id`).
+
+### Relatórios de turno — campos completos do V1
+
+20 colunas adicionadas à tabela `shift_reports` para reproduzir o formulário completo do V1:
+- **Indicadores**: `supervisor`, `occupation`, `average_daily`, `guests`, `uhs`, `maintenance_count`, `cleaning`, `walk_in`, `input_quantity`, `output_quantity`, `return_of_customers`.
+- **Notas por setor**: `observations`, `notes_ab`, `notes_reception`, `notes_reservations`, `notes_governance`, `notes_maintenance`, `notes_ti`, `notes_security`.
+- **Payload JSON**: frequências, manutenções, reclamações, extras e comentários do turno.
+- Migration 0034 cria as colunas e migra dados do payload legado em `module_records` para os novos campos via match por título.
+- Frontend: formulário de edição com seções "Indicadores" e "Observações por setor", fetch de detalhe ao abrir modal.
+- Schema `ShiftReportDetail` com todos os campos no endpoint `GET /shift-reports/{id}`.
+
+### Integração Evolution (WhatsApp) — envio real
+
+- Módulo `app/integrations/evolution.py` com `send_text`, `send_media` e `check_connection`.
+- Endpoint `GET /settings/evolution/status` — verifica conexão com a instância.
+- Endpoint `POST /settings/evolution/test` — envia mensagem de teste.
+- `notify_record_event` envia WhatsApp via Evolution para destinatários com telefone cadastrado.
+
+### Tabelas dedicadas para manutenção e mural
+
+- Modelo `MaintenanceRecord` (`maintenance_records`) com prioridade, location e payload — tabela nova e vazia, para ordens de manutenção reais.
+- Modelo `BulletinPost` (`bulletin_posts`) com pinned, expires_at e autor — mural de avisos.
+- Domínios `domain/maintenance/` e `domain/bulletin/` com CRUD completo e endpoints dedicados.
+- Auditorias noturnas (104 registros) permanecem em `module_records` — são dados legados, não manutenção.
+
+### Testes — de 52 para 70
+
+- 9 testes de anexos: upload, validação de tipo/extensão, cross-tenant, limite por registro, delete.
+- 9 testes de auditoria: record_event (create/update/delete/attachment_add), compute_diff, isolamento por tenant.
+- Fix do conftest: bypass do RLS `SET app.current_company_id` para SQLite, `current_user` override sem DB lookup, token com permissão wildcard `*`.
+- Desbloqueou 11 testes pre-existentes (fiscal_requests e cross_tenant_crud) que falhavam por incompatibilidade SQLite/RLS.
+
+### Documentação — estado atual vs planejado
+
+- `docs/mapa.md` reestruturado com seções "Implementado e operacional", "Planejado/pendente de produção" e "Limitações conhecidas".
+- `docs/backlog.md` atualizado com itens concluídos (import_v1, testes, Evolution, documentação, módulos genéricos).
+
+### Dashboard
+
+- Query UNION ALL inclui `maintenance_records` (vazia) e `module_records` com `module='manutencao'` (auditorias noturnas).
+
+## 2026-06-21 — Dashboard multi-módulo
+
+O endpoint `/dashboard/metrics` foi reescrito para agregar atividades recentes de **todos os módulos operacionais** em vez de apenas ocorrências:
+
+- **Módulos incluídos**: Ocorrências (5), Reuniões (5), Relatórios de turno (5), Inspeções (3), Manutenção (3), Solicitações Fiscais (5 quando houver).
+- **Implementação**: `UNION ALL` com `LIMIT` por subquery para garantir representação balanceada de todos os módulos, ordenado por `updated_at DESC`.
+- **Frontend**: coluna "Módulo" com badge adicionada à tabela de atividades recentes; busca filtra por módulo.
+- **Schema**: campo `module` adicionado a `RecentActivity` (router + frontend types).
+
 ## 2026-06-21 — Painel admin no padrão Jarvis/Aloji
 
 ### Reescrita completa do painel admin

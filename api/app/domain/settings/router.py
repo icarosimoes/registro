@@ -77,6 +77,54 @@ async def save_evolution(
     return EvolutionRead(has_credentials=True, api_url=body.api_url, instance=body.instance)
 
 
+class EvolutionTestSend(BaseModel):
+    to: str
+    text: str
+
+
+class EvolutionStatus(BaseModel):
+    connected: bool
+    state: str | None = None
+    detail: str | None = None
+
+
+@router.get("/evolution/status", response_model=EvolutionStatus)
+async def evolution_status(
+    user: Annotated[AuthenticatedUser, require_permission("settings.view")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> EvolutionStatus:
+    row = await _get_setting(session, user.company_id, "evolution")
+    value = row.value if row else {}
+    if not value.get("api_key"):
+        return EvolutionStatus(connected=False, detail="Credenciais não configuradas")
+    from app.integrations.evolution import check_connection
+    result = await check_connection(
+        api_url=value["api_url"], api_key=value["api_key"], instance=value["instance"],
+    )
+    state = result.get("state") or result.get("instance", {}).get("state", "unknown")
+    return EvolutionStatus(connected=(state == "open"), state=state)
+
+
+@router.post("/evolution/test")
+async def evolution_test_send(
+    body: EvolutionTestSend,
+    user: Annotated[AuthenticatedUser, require_permission("settings.edit")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> dict:
+    row = await _get_setting(session, user.company_id, "evolution")
+    value = row.value if row else {}
+    if not value.get("api_key"):
+        raise HTTPException(status_code=422, detail={"code": "not_configured"})
+    from app.integrations.evolution import send_text
+    result = await send_text(
+        api_url=value["api_url"], api_key=value["api_key"],
+        instance=value["instance"], to=body.to, text=body.text,
+    )
+    if result is None:
+        raise HTTPException(status_code=502, detail={"code": "send_failed"})
+    return {"status": "sent", "response": result}
+
+
 # ── Brevo (E-mail transacional) ──
 
 class BrevoConfig(BaseModel):

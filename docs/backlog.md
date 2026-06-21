@@ -95,7 +95,7 @@
 - [x] Re-migrar dados de `module_records` para tabelas dedicadas — migration `0030` move reuniões (72) → `meetings` e relatórios de turno (1165) → `shift_reports`; inspeções (4497) e manutenção (104) permanecem em `module_records` (frontend usa `/modules/{slug}`).
 - [x] Criar demo user para Aero Hotel — `demo@aerohotel.local` / `Registro@123` com role `legacy-admin` + permissão wildcard `*`.
 - [x] Corrigir permissões do role `legacy-admin` — adicionada permissão `*` para que os endpoints do Registro funcionem (V1 usava códigos `legacy.controller.action`, API nova usa `module.action`).
-- [ ] Atualizar `import_v1.py` para escrever diretamente nas tabelas dedicadas em futuras importações — atualmente a migration `0030` corrige o gap, mas o script deveria gravar direto.
+- [x] Atualizar `import_v1.py` para escrever diretamente nas tabelas dedicadas em futuras importações — `import_meetings` grava em `meetings`/`meeting_participants`/`meeting_subjects` e `import_shift_reports` grava em `shift_reports`.
 - [ ] Executar corte final — puxar dump MySQL atualizado do V1, importar via `import_v1.py`, rodar migrations (incluindo 0030), validar dados.
 
 ## P6 — documentação e governança
@@ -107,7 +107,7 @@
 - [x] Documentar o módulo de ocorrências (CRUD, soft delete, `legacy_id` nullable) em `api-reference.md` e `domain-model.md`.
 - [x] Atualizar `mapa.md`, contratos, runbooks, memória, backlog e registro de trabalho — atualização de 21/06/2026 corrigiu PostgreSQL como banco ativo, domínios P1/P4 implementados, bloqueios atuais revisados.
 - [x] Criar ADR quando uma decisão alterar stack, isolamento, persistência, segurança, deploy, cobrança ou estratégia de migração — ADR-001 (MySQL→PostgreSQL) e ADR-002 (RLS multi-tenant) criados em `docs/adr/`.
-- [ ] Manter documentação de estado atual separada de funcionalidades apenas planejadas.
+- [x] Manter documentação de estado atual separada de funcionalidades apenas planejadas — `docs/mapa.md` separado em seções "Implementado e operacional", "Planejado/pendente de produção" e "Limitações conhecidas".
 
 ## Correções de repositório
 
@@ -121,13 +121,13 @@
 1. **Atualizar `import_v1.py`** — reescrever para gravar diretamente nas tabelas dedicadas em futuras importações. A migration `0030` resolve o gap para dados já importados, mas o script deveria gravar direto sem depender da migration.
 2. **Dump V1 atualizado** — puxar dump MySQL fresco do servidor V1 em produção. O dump local (`aero-2026-06-19.sql`) é snapshot de desenvolvimento.
 3. **Inventário de anexos físicos** — mapear arquivos/volumes fora do banco na V1 (uploads, PDFs, imagens) para migração ao MinIO.
-4. **Testes de cobertura** — expandir para anexos e auditoria (52 testes cobrem SLA, CRUD e cross-tenant, mas anexos e audit_events não têm cobertura).
+4. ~~**Testes de cobertura**~~ — ✅ expandido: 70 testes cobrindo SLA, CRUD, cross-tenant, anexos (9 testes) e auditoria (9 testes).
 
 ### Média — valor operacional
 
-5. **Integração Evolution (WhatsApp)** — credenciais são salvas via `/settings/evolution`, mas nenhum código envia mensagens. Implementar envio real ou remover a configuração.
-6. **Separar estado atual de planejado na documentação** — item P6 aberto: garantir que docs não misturam features implementadas com funcionalidades futuras.
-7. **Promover módulos genéricos remanescentes** — manutenção e mural ainda usam `module_records`. Promover quando precisarem de campos específicos.
+5. ~~**Integração Evolution (WhatsApp)**~~ — ✅ implementado: `app/integrations/evolution.py` com `send_text`, `send_media`, `check_connection`; endpoints `GET /settings/evolution/status` e `POST /settings/evolution/test`; envio automático via `notify_record_event` para usuários com telefone cadastrado.
+6. ~~**Separar estado atual de planejado na documentação**~~ — ✅ `docs/mapa.md` reestruturado com seções explícitas.
+7. ~~**Promover módulos genéricos remanescentes**~~ — ✅ manutenção promovida para `maintenance_records` (com priority, location_id) e mural promovido para `bulletin_posts` (com pinned, expires_at, author). Migration de dados inclusa. Endpoints dedicados `/maintenance` e `/bulletin`.
 
 ### Baixa — preparação futura
 

@@ -108,7 +108,7 @@ const SLUG_TO_ENTITY_TYPE: Record<string, string> = {
   "inspecoes": "inspecoes",
   "diarios-obra": "diarios-obra",
   "manutencao": "manutencao",
-  "mural": "mural",
+  "mural": "bulletin",
 };
 
 export function OperationalModule({ definition, user }: { definition: ModuleDefinition; user: TenantUser }) {
@@ -118,7 +118,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const isUsers = definition.slug === "usuarios";
   const isCadastros = definition.slug === "cadastros";
   const isProcedimentos = definition.slug === "procedimentos";
-  const isGenericModule = ["inspecoes", "diarios-obra", "manutencao", "mural"].includes(definition.slug);
+  const isGenericModule = ["inspecoes", "diarios-obra", "manutencao"].includes(definition.slug);
   const isMeetings = definition.slug === "reunioes";
   const isShiftReports = definition.slug === "relatorios-turno";
   const hasAttachments = isFiscal || isProcedimentos;
@@ -180,6 +180,18 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
     if (!editing || editing === "new" || !hasAttachments || !isApiBacked || !entityType) return;
     fetchAttachments(entityType, editing.id).then(setSelectedAttachments).catch(() => setSelectedAttachments([]));
   }, [editing, hasAttachments, isApiBacked, entityType]);
+
+  const [shiftDetailLoaded, setShiftDetailLoaded] = useState<number | null>(null);
+  useEffect(() => {
+    if (!editing || editing === "new" || !isShiftReports) return;
+    if (shiftDetailLoaded === editing.id) return;
+    setShiftDetailLoaded(editing.id);
+    import("@/app/actions").then(({ fetchShiftReportDetail }) =>
+      fetchShiftReportDetail(editing.id).then((detail) => {
+        if (detail) setEditing((prev) => prev && prev !== "new" ? { ...prev, ...detail } : prev);
+      })
+    );
+  }, [editing, isShiftReports, shiftDetailLoaded]);
 
   useEffect(() => {
     if (!isApiBacked) return;
@@ -347,6 +359,8 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
         const ownerId = /^\d+$/.test(ownerRaw) ? Number(ownerRaw) : undefined;
         const shiftDate = String(formData.get("shift_date") ?? "") || undefined;
         const shiftType = String(formData.get("shift_type") ?? "") || undefined;
+        const intOrNull = (name: string) => { const v = String(formData.get(name) ?? ""); return v ? Number(v) : undefined; };
+        const strOrNull = (name: string) => String(formData.get(name) ?? "") || undefined;
         const { createShiftReportAction, updateShiftReportAction } = await import("@/app/actions");
         const apiBody = {
           title: fields.title,
@@ -354,6 +368,25 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
           shift_date: shiftDate,
           shift_type: shiftType,
           status: fields.status,
+          supervisor: strOrNull("supervisor"),
+          occupation: strOrNull("occupation"),
+          average_daily: strOrNull("average_daily"),
+          guests: intOrNull("guests"),
+          uhs: intOrNull("uhs"),
+          maintenance_count: intOrNull("maintenance_count"),
+          cleaning: intOrNull("cleaning"),
+          walk_in: intOrNull("walk_in"),
+          input_quantity: intOrNull("input_quantity"),
+          output_quantity: intOrNull("output_quantity"),
+          return_of_customers: intOrNull("return_of_customers"),
+          observations: strOrNull("observations"),
+          notes_ab: strOrNull("notes_ab"),
+          notes_reception: strOrNull("notes_reception"),
+          notes_reservations: strOrNull("notes_reservations"),
+          notes_governance: strOrNull("notes_governance"),
+          notes_maintenance: strOrNull("notes_maintenance"),
+          notes_ti: strOrNull("notes_ti"),
+          notes_security: strOrNull("notes_security"),
           owner_user_id: ownerId,
           notify_user_ids: notifyIds.length ? notifyIds : undefined,
         };
@@ -567,14 +600,45 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
         <label>Título<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
         <div className="form-grid">
           <label>Data do turno<input name="shift_date" type="date" defaultValue={editing !== "new" && editing.shiftDate ? editing.shiftDate : ""}/></label>
-          <label>Turno<select name="shift_type" defaultValue={editing !== "new" && editing.shiftType ? editing.shiftType : "morning"}><option value="morning">Manhã</option><option value="afternoon">Tarde</option><option value="night">Noite</option></select></label>
-        </div>
-        <div className="form-grid">
+          <label>Turno<select name="shift_type" defaultValue={editing !== "new" && editing.shiftType ? editing.shiftType : "morning"}><option value="morning">Manhã</option><option value="afternoon">Tarde</option><option value="night">Noite</option><option value="diurno">Diurno</option><option value="noturno">Noturno</option></select></label>
           <label>Status<select name="status" defaultValue={editing === "new" ? "Em andamento" : editing.status}><option>Em andamento</option><option>Aguardando</option><option>Concluído</option></select></label>
         </div>
         <label>Responsável<UserAutocomplete name="owner" required defaultValue={editing === "new" ? user.name : editing.owner} placeholder="Buscar responsável..."/></label>
+        <label>Supervisor<input name="supervisor" defaultValue={editing !== "new" ? editing.supervisor ?? "" : ""}/></label>
+        <fieldset className="form-section"><legend>Indicadores</legend>
+          <div className="form-grid">
+            <label>Ocupação<input name="occupation" defaultValue={editing !== "new" ? editing.occupation ?? "" : ""}/></label>
+            <label>Diária média<input name="average_daily" defaultValue={editing !== "new" ? editing.average_daily ?? "" : ""}/></label>
+            <label>Hóspedes<input name="guests" type="number" defaultValue={editing !== "new" ? editing.guests ?? "" : ""}/></label>
+            <label>UH&apos;s<input name="uhs" type="number" defaultValue={editing !== "new" ? editing.uhs ?? "" : ""}/></label>
+            <label>Manutenção<input name="maintenance_count" type="number" defaultValue={editing !== "new" ? editing.maintenance_count ?? "" : ""}/></label>
+            <label>Limpeza<input name="cleaning" type="number" defaultValue={editing !== "new" ? editing.cleaning ?? "" : ""}/></label>
+          </div>
+          <div className="form-grid">
+            <label>Walk-in<input name="walk_in" type="number" defaultValue={editing !== "new" ? editing.walk_in ?? "" : ""}/></label>
+            <label>Entradas<input name="input_quantity" type="number" defaultValue={editing !== "new" ? editing.input_quantity ?? "" : ""}/></label>
+            <label>Saídas<input name="output_quantity" type="number" defaultValue={editing !== "new" ? editing.output_quantity ?? "" : ""}/></label>
+            <label>Retorno de clientes<input name="return_of_customers" type="number" defaultValue={editing !== "new" ? editing.return_of_customers ?? "" : ""}/></label>
+          </div>
+        </fieldset>
+        <fieldset className="form-section"><legend>Observações por setor</legend>
+          <label>Observação geral<textarea name="observations" rows={3} defaultValue={editing !== "new" ? editing.observations ?? "" : ""}/></label>
+          <div className="form-grid">
+            <label>A&amp;B<textarea name="notes_ab" rows={2} defaultValue={editing !== "new" ? editing.notes_ab ?? "" : ""}/></label>
+            <label>Recepção<textarea name="notes_reception" rows={2} defaultValue={editing !== "new" ? editing.notes_reception ?? "" : ""}/></label>
+          </div>
+          <div className="form-grid">
+            <label>Reservas<textarea name="notes_reservations" rows={2} defaultValue={editing !== "new" ? editing.notes_reservations ?? "" : ""}/></label>
+            <label>Governança<textarea name="notes_governance" rows={2} defaultValue={editing !== "new" ? editing.notes_governance ?? "" : ""}/></label>
+          </div>
+          <div className="form-grid">
+            <label>Manutenção<textarea name="notes_maintenance" rows={2} defaultValue={editing !== "new" ? editing.notes_maintenance ?? "" : ""}/></label>
+            <label>TI<textarea name="notes_ti" rows={2} defaultValue={editing !== "new" ? editing.notes_ti ?? "" : ""}/></label>
+          </div>
+          <label>Segurança<textarea name="notes_security" rows={2} defaultValue={editing !== "new" ? editing.notes_security ?? "" : ""}/></label>
+        </fieldset>
         <label>Notificar<UserMultiSelect name="notifyUsers" defaultValues={editing !== "new" && editing.notifyUserObjects ? editing.notifyUserObjects : []}/></label>
-        <label>Descrição<textarea name="description" rows={4} defaultValue={editing === "new" ? "" : editing.description}/></label>
+        <label>Descrição<textarea name="description" rows={3} defaultValue={editing === "new" ? "" : editing.description}/></label>
       </> : <>
         <label>Título<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
         <div className="form-grid">

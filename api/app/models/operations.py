@@ -227,7 +227,7 @@ class OccurrenceParticipant(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
-class Meeting(Base, TenantMixin, TimestampMixin):
+class Meeting(Base, TenantMixin, LegacyEntityMixin, TimestampMixin):
     __tablename__ = "meetings"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -277,7 +277,7 @@ class MeetingSubject(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
-class ShiftReport(Base, TenantMixin, TimestampMixin):
+class ShiftReport(Base, TenantMixin, LegacyEntityMixin, TimestampMixin):
     __tablename__ = "shift_reports"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -288,6 +288,26 @@ class ShiftReport(Base, TenantMixin, TimestampMixin):
     status: Mapped[str] = mapped_column(String(60), default="Em andamento")
     started_at: Mapped[datetime | None] = mapped_column(DateTime)
     ended_at: Mapped[datetime | None] = mapped_column(DateTime)
+    supervisor: Mapped[str | None] = mapped_column(String(120))
+    occupation: Mapped[str | None] = mapped_column(String(20))
+    average_daily: Mapped[str | None] = mapped_column(String(20))
+    guests: Mapped[int | None] = mapped_column(Integer)
+    uhs: Mapped[int | None] = mapped_column(Integer)
+    maintenance_count: Mapped[int | None] = mapped_column(Integer)
+    cleaning: Mapped[int | None] = mapped_column(Integer)
+    walk_in: Mapped[int | None] = mapped_column(Integer)
+    input_quantity: Mapped[int | None] = mapped_column(Integer)
+    output_quantity: Mapped[int | None] = mapped_column(Integer)
+    return_of_customers: Mapped[int | None] = mapped_column(Integer)
+    observations: Mapped[str | None] = mapped_column(Text)
+    notes_ab: Mapped[str | None] = mapped_column(Text)
+    notes_reception: Mapped[str | None] = mapped_column(Text)
+    notes_reservations: Mapped[str | None] = mapped_column(Text)
+    notes_governance: Mapped[str | None] = mapped_column(Text)
+    notes_maintenance: Mapped[str | None] = mapped_column(Text)
+    notes_ti: Mapped[str | None] = mapped_column(Text)
+    notes_security: Mapped[str | None] = mapped_column(Text)
+    payload: Mapped[dict | None] = mapped_column(JSON)
     owner_user_id: Mapped[int | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL"),
     )
@@ -486,6 +506,44 @@ class WorkDiaryObservation(Base):
     content: Mapped[str] = mapped_column(Text)
     category: Mapped[str | None] = mapped_column(String(80))
     sort_order: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class MaintenanceRecord(Base, TenantMixin, LegacyEntityMixin, TimestampMixin):
+    __tablename__ = "maintenance_records"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    category: Mapped[str | None] = mapped_column(String(120))
+    status: Mapped[str] = mapped_column(String(60), default="Em andamento")
+    priority: Mapped[str | None] = mapped_column(String(20))
+    location_id: Mapped[int | None] = mapped_column(
+        ForeignKey("locations.id", ondelete="SET NULL"),
+    )
+    owner_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    created_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    notify_user_ids: Mapped[list | None] = mapped_column(JSON)
+    payload: Mapped[dict | None] = mapped_column(JSON)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class BulletinPost(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "bulletin_posts"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(String(255))
+    body: Mapped[str | None] = mapped_column(Text)
+    pinned: Mapped[bool] = mapped_column(Boolean, default=False)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime)
+    author_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    notify_user_ids: Mapped[list | None] = mapped_column(JSON)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
 
 
 class LegacyImportRun(Base):

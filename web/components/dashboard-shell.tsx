@@ -21,6 +21,7 @@ type TicketStatus = "Em andamento" | "Aguardando" | "Concluído";
 type Ticket = {
   id: number;
   title: string;
+  module: string;
   area: string;
   owner: string;
   status: TicketStatus;
@@ -37,6 +38,7 @@ type DashboardMetricsData = {
   recent: Array<{
     id: number;
     title: string;
+    module: string;
     area: string;
     owner: string;
     status: string;
@@ -90,6 +92,7 @@ export function DashboardShell({ user, metrics }: { user?: TenantUser; metrics?:
     return metrics.recent.map((item) => ({
       id: item.id,
       title: item.title,
+      module: item.module || "Ocorrências",
       area: item.area,
       owner: item.owner,
       status: item.status as TicketStatus,
@@ -107,7 +110,7 @@ export function DashboardShell({ user, metrics }: { user?: TenantUser; metrics?:
   const filteredTickets = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("pt-BR");
     return tickets.filter((ticket) =>
-      [String(ticket.id), ticket.title, ticket.area, ticket.owner, ticket.status]
+      [String(ticket.id), ticket.title, ticket.module, ticket.area, ticket.owner, ticket.status]
         .join(" ")
         .toLocaleLowerCase("pt-BR")
         .includes(normalized) && (scope === "all" || (scope === "mine" ? ticket.owner.includes(firstName) : ticket.status !== "Concluído")),
@@ -147,14 +150,14 @@ export function DashboardShell({ user, metrics }: { user?: TenantUser; metrics?:
           </div>
           <div className="table-scroll">
             <table>
-              <thead><tr><th>Protocolo</th><th>Atividade</th><th>Área</th><th>Responsável</th><th>Status</th><th>Atualização</th></tr></thead>
+              <thead><tr><th>Protocolo</th><th>Atividade</th><th>Módulo</th><th>Área</th><th>Responsável</th><th>Status</th><th>Atualização</th></tr></thead>
               <tbody>
                 {filteredTickets.map((ticket) => (
-                  <tr key={ticket.id} onClick={() => setSelectedTicket(ticket)}><td className="protocol">#{ticket.id}</td><td><strong>{ticket.title}</strong></td><td>{ticket.area}</td><td>{ticket.owner}</td><td><span className={statusClass[ticket.status] ?? "status status-progress"}>{ticket.status}</span></td><td className="muted">{ticket.updatedAt}</td></tr>
+                  <tr key={`${ticket.module}-${ticket.id}`} onClick={() => setSelectedTicket(ticket)}><td className="protocol">#{ticket.id}</td><td><strong>{ticket.title}</strong></td><td><span className="module-badge">{ticket.module}</span></td><td>{ticket.area}</td><td>{ticket.owner}</td><td><span className={statusClass[ticket.status] ?? "status status-progress"}>{ticket.status}</span></td><td className="muted">{ticket.updatedAt}</td></tr>
                 ))}
               </tbody>
             </table>
-            {!filteredTickets.length && <div className="empty-search"><Search size={28} /><strong>{metrics ? "Nenhuma atividade" : "Carregando..."}</strong><span>{metrics ? "Ainda não há ocorrências registradas." : "Conectando ao servidor..."}</span></div>}
+            {!filteredTickets.length && <div className="empty-search"><Search size={28} /><strong>{metrics ? "Nenhuma atividade" : "Carregando..."}</strong><span>{metrics ? "Ainda não há registros nos módulos operacionais." : "Conectando ao servidor..."}</span></div>}
           </div>
         </section>
 

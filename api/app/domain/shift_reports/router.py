@@ -10,6 +10,7 @@ from app.domain.auth.repository import AuthenticatedUser
 from app.domain.shift_reports.schemas import (
     SHIFT_LABELS,
     ShiftReportCreate,
+    ShiftReportDetail,
     ShiftReportListResponse,
     ShiftReportSummary,
     ShiftReportUpdate,
@@ -67,14 +68,14 @@ async def list_shift_reports_endpoint(
     )
 
 
-@router.get("/{report_id}", response_model=ShiftReportSummary)
+@router.get("/{report_id}", response_model=ShiftReportDetail)
 async def get_shift_report_endpoint(
     report_id: int,
     user: Annotated[
         AuthenticatedUser, require_permission("shift_report.view")
     ],
     session: Annotated[AsyncSession, Depends(require_session)],
-) -> ShiftReportSummary:
+) -> ShiftReportDetail:
     result = await get_shift_report(
         session, user.company_id, report_id
     )
@@ -83,7 +84,7 @@ async def get_shift_report_endpoint(
             status_code=404, detail={"code": "not_found"}
         )
     report, owner_name = result
-    return ShiftReportSummary(
+    return ShiftReportDetail(
         id=report.id,
         title=report.title,
         description=report.description,
@@ -92,6 +93,28 @@ async def get_shift_report_endpoint(
         shift_label=SHIFT_LABELS.get(report.shift_type or ""),
         status=report.status,
         owner=owner_name or "Não atribuído",
+        started_at=report.started_at,
+        ended_at=report.ended_at,
+        supervisor=report.supervisor,
+        occupation=report.occupation,
+        average_daily=report.average_daily,
+        guests=report.guests,
+        uhs=report.uhs,
+        maintenance_count=report.maintenance_count,
+        cleaning=report.cleaning,
+        walk_in=report.walk_in,
+        input_quantity=report.input_quantity,
+        output_quantity=report.output_quantity,
+        return_of_customers=report.return_of_customers,
+        observations=report.observations,
+        notes_ab=report.notes_ab,
+        notes_reception=report.notes_reception,
+        notes_reservations=report.notes_reservations,
+        notes_governance=report.notes_governance,
+        notes_maintenance=report.notes_maintenance,
+        notes_ti=report.notes_ti,
+        notes_security=report.notes_security,
+        payload=report.payload,
         updated_at=report.updated_at,
     )
 

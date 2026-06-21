@@ -204,3 +204,34 @@ async def notify_record_event(
             if notif_record and not isinstance(result, BaseException):
                 notif_record.email_sent_at = now
         await session.flush()
+
+    evolution = await get_company_setting(session, company_id, "evolution")
+    evo_key = evolution.get("api_key")
+    if evo_key:
+        from app.integrations.evolution import send_text
+
+        whatsapp_text = f"*{action_label}*\n{title}\n\nMódulo: {module}\nPor: {actor_name}"
+        if detail:
+            whatsapp_text += f"\n{detail}"
+
+        for r in recipients:
+            if r["email"] == actor_email:
+                continue
+            user_pref = prefs.get(r["id"], {"in_app": True, "email": True})
+            if not user_pref.get("whatsapp", True):
+                continue
+            phone = await session.scalar(
+                select(User.phone).where(User.id == r["id"])
+            )
+            if not phone:
+                continue
+            try:
+                await send_text(
+                    api_url=evolution["api_url"],
+                    api_key=evo_key,
+                    instance=evolution["instance"],
+                    to=phone,
+                    text=whatsapp_text,
+                )
+            except Exception:
+                logger.warning("WhatsApp send failed for user %s", r["id"])

@@ -660,6 +660,25 @@ export interface ShiftReportPayload {
   started_at?: string;
   ended_at?: string;
   status?: string;
+  supervisor?: string;
+  occupation?: string;
+  average_daily?: string;
+  guests?: number;
+  uhs?: number;
+  maintenance_count?: number;
+  cleaning?: number;
+  walk_in?: number;
+  input_quantity?: number;
+  output_quantity?: number;
+  return_of_customers?: number;
+  observations?: string;
+  notes_ab?: string;
+  notes_reception?: string;
+  notes_reservations?: string;
+  notes_governance?: string;
+  notes_maintenance?: string;
+  notes_ti?: string;
+  notes_security?: string;
   owner_user_id?: number;
   notify_user_ids?: number[];
 }
@@ -689,6 +708,12 @@ export async function deleteShiftReportAction(id: number): Promise<MutationResul
     return { ok: false, error: "Erro ao excluir relatório." };
   }
   return { ok: true };
+}
+
+export async function fetchShiftReportDetail(id: number) {
+  const response = await authedFetch(`/shift-reports/${id}`);
+  if (!response.ok) return null;
+  return response.json();
 }
 
 // --- Occurrence extras ---

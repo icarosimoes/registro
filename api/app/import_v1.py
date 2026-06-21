@@ -16,6 +16,9 @@ from app.models import (
     Function,
     LegacyImportRun,
     Location,
+    Meeting,
+    MeetingParticipant,
+    MeetingSubject,
     ModuleRecord,
     Notification,
     Occurrence,
@@ -24,6 +27,7 @@ from app.models import (
     Procedure,
     Role,
     Sector,
+    ShiftReport,
     Subscription,
     User,
 )
@@ -259,43 +263,6 @@ async def import_meetings(
     new_subjects = await source_rows(legacy, "meeting_new_subjects")
     invited = await source_rows(legacy, "meeting_invited_participants")
     registered = await source_rows(legacy, "meeting_registered_participants")
-    attachments = await source_rows(legacy, "meeting_subject_attaches")
-
-    subjects_by_meeting: dict[int, list[dict]] = {}
-    for s in subjects:
-        subjects_by_meeting.setdefault(s["meetings_id"], []).append({
-            "id": s["id"], "subject": s["subject"],
-            "url_archive": _str(s.get("url_archive")),
-            "obs": _str(s.get("obs_subject")),
-        })
-
-    new_subjects_by_meeting: dict[int, list[dict]] = {}
-    for s in new_subjects:
-        new_subjects_by_meeting.setdefault(s["meetings_id"], []).append({
-            "id": s["id"], "subject": s["subject"],
-            "url_archive": _str(s.get("url_archive")),
-            "obs": _str(s.get("obs_subject")),
-        })
-
-    attach_by_subject: dict[int, list[dict]] = {}
-    attach_by_new_subject: dict[int, list[dict]] = {}
-    for a in attachments:
-        entry = {"description": _str(a.get("description")), "dir": _str(a.get("dir"))}
-        if a.get("meeting_subject_id"):
-            attach_by_subject.setdefault(a["meeting_subject_id"], []).append(entry)
-        if a.get("meeting_new_subject_id"):
-            attach_by_new_subject.setdefault(a["meeting_new_subject_id"], []).append(entry)
-
-    for sl in subjects_by_meeting.values():
-        for s in sl:
-            s["attachments"] = attach_by_subject.get(s["id"], [])
-    for sl in new_subjects_by_meeting.values():
-        for s in sl:
-            s["attachments"] = attach_by_new_subject.get(s["id"], [])
-
-    invited_by_meeting: dict[int, list[int]] = {}
-    for row in invited:
-        invited_by_meeting.setdefault(row["meetings_id"], []).append(row["participants_id"])
 
     registered_by_meeting: dict[int, list[int]] = {}
     for row in registered:
@@ -303,39 +270,80 @@ async def import_meetings(
         if uid:
             registered_by_meeting.setdefault(row["meetings_id"], []).append(uid)
 
+    invited_by_meeting: dict[int, list[int]] = {}
+    for row in invited:
+        uid = users.get(row["participants_id"]) if row.get("participants_id") else None
+        if uid:
+            invited_by_meeting.setdefault(row["meetings_id"], []).append(uid)
+
+    subjects_by_meeting: dict[int, list[dict]] = {}
+    for s in subjects:
+        subjects_by_meeting.setdefault(s["meetings_id"], []).append({
+            "subject": s["subject"],
+            "obs": _str(s.get("obs_subject")),
+        })
+    for s in new_subjects:
+        subjects_by_meeting.setdefault(s["meetings_id"], []).append({
+            "subject": s["subject"],
+            "obs": _str(s.get("obs_subject")),
+        })
+
     count = 0
     for m in meetings:
         item = await target.scalar(
-            select(ModuleRecord).where(
-                ModuleRecord.company_id == company.id,
-                ModuleRecord.module == "reunioes",
-                ModuleRecord.legacy_id == m["id"],
+            select(Meeting).where(
+                Meeting.company_id == company.id,
+                Meeting.legacy_id == m["id"],
             )
         )
         if item is None:
-            item = ModuleRecord(company_id=company.id, module="reunioes", legacy_id=m["id"])
+            item = Meeting(company_id=company.id, legacy_id=m["id"])
             target.add(item)
 
         local_str = _str(m.get("local")) or ""
         dt_str = str(m.get("datetime") or "")[:16]
+        scheduled = _dt(m.get("datetime"))
+
         item.title = f"Reunião {dt_str} — {local_str}".strip(" —")
         item.description = local_str
-        item.category = "Reunião"
+        item.location = local_str
+        item.scheduled_at = scheduled
         item.status = _status_label(m.get("status", 1))
         item.owner_user_id = users.get(m["users_id"])
         item.created_by_user_id = users.get(m["users_id"])
+        item.notify_user_ids = registered_by_meeting.get(m["id"])
         item.deleted_at = _dt(m.get("deleted_at"))
         item.created_at = _dt(m.get("created_at")) or datetime.now(UTC).replace(tzinfo=None)
         item.updated_at = _dt(m.get("updated_at")) or item.created_at
-        item.payload = {
-            "datetime": str(m.get("datetime") or ""),
-            "local": local_str,
-            "start_meeting": str(m.get("start_meeting") or ""),
-            "subjects": subjects_by_meeting.get(m["id"], []),
-            "new_subjects": new_subjects_by_meeting.get(m["id"], []),
-            "invited_participant_ids": invited_by_meeting.get(m["id"], []),
-            "registered_user_ids": registered_by_meeting.get(m["id"], []),
-        }
+        await target.flush()
+
+        participant_ids = set(registered_by_meeting.get(m["id"], []))
+        participant_ids.update(invited_by_meeting.get(m["id"], []))
+        for uid in participant_ids:
+            existing = await target.scalar(
+                select(MeetingParticipant).where(
+                    MeetingParticipant.meeting_id == item.id,
+                    MeetingParticipant.user_id == uid,
+                )
+            )
+            if not existing:
+                target.add(MeetingParticipant(
+                    meeting_id=item.id, user_id=uid, role="attendee",
+                ))
+
+        meeting_subjects = subjects_by_meeting.get(m["id"], [])
+        existing_subjects = (await target.scalars(
+            select(MeetingSubject).where(MeetingSubject.meeting_id == item.id)
+        )).all()
+        if not existing_subjects:
+            for idx, s in enumerate(meeting_subjects):
+                target.add(MeetingSubject(
+                    meeting_id=item.id,
+                    title=s["subject"][:255],
+                    description=s.get("obs"),
+                    sort_order=idx,
+                ))
+
         count += 1
     return count
 
@@ -372,7 +380,9 @@ async def import_shift_reports(
             "reason": _str(m.get("reason")),
             "providence": _str(m.get("providence")),
             "location_id": locations.get(m["local_id"]) if m.get("local_id") else None,
-            "occurrence_id": occurrences_map.get(m["occurrences_id"]) if m.get("occurrences_id") else None,
+            "occurrence_id": (
+                occurrences_map.get(m["occurrences_id"]) if m.get("occurrences_id") else None
+            ),
         })
 
     compl_by_report: dict[int, list[dict]] = {}
@@ -380,7 +390,9 @@ async def import_shift_reports(
         compl_by_report.setdefault(c["shift_reports_id"], []).append({
             "problem": _str(c.get("problem")),
             "providence": _str(c.get("providence")),
-            "occurrence_id": occurrences_map.get(c["occurrences_id"]) if c.get("occurrences_id") else None,
+            "occurrence_id": (
+                occurrences_map.get(c["occurrences_id"]) if c.get("occurrences_id") else None
+            ),
         })
 
     extra_by_report: dict[int, list[dict]] = {}
@@ -394,46 +406,47 @@ async def import_shift_reports(
     for c in comments:
         comment_by_report.setdefault(c["shift_reports_id"], []).append({
             "comments": _str(c.get("comments")),
-            "occurrence_id": occurrences_map.get(c["occurrences_id"]) if c.get("occurrences_id") else None,
+            "occurrence_id": (
+                occurrences_map.get(c["occurrences_id"]) if c.get("occurrences_id") else None
+            ),
         })
 
     count = 0
     for r in reports:
         item = await target.scalar(
-            select(ModuleRecord).where(
-                ModuleRecord.company_id == company.id,
-                ModuleRecord.module == "relatorios-turno",
-                ModuleRecord.legacy_id == r["id"],
+            select(ShiftReport).where(
+                ShiftReport.company_id == company.id,
+                ShiftReport.legacy_id == r["id"],
             )
         )
         if item is None:
-            item = ModuleRecord(company_id=company.id, module="relatorios-turno", legacy_id=r["id"])
+            item = ShiftReport(company_id=company.id, legacy_id=r["id"])
             target.add(item)
 
         beginning = str(r.get("beginning") or "")[:16]
         end = str(r.get("end") or "")[:16]
         supervisor = _str(r.get("supervisor")) or ""
         item.title = f"Turno {beginning} — {supervisor}".strip(" —")
-        item.category = "Relatório de Turno"
+        item.shift_date = _dt(r.get("beginning")).date() if r.get("beginning") else None
+        item.shift_type = "diurno" if r.get("beginning") and "06:" in beginning else "noturno"
+        item.started_at = _dt(r.get("beginning"))
+        item.ended_at = _dt(r.get("end"))
+        item.supervisor = supervisor
+        item.return_of_customers = r.get("return_of_customers")
+        item.input_quantity = r.get("inputQuantity")
+        item.output_quantity = r.get("outputQuantity")
         item.status = _status_label(r.get("status", 1))
         item.owner_user_id = users.get(r["users_id"])
         item.created_by_user_id = users.get(r["users_id"])
-        item.created_at = _dt(r.get("created_at")) or datetime.now(UTC).replace(tzinfo=None)
-        item.updated_at = _dt(r.get("updated_at")) or item.created_at
         item.payload = {
-            "beginning": beginning,
-            "end": end,
-            "supervisor": supervisor,
-            "return_of_customers": r.get("return_of_customers"),
-            "inputQuantity": r.get("inputQuantity"),
-            "outputQuantity": r.get("outputQuantity"),
-            "viewed": r.get("viewed"),
             "frequencies": freq_by_report.get(r["id"], []),
             "maintenances": maint_by_report.get(r["id"], []),
             "complaints": compl_by_report.get(r["id"], []),
             "extras": extra_by_report.get(r["id"], []),
             "comments": comment_by_report.get(r["id"], []),
         }
+        item.created_at = _dt(r.get("created_at")) or datetime.now(UTC).replace(tzinfo=None)
+        item.updated_at = _dt(r.get("updated_at")) or item.created_at
         count += 1
     return count
 

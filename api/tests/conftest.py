@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
 from app.core.security import create_access_token
@@ -80,8 +80,10 @@ async def session(test_session_factory):
 
 @pytest.fixture()
 def app(test_session_factory):
+    from app.core.auth import current_user
     from app.core.config import Settings, get_settings
     from app.core.dependencies import require_session
+    from app.core.security import decode_access_token
     from app.main import app as fastapi_app
 
     test_settings = Settings(
@@ -93,8 +95,40 @@ def app(test_session_factory):
         async with test_session_factory() as session:
             yield session
 
+    from typing import Annotated
+
+    from fastapi import Depends
+    from fastapi.security import OAuth2PasswordBearer
+
+    _oauth2 = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+
+    async def _current_user_no_rls(
+        token: Annotated[str, Depends(_oauth2)],
+    ):
+        from fastapi import HTTPException
+
+        from app.domain.auth.repository import AuthenticatedUser
+
+        try:
+            claims = decode_access_token(token, test_settings.jwt_secret)
+        except Exception as exc:
+            raise HTTPException(status_code=401, detail={"code": "invalid_token"}) from exc
+        return AuthenticatedUser(
+            id=int(claims["sub"]),
+            name=f"User {claims['sub']}",
+            email=f"user{claims['sub']}@test.com",
+            phone=None,
+            password_hash="",
+            company_id=int(claims["company_id"]),
+            company_name="Test Hotel",
+            role_id=int(claims.get("role_id", 1)),
+            role_name="admin",
+            permissions=claims.get("permissions", ["*"]),
+        )
+
     fastapi_app.dependency_overrides[get_settings] = lambda: test_settings
     fastapi_app.dependency_overrides[require_session] = _test_session
+    fastapi_app.dependency_overrides[current_user] = _current_user_no_rls
 
     yield fastapi_app
 
@@ -116,7 +150,7 @@ def make_token(
         subject=user_id,
         company_id=company_id,
         role_id=1,
-        permissions=permissions or [],
+        permissions=permissions if permissions is not None else ["*"],
         secret=JWT_SECRET,
         minutes=60,
     )
