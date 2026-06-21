@@ -1,6 +1,6 @@
 # Documentação do Registro
 
-Esta pasta é a fonte de verdade técnica, funcional e operacional do Registro. A nova plataforma usa FastAPI, dois frontends Next.js e MySQL, nasce multitenant e preserva uma rota controlada para importar o legado e, depois, migrar para PostgreSQL.
+Esta pasta é a fonte de verdade técnica, funcional e operacional do Registro. A nova plataforma usa FastAPI, dois frontends Next.js e PostgreSQL 17 com RLS, nasce multitenant e preserva uma rota controlada para importar o dump V1 do MySQL legado.
 
 ## Comece aqui
 
@@ -19,8 +19,9 @@ Esta pasta é a fonte de verdade técnica, funcional e operacional do Registro. 
 
 - [Inventário da V1 Laravel](legado/inventario-v1.md)
 - [Estratégia FastAPI + Next.js](infra/migracao-fastapi-nextjs.md)
-- [Plano MySQL → PostgreSQL](infra/migracao-banco.md)
-- [Importação futura do dump Laravel](infra/importacao-legado.md)
+- [Plano original MySQL → PostgreSQL](infra/migracao-banco.md)
+- [Guia de migração PostgreSQL (atual)](migracao-postgresql.md)
+- [Importação do dump Laravel](infra/importacao-legado.md)
 - A V1 completa permanece somente no disco local em `docs/v1/` e é ignorada pelo Git.
 
 ## Operação
@@ -29,9 +30,10 @@ Esta pasta é a fonte de verdade técnica, funcional e operacional do Registro. 
 - [Runbook de produção](infra/runbook-producao.md)
 - [Testes e critérios de aceite](infra/testes-integracao.md)
 
-## Padrões e memória
+## Padrões, decisões e memória
 
 - [Padrão de documentação](padroes/documentacao-projeto.md)
+- [ADRs — Architecture Decision Records](adr/README.md)
 - [Agentes Jarvis aplicáveis](agentes/README.md)
 - [Decisões técnicas](memoria-projeto.md)
 - [Registro cronológico](registro-trabalho.md)

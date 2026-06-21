@@ -1,5 +1,88 @@
 # Registro de trabalho
 
+## 2026-06-21 — Painel admin no padrão Jarvis/Aloji
+
+### Reescrita completa do painel admin
+
+O painel admin (`admin/`) foi reescrito do zero no padrão Jarvis/Aloji:
+
+- **Design system**: Tailwind CSS 4 + Lucide icons + Sonner (toasts). Design tokens OKLch (paleta navy `#1D3461`). `cn()` helper com clsx + tailwind-merge.
+- **Layout**: sidebar colapsável com gradiente navy, navegação com ícones (Dashboard, Empresas, Planos, Auditoria, Configurações), menu do usuário com avatar. Header com label "Plataforma · Super Admin".
+- **Route groups**: `(auth)` para login isolado, `(app)` para páginas autenticadas com sidebar.
+- **Dashboard**: 4 stat cards (empresas, trial, inadimplentes, MRR) com dados reais da API `/platform/metrics`.
+- **Empresas**: tabela com busca, badges de status (trial/ativo/inadimplente/suspenso/cancelado), menu de ações por assinatura (suspender/reativar/cancelar), modal de criação de tenant, delete com confirmação.
+- **Planos**: cards com preço formatado em BRL, limites e status ativo/inativo.
+- **Auditoria**: tabela de logs administrativos da plataforma.
+- **Configurações**: placeholder para futuro.
+- **API proxy**: route handler `/api/proxy/[...path]` para mutations client-side (POST/PATCH/DELETE proxeados para `/platform/*`).
+- **Auth**: Server Actions + httpOnly cookies (mesmo padrão Aloji).
+- **Deps adicionadas**: tailwindcss, @tailwindcss/postcss, lucide-react, clsx, tailwind-merge, sonner.
+- **Arquivos antigos removidos**: `app/actions.ts`, `app/login/page.tsx`, `app/dashboard/page.tsx` (substituídos por route groups).
+
+### Acesso
+
+- URL: `http://localhost:3001`
+- Login: `admin@registro.local` / `RegistroAdmin@123`
+
+## 2026-06-21 — Correção das telas: dados reais em todas as 11 telas
+
+### Diagnóstico
+
+Todas as 11 telas operacionais exibiam dados mock em vez de dados reais. Duas causas:
+
+1. **Dados no company errado**: o seed user `icaro@registro.local` pertencia a company_id=1 (Empresa Demonstração) que não tem dados. Todos os dados importados do V1 pertencem a company_id=4 (Aero Hotel).
+2. **Tabelas dedicadas vazias**: as data migrations (0021, 0023) que moviam reuniões e turnos de `module_records` para `meetings`/`shift_reports` rodaram ANTES do import V1, numa base vazia. Os 72 reuniões e 1165 turnos ficaram presos em `module_records`.
+3. **Permissões incompatíveis**: o role `legacy-admin` tinha apenas permissões V1 (`legacy.meetingcontroller.index`), mas a API nova exige `meeting.view`, `occurrence.view`, etc.
+
+### Correção — migration 0030
+
+- Moveu 72 reuniões de `module_records` → `meetings` (com `scheduled_at` e `location` extraídos do payload JSON).
+- Moveu 1165 relatórios de turno de `module_records` → `shift_reports` (com `shift_date` e `shift_type` extraídos do payload).
+- Soft-deleted os registros migrados em `module_records`.
+- Manteve inspeções (4497) e manutenção (104) em `module_records` — frontend usa `/modules/inspecoes` e `/modules/manutencao` (endpoints genéricos).
+- Criou demo user `demo@aerohotel.local` / `Registro@123` para Aero Hotel.
+- Adicionou permissão wildcard `*` ao role `legacy-admin`.
+- Remapeou `audit_events`, `attachments` e `notifications` referenciando os IDs antigos para os novos.
+
+### Validação via API (todos os endpoints com token Aero Hotel)
+
+| Endpoint | Registros |
+|---|---|
+| `/dashboard/metrics` | 289 abertas, 23 ativos, 17 setores |
+| `/meetings` | 72 |
+| `/shift-reports` | 1165 |
+| `/modules/inspecoes` | 4497 |
+| `/modules/manutencao` | 104 |
+| `/occurrences` | 317 |
+| `/registries` | 99 |
+| `/users` | 23 |
+| `/procedures` | 6 |
+| `/modules/diarios-obra` | 0 (sem dados V1) |
+| `/modules/mural` | 0 (sem dados V1) |
+| `/fiscal-requests` | 0 (sem dados V1) |
+
+### Nota sobre o tenant Aero Hotel
+
+O Aero Hotel é um **cliente real**, não apenas dados de teste. O dump `aero-2026-06-19.sql` contém dados operacionais reais. O demo user é temporário para desenvolvimento; no corte final, os usuários do V1 farão login com suas senhas bcrypt preservadas do Laravel.
+
+## 2026-06-21 — P5/P6: documentação, governança e readiness de corte
+
+### P6 — Documentação e governança
+
+- Atualizado `mapa.md`: PostgreSQL 17 como banco ativo (era "planejado"), fonte de dados FastAPI corrigida de MySQL para PostgreSQL, todos os domínios P1/P4 refletidos, bloqueios atuais revisados.
+- Atualizado `desenvolvimento.md`: porta 5433 (era 3307), referências MySQL substituídas por PostgreSQL, seção de importação V1 adicionada.
+- Atualizado `runbook-producao.md`: banco PostgreSQL (era MySQL), comando `pg_dump` adicionado.
+- Atualizado `importacao-legado.md`: tabela de estado expandida com todos os domínios importados (reuniões, turnos, check suites, auditorias, notificações), banco destino PostgreSQL, pendências de corte final documentadas.
+- Atualizado `arquitetura.md`: removida frase "MySQL só será substituído depois que todos os domínios estiverem equivalentes" — MySQL já foi substituído.
+- Atualizado `memoria-projeto.md`: restrições atualizadas para refletir PostgreSQL como banco principal, seção multiempresa atualizada com RLS ativo.
+- Criado `docs/adr/` com ADR-001 (migração MySQL→PostgreSQL) e ADR-002 (RLS como isolamento multi-tenant).
+
+### P5 — Readiness de corte
+
+- Auditado `import_v1.py`: script funcional e idempotente, cobre todos os domínios (59 users, 17 sectors, 69 locations, 13 functions, 6 procedures, 375 occurrences, 72 meetings, 1165 shift reports, 4497 check suites, 104 audit reports, 3336 notifications).
+- **Issue identificada**: `import_v1.py` escreve reuniões, relatórios de turno, check suites e audit reports em `module_records` (tabela genérica). As data migrations (0021, 0023, 0028) que moviam esses dados para tabelas dedicadas já rodaram no Alembic e não serão re-executadas num banco PostgreSQL limpo. O script precisa ser atualizado para escrever diretamente nas tabelas dedicadas antes do corte final.
+- Pendente: puxar dump MySQL atualizado do servidor V1 em produção.
+
 ## 2026-06-20 (sessão 4)
 
 ### P3B — Preferências de notificação, destinatários por módulo e registro de entrega

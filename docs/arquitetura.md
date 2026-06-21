@@ -68,4 +68,4 @@ Server Components são o padrão. Client Components ficam restritos à interaç�
 4. Cortar o menu/rota para a nova versão.
 5. Monitorar e manter rollback documentado.
 
-Não existe dual-write. O dump futuro entra primeiro em uma base temporária e passa por mapeamento e validação. O MySQL só será substituído depois que todos os domínios críticos estiverem equivalentes.
+Não existe dual-write. O MySQL foi substituído por PostgreSQL 17 com RLS. Para importação do dump V1, o MySQL sobe temporariamente via profile `mysql-import` no Docker Compose.

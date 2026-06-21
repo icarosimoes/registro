@@ -8,7 +8,7 @@
 | stack | `registro` |
 | serviços | `registro_api`, `registro_web`, `registro_admin` |
 | imagens | `ghcr.io/icarosimoes/registro/api`, `/web` e `/admin` |
-| banco | MySQL externo |
+| banco | PostgreSQL 17 (asyncpg + RLS) |
 | proxy | Traefik na rede `traefik-public` |
 
 ## Pré-deploy
@@ -57,4 +57,9 @@ Alembic não roda automaticamente nas réplicas do Swarm. Cada migration de prod
 
 ## Backup mínimo antes de mudança crítica
 
-O comando exato depende de onde o MySQL é operado. O procedimento deve produzir artefato datado, tamanho, SHA-256, teste de integridade e teste de restore para mudanças de alto risco. Registrar tudo em `registro-trabalho.md`.
+```bash
+pg_dump -h $PG_HOST -U registro -Fc -f registro_$(date +%Y%m%d_%H%M%S).dump registro
+sha256sum registro_*.dump
+```
+
+O procedimento deve produzir artefato datado, tamanho, SHA-256, teste de integridade e teste de restore para mudanças de alto risco. Registrar tudo em `registro-trabalho.md`.

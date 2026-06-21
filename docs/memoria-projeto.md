@@ -12,13 +12,12 @@ Motivos:
 - permitir que SQLAlchemy acesse o MySQL atual e, posteriormente, PostgreSQL;
 - reduzir o risco de uma substituição integral em uma única entrega.
 
-### Restrições
+### Restrições (atualizadas em 21/06/2026)
 
-- O Laravel permanece funcionando e não será removido nesta fase.
-- O MySQL atual permanece como fonte de verdade.
+- O Laravel V1 permanece em operação até o corte final; não foi removido.
+- O PostgreSQL 17 com RLS é o banco principal desde 20/06/2026. MySQL é usado apenas para leitura do dump V1 via profile `mysql-import`.
 - Um módulo terá somente um escritor por vez.
-- Não haverá dual-write entre MySQL e PostgreSQL.
-- A migração de banco acontecerá depois da equivalência funcional da aplicação.
+- Não haverá dual-write.
 
 ### Padrões Jarvis adotados
 
@@ -33,7 +32,7 @@ Motivos:
 
 ### Multiempresa
 
-O schema legado já possui `company_id`, mas ainda não foi comprovado que todas as tabelas e queries estejam isoladas corretamente. O filtro por empresa será preservado na fase MySQL. RLS em três camadas será ativado apenas no PostgreSQL, depois de inventário e saneamento dos dados.
+RLS (Row-Level Security) ativo em 24 tabelas com `company_id`. O GUC `app.current_company_id` é setado na dependency `current_user` e resetado no `finally` da session. Tabelas filhas herdam isolamento via FK CASCADE. Rotas platform (admin) não setam o GUC — o owner tem `BYPASSRLS`.
 
 ## 2026-06-19 — Nome e arquivamento da V1
 

@@ -92,7 +92,11 @@
 - [x] Migrar infra de MySQL para PostgreSQL — Docker Compose com postgres:17-alpine, asyncpg como driver, MySQL mantido com profile `mysql-import` para dump V1.
 - [x] Corrigir código MySQL-specific — `LAST_INSERT_ID()` → `RETURNING id`, `NOW()` → `CURRENT_TIMESTAMP`, boolean defaults `"1"`/`"0"` → `"true"`/`"false"`, backticks → double quotes.
 - [x] Implementar RLS (Row-Level Security) — policies `tenant_isolation` em 24 tabelas com `company_id`, GUC `app.current_company_id` setado via `SET LOCAL` na dependency `current_user`.
-- [ ] Executar corte final — puxar dump MySQL atualizado do V1, importar via pgloader, rodar migrations, validar dados.
+- [x] Re-migrar dados de `module_records` para tabelas dedicadas — migration `0030` move reuniões (72) → `meetings` e relatórios de turno (1165) → `shift_reports`; inspeções (4497) e manutenção (104) permanecem em `module_records` (frontend usa `/modules/{slug}`).
+- [x] Criar demo user para Aero Hotel — `demo@aerohotel.local` / `Registro@123` com role `legacy-admin` + permissão wildcard `*`.
+- [x] Corrigir permissões do role `legacy-admin` — adicionada permissão `*` para que os endpoints do Registro funcionem (V1 usava códigos `legacy.controller.action`, API nova usa `module.action`).
+- [ ] Atualizar `import_v1.py` para escrever diretamente nas tabelas dedicadas em futuras importações — atualmente a migration `0030` corrige o gap, mas o script deveria gravar direto.
+- [ ] Executar corte final — puxar dump MySQL atualizado do V1, importar via `import_v1.py`, rodar migrations (incluindo 0030), validar dados.
 
 ## P6 — documentação e governança
 
@@ -101,8 +105,8 @@
 - [x] Corrigir referências atuais que instruíam login por slug; o histórico cronológico preserva menções ao contrato antigo.
 - [x] Documentar o módulo de solicitações fiscais em `web-rotas-ui.md`, `domain-model.md` e `api-reference.md` conforme o backend for implementado.
 - [x] Documentar o módulo de ocorrências (CRUD, soft delete, `legacy_id` nullable) em `api-reference.md` e `domain-model.md`.
-- [ ] Atualizar `mapa.md`, contratos, runbooks, memória, backlog e registro de trabalho continuamente, junto da mudança correspondente.
-- [ ] Criar ADR quando uma decisão alterar stack, isolamento, persistência, segurança, deploy, cobrança ou estratégia de migração.
+- [x] Atualizar `mapa.md`, contratos, runbooks, memória, backlog e registro de trabalho — atualização de 21/06/2026 corrigiu PostgreSQL como banco ativo, domínios P1/P4 implementados, bloqueios atuais revisados.
+- [x] Criar ADR quando uma decisão alterar stack, isolamento, persistência, segurança, deploy, cobrança ou estratégia de migração — ADR-001 (MySQL→PostgreSQL) e ADR-002 (RLS multi-tenant) criados em `docs/adr/`.
 - [ ] Manter documentação de estado atual separada de funcionalidades apenas planejadas.
 
 ## Correções de repositório
@@ -110,41 +114,25 @@
 - [x] Restaurar `.idea/` e `.vscode/` no `.gitignore`.
 - [ ] Manter `docs/v1/`, dumps SQL, credenciais, secrets e arquivos locais fora do Git e das imagens Docker.
 
-## Sugestões de próximos passos (prioridade)
+## Próximos passos pendentes (prioridade)
 
-### 🔴 Alta — bloqueiam uso real
+### Alta — bloqueiam corte
 
-1. ~~**Armazenamento de anexos**~~ — concluído: MinIO (S3-compatible) com tabela `attachments`, endpoints multipart upload/download/delete, frontend integrado em solicitações fiscais. Validação de tamanho (10MB), quantidade (20/registro), extensão e content-type.
+1. **Atualizar `import_v1.py`** — reescrever para gravar diretamente nas tabelas dedicadas em futuras importações. A migration `0030` resolve o gap para dados já importados, mas o script deveria gravar direto sem depender da migration.
+2. **Dump V1 atualizado** — puxar dump MySQL fresco do servidor V1 em produção. O dump local (`aero-2026-06-19.sql`) é snapshot de desenvolvimento.
+3. **Inventário de anexos físicos** — mapear arquivos/volumes fora do banco na V1 (uploads, PDFs, imagens) para migração ao MinIO.
+4. **Testes de cobertura** — expandir para anexos e auditoria (52 testes cobrem SLA, CRUD e cross-tenant, mas anexos e audit_events não têm cobertura).
 
-2. ~~**SLA com timezone e calendário útil**~~ — concluído: `app/core/sla.py` com dias úteis (seg-sex 8h-18h), timezone por tenant (`companies.timezone`), feriados configuráveis, pausa/resume via status "Em espera" e acúmulo de segundos pausados.
-
-3. ~~**Testes de cobertura**~~ — concluído: 52 testes (era 12). Cobertura de SLA (22 testes), CRUD fiscal_requests via API (8 testes), isolamento cross-tenant com DB (4 testes). Pendente: anexos e auditoria.
-
-### 🟡 Média — valor operacional
-
-4. ~~**Componentes reutilizáveis**~~ — concluído: ACL integrado ao OperationalModule com botões condicionais.
+### Média — valor operacional
 
 5. **Integração Evolution (WhatsApp)** — credenciais são salvas via `/settings/evolution`, mas nenhum código envia mensagens. Implementar envio real ou remover a configuração.
+6. **Separar estado atual de planejado na documentação** — item P6 aberto: garantir que docs não misturam features implementadas com funcionalidades futuras.
+7. **Promover módulos genéricos remanescentes** — manutenção e mural ainda usam `module_records`. Promover quando precisarem de campos específicos.
 
-6. ~~**Promover módulos genéricos**~~ — concluído: reuniões e relatórios de turno promovidos para tabelas dedicadas com migrations de dados.
+### Baixa — preparação futura
 
-7. ~~**Preferências de notificação**~~ — concluído: preferências por usuário/módulo (in-app e email), destinatários por módulo via company_settings e tracking de entrega (email_sent_at).
-
-### 🟢 Baixa — preparação futura
-
-8. ~~**Comercial e cobrança**~~ (P1) — concluído: CRUD auditado de tenants/planos/assinaturas, lifecycle trial→suspended, AsaasClient sandbox, webhook idempotente, reconciliação.
-
-9. ~~**Corte do Laravel**~~ (P5) — concluído parcialmente: PostgreSQL 17 ativo com RLS em 24 tabelas, código MySQL-specific eliminado. Pendente: corte final com dump V1 atualizado.
-
-### Já concluídos (removidos das sugestões)
-
-- ~~Persistir tratativas na API~~ — endpoints `GET/POST /timeline/{entity_type}/{entity_id}`
-- ~~Notificações Chess Hotel~~ — `create_notification()` + `notify_record_event`
-- ~~Testes cross-tenant~~ — suite `test_cross_tenant.py`
-- ~~Extrair `current_user`~~ — movido para `app/core/auth.py`
-- ~~Service layer~~ — `service.py` por domínio
-- ~~Rate limiting~~ — slowapi nos endpoints sensíveis
-- ~~Refresh token~~ — JWT refresh + auto-refresh no frontend
+8. **Corte do Laravel** — procedimento documentado em `docs/migracao-postgresql.md`. Depende dos itens 1-3 acima.
+9. **Remover profile `mysql-import`** — após corte final em produção, eliminar MySQL do Docker Compose e dependência `asyncmy`.
 
 ## Definition of Done por módulo
 

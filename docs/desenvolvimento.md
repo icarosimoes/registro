@@ -3,7 +3,7 @@
 ## Pré-requisitos
 
 - Docker Engine com Compose v2.
-- Portas 3000, 3001, 8000, 3307, 9000 e 9001 livres.
+- Portas 3000, 3001, 8000, 5433, 9000 e 9001 livres.
 
 ## Configuração
 
@@ -13,14 +13,14 @@ Copie o exemplo versionado:
 cp .env.example .env
 ```
 
-O Compose cria `registro_dev`, executa a migration Alembic e aplica seed fictício na primeira subida.
+O Compose cria o banco PostgreSQL, executa a migration Alembic e aplica seed fictício na primeira subida.
 
 ## Comandos
 
 ```bash
 docker compose up --build -d
 docker compose ps
-docker compose logs -f mysql minio api web admin
+docker compose logs -f postgres minio api web admin
 docker compose down
 ```
 
@@ -36,11 +36,20 @@ docker compose exec -T admin npm run typecheck
 docker compose exec -T admin npm run build
 ```
 
-Para recriar somente os dados fictícios, derrube o ambiente removendo o volume local e suba novamente. Isso apaga o MySQL de desenvolvimento e nunca deve ser usado contra um ambiente com dados úteis.
+Para recriar somente os dados fictícios, derrube o ambiente removendo o volume do PostgreSQL e suba novamente. Nunca usar contra um ambiente com dados úteis.
+
+## Importação do dump V1
+
+Para importar dados do Laravel V1, use o MySQL temporário via profile:
+
+```bash
+docker compose --profile mysql-import up -d mysql
+# Seguir procedimento em docs/migracao-postgresql.md
+docker compose --profile mysql-import stop mysql
+```
 
 ## Regras
 
 - Nunca copiar `.env` da V1 para o repositório.
-- Não executar migrations no MySQL legado sem inventário, backup e plano de rollback.
 - Não editar `docs/v1/`; ela é referência local.
 - Toda feature inclui testes proporcionais, documentação e validação Docker.

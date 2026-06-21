@@ -18,7 +18,7 @@ export async function loginAction(formData: FormData) {
     httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production",
     path: "/", maxAge: data.expires_in,
   });
-  redirect("/dashboard");
+  redirect("/");
 }
 
 export async function logoutAction() {
