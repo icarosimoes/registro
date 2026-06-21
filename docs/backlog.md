@@ -112,13 +112,14 @@
 ## Correções de repositório
 
 - [x] Restaurar `.idea/` e `.vscode/` no `.gitignore`.
-- [ ] Manter `docs/v1/`, dumps SQL, credenciais, secrets e arquivos locais fora do Git e das imagens Docker.
+- [x] Manter `docs/v1/`, dumps SQL, credenciais, secrets e arquivos locais fora do Git — `.gitignore` cobre `docs/v1/`, `*.sql`, `*.sql.gz`, `.env*`, `secrets/`, `backups/`.
+- [ ] Reforçar `.dockerignore` de api, web e admin — adicionar `docs/`, `*.sql`, `*.dump`, `secrets/`, `.mypy_cache`, `.coverage`, `tests/` para não entrarem nas imagens Docker.
 
 ## Próximos passos pendentes (prioridade)
 
 ### Alta — bloqueiam corte
 
-1. **Atualizar `import_v1.py`** — reescrever para gravar diretamente nas tabelas dedicadas em futuras importações. A migration `0030` resolve o gap para dados já importados, mas o script deveria gravar direto sem depender da migration.
+1. ~~**Atualizar `import_v1.py`**~~ — ✅ reescrito para gravar diretamente em `meetings`, `meeting_participants`, `meeting_subjects` e `shift_reports`.
 2. **Dump V1 atualizado** — puxar dump MySQL fresco do servidor V1 em produção. O dump local (`aero-2026-06-19.sql`) é snapshot de desenvolvimento.
 3. **Inventário de anexos físicos** — mapear arquivos/volumes fora do banco na V1 (uploads, PDFs, imagens) para migração ao MinIO.
 4. ~~**Testes de cobertura**~~ — ✅ expandido: 70 testes cobrindo SLA, CRUD, cross-tenant, anexos (9 testes) e auditoria (9 testes).
@@ -128,11 +129,14 @@
 5. ~~**Integração Evolution (WhatsApp)**~~ — ✅ implementado: `app/integrations/evolution.py` com `send_text`, `send_media`, `check_connection`; endpoints `GET /settings/evolution/status` e `POST /settings/evolution/test`; envio automático via `notify_record_event` para usuários com telefone cadastrado.
 6. ~~**Separar estado atual de planejado na documentação**~~ — ✅ `docs/mapa.md` reestruturado com seções explícitas.
 7. ~~**Promover módulos genéricos remanescentes**~~ — ✅ manutenção promovida para `maintenance_records` (com priority, location_id) e mural promovido para `bulletin_posts` (com pinned, expires_at, author). Migration de dados inclusa. Endpoints dedicados `/maintenance` e `/bulletin`.
+8. **Ata PDF de reuniões** — endpoint `GET /meetings/{id}/pdf` com participants e pautas (reportlab). Ocorrências já possuem PDF funcional como referência.
+9. **Higiene dos .dockerignore** — adicionar `docs/`, `*.sql`, `*.dump`, `secrets/`, `.mypy_cache`, `.coverage` e `tests/` aos .dockerignore de api, web e admin para não entrar nas imagens Docker.
+10. **Testes dos novos módulos** — OS, preventivas, checklists, estoque, handoffs, maintenance e bulletin não possuem testes dedicados. Cobertura atual: 70 testes (auth, SLA, fiscal, cross-tenant, anexos, auditoria).
 
 ### Baixa — preparação futura
 
-8. **Corte do Laravel** — procedimento documentado em `docs/migracao-postgresql.md`. Depende dos itens 1-3 acima.
-9. **Remover profile `mysql-import`** — após corte final em produção, eliminar MySQL do Docker Compose e dependência `asyncmy`.
+11. **Corte do Laravel** — procedimento documentado em `docs/migracao-postgresql.md`. Depende dos itens 2-3 acima.
+12. **Remover profile `mysql-import`** — após corte final em produção, eliminar MySQL do Docker Compose e dependência `asyncmy`.
 
 ## P6 — evolução operacional
 
