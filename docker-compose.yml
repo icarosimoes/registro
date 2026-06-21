@@ -1,6 +1,22 @@
 name: registro
 
 services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-registro}
+      POSTGRES_USER: ${POSTGRES_USER:-registro}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-registro}
+    ports:
+      - "5433:5432"
+    volumes:
+      - registro-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U registro"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
   mysql:
     image: mysql:8.4.8
     environment:
@@ -18,6 +34,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+    profiles:
+      - mysql-import
 
   minio:
     image: minio/minio:latest
@@ -47,7 +65,7 @@ services:
       CHESS_HOTEL_INTEGRATION_KEY: ${CHESS_HOTEL_INTEGRATION_KEY:-chess-hotel-development}
       CHESS_HOTEL_COMPANY_SLUG: ${CHESS_HOTEL_COMPANY_SLUG:-aero-hotel}
       REGISTRO_WEB_URL: ${REGISTRO_WEB_URL:-http://localhost:3000}
-      DATABASE_URL: ${DATABASE_URL:-mysql+asyncmy://registro:registro@mysql:3306/registro?charset=utf8mb4}
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://registro:registro@postgres:5432/registro}
       JWT_SECRET: ${JWT_SECRET:-registro-development-only-change-me}
       SEED_DEFAULT_PASSWORD: ${SEED_DEFAULT_PASSWORD:-Registro@123}
       PLATFORM_ADMIN_PASSWORD: ${PLATFORM_ADMIN_PASSWORD:-RegistroAdmin@123}
@@ -66,7 +84,7 @@ services:
       - ./api/alembic:/app/alembic
     command: ["sh", "-c", "alembic upgrade head && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
       minio:
         condition: service_healthy
@@ -108,5 +126,6 @@ services:
         condition: service_healthy
 
 volumes:
+  registro-postgres-data:
   registro-mysql-data:
   registro-minio-data:

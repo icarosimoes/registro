@@ -10,14 +10,14 @@ Navegador
    ├── Produto Next.js :3000 ────────► FastAPI :8000
    ├── Admin Next.js :3001 ──────────► API /platform
    │                                      │
-   │                                      └── SQLAlchemy/asyncmy
+   │                                      └── SQLAlchemy/asyncpg
    │                                              │
    └── Laravel V1 (referência/importação) ────────┤
                                                   ▼
-                                            MySQL legado
+                                         PostgreSQL 17 (RLS)
 ```
 
-Em produção, Next.js e FastAPI possuem duas réplicas no Swarm, passam pelo Traefik e recebem secrets por Docker Secrets. O MySQL permanece externo à stack.
+Em produção, Next.js e FastAPI possuem duas réplicas no Swarm, passam pelo Traefik e recebem secrets por Docker Secrets. O PostgreSQL substitui o MySQL como banco principal; MySQL permanece disponível apenas para importação do dump V1.
 
 ## Componentes
 
@@ -27,8 +27,8 @@ Em produção, Next.js e FastAPI possuem duas réplicas no Swarm, passam pelo Tr
 | `admin/` | Next.js 16, React 19, TypeScript | Operação da plataforma | login + dashboard |
 | `api/` | FastAPI, SQLAlchemy async, Pydantic | contratos tenant e plataforma | fundação SaaS |
 | `docs/v1/` | Laravel 7/PHP | sistema operacional anterior | local, somente referência |
-| MySQL | 8.4 local / externo em produção | base nova e futura importação | operacional com seed |
-| PostgreSQL | futuro | destino após equivalência | não iniciado |
+| PostgreSQL | 17-alpine (asyncpg + RLS) | banco principal com isolamento por tenant | ativo |
+| MySQL | 8.4 (profile mysql-import) | importação do dump V1 Laravel | disponível sob demanda |
 
 ## Organização da API
 

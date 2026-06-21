@@ -30,7 +30,7 @@ Company
   ├── AuditEvent (imutável por empresa)
   ├── Notification (in-app por usuário, com tracking de e-mail)
   ├── NotificationPreference (preferências in-app/email por usuário e módulo)
-  ├── FiscalRequest (persistente) ──► attachments / recipients (planejado)
+  ├── FiscalRequest (persistente) ──► attachments
   ├── OccurrenceParticipant (junction occurrence ↔ user)
   ├── Meeting ──► MeetingParticipant (com papel) + MeetingSubject (pautas)
   ├── ShiftReport (turno com data, tipo e horários)
@@ -48,14 +48,15 @@ Company
 | Ocorrências | `occurrences`, comentários e participantes | CRUD com soft delete, `created_by_user_id`/`updated_by_user_id`, histórico, responsáveis, anexos e exportação |
 | Reuniões | `meetings`, assuntos, pautas e participantes | início da reunião, ata, anexos e PDF |
 | Turnos | `shift_reports` e tabelas filhas | aprovação/teste, anexos e Excel |
-| Inspeções | suites, vistorias, auditorias e itens | versões V1/V2, evidências e exportações |
-| Diário de obra | `work_diaries` e tabelas filhas | equipes, atividades, equipamentos e anexos |
+| Inspeções | `check_suites`, `check_suite_items`, `inspection_suites`, `inspection_suite_items`, `apartment_inspections`, `apartment_inspection_items`, `audit_reports`, `audit_report_items` | CRUD com items inline, soft delete, auditoria, tenant isolation. Vistorias suportam tipos checkin/checkout/periodic e vínculo com inspection_suite. Dados migrados de `module_records` |
+| Diário de obra | `work_diaries`, `work_diary_activities`, `work_diary_teams`, `work_diary_equipment`, `work_diary_observations` | CRUD completo com 4 tabelas filhas gerenciadas inline (delete+re-insert). Soft delete, auditoria, tenant isolation |
+| Comercial e cobrança | `plans`, `subscriptions`, `invoices`, `webhook_events` | CRUD auditado via `PlatformAuditLog`. Trial 14d → past_due → suspended (bloqueia login). Asaas sandbox integration, webhook idempotente com dedup, reconciliação periódica |
 | Solicitações fiscais | `fiscal_requests` | tenant, tipo, título, descrição, protocolo único, origin, status, `requester_user_id`, `responsible_user_id`, `sla_deadline`, `sla_paused_at`, `sla_paused_seconds`, `chess_user_id`, `reservation_number` e `payload` JSON |
 | Módulos genéricos | `module_records` | tenant, `module` (slug), `title`, `description`, `category`, `status`, `owner_user_id`, `legacy_id`, `payload` JSON e soft delete. Compartilhado por inspeções, diário de obra, manutenção e mural. Reuniões e relatórios de turno foram promovidos para tabelas dedicadas |
 | Reuniões | `meetings`, `meeting_participants`, `meeting_subjects` | tabela dedicada com scheduled_at, location, participantes com papel (organizer/attendee/optional), pautas com resolved. Migrados de `module_records` |
 | Relatórios de turno | `shift_reports` | tabela dedicada com shift_date, shift_type (morning/afternoon/night), status, started_at, ended_at. Migrados de `module_records` |
 | Participantes de ocorrências | `occurrence_participants` | junction table (occurrence_id, user_id) para participantes de ocorrências |
-| Notificações | `notifications` | por tenant e usuário, `title`, `body`, `category`, `entity_type`/`entity_id` (link opcional ao registro), `read_at` para estado de leitura |
+| Notificações | `notifications`, `notification_preferences` | por tenant e usuário, `title`, `body`, `category`, `entity_type`/`entity_id` (link opcional ao registro), `read_at` para leitura, `email_sent_at` para tracking de entrega. Preferências por módulo (in_app/email) em `notification_preferences`. Destinatários por módulo em `company_settings` (chave `notification_recipients`) |
 | Anexos | `attachments` | por tenant, `entity_type`/`entity_id` polimórfico, `filename`, `content_type`, `size_bytes`, `storage_key` (MinIO/S3), `uploaded_by_user_id` |
 | Auditoria | `audit_events` | imutável por tenant (sem `updated_at`/`deleted_at`), `user_id`, `entity_type`, `entity_id`, `event_type` (`create`, `update`, `delete`, `comment`, `attachment_add`, `attachment_remove`), `diff` JSON com antes/depois por campo |
 
@@ -63,7 +64,7 @@ Company
 
 - IDs legados são preservados enquanto o MySQL for a fonte de verdade.
 - Como IDs novos podem colidir com dados fictícios, a identidade V1 é preservada por `company_id` + `legacy_id`. O campo `legacy_id` é nullable — registros criados pelo Registro ficam com valor null; registros importados da V1 mantêm o ID original.
-- `company_id` deve participar de toda consulta de negócio.
+- `company_id` deve participar de toda consulta de negócio. Além do filtro ORM (application-level), o PostgreSQL aplica RLS (Row-Level Security) com policies `tenant_isolation` em todas as tabelas com `company_id`. O GUC `app.current_company_id` é setado via `SET LOCAL` na dependency `current_user` — rotas platform (sem GUC) operam como superuser com `BYPASSRLS`.
 - `deleted_at` significa exclusão lógica; registros apagados não autenticam nem aparecem por padrão.
 - Anexos exigem inventário de caminho físico, metadados e política de acesso antes do corte.
 - Dinheiro, se surgir em módulos futuros, usa centavos inteiros ou `Decimal`, nunca `float`.

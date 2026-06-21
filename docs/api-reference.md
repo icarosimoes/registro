@@ -84,7 +84,46 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `POST` | `/platform/auth/login` | pública | JWT administrativo isolado |
 | `GET` | `/platform/metrics` | Platform Bearer | métricas SaaS agregadas |
 | `GET` | `/platform/tenants` | Platform Bearer | empresas e assinatura |
+| `POST` | `/platform/tenants` | Platform Bearer | cria tenant + subscription trial |
+| `GET` | `/platform/tenants/{id}` | Platform Bearer | detalhe do tenant com subscription |
+| `PATCH` | `/platform/tenants/{id}` | Platform Bearer | atualiza tenant |
+| `DELETE` | `/platform/tenants/{id}` | Platform Bearer | soft delete do tenant |
 | `GET` | `/platform/plans` | Platform Bearer | catálogo de planos |
+| `POST` | `/platform/plans` | Platform Bearer | cria plano |
+| `PATCH` | `/platform/plans/{id}` | Platform Bearer | atualiza plano |
+| `DELETE` | `/platform/plans/{id}` | Platform Bearer | desativa plano (bloqueia se há assinaturas) |
+| `GET` | `/platform/subscriptions/{id}` | Platform Bearer | detalhe da assinatura com faturas |
+| `PATCH` | `/platform/subscriptions/{id}` | Platform Bearer | atualiza assinatura |
+| `POST` | `/platform/subscriptions/{id}/reactivate` | Platform Bearer | reativa tenant suspenso |
+| `POST` | `/platform/billing/process-expirations` | Platform Bearer | processa trials expirados |
+| `POST` | `/platform/billing/process-suspensions` | Platform Bearer | suspende tenants em atraso |
+| `POST` | `/platform/billing/reconcile` | Platform Bearer | reconcilia status local vs Asaas |
+| `POST` | `/integrations/asaas/webhook` | `asaas-access-token` (60/min) | webhook idempotente do Asaas |
+| `GET` | `/check-suites` | `check_suite.view` | checklists paginados |
+| `GET` | `/check-suites/{id}` | `check_suite.view` | detalhe com itens |
+| `POST` | `/check-suites` | `check_suite.create` | cria checklist com itens inline |
+| `PATCH` | `/check-suites/{id}` | `check_suite.edit` | atualiza checklist |
+| `DELETE` | `/check-suites/{id}` | `check_suite.delete` | soft delete |
+| `GET` | `/inspection-suites` | `inspection_suite.view` | suítes de inspeção paginadas |
+| `GET` | `/inspection-suites/{id}` | `inspection_suite.view` | detalhe com itens |
+| `POST` | `/inspection-suites` | `inspection_suite.create` | cria suíte com itens inline |
+| `PATCH` | `/inspection-suites/{id}` | `inspection_suite.edit` | atualiza suíte |
+| `DELETE` | `/inspection-suites/{id}` | `inspection_suite.delete` | soft delete |
+| `GET` | `/apartment-inspections` | `apartment_inspection.view` | vistorias paginadas |
+| `GET` | `/apartment-inspections/{id}` | `apartment_inspection.view` | detalhe com itens |
+| `POST` | `/apartment-inspections` | `apartment_inspection.create` | cria vistoria com itens |
+| `PATCH` | `/apartment-inspections/{id}` | `apartment_inspection.edit` | atualiza vistoria |
+| `DELETE` | `/apartment-inspections/{id}` | `apartment_inspection.delete` | soft delete |
+| `GET` | `/audit-reports` | `audit_report.view` | auditorias paginadas |
+| `GET` | `/audit-reports/{id}` | `audit_report.view` | detalhe com itens |
+| `POST` | `/audit-reports` | `audit_report.create` | cria auditoria com itens |
+| `PATCH` | `/audit-reports/{id}` | `audit_report.edit` | atualiza auditoria |
+| `DELETE` | `/audit-reports/{id}` | `audit_report.delete` | soft delete |
+| `GET` | `/work-diaries` | `work_diary.view` | diários de obra paginados |
+| `GET` | `/work-diaries/{id}` | `work_diary.view` | detalhe com filhos |
+| `POST` | `/work-diaries` | `work_diary.create` | cria diário com atividades/equipes/equipamentos/observações |
+| `PATCH` | `/work-diaries/{id}` | `work_diary.edit` | atualiza diário |
+| `DELETE` | `/work-diaries/{id}` | `work_diary.delete` | soft delete |
 
 ### Login
 
@@ -421,7 +460,7 @@ Notificações persistentes por usuário com suporte a leitura e contagem de nã
 
 #### `GET /notifications`
 
-Lista notificações do usuário autenticado com paginação. Aceita `page`, `page_size` e `unread_only` (boolean). Responde `{items, total, unread, page, page_size}`. Cada item inclui `id`, `title`, `body`, `category`, `entity_type`, `entity_id`, `read_at` e `created_at`. O campo `unread` sempre indica o total de não lidas (independente do filtro).
+Lista notificações do usuário autenticado com paginação. Aceita `page`, `page_size` e `unread_only` (boolean). Responde `{items, total, unread, page, page_size}`. Cada item inclui `id`, `title`, `body`, `category`, `entity_type`, `entity_id`, `read_at`, `email_sent_at` e `created_at`. O campo `unread` sempre indica o total de não lidas (independente do filtro).
 
 #### `PATCH /notifications/{id}/read`
 
@@ -511,6 +550,11 @@ O sistema de permissões usa uma factory `require_permission(code)` em `app/core
 | settings | `settings.view`, `.edit` |
 | meeting | `meeting.view`, `.create`, `.edit`, `.delete` |
 | shift_report | `shift_report.view`, `.create`, `.edit`, `.delete` |
+| check_suite | `check_suite.view`, `.create`, `.edit`, `.delete` |
+| inspection_suite | `inspection_suite.view`, `.create`, `.edit`, `.delete` |
+| apartment_inspection | `apartment_inspection.view`, `.create`, `.edit`, `.delete` |
+| audit_report | `audit_report.view`, `.create`, `.edit`, `.delete` |
+| work_diary | `work_diary.view`, `.create`, `.edit`, `.delete` |
 | system | `*` (acesso total) |
 
 Sem a permissão necessária, a API retorna `403 Forbidden` com `{"code": "forbidden", "required": "modulo.acao"}`.

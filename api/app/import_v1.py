@@ -38,7 +38,9 @@ def permission_code(controller: str, action: str) -> str:
 
 
 async def source_rows(session: AsyncSession, table: str, columns: str = "*") -> list[dict]:
-    result = await session.execute(text(f"SELECT {columns} FROM `{table}`"))  # noqa: S608
+    dialect = session.bind.dialect.name if session.bind else "postgresql"
+    q = "`" if dialect == "mysql" else '"'
+    result = await session.execute(text(f"SELECT {columns} FROM {q}{table}{q}"))  # noqa: S608
     return [dict(row) for row in result.mappings().all()]
 
 

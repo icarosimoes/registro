@@ -2,7 +2,7 @@
 
 ## O que é
 
-SaaS multitenant de gestão operacional hoteleira. Substitui um sistema legado Laravel/Vue (Chess Hotel) por uma stack moderna: **FastAPI + SQLAlchemy async (MySQL)** no backend, **Next.js 15 (App Router, Server Actions)** no frontend.
+SaaS multitenant de gestão operacional hoteleira. Substitui um sistema legado Laravel/Vue (Chess Hotel) por uma stack moderna: **FastAPI + SQLAlchemy async (PostgreSQL)** no backend, **Next.js 15 (App Router, Server Actions)** no frontend.
 
 ## Stack
 
@@ -11,7 +11,7 @@ SaaS multitenant de gestão operacional hoteleira. Substitui um sistema legado L
 | API | Python 3.12, FastAPI, SQLAlchemy 2 async, Alembic, PyJWT, bcrypt, slowapi |
 | Web | Next.js 15, TypeScript, Tailwind CSS, App Router, Server Actions |
 | Admin | Next.js (painel plataforma SaaS) |
-| DB | MySQL 8.4 (asyncmy) — migração futura para PostgreSQL planejada |
+| DB | PostgreSQL 17 (asyncpg) com RLS — MySQL disponível para import V1 |
 | Infra | Docker Compose (dev), Docker Swarm (prod planejado) |
 
 ## Estrutura do repositório
@@ -51,13 +51,13 @@ docs/          → documentação técnica (fonte de verdade)
 ## Dev local com Docker
 
 ```bash
-docker compose up -d          # sobe MySQL, API, Web, Admin
+docker compose up -d          # sobe PostgreSQL, API, Web, Admin
 docker compose build api      # rebuild após mudar pyproject.toml
 docker restart registro-api-1 # restart rápido (volumes montam o código)
 docker logs registro-api-1 --tail 30  # debug
 ```
 
-- API: `localhost:8000` | Web: `localhost:3000` | Admin: `localhost:3001` | MySQL: `localhost:3307`
+- API: `localhost:8000` | Web: `localhost:3000` | Admin: `localhost:3001` | PostgreSQL: `localhost:5433`
 - A API roda migrations e seed automaticamente no startup do container.
 
 ## Integração Chess Hotel

@@ -3,6 +3,7 @@ from typing import Annotated
 
 import jwt
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi import Query as QueryParam
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,12 +11,23 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.config import Settings, get_settings
 from app.core.dependencies import require_session
 from app.core.security import create_platform_token, decode_platform_token, verify_laravel_password
+from app.domain.platform import service
 from app.domain.platform.schemas import (
+    InvoiceSummary,
+    LifecycleProcessed,
+    LifecycleResponse,
+    PlanCreate,
     PlanResponse,
+    PlanUpdate,
     PlatformLoginRequest,
     PlatformMetricsResponse,
     PlatformTokenResponse,
+    SubscriptionDetail,
+    SubscriptionUpdate,
+    TenantCreate,
+    TenantDetail,
     TenantSummary,
+    TenantUpdate,
 )
 from app.models import Company, Plan, PlatformAuditLog, PlatformUser, Subscription, User
 
@@ -44,6 +56,10 @@ async def current_platform_user(
         raise HTTPException(status_code=401, detail={"code": "inactive_platform_user"})
     return user
 
+
+# ---------------------------------------------------------------------------
+# Auth
+# ---------------------------------------------------------------------------
 
 @router.post("/auth/login", response_model=PlatformTokenResponse)
 async def platform_login(
@@ -85,6 +101,10 @@ async def platform_login(
     )
 
 
+# ---------------------------------------------------------------------------
+# Metrics
+# ---------------------------------------------------------------------------
+
 @router.get("/metrics", response_model=PlatformMetricsResponse)
 async def platform_metrics(
     _: Annotated[PlatformUser, Depends(current_platform_user)],
@@ -119,6 +139,10 @@ async def platform_metrics(
     )
 
 
+# ---------------------------------------------------------------------------
+# Tenants CRUD
+# ---------------------------------------------------------------------------
+
 @router.get("/tenants", response_model=list[TenantSummary])
 async def list_tenants(
     _: Annotated[PlatformUser, Depends(current_platform_user)],
@@ -151,6 +175,74 @@ async def list_tenants(
     return [TenantSummary(**dict(row)) for row in rows]
 
 
+@router.post("/tenants", response_model=TenantDetail, status_code=201)
+async def create_tenant(
+    admin: Annotated[PlatformUser, Depends(current_platform_user)],
+    payload: TenantCreate,
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> TenantDetail:
+    try:
+        company = await service.create_tenant(
+            session,
+            name=payload.name,
+            slug=payload.slug,
+            email=payload.email,
+            document=payload.document,
+            timezone=payload.timezone,
+            plan_id=payload.plan_id,
+            trial_days=payload.trial_days,
+            actor_id=admin.id,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail={"code": str(exc)}) from exc
+    detail = await service.get_tenant_detail(session, company.id)
+    return _build_tenant_detail(detail)
+
+
+@router.get("/tenants/{tenant_id}", response_model=TenantDetail)
+async def get_tenant(
+    tenant_id: int,
+    _: Annotated[PlatformUser, Depends(current_platform_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> TenantDetail:
+    detail = await service.get_tenant_detail(session, tenant_id)
+    if detail is None:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+    return _build_tenant_detail(detail)
+
+
+@router.patch("/tenants/{tenant_id}", response_model=TenantDetail)
+async def update_tenant(
+    tenant_id: int,
+    admin: Annotated[PlatformUser, Depends(current_platform_user)],
+    payload: TenantUpdate,
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> TenantDetail:
+    updates = payload.model_dump(exclude_unset=True)
+    if not updates:
+        raise HTTPException(status_code=422, detail={"code": "no_fields"})
+    company = await service.update_tenant(session, tenant_id, updates=updates, actor_id=admin.id)
+    if company is None:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+    detail = await service.get_tenant_detail(session, tenant_id)
+    return _build_tenant_detail(detail)
+
+
+@router.delete("/tenants/{tenant_id}", status_code=204)
+async def delete_tenant(
+    tenant_id: int,
+    admin: Annotated[PlatformUser, Depends(current_platform_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> None:
+    deleted = await service.soft_delete_tenant(session, tenant_id, actor_id=admin.id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+
+
+# ---------------------------------------------------------------------------
+# Plans CRUD
+# ---------------------------------------------------------------------------
+
 @router.get("/plans", response_model=list[PlanResponse])
 async def list_plans(
     _: Annotated[PlatformUser, Depends(current_platform_user)],
@@ -158,3 +250,190 @@ async def list_plans(
 ) -> list[PlanResponse]:
     plans = (await session.execute(select(Plan).order_by(Plan.price_cents))).scalars().all()
     return [PlanResponse.model_validate(plan, from_attributes=True) for plan in plans]
+
+
+@router.post("/plans", response_model=PlanResponse, status_code=201)
+async def create_plan(
+    admin: Annotated[PlatformUser, Depends(current_platform_user)],
+    payload: PlanCreate,
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> PlanResponse:
+    plan = await service.create_plan(
+        session,
+        code=payload.code,
+        name=payload.name,
+        price_cents=payload.price_cents,
+        currency=payload.currency,
+        billing_period=payload.billing_period,
+        features=payload.features,
+        limits=payload.limits,
+        active=payload.active,
+        public=payload.public,
+        actor_id=admin.id,
+    )
+    return PlanResponse.model_validate(plan, from_attributes=True)
+
+
+@router.patch("/plans/{plan_id}", response_model=PlanResponse)
+async def update_plan(
+    plan_id: int,
+    admin: Annotated[PlatformUser, Depends(current_platform_user)],
+    payload: PlanUpdate,
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> PlanResponse:
+    updates = payload.model_dump(exclude_unset=True)
+    if not updates:
+        raise HTTPException(status_code=422, detail={"code": "no_fields"})
+    plan = await service.update_plan(session, plan_id, updates=updates, actor_id=admin.id)
+    if plan is None:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+    return PlanResponse.model_validate(plan, from_attributes=True)
+
+
+@router.delete("/plans/{plan_id}", status_code=204)
+async def delete_plan(
+    plan_id: int,
+    admin: Annotated[PlatformUser, Depends(current_platform_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> None:
+    try:
+        deleted = await service.soft_delete_plan(session, plan_id, actor_id=admin.id)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail={"code": str(exc)}) from exc
+    if not deleted:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+
+
+# ---------------------------------------------------------------------------
+# Subscriptions
+# ---------------------------------------------------------------------------
+
+@router.get("/subscriptions/{subscription_id}", response_model=SubscriptionDetail)
+async def get_subscription(
+    subscription_id: int,
+    _: Annotated[PlatformUser, Depends(current_platform_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> SubscriptionDetail:
+    data = await service.get_subscription_with_invoices(session, subscription_id)
+    if data is None:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+    return _build_subscription_detail(data["subscription"], data["invoices"])
+
+
+@router.patch("/subscriptions/{subscription_id}", response_model=SubscriptionDetail)
+async def update_subscription(
+    subscription_id: int,
+    admin: Annotated[PlatformUser, Depends(current_platform_user)],
+    payload: SubscriptionUpdate,
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> SubscriptionDetail:
+    updates = payload.model_dump(exclude_unset=True)
+    if not updates:
+        raise HTTPException(status_code=422, detail={"code": "no_fields"})
+    sub = await service.update_subscription(
+        session, subscription_id, updates=updates, actor_id=admin.id,
+    )
+    if sub is None:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+    data = await service.get_subscription_with_invoices(session, subscription_id)
+    return _build_subscription_detail(data["subscription"], data["invoices"])
+
+
+# ---------------------------------------------------------------------------
+# Billing lifecycle
+# ---------------------------------------------------------------------------
+
+@router.post("/billing/process-expirations", response_model=LifecycleResponse)
+async def process_expirations(
+    admin: Annotated[PlatformUser, Depends(current_platform_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> LifecycleResponse:
+    results = await service.process_trial_expirations(session, actor_id=admin.id)
+    return LifecycleResponse(
+        processed=[LifecycleProcessed(**r) for r in results],
+    )
+
+
+@router.post("/billing/process-suspensions", response_model=LifecycleResponse)
+async def process_suspensions(
+    admin: Annotated[PlatformUser, Depends(current_platform_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> LifecycleResponse:
+    results = await service.process_suspensions(session, actor_id=admin.id)
+    return LifecycleResponse(
+        processed=[LifecycleProcessed(**r) for r in results],
+    )
+
+
+@router.post("/billing/reconcile")
+async def reconcile(
+    admin: Annotated[PlatformUser, Depends(current_platform_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+    settings: Annotated[Settings, Depends(get_settings)],
+    auto_correct: bool = QueryParam(False),
+) -> dict:
+    discrepancies = await service.reconcile_billing(
+        session, settings, actor_id=admin.id, auto_correct=auto_correct,
+    )
+    return {"discrepancies": discrepancies}
+
+
+@router.post("/subscriptions/{subscription_id}/reactivate", response_model=SubscriptionDetail)
+async def reactivate_subscription(
+    subscription_id: int,
+    admin: Annotated[PlatformUser, Depends(current_platform_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> SubscriptionDetail:
+    sub = await service.reactivate_tenant(session, subscription_id, actor_id=admin.id)
+    if sub is None:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+    data = await service.get_subscription_with_invoices(session, subscription_id)
+    return _build_subscription_detail(data["subscription"], data["invoices"])
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _build_subscription_detail(sub: Subscription, invoices: list) -> SubscriptionDetail:
+    return SubscriptionDetail(
+        id=sub.id,
+        plan_id=sub.plan_id,
+        plan_name=sub.plan.name,
+        plan_code=sub.plan.code,
+        status=sub.status,
+        trial_ends_at=sub.trial_ends_at,
+        current_period_start=sub.current_period_start,
+        current_period_end=sub.current_period_end,
+        past_due_since=sub.past_due_since,
+        suspended_at=sub.suspended_at,
+        invoices=[
+            InvoiceSummary(
+                id=inv.id,
+                value_cents=inv.value_cents,
+                status=inv.status,
+                due_date=inv.due_date,
+                payment_date=inv.payment_date,
+                external_payment_id=inv.external_payment_id,
+            )
+            for inv in invoices
+        ],
+    )
+
+
+def _build_tenant_detail(detail: dict) -> TenantDetail:
+    company = detail["company"]
+    sub = detail["subscription"]
+    invoices = detail["invoices"]
+    return TenantDetail(
+        id=company.id,
+        name=company.name,
+        slug=company.slug,
+        email=company.email,
+        document=company.document,
+        status=company.status,
+        timezone=company.timezone,
+        users_count=detail["users_count"],
+        created_at=company.created_at,
+        subscription=_build_subscription_detail(sub, invoices) if sub else None,
+    )

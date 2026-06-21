@@ -28,13 +28,13 @@ def upgrade() -> None:
 
     for r in records:
         old_id = r[0]
-        conn.execute(
+        result = conn.execute(
             sa.text(
                 "INSERT INTO meetings "
                 "(company_id, title, description, status, owner_user_id, "
                 "created_by_user_id, notify_user_ids, created_at, updated_at) "
                 "VALUES (:company_id, :title, :description, :status, :owner, "
-                ":created_by, :notify, :created_at, :updated_at)"
+                ":created_by, :notify, :created_at, :updated_at) RETURNING id"
             ),
             {
                 "company_id": r[1], "title": r[2], "description": r[3],
@@ -43,7 +43,7 @@ def upgrade() -> None:
                 "created_at": r[9], "updated_at": r[10],
             },
         )
-        new_id = conn.execute(sa.text("SELECT LAST_INSERT_ID()")).scalar()
+        new_id = result.scalar()
 
         conn.execute(
             sa.text(
@@ -69,7 +69,7 @@ def upgrade() -> None:
 
     conn.execute(
         sa.text(
-            "UPDATE module_records SET deleted_at = NOW() "
+            "UPDATE module_records SET deleted_at = CURRENT_TIMESTAMP "
             "WHERE module = 'reunioes' AND deleted_at IS NULL"
         )
     )

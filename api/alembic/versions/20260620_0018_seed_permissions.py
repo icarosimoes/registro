@@ -59,8 +59,8 @@ def upgrade() -> None:
         conn.execute(
             sa.text(
                 "INSERT INTO permissions (code, name, module, created_at, updated_at) "
-                "VALUES (:code, :name, :module, NOW(), NOW()) "
-                "ON DUPLICATE KEY UPDATE name = :name, module = :module"
+                "VALUES (:code, :name, :module, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) "
+                "ON CONFLICT (code) DO UPDATE SET name = EXCLUDED.name, module = EXCLUDED.module"
             ),
             {"code": code, "name": name, "module": module},
         )
@@ -77,16 +77,15 @@ def upgrade() -> None:
         ).scalar()
 
         if existing_admin is None:
-            conn.execute(
+            result = conn.execute(
                 sa.text(
                     "INSERT INTO roles (company_id, code, name, created_at, updated_at) "
-                    "VALUES (:cid, 'admin', 'Administrador', NOW(), NOW())"
+                    "VALUES (:cid, 'admin', 'Administrador', "
+                    "CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING id"
                 ),
                 {"cid": company_id},
             )
-            role_id = conn.execute(
-                sa.text("SELECT LAST_INSERT_ID()")
-            ).scalar()
+            role_id = result.scalar()
         else:
             role_id = existing_admin
 

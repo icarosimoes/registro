@@ -51,7 +51,7 @@ def upgrade() -> None:
         sa.Column("title", sa.String(255), nullable=False),
         sa.Column("description", sa.Text),
         sa.Column("sort_order", sa.Integer, server_default="0"),
-        sa.Column("resolved", sa.Boolean, server_default="0"),
+        sa.Column("resolved", sa.Boolean, server_default=sa.text("false")),
         sa.Column("created_at", sa.DateTime, server_default=sa.func.now()),
     )
 

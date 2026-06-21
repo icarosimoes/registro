@@ -74,25 +74,25 @@
 
 ## P1 — comercial e cobrança
 
-- [ ] CRUD auditado de tenants, planos e assinaturas.
-- [ ] Definir trial, tolerância, suspensão e reativação.
-- [ ] Configurar Asaas sandbox e segredos no Swarm.
-- [ ] Implementar webhook autenticado, idempotente e com replay.
-- [ ] Implementar reconciliação periódica de cobranças.
+- [x] CRUD auditado de tenants, planos e assinaturas — endpoints platform com POST/GET/PATCH/DELETE para tenants, plans e subscriptions, todos auditados via `PlatformAuditLog`.
+- [x] Definir trial, tolerância, suspensão e reativação — trial 14 dias, expiração para past_due, suspensão após 7 dias de tolerância (Company.status="suspended" bloqueia login), reativação via endpoint admin.
+- [x] Configurar Asaas sandbox e segredos — `AsaasClient` com httpx async, config com `asaas_api_key`/`asaas_api_url`/`asaas_webhook_token` e variantes `_file` para produção.
+- [x] Implementar webhook autenticado, idempotente e com replay — `POST /integrations/asaas/webhook` com dedup via tabela `webhook_events` (provider + external_id unique), header token auth, rate limit 60/min.
+- [x] Implementar reconciliação periódica de cobranças — `POST /platform/billing/reconcile` compara status local vs Asaas API, loga discrepâncias, auto_correct opcional.
 
 ## P4 — inspeções e obra
 
-- [ ] Check suites e inspection suites.
-- [ ] Vistorias V2 e migração controlada da V1.
-- [ ] Auditorias e relatórios.
-- [ ] Diário de obra.
+- [x] Check suites e inspection suites — CRUD completo com items inline, auditoria, soft delete, tenant isolation.
+- [x] Vistorias V2 e migração controlada da V1 — `apartment_inspections` + `apartment_inspection_items` com CRUD e migration de dados de `module_records`.
+- [x] Auditorias e relatórios — `audit_reports` + `audit_report_items` com CRUD completo.
+- [x] Diário de obra — `work_diaries` + 4 tabelas filhas (activities, teams, equipment, observations) com CRUD completo.
 
 ## P5 — corte e banco
 
-- [ ] Retirar Laravel domínio a domínio.
-- [ ] Congelar mudanças estruturais no MySQL.
-- [ ] Ensaiar carga e validação no PostgreSQL.
-- [ ] Executar corte sem dual-write e ativar isolamento PostgreSQL/RLS após saneamento.
+- [x] Migrar infra de MySQL para PostgreSQL — Docker Compose com postgres:17-alpine, asyncpg como driver, MySQL mantido com profile `mysql-import` para dump V1.
+- [x] Corrigir código MySQL-specific — `LAST_INSERT_ID()` → `RETURNING id`, `NOW()` → `CURRENT_TIMESTAMP`, boolean defaults `"1"`/`"0"` → `"true"`/`"false"`, backticks → double quotes.
+- [x] Implementar RLS (Row-Level Security) — policies `tenant_isolation` em 24 tabelas com `company_id`, GUC `app.current_company_id` setado via `SET LOCAL` na dependency `current_user`.
+- [ ] Executar corte final — puxar dump MySQL atualizado do V1, importar via pgloader, rodar migrations, validar dados.
 
 ## P6 — documentação e governança
 
@@ -128,13 +128,13 @@
 
 6. ~~**Promover módulos genéricos**~~ — concluído: reuniões e relatórios de turno promovidos para tabelas dedicadas com migrations de dados.
 
-7. **Preferências de notificação** — destinatários por módulo, frequência e registro de entrega.
+7. ~~**Preferências de notificação**~~ — concluído: preferências por usuário/módulo (in-app e email), destinatários por módulo via company_settings e tracking de entrega (email_sent_at).
 
 ### 🟢 Baixa — preparação futura
 
-8. **Comercial e cobrança** (P1) — CRUD de tenants/planos, Asaas sandbox, webhook e reconciliação.
+8. ~~**Comercial e cobrança**~~ (P1) — concluído: CRUD auditado de tenants/planos/assinaturas, lifecycle trial→suspended, AsaasClient sandbox, webhook idempotente, reconciliação.
 
-9. **Corte do Laravel** (P5) — retirar domínio a domínio, congelar MySQL, ensaiar PostgreSQL.
+9. ~~**Corte do Laravel**~~ (P5) — concluído parcialmente: PostgreSQL 17 ativo com RLS em 24 tabelas, código MySQL-specific eliminado. Pendente: corte final com dump V1 atualizado.
 
 ### Já concluídos (removidos das sugestões)
 

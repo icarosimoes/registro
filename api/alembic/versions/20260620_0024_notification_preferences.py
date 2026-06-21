@@ -21,8 +21,8 @@ def upgrade() -> None:
         sa.Column("company_id", sa.Integer, sa.ForeignKey("companies.id", ondelete="CASCADE"), nullable=False),
         sa.Column("user_id", sa.Integer, sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
         sa.Column("module", sa.String(80), nullable=False),
-        sa.Column("in_app", sa.Boolean, nullable=False, server_default=sa.text("1")),
-        sa.Column("email", sa.Boolean, nullable=False, server_default=sa.text("1")),
+        sa.Column("in_app", sa.Boolean, nullable=False, server_default=sa.text("true")),
+        sa.Column("email", sa.Boolean, nullable=False, server_default=sa.text("true")),
         sa.UniqueConstraint("user_id", "company_id", "module", name="uq_notif_pref_user_module"),
     )
     op.create_index("ix_notif_pref_company_user", "notification_preferences", ["company_id", "user_id"])

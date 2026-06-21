@@ -1,5 +1,7 @@
 from datetime import date, datetime
+from decimal import Decimal
 
+import sqlalchemy as sa
 from sqlalchemy import (
     JSON,
     Boolean,
@@ -8,6 +10,7 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    Numeric,
     String,
     Text,
     UniqueConstraint,
@@ -187,8 +190,8 @@ class NotificationPreference(Base, TenantMixin):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     module: Mapped[str] = mapped_column(String(80))
-    in_app: Mapped[bool] = mapped_column(Boolean, server_default="1")
-    email: Mapped[bool] = mapped_column(Boolean, server_default="1")
+    in_app: Mapped[bool] = mapped_column(Boolean, server_default=sa.true())
+    email: Mapped[bool] = mapped_column(Boolean, server_default=sa.true())
 
 
 class Attachment(Base, TenantMixin):
@@ -293,6 +296,196 @@ class ShiftReport(Base, TenantMixin, TimestampMixin):
     )
     notify_user_ids: Mapped[list | None] = mapped_column(JSON)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+# ---------------------------------------------------------------------------
+# Inspections & Construction (P4)
+# ---------------------------------------------------------------------------
+
+
+class CheckSuite(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "check_suites"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(60), default="Ativo")
+    owner_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class CheckSuiteItem(Base):
+    __tablename__ = "check_suite_items"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    suite_id: Mapped[int] = mapped_column(
+        ForeignKey("check_suites.id", ondelete="CASCADE"),
+    )
+    label: Mapped[str] = mapped_column(String(255))
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    checked: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class InspectionSuite(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "inspection_suites"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    type: Mapped[str | None] = mapped_column(String(80))
+    status: Mapped[str] = mapped_column(String(60), default="Ativo")
+    owner_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class InspectionSuiteItem(Base):
+    __tablename__ = "inspection_suite_items"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    suite_id: Mapped[int] = mapped_column(
+        ForeignKey("inspection_suites.id", ondelete="CASCADE"),
+    )
+    area: Mapped[str | None] = mapped_column(String(255))
+    item_name: Mapped[str] = mapped_column(String(255))
+    expected_condition: Mapped[str | None] = mapped_column(String(255))
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class ApartmentInspection(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "apartment_inspections"
+    __table_args__ = (
+        Index("ix_apartment_inspections_type", "company_id", "inspection_type"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    unit: Mapped[str | None] = mapped_column(String(80))
+    apartment: Mapped[str | None] = mapped_column(String(80))
+    inspection_type: Mapped[str] = mapped_column(String(40))
+    inspection_suite_id: Mapped[int | None] = mapped_column(
+        ForeignKey("inspection_suites.id", ondelete="SET NULL"),
+    )
+    inspector_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    scheduled_at: Mapped[datetime | None] = mapped_column(DateTime)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime)
+    status: Mapped[str] = mapped_column(String(60), default="Pendente")
+    notes: Mapped[str | None] = mapped_column(Text)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class ApartmentInspectionItem(Base):
+    __tablename__ = "apartment_inspection_items"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    inspection_id: Mapped[int] = mapped_column(
+        ForeignKey("apartment_inspections.id", ondelete="CASCADE"),
+    )
+    suite_item_id: Mapped[int | None] = mapped_column(
+        ForeignKey("inspection_suite_items.id", ondelete="SET NULL"),
+    )
+    condition: Mapped[str] = mapped_column(String(40), default="ok")
+    notes: Mapped[str | None] = mapped_column(Text)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class AuditReport(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "audit_reports"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    report_date: Mapped[date] = mapped_column(Date)
+    shift_type: Mapped[str | None] = mapped_column(String(20))
+    auditor_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    status: Mapped[str] = mapped_column(String(60), default="Em andamento")
+    notes: Mapped[str | None] = mapped_column(Text)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class AuditReportItem(Base):
+    __tablename__ = "audit_report_items"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    report_id: Mapped[int] = mapped_column(
+        ForeignKey("audit_reports.id", ondelete="CASCADE"),
+    )
+    category: Mapped[str | None] = mapped_column(String(120))
+    description: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(40), default="ok")
+    notes: Mapped[str | None] = mapped_column(Text)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class WorkDiary(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "work_diaries"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    diary_date: Mapped[date] = mapped_column(Date)
+    title: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    weather: Mapped[str | None] = mapped_column(String(60))
+    status: Mapped[str] = mapped_column(String(60), default="Em andamento")
+    owner_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class WorkDiaryActivity(Base):
+    __tablename__ = "work_diary_activities"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    diary_id: Mapped[int] = mapped_column(
+        ForeignKey("work_diaries.id", ondelete="CASCADE"),
+    )
+    description: Mapped[str] = mapped_column(Text)
+    start_time: Mapped[datetime | None] = mapped_column(DateTime)
+    end_time: Mapped[datetime | None] = mapped_column(DateTime)
+    status: Mapped[str] = mapped_column(String(60), default="Planejada")
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class WorkDiaryTeam(Base):
+    __tablename__ = "work_diary_teams"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    diary_id: Mapped[int] = mapped_column(
+        ForeignKey("work_diaries.id", ondelete="CASCADE"),
+    )
+    worker_name: Mapped[str] = mapped_column(String(160))
+    role: Mapped[str | None] = mapped_column(String(120))
+    hours_worked: Mapped[Decimal | None] = mapped_column(Numeric(5, 2))
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class WorkDiaryEquipment(Base):
+    __tablename__ = "work_diary_equipment"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    diary_id: Mapped[int] = mapped_column(
+        ForeignKey("work_diaries.id", ondelete="CASCADE"),
+    )
+    equipment_name: Mapped[str] = mapped_column(String(160))
+    quantity: Mapped[int] = mapped_column(Integer, default=1)
+    hours_used: Mapped[Decimal | None] = mapped_column(Numeric(5, 2))
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class WorkDiaryObservation(Base):
+    __tablename__ = "work_diary_observations"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    diary_id: Mapped[int] = mapped_column(
+        ForeignKey("work_diaries.id", ondelete="CASCADE"),
+    )
+    content: Mapped[str] = mapped_column(Text)
+    category: Mapped[str | None] = mapped_column(String(80))
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
 
 
 class LegacyImportRun(Base):

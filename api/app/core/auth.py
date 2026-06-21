@@ -3,6 +3,7 @@ from typing import Annotated
 import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings, get_settings
@@ -25,4 +26,6 @@ async def current_user(
         raise HTTPException(status_code=401, detail={"code": "invalid_token"}) from exc
     if user is None:
         raise HTTPException(status_code=401, detail={"code": "inactive_user"})
+    cid = int(user.company_id)
+    await session.execute(text(f"SET app.current_company_id = '{cid}'"))
     return user

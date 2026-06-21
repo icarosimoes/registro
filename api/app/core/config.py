@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     s3_public_url: str = "http://localhost:9000"
     attachment_max_size_mb: int = 10
     attachment_max_per_entity: int = 20
+    asaas_api_key: str = ""
+    asaas_api_key_file: str | None = None
+    asaas_api_url: str = "https://sandbox.asaas.com/api/v3"
+    asaas_webhook_token: str = ""
+    asaas_webhook_token_file: str | None = None
 
     @field_validator("web_origins", mode="before")
     @classmethod
@@ -57,6 +62,14 @@ def get_settings() -> Settings:
     if settings.chess_hotel_integration_key_file:
         settings.chess_hotel_integration_key = Path(
             settings.chess_hotel_integration_key_file
+        ).read_text(encoding="utf-8").strip()
+    if settings.asaas_api_key_file:
+        settings.asaas_api_key = Path(
+            settings.asaas_api_key_file
+        ).read_text(encoding="utf-8").strip()
+    if settings.asaas_webhook_token_file:
+        settings.asaas_webhook_token = Path(
+            settings.asaas_webhook_token_file
         ).read_text(encoding="utf-8").strip()
     insecure_default = "registro-development-only-change-me"
     if settings.environment == "production" and (

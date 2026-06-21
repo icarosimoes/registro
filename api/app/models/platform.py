@@ -74,6 +74,18 @@ class CompanySetting(Base, TenantMixin, TimestampMixin):
     value: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict)
 
 
+class WebhookEvent(Base, TimestampMixin):
+    __tablename__ = "webhook_events"
+    __table_args__ = (UniqueConstraint("provider", "external_id", name="uq_webhook_provider_ext"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    provider: Mapped[str] = mapped_column(String(40), index=True)
+    external_id: Mapped[str] = mapped_column(String(200))
+    event_type: Mapped[str] = mapped_column(String(120))
+    payload: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    processed_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
 class PlatformAuditLog(Base):
     __tablename__ = "platform_audit_logs"
 

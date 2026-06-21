@@ -16,6 +16,7 @@ class Company(Base, TimestampMixin):
     document: Mapped[str | None] = mapped_column(String(20), unique=True)
     status: Mapped[str] = mapped_column(String(20), default="active", index=True)
     timezone: Mapped[str] = mapped_column(String(60), default="America/Sao_Paulo")
+    asaas_customer_id: Mapped[str | None] = mapped_column(String(120))
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
 
 

@@ -33,13 +33,13 @@ def upgrade() -> None:
         category = r[4] or ""
         shift_type = SHIFT_MAP.get(category)
 
-        conn.execute(
+        result = conn.execute(
             sa.text(
                 "INSERT INTO shift_reports "
                 "(company_id, title, description, shift_type, status, owner_user_id, "
                 "created_by_user_id, notify_user_ids, created_at, updated_at) "
                 "VALUES (:company_id, :title, :description, :shift_type, :status, :owner, "
-                ":created_by, :notify, :created_at, :updated_at)"
+                ":created_by, :notify, :created_at, :updated_at) RETURNING id"
             ),
             {
                 "company_id": r[1], "title": r[2], "description": r[3],
@@ -48,7 +48,7 @@ def upgrade() -> None:
                 "created_at": r[9], "updated_at": r[10],
             },
         )
-        new_id = conn.execute(sa.text("SELECT LAST_INSERT_ID()")).scalar()
+        new_id = result.scalar()
 
         for table in ("audit_events", "attachments", "notifications"):
             conn.execute(
@@ -61,7 +61,7 @@ def upgrade() -> None:
 
     conn.execute(
         sa.text(
-            "UPDATE module_records SET deleted_at = NOW() "
+            "UPDATE module_records SET deleted_at = CURRENT_TIMESTAMP "
             "WHERE module = 'relatorios-turno' AND deleted_at IS NULL"
         )
     )

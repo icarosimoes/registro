@@ -35,6 +35,66 @@ async def seed() -> None:
             Permission(
                 code="occurrences.manage", name="Gerenciar ocorrências", module="occurrences"
             ),
+            Permission(
+                code="check_suite.view", name="Ver checklists", module="inspections",
+            ),
+            Permission(
+                code="check_suite.create", name="Criar checklists", module="inspections",
+            ),
+            Permission(
+                code="check_suite.edit", name="Editar checklists", module="inspections",
+            ),
+            Permission(
+                code="check_suite.delete", name="Excluir checklists", module="inspections",
+            ),
+            Permission(
+                code="inspection_suite.view", name="Ver suítes", module="inspections",
+            ),
+            Permission(
+                code="inspection_suite.create", name="Criar suítes", module="inspections",
+            ),
+            Permission(
+                code="inspection_suite.edit", name="Editar suítes", module="inspections",
+            ),
+            Permission(
+                code="inspection_suite.delete", name="Excluir suítes", module="inspections",
+            ),
+            Permission(
+                code="apartment_inspection.view", name="Ver vistorias", module="inspections",
+            ),
+            Permission(
+                code="apartment_inspection.create", name="Criar vistorias", module="inspections",
+            ),
+            Permission(
+                code="apartment_inspection.edit", name="Editar vistorias", module="inspections",
+            ),
+            Permission(
+                code="apartment_inspection.delete", name="Excluir vistorias", module="inspections",
+            ),
+            Permission(
+                code="audit_report.view", name="Ver auditorias", module="inspections",
+            ),
+            Permission(
+                code="audit_report.create", name="Criar auditorias", module="inspections",
+            ),
+            Permission(
+                code="audit_report.edit", name="Editar auditorias", module="inspections",
+            ),
+            Permission(
+                code="audit_report.delete", name="Excluir auditorias", module="inspections",
+            ),
+            Permission(
+                code="work_diary.view", name="Ver diário de obra", module="construction",
+            ),
+            Permission(
+                code="work_diary.create", name="Criar diário de obra", module="construction",
+            ),
+            Permission(
+                code="work_diary.edit", name="Editar diário de obra", module="construction",
+            ),
+            Permission(
+                code="work_diary.delete", name="Excluir diário de obra", module="construction",
+            ),
         ]
         session.add_all(permissions)
         await session.flush()

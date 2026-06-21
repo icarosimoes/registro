@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
@@ -52,3 +52,119 @@ class PlanResponse(BaseModel):
     limits: dict[str, Any]
     active: bool
     public: bool
+
+
+# ---------------------------------------------------------------------------
+# Tenant CRUD
+# ---------------------------------------------------------------------------
+
+class TenantCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=160)
+    slug: str = Field(min_length=1, max_length=100)
+    email: str | None = Field(None, max_length=255)
+    document: str | None = Field(None, max_length=20)
+    timezone: str = "America/Sao_Paulo"
+    plan_id: int
+    trial_days: int = 14
+
+    @field_validator("slug")
+    @classmethod
+    def normalize_slug(cls, value: str) -> str:
+        return value.strip().lower()
+
+
+class TenantUpdate(BaseModel):
+    name: str | None = Field(None, max_length=160)
+    email: str | None = Field(None, max_length=255)
+    document: str | None = Field(None, max_length=20)
+    status: str | None = Field(None, max_length=20)
+    timezone: str | None = Field(None, max_length=60)
+
+
+class InvoiceSummary(BaseModel):
+    id: int
+    value_cents: int
+    status: str
+    due_date: date
+    payment_date: date | None
+    external_payment_id: str | None
+
+
+class SubscriptionDetail(BaseModel):
+    id: int
+    plan_id: int
+    plan_name: str
+    plan_code: str
+    status: str
+    trial_ends_at: datetime | None
+    current_period_start: datetime | None
+    current_period_end: datetime | None
+    past_due_since: datetime | None
+    suspended_at: datetime | None
+    invoices: list[InvoiceSummary] = []
+
+
+class TenantDetail(BaseModel):
+    id: int
+    name: str
+    slug: str
+    email: str | None
+    document: str | None
+    status: str
+    timezone: str
+    users_count: int
+    created_at: datetime
+    subscription: SubscriptionDetail | None
+
+
+# ---------------------------------------------------------------------------
+# Plan CRUD
+# ---------------------------------------------------------------------------
+
+class PlanCreate(BaseModel):
+    code: str = Field(min_length=1, max_length=60)
+    name: str = Field(min_length=1, max_length=120)
+    price_cents: int = 0
+    currency: str = "BRL"
+    billing_period: str = "monthly"
+    features: dict[str, Any] = {}
+    limits: dict[str, Any] = {}
+    active: bool = True
+    public: bool = True
+
+
+class PlanUpdate(BaseModel):
+    name: str | None = None
+    price_cents: int | None = None
+    features: dict[str, Any] | None = None
+    limits: dict[str, Any] | None = None
+    active: bool | None = None
+    public: bool | None = None
+
+
+# ---------------------------------------------------------------------------
+# Subscription
+# ---------------------------------------------------------------------------
+
+class SubscriptionUpdate(BaseModel):
+    plan_id: int | None = None
+    status: str | None = None
+
+
+class SubscriptionWithInvoices(BaseModel):
+    subscription: SubscriptionDetail
+    invoices: list[InvoiceSummary]
+
+
+# ---------------------------------------------------------------------------
+# Billing lifecycle
+# ---------------------------------------------------------------------------
+
+class LifecycleProcessed(BaseModel):
+    company_id: int
+    company_name: str
+    action: str
+
+
+class LifecycleResponse(BaseModel):
+    processed: list[LifecycleProcessed]
