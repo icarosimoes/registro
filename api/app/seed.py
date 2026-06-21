@@ -95,6 +95,18 @@ async def seed() -> None:
             Permission(
                 code="work_diary.delete", name="Excluir diário de obra", module="construction",
             ),
+            Permission(
+                code="work_order.view", name="Ver ordens de serviço", module="work_orders",
+            ),
+            Permission(
+                code="work_order.create", name="Criar ordens de serviço", module="work_orders",
+            ),
+            Permission(
+                code="work_order.edit", name="Editar ordens de serviço", module="work_orders",
+            ),
+            Permission(
+                code="work_order.delete", name="Excluir ordens de serviço", module="work_orders",
+            ),
         ]
         session.add_all(permissions)
         await session.flush()

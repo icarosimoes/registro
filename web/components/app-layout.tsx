@@ -1,9 +1,10 @@
 "use client";
 
 import {
-  Bell, BookOpen, Building2, ClipboardCheck, FileClock, FileText, HardHat, Home,
-  Menu, MessageSquareText, PanelLeftClose, PanelLeftOpen, Receipt,
-  Settings, ShieldCheck, Users, Wrench, X,
+  ArrowRightLeft, Bell, BookOpen, Building2, CalendarCheck, ClipboardCheck, ClipboardList,
+  FileClock, FileText, HardHat, Home, Menu, MessageSquareText, Package,
+  PanelLeftClose, PanelLeftOpen, Receipt,
+  Settings, ShieldCheck, Timer, Users, Wrench, X,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -15,11 +16,16 @@ import { NotificationPanel, NotificationBadge } from "./notification-panel";
 const navOperation = [
   { slug: "dashboard", label: "Visão geral", icon: Home, href: "/dashboard" },
   { slug: "ocorrencias", label: "Ocorrências", icon: FileClock, href: "/ocorrencias" },
+  { slug: "ordens-servico", label: "Ordens de Serviço", icon: ClipboardList, href: "/ordens-servico" },
   { slug: "reunioes", label: "Reuniões", icon: Users, href: "/reunioes" },
   { slug: "relatorios-turno", label: "Relatórios de turno", icon: FileText, href: "/relatorios-turno" },
   { slug: "inspecoes", label: "Inspeções", icon: ClipboardCheck, href: "/inspecoes" },
   { slug: "diarios-obra", label: "Diário de obra", icon: HardHat, href: "/diarios-obra" },
   { slug: "manutencao", label: "Manutenção", icon: Wrench, href: "/manutencao" },
+  { slug: "preventivas", label: "Preventivas", icon: Timer, href: "/preventivas" },
+  { slug: "checklists", label: "Checklists", icon: CalendarCheck, href: "/checklists" },
+  { slug: "estoque", label: "Estoque", icon: Package, href: "/estoque" },
+  { slug: "pendencias", label: "Pendências turno", icon: ArrowRightLeft, href: "/pendencias" },
   { slug: "solicitacoes-fiscais", label: "Solicitações Fiscais", icon: Receipt, href: "/solicitacoes-fiscais" },
 ];
 

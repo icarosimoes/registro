@@ -23,6 +23,46 @@ class RecentActivity(BaseModel):
     updated_at: datetime
 
 
+class TrendDay(BaseModel):
+    date: str
+    work_orders: int
+    occurrences: int
+    fiscal_requests: int
+
+
+class WorkOrderKpis(BaseModel):
+    total: int
+    by_status: dict[str, int]
+    by_priority: dict[str, int]
+    by_category: dict[str, int]
+    avg_resolution_hours: float | None
+    sla_compliance_pct: int | None
+    overdue: int
+    created_week: int
+    completed_week: int
+
+
+class OccurrenceKpis(BaseModel):
+    by_status: dict[str, int]
+    completion_rate_pct: int | None
+    by_sector: dict[str, int]
+    overdue: int
+
+
+class FiscalRequestKpis(BaseModel):
+    by_status: dict[str, int]
+    by_type: dict[str, int]
+    sla_compliance_pct: int | None
+    overdue: int
+
+
+class DashboardKpis(BaseModel):
+    work_orders: WorkOrderKpis
+    occurrences: OccurrenceKpis
+    fiscal_requests: FiscalRequestKpis
+    trend: list[TrendDay]
+
+
 class DashboardMetrics(BaseModel):
     open_occurrences: int
     my_occurrences: int
@@ -31,6 +71,7 @@ class DashboardMetrics(BaseModel):
     active_users: int
     active_sectors: int
     recent: list[RecentActivity]
+    kpis: DashboardKpis
 
 
 @router.get("/metrics", response_model=DashboardMetrics)
@@ -47,4 +88,5 @@ async def get_metrics_endpoint(
         active_users=data["active_users"],
         active_sectors=data["active_sectors"],
         recent=[RecentActivity(**r) for r in data["recent"]],
+        kpis=DashboardKpis(**data["kpis"]),
     )

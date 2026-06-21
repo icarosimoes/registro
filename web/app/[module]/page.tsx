@@ -1,4 +1,5 @@
 import { AppLayout } from "@/components/app-layout";
+import { KanbanBoard } from "@/components/kanban-board";
 import { OperationalModule } from "@/components/operational-module";
 import { currentTenantUser, tenantFetch } from "@/lib/api";
 import { moduleDefinitions } from "@/lib/module-definitions";
@@ -278,6 +279,192 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
       } catch (error) {
         if (error instanceof Error && error.message === "unauthorized") throw error;
       }
+    } else if (module === "preventivas") {
+      type PreventivePlanItem = {
+        id: number; name: string; description: string | null;
+        recurrence: string; category: string | null; priority: string;
+        sla_hours: number | null; assigned_user_name: string | null;
+        location_name: string | null; active: boolean;
+        next_due: string | null; last_generated_at: string | null;
+        created_at: string; updated_at: string;
+      };
+      type PreventivePlanPage = { items: PreventivePlanItem[]; total: number; page: number; page_size: number };
+      const recurrenceLabels: Record<string, string> = {
+        daily: "Diário", weekly: "Semanal", biweekly: "Quinzenal",
+        monthly: "Mensal", quarterly: "Trimestral", semiannual: "Semestral", annual: "Anual",
+      };
+      try {
+        const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
+        const search = query.search ?? "";
+        const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+        const data = await tenantFetch<PreventivePlanPage>(`/preventive-plans?page=${pg}&page_size=20${searchParam}`);
+        hydratedDefinition = {
+          ...definition,
+          source: "api",
+          records: data.items.map((item) => ({
+            id: item.id,
+            title: item.name,
+            description: item.description ?? undefined,
+            category: recurrenceLabels[item.recurrence] ?? item.recurrence,
+            owner: item.assigned_user_name ?? "Não atribuído",
+            status: item.active ? "Ativo" : "Inativo",
+            priority: item.priority,
+            location: item.location_name ?? undefined,
+            deadline: item.next_due ?? undefined,
+            updatedAt: item.next_due
+              ? `Próxima: ${new Intl.DateTimeFormat("pt-BR").format(new Date(item.next_due))}`
+              : new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
+          })),
+          serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
+        };
+      } catch (error) {
+        if (error instanceof Error && error.message === "unauthorized") throw error;
+      }
+    } else if (module === "checklists") {
+      type ChecklistItem = {
+        id: number; name: string; description: string | null;
+        recurrence: string; category: string | null;
+        assigned_user_name: string | null; active: boolean;
+        next_due: string | null; item_count: number;
+        created_at: string; updated_at: string;
+      };
+      type ChecklistPage = { items: ChecklistItem[]; total: number; page: number; page_size: number };
+      const recurrenceLabels: Record<string, string> = {
+        daily: "Diário", weekly: "Semanal", biweekly: "Quinzenal", monthly: "Mensal",
+      };
+      try {
+        const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
+        const search = query.search ?? "";
+        const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+        const data = await tenantFetch<ChecklistPage>(`/checklists/templates?page=${pg}&page_size=20${searchParam}`);
+        hydratedDefinition = {
+          ...definition,
+          source: "api",
+          records: data.items.map((item) => ({
+            id: item.id,
+            title: item.name,
+            description: item.description ?? undefined,
+            category: recurrenceLabels[item.recurrence] ?? item.recurrence,
+            owner: item.assigned_user_name ?? "Não atribuído",
+            status: item.active ? "Ativo" : "Inativo",
+            deadline: item.next_due ?? undefined,
+            updatedAt: item.item_count > 0
+              ? `${item.item_count} itens`
+              : new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
+          })),
+          serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
+        };
+      } catch (error) {
+        if (error instanceof Error && error.message === "unauthorized") throw error;
+      }
+    } else if (module === "estoque") {
+      type StockItem = {
+        id: number; name: string; category: string | null;
+        unit: string; min_quantity: number; current_quantity: number;
+        location_name: string | null; below_min: boolean;
+        created_at: string; updated_at: string;
+      };
+      type StockPage = { items: StockItem[]; total: number; page: number; page_size: number };
+      try {
+        const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
+        const search = query.search ?? "";
+        const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+        const data = await tenantFetch<StockPage>(`/stock/items?page=${pg}&page_size=20${searchParam}`);
+        hydratedDefinition = {
+          ...definition,
+          source: "api",
+          records: data.items.map((item) => ({
+            id: item.id,
+            title: item.name,
+            category: item.category ?? "Geral",
+            owner: `${item.current_quantity} ${item.unit}`,
+            status: item.below_min ? "Abaixo do mínimo" : "OK",
+            location: item.location_name ?? undefined,
+            description: item.min_quantity > 0 ? `Mín: ${item.min_quantity} ${item.unit}` : undefined,
+            updatedAt: new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
+          })),
+          serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
+        };
+      } catch (error) {
+        if (error instanceof Error && error.message === "unauthorized") throw error;
+      }
+    } else if (module === "pendencias") {
+      type HandoffItem = {
+        id: number; title: string; description: string | null;
+        priority: string; category: string | null;
+        target_shift: string | null; target_date: string;
+        status: string; created_by_name: string | null;
+        read_at: string | null; resolved_at: string | null;
+        created_at: string; updated_at: string;
+      };
+      type HandoffPage = { items: HandoffItem[]; total: number; page: number; page_size: number };
+      const shiftLabels: Record<string, string> = {
+        morning: "Manhã", afternoon: "Tarde", night: "Noite",
+      };
+      const statusLabels: Record<string, string> = {
+        pendente: "Pendente", lido: "Lido", resolvido: "Resolvido",
+      };
+      try {
+        const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
+        const search = query.search ?? "";
+        const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+        const data = await tenantFetch<HandoffPage>(`/handoffs?page=${pg}&page_size=20${searchParam}`);
+        hydratedDefinition = {
+          ...definition,
+          source: "api",
+          records: data.items.map((item) => ({
+            id: item.id,
+            title: item.title,
+            description: item.description ?? undefined,
+            category: item.target_shift ? shiftLabels[item.target_shift] ?? item.target_shift : "Todos",
+            owner: item.created_by_name ?? "Sistema",
+            status: statusLabels[item.status] ?? item.status,
+            priority: item.priority,
+            deadline: item.target_date,
+            updatedAt: new Intl.DateTimeFormat("pt-BR").format(new Date(item.target_date)),
+          })),
+          serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
+        };
+      } catch (error) {
+        if (error instanceof Error && error.message === "unauthorized") throw error;
+      }
+    } else if (module === "ordens-servico") {
+      type WorkOrderItem = {
+        id: number; title: string; description: string | null;
+        status: string; priority: string | null; category: string | null;
+        assigned_user_name: string | null; sla_deadline: string | null;
+        created_at: string; updated_at: string;
+      };
+      type WorkOrderPage = { items: WorkOrderItem[]; total: number; page: number; page_size: number };
+      try {
+        const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
+        const search = query.search ?? "";
+        const status = query.status ?? "";
+        const params = new URLSearchParams();
+        params.set("page", String(pg));
+        params.set("page_size", "100");
+        if (search) params.set("search", search);
+        if (status) params.set("status", status);
+        const data = await tenantFetch<WorkOrderPage>(`/work-orders?${params}`);
+        hydratedDefinition = {
+          ...definition,
+          source: "api",
+          records: data.items.map((item) => ({
+            id: item.id,
+            title: item.title,
+            description: item.description ?? undefined,
+            category: item.category ?? "Geral",
+            owner: item.assigned_user_name ?? "Não atribuído",
+            status: item.status,
+            priority: item.priority ?? undefined,
+            slaDeadline: item.sla_deadline ?? undefined,
+            updatedAt: new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(item.updated_at)),
+          })),
+          serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
+        };
+      } catch (error) {
+        if (error instanceof Error && error.message === "unauthorized") throw error;
+      }
     } else if (GENERIC_MODULES.has(module)) {
       type ModuleRecordItem = {
         id: number;
@@ -313,7 +500,10 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
       }
     }
 
-    return <AppLayout user={user}><OperationalModule definition={hydratedDefinition} user={user} /></AppLayout>;
+    const content = hydratedDefinition.layout === "kanban"
+      ? <KanbanBoard definition={hydratedDefinition} user={user} />
+      : <OperationalModule definition={hydratedDefinition} user={user} />;
+    return <AppLayout user={user}>{content}</AppLayout>;
   } catch (error) {
     if (error instanceof Error && error.message === "unauthorized") redirect("/login");
     throw error;

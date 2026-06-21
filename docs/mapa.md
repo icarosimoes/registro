@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | Docker local | operacional | Compose (PostgreSQL + MinIO + API + Web + Admin) |
 | PostgreSQL 17 | ativo com RLS em 24 tabelas, asyncpg | banco principal |
-| FastAPI | health, auth, dashboard, CRUD completo de todos os domínios operacionais | PostgreSQL via SQLAlchemy async |
+| FastAPI | health, auth, dashboard, CRUD de todos os domínios operacionais + ordens de serviço com workflow | PostgreSQL via SQLAlchemy async |
 | Next.js | portal autenticado, todos os módulos operacionais e dashboard com dados reais | todos os módulos via API |
 | Painel admin | sidebar Jarvis, dashboard com stat cards, CRUD de empresas, planos, auditoria | Tailwind 4 + Lucide + API plataforma |
 | SaaS/Billing | tenants, planos, assinaturas, faturas, lifecycle trial→suspended | Asaas sandbox + webhook idempotente |
@@ -19,6 +19,12 @@
 | Inspeções/Obra | check suites, inspection suites, vistorias V2, auditorias, diário de obra | tabelas dedicadas com RLS |
 | Reuniões | tabela dedicada com participantes, pautas e ata PDF | `meetings` + filhas |
 | Relatórios de turno | tabela dedicada com filtro por data e turno | `shift_reports` |
+| Ordens de serviço | CRUD + workflow de 5 estados + Kanban com drag-and-drop | `work_orders` com RLS |
+| Manutenção preventiva | planos recorrentes (daily→annual) com geração automática de OS | `preventive_plans` |
+| Checklists recorrentes | templates com itens, execuções automáticas, toggle individual, conclusão | `checklist_templates` + `checklist_executions` |
+| Dashboard KPIs | indicadores avançados de OS, ocorrências e fiscais + tendência 7 dias | `/dashboard/metrics` expandido |
+| Estoque e materiais | itens com entrada/saída/ajuste, vínculo com OS e ocorrências, alerta mínimo | `stock_items` + `stock_movements` |
+| Pendências de turno | handoff estruturado com leitura e resolução, direcionável por turno/data | `shift_handoffs` |
 
 ## Caminhos
 
@@ -72,7 +78,8 @@ Login: `demo@aerohotel.local` / `Registro@123` (tenant Aero Hotel, admin com wil
 - Anexos via MinIO com validação completa
 - Auditoria imutável com diff JSON
 - 70 testes automatizados (SLA, CRUD, cross-tenant, anexos, auditoria)
-- RLS em 24 tabelas PostgreSQL
+- RLS em 25 tabelas PostgreSQL (inclui `work_orders`)
+- Ordens de serviço com workflow de 5 estados, Kanban com drag-and-drop, criação, exclusão e transições auditadas
 
 ### Planejado / pendente de produção
 

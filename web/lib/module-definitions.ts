@@ -35,6 +35,7 @@ export type ModuleRecord = {
   deadline?: string;
   location?: string;
   slaStatus?: string;
+  priority?: string;
   scheduledAt?: string;
   shiftDate?: string;
   shiftType?: string;
@@ -65,7 +66,7 @@ export type ModuleDefinition = {
   description: string;
   singular: string;
   action: string;
-  layout?: "table" | "cards" | "settings" | "profile";
+  layout?: "table" | "cards" | "settings" | "profile" | "kanban";
   source?: "local" | "api";
   records: ModuleRecord[];
   serverPagination?: {
@@ -138,6 +139,11 @@ export const moduleDefinitions: Record<string, ModuleDefinition> = {
       { id: 488, title: "Teste do gerador", category: "Preventiva", owner: "Ana Souza", status: "Concluído", updatedAt: "16/06/2026" },
     ],
   },
+  "ordens-servico": {
+    slug: "ordens-servico", title: "Ordens de Serviço", singular: "ordem de serviço", action: "Nova OS", layout: "kanban",
+    description: "Crie, atribua e acompanhe ordens de serviço com workflow completo.",
+    records: [],
+  },
   procedimentos: {
     slug: "procedimentos", title: "Procedimentos", singular: "procedimento", action: "Novo procedimento",
     description: "Gerencie documentos operacionais, SOPs e manuais da empresa.",
@@ -182,6 +188,26 @@ export const moduleDefinitions: Record<string, ModuleDefinition> = {
     slug: "minha-conta", title: "Minha conta", singular: "perfil", action: "Salvar perfil", layout: "profile",
     description: "Atualize seus dados pessoais e preferências de acesso.", records: [],
   },
+  preventivas: {
+    slug: "preventivas", title: "Manutenção Preventiva", singular: "plano preventivo", action: "Novo plano",
+    description: "Crie planos de manutenção recorrente que geram OS automaticamente.",
+    records: [],
+  },
+  checklists: {
+    slug: "checklists", title: "Checklists", singular: "checklist", action: "Novo template",
+    description: "Configure templates de verificação recorrente e acompanhe execuções.",
+    records: [],
+  },
+  estoque: {
+    slug: "estoque", title: "Estoque", singular: "item", action: "Novo item",
+    description: "Controle materiais, produtos de limpeza, amenities e peças de reposição.",
+    records: [],
+  },
+  pendencias: {
+    slug: "pendencias", title: "Pendências de Turno", singular: "pendência", action: "Nova pendência",
+    description: "Registre pendências para o próximo turno com confirmação de leitura e resolução.",
+    records: [],
+  },
   "solicitacoes-fiscais": {
     slug: "solicitacoes-fiscais", title: "Solicitações Fiscais", singular: "solicitação", action: "Nova solicitação",
     description: "Solicitações da recepção para o financeiro sobre emissão e problemas com notas fiscais.",
@@ -194,5 +220,5 @@ export const moduleDefinitions: Record<string, ModuleDefinition> = {
 };
 
 export const navigationModules = [
-  "ocorrencias", "reunioes", "relatorios-turno", "inspecoes", "diarios-obra", "manutencao", "solicitacoes-fiscais",
+  "ocorrencias", "ordens-servico", "reunioes", "relatorios-turno", "inspecoes", "diarios-obra", "manutencao", "preventivas", "checklists", "estoque", "pendencias", "solicitacoes-fiscais",
 ];

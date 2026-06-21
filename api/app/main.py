@@ -13,27 +13,32 @@ from app.domain.apartment_inspections.router import router as apartment_inspecti
 from app.domain.attachments.router import router as attachments_router
 from app.domain.audit_reports.router import router as audit_reports_router
 from app.domain.auth.router import router as auth_router
+from app.domain.bulletin.router import router as bulletin_router
 from app.domain.check_suites.router import router as check_suites_router
+from app.domain.checklists.router import router as checklists_router
 from app.domain.dashboard.router import router as dashboard_router
 from app.domain.fiscal_requests.router import router as fiscal_requests_router
+from app.domain.handoffs.router import router as handoffs_router
 from app.domain.health.router import router as health_router
 from app.domain.inspection_suites.router import router as inspection_suites_router
+from app.domain.maintenance.router import router as maintenance_router
 from app.domain.meetings.router import router as meetings_router
 from app.domain.modules.router import router as modules_router
 from app.domain.notifications.router import router as notifications_router
 from app.domain.occurrences.router import router as occurrences_router
 from app.domain.platform.router import router as platform_router
 from app.domain.platform.webhook_router import router as asaas_webhook_router
+from app.domain.preventive_plans.router import router as preventive_plans_router
 from app.domain.procedures.router import router as procedures_router
 from app.domain.registries.router import router as registries_router
 from app.domain.roles.router import router as roles_router
 from app.domain.settings.router import router as settings_router
 from app.domain.shift_reports.router import router as shift_reports_router
+from app.domain.stock.router import router as stock_router
 from app.domain.timeline.router import router as timeline_router
 from app.domain.users.router import router as users_router
-from app.domain.bulletin.router import router as bulletin_router
-from app.domain.maintenance.router import router as maintenance_router
 from app.domain.work_diaries.router import router as work_diaries_router
+from app.domain.work_orders.router import router as work_orders_router
 
 settings = get_settings()
 
@@ -90,4 +95,9 @@ app.include_router(audit_reports_router, prefix=settings.api_prefix)
 app.include_router(work_diaries_router, prefix=settings.api_prefix)
 app.include_router(maintenance_router, prefix=settings.api_prefix)
 app.include_router(bulletin_router, prefix=settings.api_prefix)
+app.include_router(work_orders_router, prefix=settings.api_prefix)
+app.include_router(preventive_plans_router, prefix=settings.api_prefix)
+app.include_router(checklists_router, prefix=settings.api_prefix)
+app.include_router(stock_router, prefix=settings.api_prefix)
+app.include_router(handoffs_router, prefix=settings.api_prefix)
 app.include_router(asaas_webhook_router, prefix=settings.api_prefix)

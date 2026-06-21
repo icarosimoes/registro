@@ -1,5 +1,93 @@
 # Registro de trabalho
 
+## 2026-06-21 — Controle de Estoque e Pendências de Turno
+
+### Controle de materiais e estoque
+
+- Modelos `StockItem` + `StockMovement` em `operations.py`.
+- `StockItem`: name, category, unit, min_quantity, current_quantity, location_id. Soft delete.
+- `StockMovement`: item_id, movement_type (entrada/saída/ajuste), quantity, reason, vínculo opcional com work_order_id e occurrence_id.
+- Domínio `domain/stock/` com router, schemas e service — CRUD de itens + movimentações com validação de estoque.
+- Saída valida estoque suficiente, ajuste define saldo absoluto, entrada soma ao saldo.
+- Filtro `below_min=true` para alertas de reposição.
+- Migration `0037_stock_handoff` com tabelas e 4 permissões `stock.*`.
+- Server actions: `createStockItemAction`, `updateStockItemAction`, `deleteStockItemAction`, `createStockMovementAction`.
+- Navegação: item "Estoque" na sidebar com ícone Package, módulo `/estoque`.
+
+### Pendências de turno (Handoff)
+
+- Modelo `ShiftHandoff` com fluxo pendente → lido → resolvido.
+- Campos: title, description, priority (normal/alta/urgente), category, target_shift (morning/afternoon/night), target_date, shift_report_id (vínculo opcional).
+- Confirmação de leitura: `read_at`, `read_by_user_id`. Resolução: `resolved_at`, `resolved_by_user_id`, `resolution_notes`.
+- Domínio `domain/handoffs/` com router, schemas e service — CRUD + read + resolve + pending.
+- `GET /handoffs/pending` retorna pendências não resolvidas para data/turno (inclui atrasadas de dias anteriores).
+- 4 permissões `handoff.*`.
+- Server actions: `createHandoffAction`, `updateHandoffAction`, `markHandoffReadAction`, `resolveHandoffAction`, `deleteHandoffAction`.
+- Navegação: item "Pendências turno" na sidebar com ícone ArrowRightLeft, módulo `/pendencias`.
+
+## 2026-06-21 — Dashboard KPIs, Manutenção Preventiva e Checklists Recorrentes
+
+### Dashboard com KPIs avançados
+
+- Endpoint `/dashboard/metrics` expandido com campo `kpis` contendo indicadores detalhados.
+- **Ordens de Serviço**: total, distribuição por status/prioridade/categoria, tempo médio de resolução, SLA compliance %, OS atrasadas, criadas/concluídas na semana.
+- **Ocorrências**: distribuição por status, taxa de conclusão mensal, distribuição por setor (top 8), atrasadas por deadline.
+- **Solicitações Fiscais**: distribuição por status/tipo (top 8), SLA compliance %, atrasadas.
+- **Tendência 7 dias**: contagem diária de OS, ocorrências e fiscais.
+- Frontend: seção "Indicadores detalhados" com 3 painéis (grid responsivo), gráficos de barras por distribuição, gráfico de tendência semanal com 3 séries. Sidebar expandido com OS ativas e da semana.
+
+### Manutenção preventiva
+
+- Modelo `PreventivePlan` em `operations.py` com recorrência (daily/weekly/biweekly/monthly/quarterly/semiannual/annual), categoria, prioridade, SLA, localização, responsável, `next_due`, `last_generated_at`.
+- Domínio `domain/preventive_plans/` com router, schemas e service — CRUD completo.
+- Endpoint `POST /preventive-plans/generate` gera OS automaticamente para planos vencidos, com título `[Preventiva] {nome}`, avança `next_due` conforme recorrência.
+- Migration `0036_preventive_checklists` com tabelas e 4 permissões `preventive_plan.*`.
+- Server actions no frontend: `createPreventivePlanAction`, `updatePreventivePlanAction`, `deletePreventivePlanAction`, `generatePreventiveOrdersAction`.
+- Navegação: item "Preventivas" na sidebar com ícone Timer, módulo `/preventivas` listando planos da API.
+
+### Checklists recorrentes
+
+- Modelos: `ChecklistTemplate` + `ChecklistTemplateItem` (templates com itens ordenados), `ChecklistExecution` + `ChecklistExecutionItem` (instâncias com check individual e conclusão).
+- Domínio `domain/checklists/` com router, schemas e service — templates CRUD + execuções com toggle/complete.
+- Endpoint `POST /checklists/generate` gera execuções para templates vencidos, copiando itens do template, avançando `next_due`.
+- 4 permissões `checklist.*` atribuídas ao role admin.
+- Server actions: `createChecklistTemplateAction`, `updateChecklistTemplateAction`, `deleteChecklistTemplateAction`, `toggleChecklistItemAction`, `completeChecklistAction`, `generateChecklistExecutionsAction`.
+- Navegação: item "Checklists" na sidebar com ícone CalendarCheck, módulo `/checklists` listando templates da API.
+
+## 2026-06-21 — Ordens de Serviço, Kanban e PWA
+
+### Ordens de Serviço (work_orders)
+
+- Modelo `WorkOrder` com fluxo de estados (aberta → em andamento → aguardando material → concluída → validada).
+- Migration `0035_work_orders` com tabela, RLS (`tenant_isolation`) e 4 permissões (`work_order.view/create/edit/delete`).
+- Domínio `domain/work_orders/` com router, schemas e service — CRUD completo com transições de estado auditadas.
+- Atribuição de responsável, SLA calculado no servidor, vínculo com ocorrências e manutenção.
+- Endpoint `GET /work-orders/summary` com contagem por status e mapa de transições permitidas.
+- Server actions no frontend: `createWorkOrderAction`, `updateWorkOrderAction`, `transitionWorkOrderAction`, `deleteWorkOrderAction`.
+
+### Kanban visual
+
+- Componente `kanban-board.tsx` com drag-and-drop HTML5 para transição de status entre colunas.
+- Modal de criação de OS com título, descrição, prioridade (urgente/alta/média/baixa), categoria e SLA em horas.
+- Exclusão de OS direto no card com confirmação.
+- Feedback visual: card arrastado com opacidade, coluna-alvo com outline azul, toast de erro para transições inválidas, loading indicator fixo.
+- Badges de prioridade coloridos e exibição de SLA no card.
+- CSS responsivo: no mobile as colunas empilham verticalmente.
+
+### PWA (Progressive Web App)
+
+- `manifest.json` com nome, tema e ícones.
+- Service worker (`sw.js`) com network-first para navegação e cache-first para assets.
+- Ícones SVG gerados via `scripts/generate-icons.mjs`.
+- Meta tags Apple, safe-area-inset e display standalone no layout.
+
+### Backlog P6 — evolução operacional
+
+Adicionada seção de evolução operacional ao backlog com roadmap de funcionalidades:
+- Alta: Ordens de Serviço com workflow (implementado), Kanban visual (implementado).
+- Média: manutenção preventiva, controle de materiais, checklists recorrentes, KPIs avançados, handoff entre turnos.
+- Baixa: PWA (implementado).
+
 ## 2026-06-21 — Import V1 reescrito, Evolution WhatsApp, testes e relatórios de turno completos
 
 ### import_v1.py reescrito para tabelas dedicadas

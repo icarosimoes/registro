@@ -3,16 +3,6 @@ import { DashboardShell } from "@/components/dashboard-shell";
 import { currentTenantUser, tenantFetch } from "@/lib/api";
 import { redirect } from "next/navigation";
 
-type RecentActivity = {
-  id: number;
-  title: string;
-  module: string;
-  area: string;
-  owner: string;
-  status: string;
-  updated_at: string;
-};
-
 type DashboardMetrics = {
   open_occurrences: number;
   my_occurrences: number;
@@ -20,7 +10,46 @@ type DashboardMetrics = {
   completed_month: number;
   active_users: number;
   active_sectors: number;
-  recent: RecentActivity[];
+  recent: Array<{
+    id: number;
+    title: string;
+    module: string;
+    area: string;
+    owner: string;
+    status: string;
+    updated_at: string;
+  }>;
+  kpis: {
+    work_orders: {
+      total: number;
+      by_status: Record<string, number>;
+      by_priority: Record<string, number>;
+      by_category: Record<string, number>;
+      avg_resolution_hours: number | null;
+      sla_compliance_pct: number | null;
+      overdue: number;
+      created_week: number;
+      completed_week: number;
+    };
+    occurrences: {
+      by_status: Record<string, number>;
+      completion_rate_pct: number | null;
+      by_sector: Record<string, number>;
+      overdue: number;
+    };
+    fiscal_requests: {
+      by_status: Record<string, number>;
+      by_type: Record<string, number>;
+      sla_compliance_pct: number | null;
+      overdue: number;
+    };
+    trend: Array<{
+      date: string;
+      work_orders: number;
+      occurrences: number;
+      fiscal_requests: number;
+    }>;
+  };
 };
 
 export default async function DashboardPage() {

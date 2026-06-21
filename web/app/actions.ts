@@ -774,3 +774,294 @@ export async function listPermissionsAction(): Promise<{ module: string; permiss
   if (!response.ok) return [];
   return response.json();
 }
+
+// --- Preventive Plans ---
+
+export interface PreventivePlanPayload {
+  name: string;
+  description?: string;
+  recurrence: string;
+  category?: string;
+  priority?: string;
+  sla_hours?: number;
+  location_id?: number;
+  assigned_user_id?: number;
+  next_due?: string;
+}
+
+export async function createPreventivePlanAction(body: PreventivePlanPayload): Promise<MutationResult> {
+  const response = await authedFetch("/preventive-plans", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar plano preventivo." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updatePreventivePlanAction(id: number, body: Partial<PreventivePlanPayload>): Promise<MutationResult> {
+  const response = await authedFetch(`/preventive-plans/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar plano preventivo." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deletePreventivePlanAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/preventive-plans/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir plano preventivo." };
+  }
+  return { ok: true };
+}
+
+export async function generatePreventiveOrdersAction(): Promise<MutationResult> {
+  const response = await authedFetch("/preventive-plans/generate", { method: "POST" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao gerar OS preventivas." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+// --- Checklists ---
+
+export interface ChecklistTemplatePayload {
+  name: string;
+  description?: string;
+  recurrence: string;
+  category?: string;
+  assigned_user_id?: number;
+  next_due?: string;
+  items?: { label: string; sort_order: number }[];
+}
+
+export async function createChecklistTemplateAction(body: ChecklistTemplatePayload): Promise<MutationResult> {
+  const response = await authedFetch("/checklists/templates", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar template de checklist." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateChecklistTemplateAction(id: number, body: Partial<ChecklistTemplatePayload>): Promise<MutationResult> {
+  const response = await authedFetch(`/checklists/templates/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar template." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteChecklistTemplateAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/checklists/templates/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir template." };
+  }
+  return { ok: true };
+}
+
+export async function toggleChecklistItemAction(executionId: number, itemId: number, checked: boolean): Promise<MutationResult> {
+  const response = await authedFetch(`/checklists/executions/${executionId}/toggle`, {
+    method: "POST", body: JSON.stringify({ item_id: itemId, checked }),
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar item." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function completeChecklistAction(executionId: number, notes?: string): Promise<MutationResult> {
+  const response = await authedFetch(`/checklists/executions/${executionId}/complete`, {
+    method: "POST", body: JSON.stringify({ notes: notes ?? null }),
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao concluir checklist." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function generateChecklistExecutionsAction(): Promise<MutationResult> {
+  const response = await authedFetch("/checklists/generate", { method: "POST" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao gerar execuções." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+// --- Stock ---
+
+export interface StockItemPayload {
+  name: string;
+  category?: string;
+  unit?: string;
+  min_quantity?: number;
+  current_quantity?: number;
+  location_id?: number;
+}
+
+export async function createStockItemAction(body: StockItemPayload): Promise<MutationResult> {
+  const response = await authedFetch("/stock/items", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar item." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateStockItemAction(id: number, body: Partial<StockItemPayload>): Promise<MutationResult> {
+  const response = await authedFetch(`/stock/items/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar item." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteStockItemAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/stock/items/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir item." };
+  }
+  return { ok: true };
+}
+
+export interface StockMovementPayload {
+  item_id: number;
+  movement_type: string;
+  quantity: number;
+  reason?: string;
+  work_order_id?: number;
+  occurrence_id?: number;
+}
+
+export async function createStockMovementAction(body: StockMovementPayload): Promise<MutationResult> {
+  const response = await authedFetch("/stock/movements", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    const data = await response.json().catch(() => ({}));
+    return { ok: false, error: data?.detail ?? "Erro ao registrar movimentação." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+// --- Handoffs ---
+
+export interface HandoffPayload {
+  title: string;
+  description?: string;
+  priority?: string;
+  category?: string;
+  target_shift?: string;
+  target_date?: string;
+  shift_report_id?: number;
+}
+
+export async function createHandoffAction(body: HandoffPayload): Promise<MutationResult> {
+  const response = await authedFetch("/handoffs", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar pendência." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateHandoffAction(id: number, body: Partial<HandoffPayload>): Promise<MutationResult> {
+  const response = await authedFetch(`/handoffs/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar pendência." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function markHandoffReadAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/handoffs/${id}/read`, { method: "POST" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao marcar como lida." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function resolveHandoffAction(id: number, notes?: string): Promise<MutationResult> {
+  const response = await authedFetch(`/handoffs/${id}/resolve`, {
+    method: "POST", body: JSON.stringify({ resolution_notes: notes ?? null }),
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao resolver pendência." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteHandoffAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/handoffs/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir pendência." };
+  }
+  return { ok: true };
+}
+
+// --- Work Orders ---
+
+export interface WorkOrderPayload {
+  title: string;
+  description?: string;
+  priority?: string;
+  category?: string;
+  location_id?: number;
+  occurrence_id?: number;
+  maintenance_id?: number;
+  assigned_user_id?: number;
+  notify_user_ids?: number[];
+  sla_hours?: number;
+}
+
+export async function createWorkOrderAction(body: WorkOrderPayload): Promise<MutationResult> {
+  const response = await authedFetch("/work-orders", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar ordem de serviço." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateWorkOrderAction(id: number, body: Partial<WorkOrderPayload>): Promise<MutationResult> {
+  const response = await authedFetch(`/work-orders/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar ordem de serviço." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function transitionWorkOrderAction(id: number, targetStatus: string, notes?: string): Promise<MutationResult> {
+  const response = await authedFetch(`/work-orders/${id}/transition/${targetStatus}`, {
+    method: "POST",
+    body: JSON.stringify({ notes: notes ?? null }),
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    const data = await response.json().catch(() => ({}));
+    return { ok: false, error: data?.detail?.message ?? "Transição não permitida." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteWorkOrderAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/work-orders/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir ordem de serviço." };
+  }
+  return { ok: true };
+}

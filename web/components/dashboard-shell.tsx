@@ -28,6 +28,46 @@ type Ticket = {
   updatedAt: string;
 };
 
+type TrendDay = {
+  date: string;
+  work_orders: number;
+  occurrences: number;
+  fiscal_requests: number;
+};
+
+type WorkOrderKpis = {
+  total: number;
+  by_status: Record<string, number>;
+  by_priority: Record<string, number>;
+  by_category: Record<string, number>;
+  avg_resolution_hours: number | null;
+  sla_compliance_pct: number | null;
+  overdue: number;
+  created_week: number;
+  completed_week: number;
+};
+
+type OccurrenceKpis = {
+  by_status: Record<string, number>;
+  completion_rate_pct: number | null;
+  by_sector: Record<string, number>;
+  overdue: number;
+};
+
+type FiscalRequestKpis = {
+  by_status: Record<string, number>;
+  by_type: Record<string, number>;
+  sla_compliance_pct: number | null;
+  overdue: number;
+};
+
+type DashboardKpis = {
+  work_orders: WorkOrderKpis;
+  occurrences: OccurrenceKpis;
+  fiscal_requests: FiscalRequestKpis;
+  trend: TrendDay[];
+};
+
 type DashboardMetricsData = {
   open_occurrences: number;
   my_occurrences: number;
@@ -44,6 +84,7 @@ type DashboardMetricsData = {
     status: string;
     updated_at: string;
   }>;
+  kpis?: DashboardKpis;
 } | null;
 
 function formatRelativeTime(dateStr: string): string {
@@ -78,6 +119,75 @@ const statusClass: Record<TicketStatus, string> = {
   Concluído: "status status-done",
 };
 
+const WO_STATUS_LABELS: Record<string, string> = {
+  aberta: "Aberta",
+  em_andamento: "Em andamento",
+  aguardando_material: "Aguardando",
+  concluida: "Concluída",
+  validada: "Validada",
+};
+
+const PRIORITY_LABELS: Record<string, string> = {
+  urgente: "Urgente",
+  alta: "Alta",
+  media: "Média",
+  baixa: "Baixa",
+};
+
+function BarChart({ data, max, color = "blue" }: { data: Record<string, number>; max?: number; color?: string }) {
+  const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+  const maxVal = max ?? Math.max(...entries.map(([, v]) => v), 1);
+  return (
+    <div className="kpi-bar-list">
+      {entries.map(([label, count]) => (
+        <div key={label} className="kpi-bar-row">
+          <span className="kpi-bar-label" title={label}>{label}</span>
+          <div className="kpi-bar-track">
+            <div className={`kpi-bar-fill ${color}`} style={{ width: `${Math.max(2, (count / maxVal) * 100)}%` }} />
+          </div>
+          <span className="kpi-bar-count">{count}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function TrendChart({ trend }: { trend: TrendDay[] }) {
+  const maxVal = Math.max(
+    ...trend.flatMap((d) => [d.work_orders, d.occurrences, d.fiscal_requests]),
+    1,
+  );
+  const dayNames = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+  return (
+    <div className="kpi-trend">
+      <div className="kpi-trend-header">
+        <h3>Últimos 7 dias</h3>
+        <div className="kpi-trend-legend">
+          <span><i style={{ background: "var(--blue)" }} /> OS</span>
+          <span><i style={{ background: "var(--orange)" }} /> Ocorrências</span>
+          <span><i style={{ background: "var(--green)" }} /> Fiscais</span>
+        </div>
+      </div>
+      <div className="kpi-trend-chart">
+        {trend.map((day) => (
+          <div key={day.date} className="kpi-trend-day">
+            <div className="kpi-trend-bar blue" style={{ height: `${(day.work_orders / maxVal) * 100}%` }} />
+            <div className="kpi-trend-bar orange" style={{ height: `${(day.occurrences / maxVal) * 100}%` }} />
+            <div className="kpi-trend-bar green" style={{ height: `${(day.fiscal_requests / maxVal) * 100}%` }} />
+          </div>
+        ))}
+      </div>
+      <div className="kpi-trend-labels">
+        {trend.map((day) => {
+          const d = new Date(day.date + "T12:00:00");
+          return <span key={day.date}>{dayNames[d.getDay()]}</span>;
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function DashboardShell({ user, metrics }: { user?: TenantUser; metrics?: DashboardMetricsData }) {
   const [query, setQuery] = useState("");
   const [scope, setScope] = useState<"all" | "mine" | "pending">("all");
@@ -106,6 +216,7 @@ export function DashboardShell({ user, metrics }: { user?: TenantUser; metrics?:
   const completedMonth = metrics?.completed_month ?? 0;
   const activeUsers = metrics?.active_users ?? 0;
   const activeSectors = metrics?.active_sectors ?? 0;
+  const kpis = metrics?.kpis ?? null;
 
   const filteredTickets = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("pt-BR");
@@ -134,6 +245,97 @@ export function DashboardShell({ user, metrics }: { user?: TenantUser; metrics?:
         <article className="metric-card accent-green"><span>Concluídos no mês</span><strong>{completedMonth}</strong><small>ocorrências finalizadas</small><ShieldCheck /></article>
         <article className="metric-card accent-purple"><span>Equipe ativa</span><strong>{activeUsers}</strong><small>{activeSectors} setores em operação</small><Users /></article>
       </section>
+
+      {kpis && (
+        <section className="kpi-section" aria-label="KPIs avançados">
+          <h2>Indicadores detalhados</h2>
+          <div className="kpi-grid">
+            <div className="kpi-panel">
+              <h3>Ordens de Serviço</h3>
+              <div className="kpi-stat-grid">
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">Total</span>
+                  <span className="kpi-stat-value accent-blue">{kpis.work_orders.total}</span>
+                </div>
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">Atrasadas (SLA)</span>
+                  <span className={`kpi-stat-value ${kpis.work_orders.overdue > 0 ? "accent-red" : "accent-green"}`}>{kpis.work_orders.overdue}</span>
+                </div>
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">Tempo médio</span>
+                  <span className="kpi-stat-value">{kpis.work_orders.avg_resolution_hours != null ? `${kpis.work_orders.avg_resolution_hours}h` : "—"}</span>
+                </div>
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">SLA cumprido</span>
+                  <span className={`kpi-stat-value ${(kpis.work_orders.sla_compliance_pct ?? 0) >= 80 ? "accent-green" : "accent-orange"}`}>{kpis.work_orders.sla_compliance_pct != null ? `${kpis.work_orders.sla_compliance_pct}%` : "—"}</span>
+                </div>
+              </div>
+              <BarChart
+                data={Object.fromEntries(
+                  Object.entries(kpis.work_orders.by_status).map(([k, v]) => [WO_STATUS_LABELS[k] ?? k, v])
+                )}
+                color="blue"
+              />
+            </div>
+
+            <div className="kpi-panel">
+              <h3>Ocorrências</h3>
+              <div className="kpi-stat-grid">
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">Abertas</span>
+                  <span className="kpi-stat-value accent-blue">{(kpis.occurrences.by_status.em_andamento ?? 0) + (kpis.occurrences.by_status.aguardando ?? 0)}</span>
+                </div>
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">Atrasadas</span>
+                  <span className={`kpi-stat-value ${kpis.occurrences.overdue > 0 ? "accent-red" : "accent-green"}`}>{kpis.occurrences.overdue}</span>
+                </div>
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">Taxa conclusão</span>
+                  <span className={`kpi-stat-value ${(kpis.occurrences.completion_rate_pct ?? 0) >= 70 ? "accent-green" : "accent-orange"}`}>{kpis.occurrences.completion_rate_pct != null ? `${kpis.occurrences.completion_rate_pct}%` : "—"}</span>
+                </div>
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">Concluídas</span>
+                  <span className="kpi-stat-value accent-green">{kpis.occurrences.by_status.concluido ?? 0}</span>
+                </div>
+              </div>
+              {Object.keys(kpis.occurrences.by_sector).length > 0 && (
+                <BarChart data={kpis.occurrences.by_sector} color="orange" />
+              )}
+            </div>
+
+            <div className="kpi-panel">
+              <h3>Solicitações Fiscais</h3>
+              <div className="kpi-stat-grid">
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">Abertas</span>
+                  <span className="kpi-stat-value accent-orange">{Object.entries(kpis.fiscal_requests.by_status).filter(([k]) => k !== "Concluído").reduce((s, [, v]) => s + v, 0)}</span>
+                </div>
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">Atrasadas (SLA)</span>
+                  <span className={`kpi-stat-value ${kpis.fiscal_requests.overdue > 0 ? "accent-red" : "accent-green"}`}>{kpis.fiscal_requests.overdue}</span>
+                </div>
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">SLA cumprido</span>
+                  <span className={`kpi-stat-value ${(kpis.fiscal_requests.sla_compliance_pct ?? 0) >= 80 ? "accent-green" : "accent-orange"}`}>{kpis.fiscal_requests.sla_compliance_pct != null ? `${kpis.fiscal_requests.sla_compliance_pct}%` : "—"}</span>
+                </div>
+                <div className="kpi-stat">
+                  <span className="kpi-stat-label">Concluídas</span>
+                  <span className="kpi-stat-value accent-green">{kpis.fiscal_requests.by_status["Concluído"] ?? 0}</span>
+                </div>
+              </div>
+              {Object.keys(kpis.fiscal_requests.by_type).length > 0 && (
+                <BarChart data={kpis.fiscal_requests.by_type} color="purple" />
+              )}
+            </div>
+          </div>
+
+          {kpis.trend.length > 0 && (
+            <div className="kpi-panel">
+              <TrendChart trend={kpis.trend} />
+            </div>
+          )}
+        </section>
+      )}
 
       <div className="content-grid">
         <section className="panel activity-panel">
@@ -168,6 +370,10 @@ export function DashboardShell({ user, metrics }: { user?: TenantUser; metrics?:
               <div><span>Ocorrências</span><strong>{openOccurrences}</strong></div>
               <div><span>Solicitações fiscais</span><strong>{openFiscal}</strong></div>
               <div><span>Concluídos (mês)</span><strong>{completedMonth}</strong></div>
+              {kpis && <>
+                <div><span>OS ativas</span><strong>{kpis.work_orders.total - (kpis.work_orders.by_status.validada ?? 0)}</strong></div>
+                <div><span>OS esta semana</span><strong>{kpis.work_orders.created_week}</strong></div>
+              </>}
             </div>
           </section>
           <section className="panel notices-panel">

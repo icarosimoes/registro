@@ -19,6 +19,11 @@
 | `/cadastros` | lista e CRUD | CRUD via API + mutações server-side | API `registries` (setores, locais e funções) isolada por tenant |
 | `/usuarios` | lista e CRUD | CRUD via API + mutações server-side | API `users` isolada por tenant |
 | `/mural` | cartões e CRUD | CRUD via API + mutações server-side | API `modules/mural` isolada por tenant |
+| `/ordens-servico` | Kanban com drag-and-drop | CRUD + transições via API + server actions | API `work-orders` isolada por tenant |
+| `/preventivas` | lista e CRUD | CRUD via API + geração automática de OS | API `preventive-plans` isolada por tenant |
+| `/checklists` | lista e CRUD | templates + execuções via API + geração automática | API `checklists/templates` + `checklists/executions` isolada por tenant |
+| `/estoque` | lista e CRUD + movimentações | itens de estoque com entrada/saída/ajuste | API `stock/items` + `stock/movements` isolada por tenant |
+| `/pendencias` | lista e CRUD + leitura/resolução | pendências entre turnos com confirmação | API `handoffs` isolada por tenant |
 | `/configuracoes`, `/minha-conta` | formulários | operacional local | preferências do navegador |
 
 ## Painel administrativo (`admin/`)
@@ -50,6 +55,11 @@ Todas as rotas operacionais estão integradas com a API. A tabela abaixo lista o
 | `/diarios-obra` | `GET/POST/PATCH/DELETE /modules/diarios-obra` |
 | `/manutencao` | `GET/POST/PATCH/DELETE /modules/manutencao` |
 | `/mural` | `GET/POST/PATCH/DELETE /modules/mural` |
+| `/ordens-servico` | `GET/POST/PATCH/DELETE /work-orders` + `POST /work-orders/{id}/transition/{status}` |
+| `/preventivas` | `GET/POST/PATCH/DELETE /preventive-plans` + `POST /preventive-plans/generate` |
+| `/checklists` | `GET/POST/PATCH/DELETE /checklists/templates` + `GET /checklists/executions` + toggle/complete/generate |
+| `/estoque` | `GET/POST/PATCH/DELETE /stock/items` + `POST/GET /stock/movements` |
+| `/pendencias` | `GET/POST/PATCH/DELETE /handoffs` + `POST /handoffs/{id}/read` + `POST /handoffs/{id}/resolve` + `GET /handoffs/pending` |
 
 ## Workspace tabs (removido)
 

@@ -546,6 +546,240 @@ class BulletinPost(Base, TenantMixin, TimestampMixin):
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
 
 
+# ---------------------------------------------------------------------------
+# Work Orders (P6)
+# ---------------------------------------------------------------------------
+
+WORK_ORDER_STATUSES = ("aberta", "em_andamento", "aguardando_material", "concluida", "validada")
+
+
+class WorkOrder(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "work_orders"
+    __table_args__ = (
+        Index("ix_work_orders_status", "company_id", "status"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String(40), default="aberta")
+    priority: Mapped[str | None] = mapped_column(String(20))
+    category: Mapped[str | None] = mapped_column(String(120))
+    location_id: Mapped[int | None] = mapped_column(
+        ForeignKey("locations.id", ondelete="SET NULL"),
+    )
+    occurrence_id: Mapped[int | None] = mapped_column(
+        ForeignKey("occurrences.id", ondelete="SET NULL"),
+    )
+    maintenance_id: Mapped[int | None] = mapped_column(
+        ForeignKey("maintenance_records.id", ondelete="SET NULL"),
+    )
+    assigned_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    created_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    validated_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    notify_user_ids: Mapped[list | None] = mapped_column(JSON)
+    sla_hours: Mapped[int | None] = mapped_column(Integer)
+    sla_deadline: Mapped[datetime | None] = mapped_column(DateTime)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime)
+    validated_at: Mapped[datetime | None] = mapped_column(DateTime)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+# ---------------------------------------------------------------------------
+# Stock / Materials Control (P7)
+# ---------------------------------------------------------------------------
+
+MOVEMENT_TYPES = ("entrada", "saida", "ajuste")
+
+
+class StockItem(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "stock_items"
+    __table_args__ = (
+        Index("ix_stock_items_company", "company_id"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(255))
+    category: Mapped[str | None] = mapped_column(String(120))
+    unit: Mapped[str] = mapped_column(String(40), default="un")
+    min_quantity: Mapped[int] = mapped_column(Integer, default=0)
+    current_quantity: Mapped[int] = mapped_column(Integer, default=0)
+    location_id: Mapped[int | None] = mapped_column(
+        ForeignKey("locations.id", ondelete="SET NULL"),
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class StockMovement(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "stock_movements"
+    __table_args__ = (
+        Index("ix_stock_movements_item", "item_id"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    item_id: Mapped[int] = mapped_column(
+        ForeignKey("stock_items.id", ondelete="CASCADE"),
+    )
+    movement_type: Mapped[str] = mapped_column(String(20))
+    quantity: Mapped[int] = mapped_column(Integer)
+    reason: Mapped[str | None] = mapped_column(String(255))
+    work_order_id: Mapped[int | None] = mapped_column(
+        ForeignKey("work_orders.id", ondelete="SET NULL"),
+    )
+    occurrence_id: Mapped[int | None] = mapped_column(
+        ForeignKey("occurrences.id", ondelete="SET NULL"),
+    )
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Shift Handoff (P7)
+# ---------------------------------------------------------------------------
+
+HANDOFF_STATUS = ("pendente", "lido", "resolvido")
+
+
+class ShiftHandoff(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "shift_handoffs"
+    __table_args__ = (
+        Index("ix_shift_handoffs_company_date", "company_id", "target_date"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    shift_report_id: Mapped[int | None] = mapped_column(
+        ForeignKey("shift_reports.id", ondelete="SET NULL"),
+    )
+    title: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    priority: Mapped[str] = mapped_column(String(20), default="normal")
+    category: Mapped[str | None] = mapped_column(String(120))
+    target_shift: Mapped[str | None] = mapped_column(String(20))
+    target_date: Mapped[date] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(String(20), default="pendente")
+    read_at: Mapped[datetime | None] = mapped_column(DateTime)
+    read_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime)
+    resolved_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    resolution_notes: Mapped[str | None] = mapped_column(Text)
+    created_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+# ---------------------------------------------------------------------------
+# Preventive Maintenance Plans (P7)
+# ---------------------------------------------------------------------------
+
+RECURRENCE_TYPES = ("daily", "weekly", "biweekly", "monthly", "quarterly", "semiannual", "annual")
+
+
+class PreventivePlan(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "preventive_plans"
+    __table_args__ = (
+        Index("ix_preventive_plans_company_active", "company_id", "active"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    recurrence: Mapped[str] = mapped_column(String(20))
+    category: Mapped[str | None] = mapped_column(String(120))
+    priority: Mapped[str] = mapped_column(String(20), default="media")
+    sla_hours: Mapped[int | None] = mapped_column(Integer)
+    location_id: Mapped[int | None] = mapped_column(
+        ForeignKey("locations.id", ondelete="SET NULL"),
+    )
+    assigned_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    next_due: Mapped[date | None] = mapped_column(Date)
+    last_generated_at: Mapped[datetime | None] = mapped_column(DateTime)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+# ---------------------------------------------------------------------------
+# Recurring Checklists (P7)
+# ---------------------------------------------------------------------------
+
+CHECKLIST_RECURRENCE_TYPES = ("daily", "weekly", "biweekly", "monthly")
+
+
+class ChecklistTemplate(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "checklist_templates"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    recurrence: Mapped[str] = mapped_column(String(20))
+    category: Mapped[str | None] = mapped_column(String(120))
+    assigned_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    next_due: Mapped[date | None] = mapped_column(Date)
+    last_generated_at: Mapped[datetime | None] = mapped_column(DateTime)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class ChecklistTemplateItem(Base):
+    __tablename__ = "checklist_template_items"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    template_id: Mapped[int] = mapped_column(
+        ForeignKey("checklist_templates.id", ondelete="CASCADE"),
+    )
+    label: Mapped[str] = mapped_column(String(255))
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+
+
+class ChecklistExecution(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "checklist_executions"
+    __table_args__ = (
+        Index("ix_checklist_exec_company_due", "company_id", "due_date"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    template_id: Mapped[int] = mapped_column(
+        ForeignKey("checklist_templates.id", ondelete="CASCADE"),
+    )
+    due_date: Mapped[date] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(String(40), default="pendente")
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime)
+    completed_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    notes: Mapped[str | None] = mapped_column(Text)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class ChecklistExecutionItem(Base):
+    __tablename__ = "checklist_execution_items"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    execution_id: Mapped[int] = mapped_column(
+        ForeignKey("checklist_executions.id", ondelete="CASCADE"),
+    )
+    label: Mapped[str] = mapped_column(String(255))
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    checked: Mapped[bool] = mapped_column(Boolean, default=False)
+    checked_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
 class LegacyImportRun(Base):
     __tablename__ = "legacy_import_runs"
 

@@ -124,6 +124,44 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `POST` | `/work-diaries` | `work_diary.create` | cria diário com atividades/equipes/equipamentos/observações |
 | `PATCH` | `/work-diaries/{id}` | `work_diary.edit` | atualiza diário |
 | `DELETE` | `/work-diaries/{id}` | `work_diary.delete` | soft delete |
+| `GET` | `/work-orders` | `work_order.view` | ordens de serviço paginadas (filtro por status, prioridade, busca) |
+| `GET` | `/work-orders/summary` | `work_order.view` | contagem por status e mapa de transições |
+| `GET` | `/work-orders/{id}` | `work_order.view` | detalhe da ordem de serviço |
+| `POST` | `/work-orders` | `work_order.create` | cria ordem de serviço com SLA opcional |
+| `PATCH` | `/work-orders/{id}` | `work_order.edit` | atualiza ordem de serviço |
+| `POST` | `/work-orders/{id}/transition/{status}` | `work_order.edit` | transição de status com validação de fluxo |
+| `DELETE` | `/work-orders/{id}` | `work_order.delete` | soft delete de ordem de serviço |
+| `GET` | `/preventive-plans` | `preventive_plan.view` | planos preventivos paginados (filtro por busca, ativos) |
+| `GET` | `/preventive-plans/{id}` | `preventive_plan.view` | detalhe do plano preventivo |
+| `POST` | `/preventive-plans` | `preventive_plan.create` | cria plano preventivo com recorrência |
+| `PATCH` | `/preventive-plans/{id}` | `preventive_plan.edit` | atualiza plano preventivo |
+| `DELETE` | `/preventive-plans/{id}` | `preventive_plan.delete` | soft delete de plano preventivo |
+| `POST` | `/preventive-plans/generate` | `preventive_plan.edit` | gera OS para planos vencidos |
+| `GET` | `/checklists/templates` | `checklist.view` | templates de checklist paginados |
+| `GET` | `/checklists/templates/{id}` | `checklist.view` | detalhe do template com itens |
+| `POST` | `/checklists/templates` | `checklist.create` | cria template com itens inline |
+| `PATCH` | `/checklists/templates/{id}` | `checklist.edit` | atualiza template e itens |
+| `DELETE` | `/checklists/templates/{id}` | `checklist.delete` | soft delete de template |
+| `GET` | `/checklists/executions` | `checklist.view` | execuções paginadas (filtro por template, status) |
+| `GET` | `/checklists/executions/{id}` | `checklist.view` | detalhe da execução com itens |
+| `POST` | `/checklists/executions/{id}/toggle` | `checklist.edit` | marca/desmarca item individual |
+| `POST` | `/checklists/executions/{id}/complete` | `checklist.edit` | conclui execução com notas opcionais |
+| `POST` | `/checklists/generate` | `checklist.edit` | gera execuções para templates vencidos |
+| `GET` | `/stock/items` | `stock.view` | itens de estoque paginados (filtro por busca, abaixo do mínimo) |
+| `GET` | `/stock/items/{id}` | `stock.view` | detalhe do item de estoque |
+| `POST` | `/stock/items` | `stock.create` | cria item de estoque |
+| `PATCH` | `/stock/items/{id}` | `stock.edit` | atualiza item de estoque |
+| `DELETE` | `/stock/items/{id}` | `stock.delete` | soft delete de item de estoque |
+| `POST` | `/stock/movements` | `stock.edit` | registra movimentação (entrada/saída/ajuste) |
+| `GET` | `/stock/movements` | `stock.view` | movimentações paginadas (filtro por item) |
+| `GET` | `/handoffs` | `handoff.view` | pendências de turno paginadas (filtro por data, turno, status) |
+| `GET` | `/handoffs/pending` | `handoff.view` | pendências não resolvidas para data/turno |
+| `GET` | `/handoffs/{id}` | `handoff.view` | detalhe da pendência |
+| `POST` | `/handoffs` | `handoff.create` | cria pendência de turno |
+| `PATCH` | `/handoffs/{id}` | `handoff.edit` | atualiza pendência |
+| `POST` | `/handoffs/{id}/read` | `handoff.view` | marca pendência como lida |
+| `POST` | `/handoffs/{id}/resolve` | `handoff.edit` | resolve pendência com notas |
+| `DELETE` | `/handoffs/{id}` | `handoff.delete` | soft delete de pendência |
 
 ### Login
 
@@ -340,7 +378,35 @@ Valores inválidos retornam `422`.
   "active_sectors": 5,
   "recent": [
     { "id": 1048, "title": "...", "area": "Governança", "owner": "Marina Costa", "status": "Em andamento", "updated_at": "..." }
-  ]
+  ],
+  "kpis": {
+    "work_orders": {
+      "total": 15,
+      "by_status": {"aberta": 5, "em_andamento": 4, "concluida": 6},
+      "by_priority": {"urgente": 2, "alta": 5, "media": 8},
+      "by_category": {"Elétrica": 4, "Hidráulica": 3, "Geral": 8},
+      "avg_resolution_hours": 12.5,
+      "sla_compliance_pct": 85,
+      "overdue": 2,
+      "created_week": 8,
+      "completed_week": 5
+    },
+    "occurrences": {
+      "by_status": {"em_andamento": 8, "concluido": 20, "aguardando": 4},
+      "completion_rate_pct": 62,
+      "by_sector": {"Governança": 5, "Operação": 3},
+      "overdue": 1
+    },
+    "fiscal_requests": {
+      "by_status": {"Em andamento": 3, "Concluído": 10},
+      "by_type": {"Nota travada": 5, "Dados incorretos": 3},
+      "sla_compliance_pct": 90,
+      "overdue": 0
+    },
+    "trend": [
+      {"date": "2026-06-15", "work_orders": 2, "occurrences": 3, "fiscal_requests": 1}
+    ]
+  }
 }
 ```
 
@@ -352,7 +418,157 @@ Valores inválidos retornam `422`.
 | `completed_month` | ocorrências concluídas (status 2) no mês corrente |
 | `active_users` | usuários ativos e não excluídos do tenant |
 | `active_sectors` | setores não excluídos do tenant |
-| `recent` | últimas 10 ocorrências ordenadas por `updated_at` |
+| `recent` | últimas atividades recentes de todos os módulos |
+| `kpis.work_orders` | KPIs de ordens de serviço: total, distribuição por status/prioridade/categoria, tempo médio de resolução (horas), SLA compliance (%), atrasadas, criadas/concluídas na semana |
+| `kpis.occurrences` | KPIs de ocorrências: distribuição por status, taxa de conclusão mensal (%), distribuição por setor (top 8), atrasadas |
+| `kpis.fiscal_requests` | KPIs de solicitações fiscais: distribuição por status/tipo (top 8), SLA compliance (%), atrasadas |
+| `kpis.trend` | tendência dos últimos 7 dias: contagem diária de OS, ocorrências e fiscais |
+
+### Manutenção preventiva
+
+Planos de manutenção recorrente que geram ordens de serviço automaticamente quando a data programada chega.
+
+#### Modelo
+
+- `preventive_plans`: name, description, recurrence (daily/weekly/biweekly/monthly/quarterly/semiannual/annual), category, priority, sla_hours, location_id, assigned_user_id, active, next_due, last_generated_at
+
+#### `POST /preventive-plans`
+
+Cria um plano preventivo. Requer `name` e `recurrence`. Se `next_due` não for informado, calcula automaticamente com base na recorrência.
+
+```json
+{
+  "name": "Revisão ar-condicionado suíte 301",
+  "recurrence": "quarterly",
+  "category": "HVAC",
+  "priority": "media",
+  "sla_hours": 48,
+  "assigned_user_id": 5,
+  "location_id": 12
+}
+```
+
+#### `POST /preventive-plans/generate`
+
+Verifica todos os planos ativos com `next_due <= hoje` e gera uma OS para cada um. O título da OS é prefixado com `[Preventiva]`. Após gerar, avança `next_due` conforme a recorrência e registra `last_generated_at`. Retorna `{generated: N, work_order_ids: [...]}`.
+
+### Checklists recorrentes
+
+Templates de verificação reutilizáveis com geração automática de execuções por agenda.
+
+#### Modelos
+
+- `checklist_templates`: name, description, recurrence (daily/weekly/biweekly/monthly), category, assigned_user_id, active, next_due
+- `checklist_template_items`: template_id, label, sort_order
+- `checklist_executions`: template_id, due_date, status (pendente/concluido), completed_at, completed_by_user_id, notes
+- `checklist_execution_items`: execution_id, label, sort_order, checked, checked_at
+
+#### `POST /checklists/templates`
+
+Cria um template com itens inline.
+
+```json
+{
+  "name": "Abertura turno manhã",
+  "recurrence": "daily",
+  "category": "Operação",
+  "items": [
+    {"label": "Verificar lobby", "sort_order": 0},
+    {"label": "Checar piscina", "sort_order": 1},
+    {"label": "Inspecionar elevadores", "sort_order": 2}
+  ]
+}
+```
+
+#### `POST /checklists/executions/{id}/toggle`
+
+Marca ou desmarca um item individual. Body: `{item_id: 5, checked: true}`. Registra `checked_at` quando marcado.
+
+#### `POST /checklists/executions/{id}/complete`
+
+Conclui a execução. Body opcional: `{notes: "Observação"}`. Registra `completed_at` e `completed_by_user_id`.
+
+#### `POST /checklists/generate`
+
+Gera execuções para templates ativos com `next_due <= hoje`. Copia os itens do template para a execução. Avança `next_due` conforme a recorrência. Retorna `{generated: N, execution_ids: [...]}`.
+
+### Controle de estoque
+
+Registro de materiais com movimentações de entrada, saída e ajuste, vinculáveis a ordens de serviço ou ocorrências.
+
+#### Modelo
+
+- `stock_items`: name, category, unit (padrão "un"), min_quantity, current_quantity, location_id
+- `stock_movements`: item_id, movement_type (entrada/saida/ajuste), quantity, reason, work_order_id, occurrence_id, user_id
+
+#### `POST /stock/items`
+
+Cria um item de estoque. Requer `name`.
+
+```json
+{
+  "name": "Toalha de banho",
+  "category": "Amenities",
+  "unit": "un",
+  "min_quantity": 50,
+  "current_quantity": 120,
+  "location_id": 3
+}
+```
+
+#### `POST /stock/movements`
+
+Registra uma movimentação. Atualiza `current_quantity` do item automaticamente. Para `saida`, valida estoque suficiente. Para `ajuste`, o `quantity` passa a ser o novo saldo.
+
+```json
+{
+  "item_id": 1,
+  "movement_type": "saida",
+  "quantity": 5,
+  "reason": "Consumo do turno manhã",
+  "work_order_id": 42
+}
+```
+
+Retorna `422` se estoque insuficiente para saída ou tipo inválido.
+
+#### `GET /stock/items?below_min=true`
+
+Filtra itens com `current_quantity < min_quantity` para alertas de reposição.
+
+### Pendências de turno (Handoff)
+
+Comunicação estruturada entre turnos com fluxo pendente → lido → resolvido.
+
+#### Modelo
+
+- `shift_handoffs`: title, description, priority (normal/alta/urgente), category, target_shift (morning/afternoon/night), target_date, status (pendente/lido/resolvido), shift_report_id (vínculo opcional com relatório de turno), read_at/read_by_user_id, resolved_at/resolved_by_user_id/resolution_notes, created_by_user_id
+
+#### `POST /handoffs`
+
+Cria uma pendência para o próximo turno.
+
+```json
+{
+  "title": "Hóspede UH 412 solicitou late checkout",
+  "description": "Confirmar com recepção se há disponibilidade até 14h",
+  "priority": "alta",
+  "target_shift": "morning",
+  "target_date": "2026-06-22"
+}
+```
+
+#### `GET /handoffs/pending?target_date=2026-06-22&target_shift=morning`
+
+Retorna pendências não resolvidas para a data/turno informados (inclui pendências de datas anteriores ainda abertas e pendências sem turno específico). Limite de 50 itens.
+
+#### `POST /handoffs/{id}/read`
+
+Marca como lido. Idempotente. Registra `read_at` e `read_by_user_id`, muda status para `lido`.
+
+#### `POST /handoffs/{id}/resolve`
+
+Resolve a pendência. Body opcional: `{resolution_notes: "..."}`. Registra timestamps e muda status para `resolvido`. Se não lida, marca como lida automaticamente.
 
 ### Usuários
 
@@ -555,6 +771,11 @@ O sistema de permissões usa uma factory `require_permission(code)` em `app/core
 | apartment_inspection | `apartment_inspection.view`, `.create`, `.edit`, `.delete` |
 | audit_report | `audit_report.view`, `.create`, `.edit`, `.delete` |
 | work_diary | `work_diary.view`, `.create`, `.edit`, `.delete` |
+| work_order | `work_order.view`, `.create`, `.edit`, `.delete` |
+| preventive_plan | `preventive_plan.view`, `.create`, `.edit`, `.delete` |
+| checklist | `checklist.view`, `.create`, `.edit`, `.delete` |
+| stock | `stock.view`, `.create`, `.edit`, `.delete` |
+| handoff | `handoff.view`, `.create`, `.edit`, `.delete` |
 | system | `*` (acesso total) |
 
 Sem a permissão necessária, a API retorna `403 Forbidden` com `{"code": "forbidden", "required": "modulo.acao"}`.

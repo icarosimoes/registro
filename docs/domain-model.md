@@ -34,6 +34,12 @@ Company
   ├── OccurrenceParticipant (junction occurrence ↔ user)
   ├── Meeting ──► MeetingParticipant (com papel) + MeetingSubject (pautas)
   ├── ShiftReport (turno com data, tipo e horários)
+  ├── WorkOrder (OS com workflow de 5 estados)
+  ├── PreventivePlan (manutenção preventiva recorrente → gera WorkOrder)
+  ├── ChecklistTemplate ──► ChecklistTemplateItem
+  ├── ChecklistExecution ──► ChecklistExecutionItem
+  ├── StockItem ──► StockMovement (→ WorkOrder, Occurrence)
+  ├── ShiftHandoff (pendências entre turnos → ShiftReport)
   └── ModuleRecord (genérico: inspeções, obra, manutenção, mural)
 ```
 
@@ -55,6 +61,11 @@ Company
 | Módulos genéricos | `module_records` | tenant, `module` (slug), `title`, `description`, `category`, `status`, `owner_user_id`, `legacy_id`, `payload` JSON e soft delete. Compartilhado por inspeções, diário de obra, manutenção e mural. Reuniões e relatórios de turno foram promovidos para tabelas dedicadas |
 | Reuniões | `meetings`, `meeting_participants`, `meeting_subjects` | tabela dedicada com scheduled_at, location, participantes com papel (organizer/attendee/optional), pautas com resolved. Migrados de `module_records` |
 | Relatórios de turno | `shift_reports` | tabela dedicada com shift_date, shift_type (morning/afternoon/night), status, started_at, ended_at. Migrados de `module_records` |
+| Ordens de serviço | `work_orders` | workflow de 5 estados (aberta → em_andamento → aguardando_material → concluída → validada), `priority` (urgente/alta/media/baixa), `category`, `sla_hours`/`sla_deadline`, vínculos opcionais com `occurrences` e `maintenance_records`, `assigned_user_id`, `created_by_user_id`, `validated_by_user_id`. Transições auditadas com timestamps (`started_at`, `completed_at`, `validated_at`). RLS com policy `tenant_isolation`. Permissões: `work_order.view/create/edit/delete` |
+| Manutenção preventiva | `preventive_plans` | planos recorrentes (daily→annual) que geram `work_orders` automaticamente via `POST /preventive-plans/generate`. Campos: name, recurrence, category, priority, sla_hours, location_id, assigned_user_id, active, next_due, last_generated_at. Permissões: `preventive_plan.view/create/edit/delete` |
+| Checklists recorrentes | `checklist_templates` → `checklist_template_items`, `checklist_executions` → `checklist_execution_items` | templates com itens reutilizáveis; execuções geradas por agenda via `POST /checklists/generate`. Cada item tem checked/checked_at individual. Status: pendente → concluido. Permissões: `checklist.view/create/edit/delete` |
+| Estoque e materiais | `stock_items`, `stock_movements` | itens com quantity/min_quantity/unit/category/location. Movimentações (entrada/saída/ajuste) vinculáveis a `work_orders` e `occurrences`. Saída valida estoque. Permissões: `stock.view/create/edit/delete` |
+| Pendências de turno | `shift_handoffs` | comunicação entre turnos com fluxo pendente → lido → resolvido. Direcionável por turno (morning/afternoon/night) e data. Vínculo opcional com `shift_reports`. Confirmação de leitura e resolução com timestamps. Permissões: `handoff.view/create/edit/delete` |
 | Participantes de ocorrências | `occurrence_participants` | junction table (occurrence_id, user_id) para participantes de ocorrências |
 | Notificações | `notifications`, `notification_preferences` | por tenant e usuário, `title`, `body`, `category`, `entity_type`/`entity_id` (link opcional ao registro), `read_at` para leitura, `email_sent_at` para tracking de entrega. Preferências por módulo (in_app/email) em `notification_preferences`. Destinatários por módulo em `company_settings` (chave `notification_recipients`) |
 | Anexos | `attachments` | por tenant, `entity_type`/`entity_id` polimórfico, `filename`, `content_type`, `size_bytes`, `storage_key` (MinIO/S3), `uploaded_by_user_id` |
@@ -77,6 +88,7 @@ Company
 - A tabela `companies` possui campo `timezone` (VARCHAR 60, default `America/Sao_Paulo`) para cálculo de SLA e exibição de horários na timezone do tenant.
 - Procedimentos possuem CRUD completo via `/procedures` com `name`, `link`, `file` e soft delete. Seguem o mesmo padrão de isolamento por `company_id` e auditoria dos demais módulos.
 - Notificações in-app são persistidas na tabela `notifications` com `company_id`, `user_id`, `title`, `body`, `category` (default `info`), `entity_type`/`entity_id` opcionais para link ao registro de origem, e `read_at` para estado de leitura. A criação programática é feita via `create_notification()` em `app/domain/notifications/service.py`.
+- Ordens de serviço possuem workflow com máquina de estados: `aberta` → `em_andamento` → `aguardando_material` | `concluida` → `validada`. A transição `aguardando_material` → `em_andamento` e `concluida` → `em_andamento` permitem retorno. `validada` é estado terminal. Transições são validadas no service (`TRANSITIONS` dict) e rejeitadas com 422 se inválidas. Cada transição registra `AuditEvent` com diff do status e timestamps automáticos (`started_at` na primeira ida a `em_andamento`, `completed_at` em `concluida`, `validated_at` + `validated_by_user_id` em `validada`). O SLA é calculado no momento da criação: `sla_deadline = now() + sla_hours` se `sla_hours` for fornecido.
 - Autenticação usa dois tokens JWT: access token (30min, type=access, contém permissions) e refresh token (7 dias, type=refresh, contém apenas sub e company_id). O frontend armazena ambos em cookies httpOnly e faz auto-refresh transparente quando o access expira.
 - Rate limiting via slowapi protege endpoints sensíveis: login (10/min), refresh (20/min), integração Chess (30/min). Exceder retorna 429.
 - Cada domínio possui `service.py` com lógica de negócio separada do router. Services recebem session e parâmetros tipados, facilitando reuso entre integrações (ex: `fiscal_requests.service.create_from_chess()`) e testes unitários sem dependência do FastAPI.

@@ -134,6 +134,28 @@
 8. **Corte do Laravel** — procedimento documentado em `docs/migracao-postgresql.md`. Depende dos itens 1-3 acima.
 9. **Remover profile `mysql-import`** — após corte final em produção, eliminar MySQL do Docker Compose e dependência `asyncmy`.
 
+## P6 — evolução operacional
+
+### Alta — valor operacional imediato
+
+1. ~~**Ordens de Serviço (OS) com workflow**~~ — ✅ modelo `work_orders` com fluxo de estados (aberta → em andamento → aguardando material → concluída → validada), atribuição de responsável, SLA, vínculo com ocorrências e manutenção. Migration com RLS e permissões. Endpoints CRUD + transições de estado auditadas + summary. Server actions no frontend.
+2. ~~**Kanban visual**~~ — ✅ componente `KanbanBoard` com drag-and-drop HTML5 para transição de status, modal de criação de OS, busca, badges de prioridade, SLA e exclusão. CSS responsivo com estados visuais de drag.
+
+### Média — automação e controle
+
+3. ~~**Manutenção preventiva com agendamento**~~ — ✅ modelo `preventive_plans` com recorrência (daily→annual), geração automática de OS via `POST /preventive-plans/generate`, avanço de `next_due`, CRUD completo com permissões. Frontend em `/preventivas`.
+4. ~~**Controle de materiais e estoque operacional**~~ — ✅ modelo `stock_items` + `stock_movements` com entrada/saída/ajuste, vínculo com OS e ocorrências, alerta de estoque mínimo. CRUD completo com permissões `stock.*`. Frontend em `/estoque`.
+5. ~~**Checklists operacionais recorrentes**~~ — ✅ templates com itens (`checklist_templates` + `checklist_template_items`), execuções automáticas por agenda (`checklist_executions` + `checklist_execution_items`), toggle individual de itens, conclusão com notas. CRUD completo com permissões. Frontend em `/checklists`.
+
+### Média — visibilidade e comunicação
+
+6. ~~**Dashboard com KPIs operacionais avançados**~~ — ✅ endpoint `/dashboard/metrics` expandido com `kpis`: OS (total, por status/prioridade/categoria, tempo médio resolução, SLA compliance %, atrasadas, semana), ocorrências (por status, taxa conclusão, por setor, atrasadas), fiscais (por status/tipo, SLA compliance %, atrasadas), tendência 7 dias. Frontend com painéis de indicadores, gráficos de barras e tendência semanal.
+7. ~~**Comunicação entre turnos aprimorada**~~ — ✅ modelo `shift_handoffs` com pendências direcionadas por turno/data, fluxo pendente → lido → resolvido com timestamps e responsáveis, endpoint `GET /handoffs/pending` para pendências não resolvidas do turno. CRUD completo com permissões `handoff.*`. Frontend em `/pendencias`.
+
+### Baixa — alcance e adoção
+
+8. ~~**App mobile / PWA**~~ — ✅ PWA implementado com manifest, service worker (network-first para navegação, cache-first para assets), ícones SVG, meta tags Apple, safe-area-inset e display standalone.
+
 ## Definition of Done por módulo
 
 Contrato, autorização, isolamento por empresa, estados de UI, CRUD necessário, anexos/exportações, testes, comparação de dados, observabilidade, documentação e rollback precisam estar aprovados antes do corte. Uma entrega não está concluída se a documentação pertinente em `/docs` estiver ausente ou desatualizada.
