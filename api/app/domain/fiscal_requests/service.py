@@ -7,7 +7,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.audit import compute_diff, record_event
 from app.core.config import Settings
 from app.core.sla import calculate_business_deadline, pause_sla, resume_sla
-from app.integrations.notifications import create_notification
+from app.domain.settings.router import get_module_recipients
+from app.integrations.notifications import (
+    _load_preferences,
+    create_notification,
+)
 from app.models import AuditEvent, Company, FiscalRequest, User
 
 
@@ -126,20 +130,33 @@ async def create_from_chess(
         event_type="create_from_chess",
         diff={"chess_user_id": chess_user_id, "hotel": settings.chess_hotel_company_slug},
     )
-    active_users = (
-        await session.scalars(
-            select(User.id).where(
-                User.company_id == company_id,
-                User.active.is_(True),
-                User.deleted_at.is_(None),
-                User.id != registro_user.id,
+    module_recipient_ids = await get_module_recipients(
+        session, company_id, "fiscal_requests",
+    )
+    if module_recipient_ids:
+        target_ids = [uid for uid in module_recipient_ids if uid != registro_user.id]
+    else:
+        target_ids = list((
+            await session.scalars(
+                select(User.id).where(
+                    User.company_id == company_id,
+                    User.active.is_(True),
+                    User.deleted_at.is_(None),
+                    User.id != registro_user.id,
+                )
             )
-        )
-    ).all()
+        ).all())
+
+    prefs = await _load_preferences(
+        session, company_id, target_ids, "fiscal_requests",
+    )
     title_text = request_type
     if apartment:
         title_text += f" · UH {apartment}"
-    for uid in active_users:
+    for uid in target_ids:
+        user_pref = prefs.get(uid, {"in_app": True, "email": True})
+        if not user_pref["in_app"]:
+            continue
         await create_notification(
             session,
             company_id=company_id,

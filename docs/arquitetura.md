@@ -34,7 +34,7 @@ Em produção, Next.js e FastAPI possuem duas réplicas no Swarm, passam pelo Tr
 
 ```text
 api/app/
-  core/                 configuração, conexão e segurança
+  core/                 configuração, conexão, segurança e ACL (permissions.py)
   domain/<domínio>/     router, schemas, service e repository
   models/               identidade tenant e plataforma
   seed.py               dados fictícios idempotentes

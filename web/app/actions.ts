@@ -193,6 +193,7 @@ export interface OccurrencePayload {
   location_id?: number;
   owner_user_id?: number;
   notify_user_ids?: number[];
+  participant_ids?: number[];
 }
 
 export async function createOccurrenceAction(body: OccurrencePayload): Promise<MutationResult> {
@@ -535,7 +536,7 @@ export async function deleteAttachmentAction(
   return { ok: true };
 }
 
-export function getAttachmentDownloadUrl(id: number): string {
+export async function getAttachmentDownloadUrl(id: number): Promise<string> {
   return `${apiUrl}/attachments/${id}/download`;
 }
 
@@ -595,6 +596,156 @@ export interface UserOption {
 
 export async function searchUsers(q: string): Promise<UserOption[]> {
   const response = await authedFetch(`/users/search?q=${encodeURIComponent(q)}`);
+  if (!response.ok) return [];
+  return response.json();
+}
+
+// --- Meetings ---
+
+export interface MeetingPayload {
+  title: string;
+  description?: string;
+  scheduled_at?: string;
+  location?: string;
+  status?: string;
+  owner_user_id?: number;
+  participants?: { user_id: number; role: string }[];
+  subjects?: { title: string; description?: string; sort_order?: number }[];
+  notify_user_ids?: number[];
+}
+
+export async function createMeetingAction(body: MeetingPayload): Promise<MutationResult> {
+  const response = await authedFetch("/meetings", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar reunião." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateMeetingAction(id: number, body: Partial<MeetingPayload>): Promise<MutationResult> {
+  const response = await authedFetch(`/meetings/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar reunião." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteMeetingAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/meetings/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir reunião." };
+  }
+  return { ok: true };
+}
+
+export async function cloneMeetingAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/meetings/${id}/clone`, { method: "POST" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao duplicar reunião." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+// --- Shift Reports ---
+
+export interface ShiftReportPayload {
+  title: string;
+  description?: string;
+  shift_date?: string;
+  shift_type?: string;
+  started_at?: string;
+  ended_at?: string;
+  status?: string;
+  owner_user_id?: number;
+  notify_user_ids?: number[];
+}
+
+export async function createShiftReportAction(body: ShiftReportPayload): Promise<MutationResult> {
+  const response = await authedFetch("/shift-reports", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar relatório." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateShiftReportAction(id: number, body: Partial<ShiftReportPayload>): Promise<MutationResult> {
+  const response = await authedFetch(`/shift-reports/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar relatório." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteShiftReportAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/shift-reports/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao excluir relatório." };
+  }
+  return { ok: true };
+}
+
+// --- Occurrence extras ---
+
+export async function cloneOccurrenceAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/occurrences/${id}/clone`, { method: "POST" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao duplicar ocorrência." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+// --- Roles ---
+
+export interface RolePayload {
+  code: string;
+  name: string;
+  permission_codes: string[];
+}
+
+export async function listRolesAction(): Promise<{ items: { id: number; code: string; name: string; permission_codes: string[]; user_count: number }[]; total: number }> {
+  const response = await authedFetch("/roles?page=1&page_size=100");
+  if (!response.ok) return { items: [], total: 0 };
+  return response.json();
+}
+
+export async function createRoleAction(body: RolePayload): Promise<MutationResult> {
+  const response = await authedFetch("/roles", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao criar cargo." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function updateRoleAction(id: number, body: Partial<RolePayload>): Promise<MutationResult> {
+  const response = await authedFetch(`/roles/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao atualizar cargo." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteRoleAction(id: number): Promise<MutationResult> {
+  const response = await authedFetch(`/roles/${id}`, { method: "DELETE" });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    if (response.status === 409) return { ok: false, error: "Cargo possui usuários atribuídos." };
+    return { ok: false, error: "Erro ao excluir cargo." };
+  }
+  return { ok: true };
+}
+
+export async function listPermissionsAction(): Promise<{ module: string; permissions: { id: number; code: string; name: string }[] }[]> {
+  const response = await authedFetch("/roles/permissions");
   if (!response.ok) return [];
   return response.json();
 }

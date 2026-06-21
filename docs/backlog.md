@@ -34,7 +34,7 @@
 - [x] Tabela de auditoria na API (`audit_events`) para persistir o histórico de alterações com `user_id`, `company_id` e diff JSON.
 - [x] Padronizar design tokens no `globals.css` (espaçamento, cores, raios, sombras, tipografia, transições).
 - [x] Unificar `DashboardShell` e `OperationalModule` em um `AppLayout` compartilhado, eliminando sidebar/topbar/navegação duplicados.
-- [ ] Componentes reutilizáveis de lista, formulário, estado vazio e confirmação.
+- [x] Componentes reutilizáveis de lista, formulário, estado vazio e confirmação — permissões ACL integradas ao `OperationalModule` (canView/canCreate/canEdit/canDelete); botões condicionados por `user.permissions`.
 - [x] Persistir comentários e alterações da tratativa na API (`GET/POST /timeline/{entity_type}/{entity_id}`); frontend consome timeline da API para módulos conectados.
 - [x] Tornar a auditoria imutável, com ator, tenant, data UTC, tipo de evento e diferenças estruturadas — `AuditEvent` já é imutável por design (sem `updated_at`/`deleted_at`, `created_at` com `server_default=func.now()`).
 - [x] Registrar na timeline todos os campos específicos do domínio, inclusive os campos fiscais e anexos — timeline agora renderiza eventos `attachment_add`/`attachment_remove` com nome do arquivo; `procedure` adicionado como entity type válido; campos fiscais já eram capturados via `compute_diff` no payload.
@@ -49,9 +49,10 @@
 - [x] Dashboard com métricas reais agregadas do banco (ocorrências, fiscais, equipe, atividades recentes).
 - [x] Todos os módulos operacionais conectados à API com CRUD completo e paginação server-side.
 - [x] Tabela genérica `module_records` para módulos sem tabela própria (reuniões, inspeções, turnos, obra, manutenção, mural).
-- [ ] Ocorrências: comentários, participantes, anexos, clone e PDF.
-- [ ] Reuniões: promover para tabela própria com participantes, assuntos, anexos, início e ata PDF.
-- [ ] Relatórios de turno: promover para tabela própria com Excel.
+- [x] Ocorrências: participantes (tabela junction `occurrence_participants`), clone (`POST /occurrences/{id}/clone`), PDF (`GET /occurrences/{id}/pdf` via reportlab). Comentários e anexos já existiam via timeline/attachments.
+- [x] Reuniões: promovidas para tabela dedicada `meetings` + `meeting_participants` (com papel: organizer/attendee/optional) + `meeting_subjects` (pautas com resolved). Migration de dados de `module_records`. CRUD completo + clone + subjects CRUD + ata PDF.
+- [x] Relatórios de turno: promovidos para tabela dedicada `shift_reports` com `shift_date`, `shift_type` (morning/afternoon/night), `status`. Migration de dados de `module_records`. CRUD completo com filtro por data.
+- [x] Sistema ACL: `require_permission()` em todos os routers, seed de 35 permissões, role "Administrador" com wildcard `*`. CRUD de roles via `/roles`. Frontend condiciona ações por `user.permissions`.
 
 ## P3B — solicitações fiscais
 
@@ -67,7 +68,7 @@
 - [x] Validar tamanho (10MB), quantidade (20/registro), extensão e content-type dos anexos.
 - [x] Restringir previews e downloads — CSP `default-src 'none'`, `nosniff`, `X-Frame-Options: DENY`, sanitização de filename no endpoint de download.
 - [x] Notificações in-app: `create_notification()` dispara para responsáveis e notificados em todo `notify_record_event`; Chess Hotel notifica todos os usuários ativos ao criar solicitação fiscal.
-- [ ] Implementar preferências de notificação, destinatários por módulo e registro de entrega.
+- [x] Implementar preferências de notificação, destinatários por módulo e registro de entrega.
 - [x] Backend de notificações in-app: model `Notification`, migration, endpoints de listagem paginada, marcar como lida e marcar todas como lidas.
 - [x] Cobrir CRUD, SLA e isolamento cross-tenant com testes (52 testes; anexos e auditoria pendentes).
 
@@ -121,11 +122,11 @@
 
 ### 🟡 Média — valor operacional
 
-4. **Componentes reutilizáveis** (P2) — lista, formulário, estado vazio e confirmação. Reduz duplicação no frontend.
+4. ~~**Componentes reutilizáveis**~~ — concluído: ACL integrado ao OperationalModule com botões condicionais.
 
 5. **Integração Evolution (WhatsApp)** — credenciais são salvas via `/settings/evolution`, mas nenhum código envia mensagens. Implementar envio real ou remover a configuração.
 
-6. **Promover módulos genéricos** — quando reuniões, inspeções ou diário de obra precisarem de campos específicos, criar tabelas dedicadas preservando os dados da `module_records`.
+6. ~~**Promover módulos genéricos**~~ — concluído: reuniões e relatórios de turno promovidos para tabelas dedicadas com migrations de dados.
 
 7. **Preferências de notificação** — destinatários por módulo, frequência e registro de entrega.
 

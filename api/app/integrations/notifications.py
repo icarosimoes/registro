@@ -2,15 +2,25 @@
 
 import asyncio
 import logging
+from datetime import datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.domain.settings.router import get_company_setting
+from app.domain.settings.router import get_company_setting, get_module_recipients
 from app.integrations.brevo import send_email
-from app.models import Notification, User
+from app.models import Notification, NotificationPreference, User
 
 logger = logging.getLogger(__name__)
+
+ENTITY_TO_MODULE: dict[str, str] = {
+    "occurrence": "occurrences",
+    "fiscal_request": "fiscal_requests",
+    "meeting": "meetings",
+    "shift_report": "shift_reports",
+    "procedure": "procedures",
+    "module_record": "modules",
+}
 
 
 async def _resolve_users(session: AsyncSession, user_ids: list[int]) -> list[dict]:
@@ -20,6 +30,27 @@ async def _resolve_users(session: AsyncSession, user_ids: list[int]) -> list[dic
         select(User.id, User.name, User.email).where(User.id.in_(user_ids), User.active.is_(True))
     )).all()
     return [{"id": r.id, "name": r.name, "email": r.email} for r in rows]
+
+
+async def _load_preferences(
+    session: AsyncSession, company_id: int, user_ids: list[int], module: str,
+) -> dict[int, dict[str, bool]]:
+    """Returns {user_id: {"in_app": bool, "email": bool}} for the given module."""
+    if not user_ids or not module:
+        return {}
+    rows = (
+        await session.scalars(
+            select(NotificationPreference).where(
+                NotificationPreference.company_id == company_id,
+                NotificationPreference.user_id.in_(user_ids),
+                NotificationPreference.module == module,
+            )
+        )
+    ).all()
+    prefs: dict[int, dict[str, bool]] = {}
+    for r in rows:
+        prefs[r.user_id] = {"in_app": r.in_app, "email": r.email}
+    return prefs
 
 
 def _build_html(action: str, title: str, module: str, actor: str, detail: str | None = None) -> str:
@@ -52,8 +83,8 @@ async def create_notification(
     category: str = "info",
     entity_type: str | None = None,
     entity_id: int | None = None,
-) -> None:
-    session.add(Notification(
+) -> Notification:
+    record = Notification(
         company_id=company_id,
         user_id=user_id,
         title=title,
@@ -61,7 +92,9 @@ async def create_notification(
         category=category,
         entity_type=entity_type,
         entity_id=entity_id,
-    ))
+    )
+    session.add(record)
+    return record
 
 
 async def notify_record_event(
@@ -95,24 +128,40 @@ async def notify_record_event(
     if event in ("update", "comment") and created_by_user_id:
         recipient_ids.add(created_by_user_id)
 
+    pref_module = ENTITY_TO_MODULE.get(entity_type or "", "")
+    if pref_module:
+        module_recipient_ids = await get_module_recipients(
+            session, company_id, pref_module,
+        )
+        recipient_ids.update(module_recipient_ids)
+
     recipients = await _resolve_users(session, list(recipient_ids))
+
+    prefs = await _load_preferences(
+        session, company_id, [r["id"] for r in recipients], pref_module,
+    )
 
     notification_body = f"{actor_name} · {module}"
     if detail:
         notification_body += f"\n{detail}"
+
+    created_notifications: list[tuple[Notification, dict]] = []
     for r in recipients:
         if r["email"] == actor_email:
             continue
-        await create_notification(
-            session,
-            company_id=company_id,
-            user_id=r["id"],
-            title=f"{action_label}: {title}",
-            body=notification_body,
-            category=event,
-            entity_type=entity_type,
-            entity_id=entity_id,
-        )
+        user_pref = prefs.get(r["id"], {"in_app": True, "email": True})
+        if user_pref["in_app"]:
+            notif = await create_notification(
+                session,
+                company_id=company_id,
+                user_id=r["id"],
+                title=f"{action_label}: {title}",
+                body=notification_body,
+                category=event,
+                entity_type=entity_type,
+                entity_id=entity_id,
+            )
+            created_notifications.append((notif, r))
     await session.flush()
 
     brevo = await get_company_setting(session, company_id, "brevo")
@@ -125,11 +174,17 @@ async def notify_record_event(
     html = _build_html(action_label, title, module, actor_name, detail)
     subject = f"[Registro] {action_label}: {title}"
 
-    email_tasks = []
+    email_tasks: list[tuple[Notification | None, asyncio.Task]] = []  # type: ignore[type-arg]
     for r in recipients:
         if r["email"] == actor_email:
             continue
-        email_tasks.append(send_email(
+        user_pref = prefs.get(r["id"], {"in_app": True, "email": True})
+        if not user_pref["email"]:
+            continue
+        notif_record = next(
+            (n for n, ri in created_notifications if ri["id"] == r["id"]), None,
+        )
+        email_tasks.append((notif_record, send_email(
             api_key=api_key,
             from_address=from_address,
             from_name=from_name,
@@ -138,7 +193,14 @@ async def notify_record_event(
             subject=subject,
             html=html,
             reply_to=actor_email,
-        ))
+        )))
 
     if email_tasks:
-        await asyncio.gather(*email_tasks, return_exceptions=True)
+        results = await asyncio.gather(
+            *[t for _, t in email_tasks], return_exceptions=True,
+        )
+        now = datetime.now()
+        for (notif_record, _), result in zip(email_tasks, results, strict=True):
+            if notif_record and not isinstance(result, BaseException):
+                notif_record.email_sent_at = now
+        await session.flush()

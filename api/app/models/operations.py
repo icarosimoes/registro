@@ -2,6 +2,7 @@ from datetime import date, datetime
 
 from sqlalchemy import (
     JSON,
+    Boolean,
     Date,
     DateTime,
     ForeignKey,
@@ -172,7 +173,22 @@ class Notification(Base, TenantMixin):
     entity_type: Mapped[str | None] = mapped_column(String(80))
     entity_id: Mapped[int | None] = mapped_column(Integer)
     read_at: Mapped[datetime | None] = mapped_column(DateTime)
+    email_sent_at: Mapped[datetime | None] = mapped_column(DateTime)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class NotificationPreference(Base, TenantMixin):
+    __tablename__ = "notification_preferences"
+    __table_args__ = (
+        UniqueConstraint("user_id", "company_id", "module", name="uq_notif_pref_user_module"),
+        Index("ix_notif_pref_company_user", "company_id", "user_id"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
+    module: Mapped[str] = mapped_column(String(80))
+    in_app: Mapped[bool] = mapped_column(Boolean, server_default="1")
+    email: Mapped[bool] = mapped_column(Boolean, server_default="1")
 
 
 class Attachment(Base, TenantMixin):
@@ -194,6 +210,89 @@ class Attachment(Base, TenantMixin):
     created_at: Mapped[datetime] = mapped_column(
         DateTime, server_default=func.now(),
     )
+
+
+class OccurrenceParticipant(Base):
+    __tablename__ = "occurrence_participants"
+
+    occurrence_id: Mapped[int] = mapped_column(
+        ForeignKey("occurrences.id", ondelete="CASCADE"), primary_key=True,
+    )
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True,
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class Meeting(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "meetings"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    scheduled_at: Mapped[datetime | None] = mapped_column(DateTime)
+    location: Mapped[str | None] = mapped_column(String(255))
+    status: Mapped[str] = mapped_column(String(60), default="Agendada")
+    owner_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    created_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    notify_user_ids: Mapped[list | None] = mapped_column(JSON)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
+
+
+class MeetingParticipant(Base):
+    __tablename__ = "meeting_participants"
+    __table_args__ = (
+        UniqueConstraint("meeting_id", "user_id", name="uq_meeting_participant"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    meeting_id: Mapped[int] = mapped_column(
+        ForeignKey("meetings.id", ondelete="CASCADE"),
+    )
+    user_id: Mapped[int] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"),
+    )
+    role: Mapped[str] = mapped_column(String(20), default="attendee")
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class MeetingSubject(Base):
+    __tablename__ = "meeting_subjects"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    meeting_id: Mapped[int] = mapped_column(
+        ForeignKey("meetings.id", ondelete="CASCADE"),
+    )
+    title: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0)
+    resolved: Mapped[bool] = mapped_column(default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class ShiftReport(Base, TenantMixin, TimestampMixin):
+    __tablename__ = "shift_reports"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    title: Mapped[str] = mapped_column(String(255))
+    description: Mapped[str | None] = mapped_column(Text)
+    shift_date: Mapped[date | None] = mapped_column(Date)
+    shift_type: Mapped[str | None] = mapped_column(String(20))
+    status: Mapped[str] = mapped_column(String(60), default="Em andamento")
+    started_at: Mapped[datetime | None] = mapped_column(DateTime)
+    ended_at: Mapped[datetime | None] = mapped_column(DateTime)
+    owner_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    created_by_user_id: Mapped[int | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"),
+    )
+    notify_user_ids: Mapped[list | None] = mapped_column(JSON)
+    deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
 
 
 class LegacyImportRun(Base):

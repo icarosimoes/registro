@@ -3,6 +3,11 @@ from datetime import date, datetime
 from pydantic import BaseModel
 
 
+class ParticipantSummary(BaseModel):
+    id: int
+    name: str
+
+
 class OccurrenceSummary(BaseModel):
     id: int
     legacy_id: int | None
@@ -14,6 +19,12 @@ class OccurrenceSummary(BaseModel):
     status: str
     deadline: date | None
     updated_at: datetime
+
+
+class OccurrenceDetail(OccurrenceSummary):
+    unit: str | None
+    participants: list[ParticipantSummary]
+    notify_user_ids: list[int] | None
 
 
 class OccurrenceListResponse(BaseModel):
@@ -33,6 +44,7 @@ class OccurrenceCreate(BaseModel):
     location_id: int | None = None
     owner_user_id: int | None = None
     notify_user_ids: list[int] | None = None
+    participant_ids: list[int] | None = None
 
 
 class OccurrenceUpdate(BaseModel):
@@ -45,3 +57,4 @@ class OccurrenceUpdate(BaseModel):
     location_id: int | None = None
     owner_user_id: int | None = None
     notify_user_ids: list[int] | None = None
+    participant_ids: list[int] | None = None

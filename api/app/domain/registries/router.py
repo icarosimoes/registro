@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth import current_user
 from app.core.dependencies import require_session
+from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.registries.service import (
     MODELS,
@@ -44,7 +44,7 @@ class RegistryUpdate(BaseModel):
 
 @router.get("", response_model=RegistryListResponse)
 async def list_registries_endpoint(
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("registry.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
@@ -66,7 +66,7 @@ async def list_registries_endpoint(
 @router.post("", response_model=RegistrySummary, status_code=201)
 async def create_registry_endpoint(
     body: RegistryCreate,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("registry.create")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> RegistrySummary:
     if body.category not in MODELS:
@@ -88,7 +88,7 @@ async def update_registry_endpoint(
     registry_id: int,
     body: RegistryUpdate,
     category: str = Query(..., description="Setor, Local ou Função"),
-    user: Annotated[AuthenticatedUser, Depends(current_user)] = None,
+    user: Annotated[AuthenticatedUser, require_permission("registry.edit")] = None,
     session: Annotated[AsyncSession, Depends(require_session)] = None,
 ) -> RegistrySummary:
     result = await update_registry(session, user.company_id, registry_id, category, body.name)
@@ -106,7 +106,7 @@ async def update_registry_endpoint(
 async def delete_registry_endpoint(
     registry_id: int,
     category: str = Query(..., description="Setor, Local ou Função"),
-    user: Annotated[AuthenticatedUser, Depends(current_user)] = None,
+    user: Annotated[AuthenticatedUser, require_permission("registry.delete")] = None,
     session: Annotated[AsyncSession, Depends(require_session)] = None,
 ) -> None:
     result = await delete_registry(session, user.company_id, user.id, registry_id, category)

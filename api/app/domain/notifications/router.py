@@ -5,13 +5,23 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth import current_user
 from app.core.dependencies import require_session
 from app.domain.auth.repository import AuthenticatedUser
-from app.core.auth import current_user
-from app.domain.notifications.schemas import NotificationListResponse, NotificationOut
-from app.models import Notification
+from app.domain.notifications.schemas import (
+    NotificationListResponse,
+    NotificationOut,
+    PreferenceOut,
+    PreferenceUpdate,
+)
+from app.models import Notification, NotificationPreference
 
 router = APIRouter(prefix="/notifications", tags=["notifications"])
+
+VALID_MODULES = [
+    "occurrences", "fiscal_requests", "meetings", "shift_reports",
+    "procedures", "inspections", "maintenance", "modules",
+]
 
 
 @router.get("", response_model=NotificationListResponse)
@@ -49,7 +59,8 @@ async def list_notifications(
             NotificationOut(
                 id=n.id, title=n.title, body=n.body, category=n.category,
                 entity_type=n.entity_type, entity_id=n.entity_id,
-                read_at=n.read_at, created_at=n.created_at,
+                read_at=n.read_at, email_sent_at=n.email_sent_at,
+                created_at=n.created_at,
             )
             for n in rows
         ],
@@ -82,7 +93,8 @@ async def mark_as_read(
     return NotificationOut(
         id=record.id, title=record.title, body=record.body, category=record.category,
         entity_type=record.entity_type, entity_id=record.entity_id,
-        read_at=record.read_at, created_at=record.created_at,
+        read_at=record.read_at, email_sent_at=record.email_sent_at,
+        created_at=record.created_at,
     )
 
 
@@ -101,3 +113,62 @@ async def mark_all_as_read(
         .values(read_at=datetime.now())
     )
     await session.commit()
+
+
+# ── Preferências de notificação ──
+
+
+@router.get("/preferences", response_model=list[PreferenceOut])
+async def list_preferences(
+    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> list[PreferenceOut]:
+    rows = (
+        await session.scalars(
+            select(NotificationPreference).where(
+                NotificationPreference.company_id == user.company_id,
+                NotificationPreference.user_id == user.id,
+            )
+        )
+    ).all()
+    saved = {r.module: r for r in rows}
+    result: list[PreferenceOut] = []
+    for mod in VALID_MODULES:
+        if mod in saved:
+            r = saved[mod]
+            result.append(PreferenceOut(module=mod, in_app=r.in_app, email=r.email))
+        else:
+            result.append(PreferenceOut(module=mod, in_app=True, email=True))
+    return result
+
+
+@router.put("/preferences/{module}", response_model=PreferenceOut)
+async def update_preference(
+    module: str,
+    body: PreferenceUpdate,
+    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> PreferenceOut:
+    if module not in VALID_MODULES:
+        raise HTTPException(status_code=400, detail={"code": "invalid_module"})
+    row = await session.scalar(
+        select(NotificationPreference).where(
+            NotificationPreference.company_id == user.company_id,
+            NotificationPreference.user_id == user.id,
+            NotificationPreference.module == module,
+        )
+    )
+    if row:
+        row.in_app = body.in_app
+        row.email = body.email
+    else:
+        row = NotificationPreference(
+            company_id=user.company_id,
+            user_id=user.id,
+            module=module,
+            in_app=body.in_app,
+            email=body.email,
+        )
+        session.add(row)
+    await session.commit()
+    return PreferenceOut(module=module, in_app=row.in_app, email=row.email)

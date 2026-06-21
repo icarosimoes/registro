@@ -1,5 +1,58 @@
 # Registro de trabalho
 
+## 2026-06-20 (sessão 4)
+
+### P3B — Preferências de notificação, destinatários por módulo e registro de entrega
+
+- Migration `0024_notification_preferences`: tabela `notification_preferences` (user_id, company_id, module, in_app, email) + coluna `email_sent_at` em `notifications`.
+- Model `NotificationPreference` em `models/operations.py`.
+- Endpoints de preferências do usuário: `GET /notifications/preferences` (lista todos os módulos com defaults) e `PUT /notifications/preferences/{module}`.
+- Endpoints de destinatários por módulo: `GET /settings/notification-recipients` e `PUT /settings/notification-recipients/{module}` — armazenados em `company_settings` com chave `notification_recipients`.
+- `notify_record_event` agora consulta preferências individuais e destinatários por módulo antes de criar notificações in-app ou enviar e-mails; `email_sent_at` preenchido após envio bem-sucedido via Brevo.
+- Fluxo Chess Hotel respeita destinatários por módulo — se configurados, notifica apenas a lista; senão, fallback para todos os usuários ativos.
+
+## 2026-06-20 (sessão 3)
+
+### P2 — ACL e identidade
+
+- Criado `app/core/permissions.py` com factory `require_permission(code)` que verifica `user.permissions` do JWT.
+- Seed de 35 permissões via migration `0018_seed_permissions` (occurrence.*, fiscal_request.*, user.*, registry.*, module.*, procedure.*, settings.*, meeting.*, shift_report.*, wildcard `*`).
+- Role "Administrador" com `*` criado para cada empresa existente; todos os users sem role recebem o role admin (backwards compat).
+- Todos os 7 routers modificados: `Depends(current_user)` → `require_permission("modulo.acao")` com permissões granulares por endpoint.
+- Novo domínio `domain/roles/` com CRUD de cargos (router, service, schemas) — lista, detalhe, criação, atualização, exclusão (protegida contra roles com users), listagem de permissões agrupadas por módulo.
+- Frontend: `OperationalModule` condiciona botões Novo/Editar/Excluir por `user.permissions` (canView, canCreate, canEdit, canDelete).
+
+### P3 — Ocorrências: participantes, clone e PDF
+
+- Migration `0019_occurrence_participants` com tabela junction `occurrence_participants` (PK composta).
+- Modelo `OccurrenceParticipant` em `models/operations.py`.
+- `GET /occurrences/{id}` — endpoint de detalhe com participantes.
+- `POST /occurrences/{id}/clone` — duplica ocorrência com participantes, título "Cópia de ...", status resetado.
+- `GET /occurrences/{id}/pdf` — exporta PDF via reportlab com metadata, descrição, participantes e timeline.
+- Schemas: `OccurrenceDetail`, `ParticipantSummary`; `participant_ids` adicionado a Create/Update.
+- Service: `_sync_participants`, `_get_participants`, `get_occurrence`, `clone_occurrence`.
+
+### P3 — Reuniões: tabela dedicada
+
+- Migrations `0020_meetings` (3 tabelas: meetings, meeting_participants, meeting_subjects) e `0021_migrate_reunioes_data` (migra dados de module_records → meetings, remapeia audit_events, attachments e notifications).
+- Modelos: `Meeting`, `MeetingParticipant`, `MeetingSubject` em `models/operations.py`.
+- Novo domínio `domain/meetings/` com CRUD completo + subjects CRUD + clone.
+- Frontend: form dedicado com scheduled_at (datetime-local), location, status (Agendada/Em andamento/Concluída/Cancelada).
+- `VALID_MODULES` reduzido: removidos `reunioes` e `relatorios-turno`.
+- Timeline service atualizado: entity types `meeting` e `shift_report` adicionados.
+
+### P3 — Relatórios de turno: tabela dedicada
+
+- Migration `0022_shift_reports` com tabela dedicada (shift_date, shift_type, status) e `0023_migrate_relatorios_turno_data`.
+- Modelo `ShiftReport` em `models/operations.py`.
+- Novo domínio `domain/shift_reports/` com CRUD completo e filtro por data.
+- Frontend: form dedicado com shift_date, shift_type (Manhã/Tarde/Noite), status.
+
+### Dependências e infra
+
+- Adicionados `reportlab>=4.2` (PDF) e `openpyxl>=3.1` (Excel) ao `pyproject.toml`.
+- 6 novas migrations (0018-0023), 3 novos domínios, 1 novo módulo core.
+
 ## 2026-06-19
 
 - Inventariado o legado: Laravel 7, PHP 7.2+, 131 migrations e 194 views Blade.

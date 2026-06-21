@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth import current_user
 from app.core.dependencies import require_session
+from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.procedures.schemas import (
     ProcedureCreate,
@@ -24,7 +24,7 @@ router = APIRouter(prefix="/procedures", tags=["procedures"])
 
 @router.get("", response_model=ProcedureListResponse)
 async def list_procedures_endpoint(
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("procedure.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
@@ -46,7 +46,7 @@ async def list_procedures_endpoint(
 @router.post("", response_model=ProcedureSummary, status_code=201)
 async def create_procedure_endpoint(
     body: ProcedureCreate,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("procedure.create")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> ProcedureSummary:
     record = await create_procedure(
@@ -63,7 +63,7 @@ async def create_procedure_endpoint(
 async def update_procedure_endpoint(
     procedure_id: int,
     body: ProcedureUpdate,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("procedure.edit")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> ProcedureSummary:
     updates = body.model_dump(exclude_none=True)
@@ -79,7 +79,7 @@ async def update_procedure_endpoint(
 @router.delete("/{procedure_id}", status_code=204)
 async def delete_procedure_endpoint(
     procedure_id: int,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("procedure.delete")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
     deleted = await delete_procedure(session, user.company_id, user.id, procedure_id)

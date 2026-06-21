@@ -103,8 +103,8 @@ const SLUG_TO_ENTITY_TYPE: Record<string, string> = {
   "ocorrencias": "occurrence",
   "solicitacoes-fiscais": "fiscal_request",
   "procedimentos": "procedure",
-  "reunioes": "reunioes",
-  "relatorios-turno": "relatorios-turno",
+  "reunioes": "meeting",
+  "relatorios-turno": "shift_report",
   "inspecoes": "inspecoes",
   "diarios-obra": "diarios-obra",
   "manutencao": "manutencao",
@@ -118,11 +118,21 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const isUsers = definition.slug === "usuarios";
   const isCadastros = definition.slug === "cadastros";
   const isProcedimentos = definition.slug === "procedimentos";
-  const isGenericModule = ["reunioes", "relatorios-turno", "inspecoes", "diarios-obra", "manutencao", "mural"].includes(definition.slug);
+  const isGenericModule = ["inspecoes", "diarios-obra", "manutencao", "mural"].includes(definition.slug);
+  const isMeetings = definition.slug === "reunioes";
+  const isShiftReports = definition.slug === "relatorios-turno";
   const hasAttachments = isFiscal || isProcedimentos;
   const isApiBacked = definition.source === "api";
   const entityType = SLUG_TO_ENTITY_TYPE[definition.slug];
-  const canMutate = true;
+  function hasPermission(code: string) {
+    return user.permissions.includes("*") || user.permissions.includes(code);
+  }
+  const permModule = isFiscal ? "fiscal_request" : isOcorrencias ? "occurrence" : isUsers ? "user" : isCadastros ? "registry" : isProcedimentos ? "procedure" : isMeetings ? "meeting" : isShiftReports ? "shift_report" : isGenericModule ? "module" : "module";
+  const canView = hasPermission(`${permModule}.view`);
+  const canCreate = hasPermission(`${permModule}.create`);
+  const canEdit = hasPermission(`${permModule}.edit`);
+  const canDelete = hasPermission(`${permModule}.delete`);
+  const canMutate = canCreate || canEdit;
   const searchParams = useSearchParams();
   const router = useRouter();
   const sp = definition.serverPagination;
@@ -314,6 +324,42 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
             }
           }
         }
+      } else if (isMeetings) {
+        const ownerRaw = String(formData.get("owner") ?? "");
+        const ownerId = /^\d+$/.test(ownerRaw) ? Number(ownerRaw) : undefined;
+        const scheduledAt = String(formData.get("scheduled_at") ?? "") || undefined;
+        const location = String(formData.get("location") ?? "") || undefined;
+        const { createMeetingAction, updateMeetingAction } = await import("@/app/actions");
+        const apiBody = {
+          title: fields.title,
+          description: fields.description || undefined,
+          scheduled_at: scheduledAt,
+          location,
+          status: fields.status,
+          owner_user_id: ownerId,
+          notify_user_ids: notifyIds.length ? notifyIds : undefined,
+        };
+        result = current
+          ? await updateMeetingAction(current.id, apiBody)
+          : await createMeetingAction(apiBody);
+      } else if (isShiftReports) {
+        const ownerRaw = String(formData.get("owner") ?? "");
+        const ownerId = /^\d+$/.test(ownerRaw) ? Number(ownerRaw) : undefined;
+        const shiftDate = String(formData.get("shift_date") ?? "") || undefined;
+        const shiftType = String(formData.get("shift_type") ?? "") || undefined;
+        const { createShiftReportAction, updateShiftReportAction } = await import("@/app/actions");
+        const apiBody = {
+          title: fields.title,
+          description: fields.description || undefined,
+          shift_date: shiftDate,
+          shift_type: shiftType,
+          status: fields.status,
+          owner_user_id: ownerId,
+          notify_user_ids: notifyIds.length ? notifyIds : undefined,
+        };
+        result = current
+          ? await updateShiftReportAction(current.id, apiBody)
+          : await createShiftReportAction(apiBody);
       } else if (isGenericModule) {
         const ownerRaw = String(formData.get("owner") ?? "");
         const ownerId = /^\d+$/.test(ownerRaw) ? Number(ownerRaw) : undefined;
@@ -442,6 +488,8 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       else if (isUsers) result = await deleteUserAction(record.id);
       else if (isCadastros) result = await deleteRegistryAction(record.id, record.category);
       else if (isProcedimentos) result = await deleteProcedureAction(record.id);
+      else if (isMeetings) { const { deleteMeetingAction } = await import("@/app/actions"); result = await deleteMeetingAction(record.id); }
+      else if (isShiftReports) { const { deleteShiftReportAction } = await import("@/app/actions"); result = await deleteShiftReportAction(record.id); }
       else if (isGenericModule) result = await deleteModuleRecordAction(definition.slug, record.id);
       else result = { ok: false, error: "Módulo não suportado." };
       if (!result.ok) { setToast(result.error ?? "Erro ao excluir."); window.setTimeout(() => setToast(""), 2600); return; }
@@ -464,11 +512,11 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   }
 
   return <>
-      <header className="module-heading"><div><p className="eyebrow">Operação</p><h1>{definition.title}</h1><p>{definition.description}</p></div>{canMutate && definition.layout !== "settings" && definition.layout !== "profile" ? <button className="primary-button" onClick={() => setEditing("new")}><Plus size={18}/>{definition.action}</button> : null}</header>
+      <header className="module-heading"><div><p className="eyebrow">Operação</p><h1>{definition.title}</h1><p>{definition.description}</p></div>{canCreate && definition.layout !== "settings" && definition.layout !== "profile" ? <button className="primary-button" onClick={() => setEditing("new")}><Plus size={18}/>{definition.action}</button> : null}</header>
 
       {definition.layout === "settings" ? <SettingsForm storageKey={storageKey} onSaved={() => setToast("Configurações salvas com sucesso.")}/> : definition.layout === "profile" ? <ProfileForm user={user} onSaved={(msg) => { setToast(msg); window.setTimeout(() => setToast(""), 2600); }}/> : <section className="module-panel">
         <div className="module-toolbar"><label><Search size={18}/><input value={query} onChange={(event) => handleServerSearch(event.target.value)} placeholder={`Buscar em ${definition.title.toLocaleLowerCase("pt-BR")}`}/></label>{!sp ? <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}>{statuses.map((item) => <option key={item}>{item}</option>)}</select> : null}{!isApiBacked && !sp ? <button onClick={() => { setRecords(definition.records); localStorage.removeItem(storageKey); setToast("Dados fictícios restaurados."); }} title="Restaurar dados"><RefreshCw size={17}/></button> : null}<button onClick={exportCsv}><Download size={17}/> Exportar</button></div>
-        {!ready ? <div className="module-state">Carregando registros…</div> : !visible.length ? <div className="module-state"><Search size={30}/><strong>Nenhum resultado</strong><span>Ajuste os filtros ou crie um novo registro.</span></div> : definition.layout === "cards" ? <div className="notice-grid">{visible.map((record) => <article key={record.id} onClick={() => isUsers ? setEditing(record) : setSelected(record)}><span>{record.category}</span><h2>{record.title}</h2><p>{record.description}</p><footer><small>{record.owner} · {record.updatedAt}</small><i className={statusClass(record.status)}>{record.status}</i></footer></article>)}</div> : <div className="module-table-wrap"><table><thead><tr><th>ID</th><th>{definition.singular}</th>{isFiscal && <th>UH</th>}<th>Categoria</th><th>Responsável</th><th>Status</th>{isFiscal && <th>SLA</th>}<th>Atualização</th>{canMutate ? <th>Ações</th> : null}</tr></thead><tbody>{visible.map((record) => <tr key={record.id} onClick={() => isUsers ? setEditing(record) : setSelected(record)}><td className="protocol">#{record.id}</td><td><strong>{record.title}</strong></td>{isFiscal && <td>{record.apartment ?? "—"}</td>}<td>{record.category}</td><td>{record.owner}</td><td><span className={statusClass(record.status)}>{record.status}</span></td>{isFiscal && <td>{record.slaDeadline ? <SlaIndicator deadline={record.slaDeadline}/> : "—"}</td>}<td className="muted">{record.updatedAt}</td>{canMutate ? <td><div className="row-actions"><button onClick={(event) => { event.stopPropagation(); setEditing(record); }} aria-label="Editar"><Pencil size={16}/></button><button onClick={(event) => { event.stopPropagation(); remove(record); }} aria-label="Excluir"><Trash2 size={16}/></button></div></td> : null}</tr>)}</tbody></table></div>}
+        {!ready ? <div className="module-state">Carregando registros…</div> : !visible.length ? <div className="module-state"><Search size={30}/><strong>Nenhum resultado</strong><span>Ajuste os filtros ou crie um novo registro.</span></div> : definition.layout === "cards" ? <div className="notice-grid">{visible.map((record) => <article key={record.id} onClick={() => isUsers ? setEditing(record) : setSelected(record)}><span>{record.category}</span><h2>{record.title}</h2><p>{record.description}</p><footer><small>{record.owner} · {record.updatedAt}</small><i className={statusClass(record.status)}>{record.status}</i></footer></article>)}</div> : <div className="module-table-wrap"><table><thead><tr><th>ID</th><th>{definition.singular}</th>{isFiscal && <th>UH</th>}<th>Categoria</th><th>Responsável</th><th>Status</th>{isFiscal && <th>SLA</th>}<th>Atualização</th>{canMutate ? <th>Ações</th> : null}</tr></thead><tbody>{visible.map((record) => <tr key={record.id} onClick={() => isUsers ? setEditing(record) : setSelected(record)}><td className="protocol">#{record.id}</td><td><strong>{record.title}</strong></td>{isFiscal && <td>{record.apartment ?? "—"}</td>}<td>{record.category}</td><td>{record.owner}</td><td><span className={statusClass(record.status)}>{record.status}</span></td>{isFiscal && <td>{record.slaDeadline ? <SlaIndicator deadline={record.slaDeadline}/> : "—"}</td>}<td className="muted">{record.updatedAt}</td>{canMutate ? <td><div className="row-actions">{canEdit ? <button onClick={(event) => { event.stopPropagation(); setEditing(record); }} aria-label="Editar"><Pencil size={16}/></button> : null}{canDelete ? <button onClick={(event) => { event.stopPropagation(); remove(record); }} aria-label="Excluir"><Trash2 size={16}/></button> : null}</div></td> : null}</tr>)}</tbody></table></div>}
         <footer className="module-pagination"><span>{totalItems} registro(s)</span><div><button disabled={page <= 1} onClick={() => handleServerPage(page - 1)}><ChevronLeft/></button><span>Pagina {Math.min(page, pages)} de {pages}</span><button disabled={page >= pages} onClick={() => handleServerPage(page + 1)}><ChevronRight/></button></div></footer>
       </section>}
 
@@ -505,6 +553,28 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
           </div>
           {editing !== "new" && selectedAttachments.length > 0 && <div className="attachment-grid">{selectedAttachments.map((att) => <div key={att.id} className="attachment-preview"><button type="button" className="attachment-remove" onClick={() => { deleteAttachmentAction(att.id); setSelectedAttachments((prev) => prev.filter((a) => a.id !== att.id)); }}><X size={14}/></button><div className="attachment-file-icon"><Paperclip size={20}/></div><span className="attachment-name">{att.filename}</span></div>)}</div>}
         </div>
+      </> : isMeetings ? <>
+        <label>Título<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
+        <div className="form-grid">
+          <label>Data e hora<input name="scheduled_at" type="datetime-local" defaultValue={editing !== "new" && editing.scheduledAt ? editing.scheduledAt : ""}/></label>
+          <label>Status<select name="status" defaultValue={editing === "new" ? "Agendada" : editing.status}><option>Agendada</option><option>Em andamento</option><option>Concluída</option><option>Cancelada</option></select></label>
+        </div>
+        <label>Local<input name="location" defaultValue={editing !== "new" && editing.location ? editing.location : ""}/></label>
+        <label>Responsável<UserAutocomplete name="owner" required defaultValue={editing === "new" ? user.name : editing.owner} placeholder="Buscar responsável..."/></label>
+        <label>Notificar<UserMultiSelect name="notifyUsers" defaultValues={editing !== "new" && editing.notifyUserObjects ? editing.notifyUserObjects : []}/></label>
+        <label>Descrição<textarea name="description" rows={4} defaultValue={editing === "new" ? "" : editing.description}/></label>
+      </> : isShiftReports ? <>
+        <label>Título<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
+        <div className="form-grid">
+          <label>Data do turno<input name="shift_date" type="date" defaultValue={editing !== "new" && editing.shiftDate ? editing.shiftDate : ""}/></label>
+          <label>Turno<select name="shift_type" defaultValue={editing !== "new" && editing.shiftType ? editing.shiftType : "morning"}><option value="morning">Manhã</option><option value="afternoon">Tarde</option><option value="night">Noite</option></select></label>
+        </div>
+        <div className="form-grid">
+          <label>Status<select name="status" defaultValue={editing === "new" ? "Em andamento" : editing.status}><option>Em andamento</option><option>Aguardando</option><option>Concluído</option></select></label>
+        </div>
+        <label>Responsável<UserAutocomplete name="owner" required defaultValue={editing === "new" ? user.name : editing.owner} placeholder="Buscar responsável..."/></label>
+        <label>Notificar<UserMultiSelect name="notifyUsers" defaultValues={editing !== "new" && editing.notifyUserObjects ? editing.notifyUserObjects : []}/></label>
+        <label>Descrição<textarea name="description" rows={4} defaultValue={editing === "new" ? "" : editing.description}/></label>
       </> : <>
         <label>Título<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
         <div className="form-grid">
@@ -590,7 +660,10 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
         </div> : <p className="thread-empty">Nenhuma interação registrada.</p>}
         {canMutate ? <CommentInput onSend={(msg) => addComment(selected, msg)}/> : <p className="thread-empty">Comentários serão liberados com a API de mutações.</p>}
       </div>}
-      {canMutate ? <footer><button onClick={() => setEditing(selected)}><Pencil size={16}/>Editar</button><button onClick={() => remove(selected)}><Trash2 size={16}/>Excluir</button></footer> : null}
+      <footer>
+        {canEdit ? <button onClick={() => setEditing(selected)}><Pencil size={16}/>Editar</button> : null}
+        {canDelete ? <button onClick={() => remove(selected)}><Trash2 size={16}/>Excluir</button> : null}
+      </footer>
     </aside></> : null}
     {toast ? <div className="module-toast" role="status">{toast}</div> : null}
   </>;

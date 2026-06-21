@@ -28,9 +28,13 @@ Company
   ├── AuditReport ──► item1 / item2 / item3
   ├── WorkDiary ──► activities / teams / equipment / observations
   ├── AuditEvent (imutável por empresa)
-  ├── Notification (in-app por usuário)
+  ├── Notification (in-app por usuário, com tracking de e-mail)
+  ├── NotificationPreference (preferências in-app/email por usuário e módulo)
   ├── FiscalRequest (persistente) ──► attachments / recipients (planejado)
-  └── ModuleRecord (genérico: reuniões, inspeções, turnos, obra, manutenção, mural)
+  ├── OccurrenceParticipant (junction occurrence ↔ user)
+  ├── Meeting ──► MeetingParticipant (com papel) + MeetingSubject (pautas)
+  ├── ShiftReport (turno com data, tipo e horários)
+  └── ModuleRecord (genérico: inspeções, obra, manutenção, mural)
 ```
 
 ## Agregados principais
@@ -47,7 +51,10 @@ Company
 | Inspeções | suites, vistorias, auditorias e itens | versões V1/V2, evidências e exportações |
 | Diário de obra | `work_diaries` e tabelas filhas | equipes, atividades, equipamentos e anexos |
 | Solicitações fiscais | `fiscal_requests` | tenant, tipo, título, descrição, protocolo único, origin, status, `requester_user_id`, `responsible_user_id`, `sla_deadline`, `sla_paused_at`, `sla_paused_seconds`, `chess_user_id`, `reservation_number` e `payload` JSON |
-| Módulos genéricos | `module_records` | tenant, `module` (slug), `title`, `description`, `category`, `status`, `owner_user_id`, `legacy_id`, `payload` JSON e soft delete. Compartilhado por reuniões, relatórios de turno, inspeções, diário de obra, manutenção e mural. Registros importados da V1 preservam dados ricos (subjects, participants, frequencies, items) no `payload` |
+| Módulos genéricos | `module_records` | tenant, `module` (slug), `title`, `description`, `category`, `status`, `owner_user_id`, `legacy_id`, `payload` JSON e soft delete. Compartilhado por inspeções, diário de obra, manutenção e mural. Reuniões e relatórios de turno foram promovidos para tabelas dedicadas |
+| Reuniões | `meetings`, `meeting_participants`, `meeting_subjects` | tabela dedicada com scheduled_at, location, participantes com papel (organizer/attendee/optional), pautas com resolved. Migrados de `module_records` |
+| Relatórios de turno | `shift_reports` | tabela dedicada com shift_date, shift_type (morning/afternoon/night), status, started_at, ended_at. Migrados de `module_records` |
+| Participantes de ocorrências | `occurrence_participants` | junction table (occurrence_id, user_id) para participantes de ocorrências |
 | Notificações | `notifications` | por tenant e usuário, `title`, `body`, `category`, `entity_type`/`entity_id` (link opcional ao registro), `read_at` para estado de leitura |
 | Anexos | `attachments` | por tenant, `entity_type`/`entity_id` polimórfico, `filename`, `content_type`, `size_bytes`, `storage_key` (MinIO/S3), `uploaded_by_user_id` |
 | Auditoria | `audit_events` | imutável por tenant (sem `updated_at`/`deleted_at`), `user_id`, `entity_type`, `entity_id`, `event_type` (`create`, `update`, `delete`, `comment`, `attachment_add`, `attachment_remove`), `diff` JSON com antes/depois por campo |

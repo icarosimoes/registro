@@ -4,7 +4,7 @@ import { currentTenantUser, tenantFetch } from "@/lib/api";
 import { moduleDefinitions } from "@/lib/module-definitions";
 import { notFound, redirect } from "next/navigation";
 
-const GENERIC_MODULES = new Set(["reunioes", "relatorios-turno", "inspecoes", "diarios-obra", "manutencao", "mural"]);
+const GENERIC_MODULES = new Set(["inspecoes", "diarios-obra", "manutencao", "mural"]);
 
 export default async function ModulePage({ params, searchParams }: { params: Promise<{ module: string }>; searchParams: Promise<Record<string, string | undefined>> }) {
   const { module } = await params;
@@ -176,6 +176,73 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
             status: "Ativo",
             description: item.link ?? undefined,
             updatedAt: new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
+          })),
+          serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
+        };
+      } catch (error) {
+        if (error instanceof Error && error.message === "unauthorized") throw error;
+      }
+    } else if (module === "reunioes") {
+      type MeetingItem = {
+        id: number; title: string; description: string | null;
+        scheduled_at: string | null; location: string | null;
+        status: string; owner: string; participant_count: number;
+        subject_count: number; updated_at: string;
+      };
+      type MeetingPage = { items: MeetingItem[]; total: number; page: number; page_size: number };
+      try {
+        const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
+        const search = query.search ?? "";
+        const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+        const data = await tenantFetch<MeetingPage>(`/meetings?page=${pg}&page_size=20${searchParam}`);
+        hydratedDefinition = {
+          ...definition,
+          source: "api",
+          records: data.items.map((item) => ({
+            id: item.id,
+            title: item.title,
+            description: item.description ?? undefined,
+            category: item.location ?? "Geral",
+            owner: item.owner,
+            status: item.status,
+            scheduledAt: item.scheduled_at ?? undefined,
+            updatedAt: item.scheduled_at
+              ? new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short" }).format(new Date(item.scheduled_at))
+              : new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
+          })),
+          serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
+        };
+      } catch (error) {
+        if (error instanceof Error && error.message === "unauthorized") throw error;
+      }
+    } else if (module === "relatorios-turno") {
+      type ShiftReportItem = {
+        id: number; title: string; description: string | null;
+        shift_date: string | null; shift_type: string | null;
+        shift_label: string | null; status: string; owner: string;
+        updated_at: string;
+      };
+      type ShiftReportPage = { items: ShiftReportItem[]; total: number; page: number; page_size: number };
+      try {
+        const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
+        const search = query.search ?? "";
+        const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
+        const data = await tenantFetch<ShiftReportPage>(`/shift-reports?page=${pg}&page_size=20${searchParam}`);
+        hydratedDefinition = {
+          ...definition,
+          source: "api",
+          records: data.items.map((item) => ({
+            id: item.id,
+            title: item.title,
+            description: item.description ?? undefined,
+            category: item.shift_label ?? item.shift_type ?? "Geral",
+            owner: item.owner,
+            status: item.status,
+            shiftDate: item.shift_date ?? undefined,
+            shiftType: item.shift_type ?? undefined,
+            updatedAt: item.shift_date
+              ? new Intl.DateTimeFormat("pt-BR").format(new Date(item.shift_date))
+              : new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
           })),
           serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
         };

@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth import current_user
 from app.core.dependencies import require_session
+from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.users.service import (
     create_user,
@@ -89,7 +90,7 @@ async def update_profile_endpoint(
 
 @router.get("", response_model=UserListResponse)
 async def list_users_endpoint(
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("user.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
@@ -110,7 +111,7 @@ async def list_users_endpoint(
 
 @router.get("/search", response_model=list[UserOption])
 async def search_users_endpoint(
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("user.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
     q: str = "",
 ) -> list[UserOption]:
@@ -121,7 +122,7 @@ async def search_users_endpoint(
 @router.post("", response_model=UserSummary, status_code=201)
 async def create_user_endpoint(
     body: UserCreate,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("user.create")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> UserSummary:
     record = await create_user(
@@ -142,7 +143,7 @@ async def create_user_endpoint(
 async def update_user_endpoint(
     user_id: int,
     body: UserUpdate,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("user.edit")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> UserSummary:
     updates = body.model_dump(exclude_none=True)
@@ -159,7 +160,7 @@ async def update_user_endpoint(
 @router.delete("/{user_id}", status_code=204)
 async def delete_user_endpoint(
     user_id: int,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("user.delete")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
     if user_id == user.id:

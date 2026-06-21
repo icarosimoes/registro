@@ -3,9 +3,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth import current_user
 from app.core.config import Settings, get_settings
 from app.core.dependencies import require_session
+from app.core.permissions import require_permission
 from app.core.rate_limit import limiter
 from app.core.sla import compute_sla_status
 from app.domain.auth.repository import AuthenticatedUser
@@ -188,7 +188,7 @@ async def track_chess_hotel_ticket(
 
 @router.get("/fiscal-requests", response_model=FiscalRequestListResponse)
 async def list_fiscal_requests_endpoint(
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("fiscal_request.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
@@ -208,7 +208,7 @@ async def list_fiscal_requests_endpoint(
 @router.post("/fiscal-requests", response_model=FiscalRequestSummary, status_code=201)
 async def create_fiscal_request_endpoint(
     body: FiscalRequestUserCreate,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("fiscal_request.create")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> FiscalRequestSummary:
     record = await create_fiscal_request(
@@ -230,7 +230,7 @@ async def create_fiscal_request_endpoint(
 async def update_fiscal_request_endpoint(
     request_id: int,
     body: FiscalRequestUpdate,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("fiscal_request.edit")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> FiscalRequestSummary:
     updates = body.model_dump(exclude_none=True)
@@ -245,7 +245,7 @@ async def update_fiscal_request_endpoint(
 @router.delete("/fiscal-requests/{request_id}", status_code=204)
 async def delete_fiscal_request_endpoint(
     request_id: int,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("fiscal_request.delete")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
     deleted = await delete_fiscal_request(session, user.company_id, user.id, request_id)

@@ -35,6 +35,9 @@ export type ModuleRecord = {
   deadline?: string;
   location?: string;
   slaStatus?: string;
+  scheduledAt?: string;
+  shiftDate?: string;
+  shiftType?: string;
 };
 
 export type ModuleDefinition = {

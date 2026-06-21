@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth import current_user
 from app.core.dependencies import require_session
+from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.modules.service import (
     VALID_MODULES,
@@ -62,7 +62,7 @@ def _validate_module(module_slug: str) -> None:
 @router.get("/{module_slug}", response_model=ModuleRecordListResponse)
 async def list_records_endpoint(
     module_slug: str,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("module.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
@@ -87,7 +87,7 @@ async def list_records_endpoint(
 async def create_record_endpoint(
     module_slug: str,
     body: ModuleRecordCreate,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("module.create")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> ModuleRecordSummary:
     _validate_module(module_slug)
@@ -108,7 +108,7 @@ async def update_record_endpoint(
     module_slug: str,
     record_id: int,
     body: ModuleRecordUpdate,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("module.edit")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> ModuleRecordSummary:
     _validate_module(module_slug)
@@ -131,7 +131,7 @@ async def update_record_endpoint(
 async def delete_record_endpoint(
     module_slug: str,
     record_id: int,
-    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    user: Annotated[AuthenticatedUser, require_permission("module.delete")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
     _validate_module(module_slug)

@@ -5,7 +5,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import compute_diff, record_event
 from app.integrations.notifications import notify_record_event
-from app.models import Location, Occurrence, Sector, User
+from app.models import (
+    Location,
+    Occurrence,
+    OccurrenceParticipant,
+    Sector,
+    User,
+)
 
 STATUS_LABELS = {1: "Em andamento", 2: "Concluído", 3: "Aguardando"}
 
@@ -62,6 +68,62 @@ async def list_occurrences(
     return rows, total
 
 
+async def _sync_participants(
+    session: AsyncSession, occurrence_id: int, participant_ids: list[int]
+) -> None:
+    await session.execute(
+        select(OccurrenceParticipant).where(
+            OccurrenceParticipant.occurrence_id == occurrence_id
+        )
+    )
+    from sqlalchemy import delete as sa_delete
+
+    await session.execute(
+        sa_delete(OccurrenceParticipant).where(
+            OccurrenceParticipant.occurrence_id == occurrence_id
+        )
+    )
+    for uid in participant_ids:
+        session.add(
+            OccurrenceParticipant(
+                occurrence_id=occurrence_id, user_id=uid
+            )
+        )
+
+
+async def _get_participants(
+    session: AsyncSession, occurrence_id: int
+) -> list[tuple[int, str]]:
+    rows = (
+        await session.execute(
+            select(OccurrenceParticipant.user_id, User.name)
+            .join(User, User.id == OccurrenceParticipant.user_id)
+            .where(
+                OccurrenceParticipant.occurrence_id == occurrence_id
+            )
+            .order_by(User.name)
+        )
+    ).all()
+    return [(uid, name) for uid, name in rows]
+
+
+async def get_occurrence(
+    session: AsyncSession, company_id: int, occurrence_id: int
+) -> tuple | None:
+    record = await session.scalar(
+        select(Occurrence).where(
+            Occurrence.id == occurrence_id,
+            Occurrence.company_id == company_id,
+            Occurrence.deleted_at.is_(None),
+        )
+    )
+    if record is None:
+        return None
+    names = await _resolve_names(session, record)
+    participants = await _get_participants(session, record.id)
+    return record, names, participants
+
+
 async def create_occurrence(
     session: AsyncSession,
     company_id: int,
@@ -78,6 +140,7 @@ async def create_occurrence(
     location_id: int | None,
     owner_user_id: int | None,
     notify_user_ids: list[int] | None,
+    participant_ids: list[int] | None = None,
 ) -> tuple[Occurrence, tuple[str | None, str | None, str | None]]:
     record = Occurrence(
         company_id=company_id,
@@ -96,6 +159,9 @@ async def create_occurrence(
     session.add(record)
     await session.commit()
     await session.refresh(record)
+    if participant_ids:
+        await _sync_participants(session, record.id, participant_ids)
+        await session.commit()
     await record_event(
         session,
         company_id=company_id,
@@ -138,11 +204,21 @@ async def update_occurrence(
     )
     if record is None:
         return None
-    before = {k: str(getattr(record, k)) for k in updates if k != "notify_user_ids"}
+    participant_ids = updates.pop("participant_ids", None)
+    before = {
+        k: str(getattr(record, k))
+        for k in updates
+        if k != "notify_user_ids"
+    }
     for field, value in updates.items():
         setattr(record, field, value)
     record.updated_by_user_id = user_id
-    diff = compute_diff(before, {k: str(v) for k, v in updates.items() if k != "notify_user_ids"})
+    if participant_ids is not None:
+        await _sync_participants(session, record.id, participant_ids)
+    diff = compute_diff(
+        before,
+        {k: str(v) for k, v in updates.items() if k != "notify_user_ids"},
+    )
     if diff:
         await record_event(
             session,
@@ -201,3 +277,43 @@ async def delete_occurrence(
     )
     await session.commit()
     return True
+
+
+async def clone_occurrence(
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    user_name: str,
+    user_email: str,
+    occurrence_id: int,
+) -> tuple | None:
+    original = await session.scalar(
+        select(Occurrence).where(
+            Occurrence.id == occurrence_id,
+            Occurrence.company_id == company_id,
+            Occurrence.deleted_at.is_(None),
+        )
+    )
+    if original is None:
+        return None
+
+    participants = await _get_participants(session, original.id)
+    p_ids = [uid for uid, _ in participants]
+
+    return await create_occurrence(
+        session,
+        company_id,
+        user_id,
+        user_name,
+        user_email,
+        title=f"Cópia de {original.title}",
+        description=original.description,
+        unit=original.unit,
+        deadline=original.deadline,
+        status=1,
+        sector_id=original.sector_id,
+        location_id=original.location_id,
+        owner_user_id=original.owner_user_id,
+        notify_user_ids=original.notify_user_ids,
+        participant_ids=p_ids,
+    )

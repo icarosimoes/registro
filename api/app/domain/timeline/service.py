@@ -8,9 +8,11 @@ from app.integrations.notifications import notify_record_event
 from app.models import (
     AuditEvent,
     FiscalRequest,
+    Meeting,
     ModuleRecord,
     Occurrence,
     Procedure,
+    ShiftReport,
     User,
 )
 
@@ -18,8 +20,8 @@ VALID_ENTITY_TYPES = {
     "occurrence",
     "fiscal_request",
     "procedure",
-    "reunioes",
-    "relatorios-turno",
+    "meeting",
+    "shift_report",
     "inspecoes",
     "diarios-obra",
     "manutencao",
@@ -30,11 +32,11 @@ ENTITY_MODEL_MAP: dict[str, Any] = {
     "occurrence": Occurrence,
     "fiscal_request": FiscalRequest,
     "procedure": Procedure,
+    "meeting": Meeting,
+    "shift_report": ShiftReport,
 }
 
 MODULE_SLUG_ENTITY_TYPES = {
-    "reunioes",
-    "relatorios-turno",
     "inspecoes",
     "diarios-obra",
     "manutencao",

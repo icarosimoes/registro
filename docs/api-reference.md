@@ -11,43 +11,70 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `POST` | `/auth/login` | pública (10/min) | JWT access + refresh e perfil |
 | `POST` | `/auth/refresh` | pública (20/min) | renova tokens via refresh token |
 | `GET` | `/auth/me` | Bearer | perfil revalidado no MySQL |
-| `GET` | `/occurrences` | Tenant Bearer | ocorrências paginadas e isoladas por empresa |
-| `POST` | `/occurrences` | Tenant Bearer | cria ocorrência |
-| `PATCH` | `/occurrences/{id}` | Tenant Bearer | atualiza ocorrência |
-| `DELETE` | `/occurrences/{id}` | Tenant Bearer | soft delete de ocorrência |
+| `GET` | `/occurrences` | `occurrence.view` | ocorrências paginadas e isoladas por empresa |
+| `GET` | `/occurrences/{id}` | `occurrence.view` | detalhe com participantes |
+| `POST` | `/occurrences` | `occurrence.create` | cria ocorrência |
+| `PATCH` | `/occurrences/{id}` | `occurrence.edit` | atualiza ocorrência |
+| `DELETE` | `/occurrences/{id}` | `occurrence.delete` | soft delete de ocorrência |
+| `POST` | `/occurrences/{id}/clone` | `occurrence.create` | duplica ocorrência com participantes |
+| `GET` | `/occurrences/{id}/pdf` | `occurrence.view` | exporta PDF da ocorrência |
 | `POST` | `/integrations/chess-hotel/users/resolve` | `X-Registro-Key` (30/min) | resolve usuário Chess no Registro por e-mail |
 | `POST` | `/integrations/chess-hotel/tickets` | `X-Registro-Key` (30/min) | cria solicitação fiscal via integração Chess Hotel |
 | `GET` | `/integrations/chess-hotel/tickets` | `X-Registro-Key` | lista solicitações do usuário Chess com tracking |
-| `GET` | `/fiscal-requests` | Tenant Bearer | solicitações fiscais paginadas do tenant |
-| `POST` | `/fiscal-requests` | Tenant Bearer | cria solicitação fiscal |
-| `PATCH` | `/fiscal-requests/{id}` | Tenant Bearer | atualiza solicitação fiscal |
-| `DELETE` | `/fiscal-requests/{id}` | Tenant Bearer | exclui solicitação fiscal |
+| `GET` | `/fiscal-requests` | `fiscal_request.view` | solicitações fiscais paginadas do tenant |
+| `POST` | `/fiscal-requests` | `fiscal_request.create` | cria solicitação fiscal |
+| `PATCH` | `/fiscal-requests/{id}` | `fiscal_request.edit` | atualiza solicitação fiscal |
+| `DELETE` | `/fiscal-requests/{id}` | `fiscal_request.delete` | exclui solicitação fiscal |
 | `GET` | `/dashboard/metrics` | Tenant Bearer | métricas agregadas do dashboard |
 | `PATCH` | `/users/me` | Tenant Bearer | edição de perfil do próprio usuário |
-| `GET` | `/users` | Tenant Bearer | usuários paginados do tenant |
-| `POST` | `/users` | Tenant Bearer | cria usuário |
-| `PATCH` | `/users/{id}` | Tenant Bearer | atualiza usuário |
-| `DELETE` | `/users/{id}` | Tenant Bearer | soft delete de usuário |
-| `GET` | `/registries` | Tenant Bearer | cadastros (setores, locais e funções) |
-| `POST` | `/registries` | Tenant Bearer | cria cadastro |
-| `PATCH` | `/registries/{id}?category=` | Tenant Bearer | atualiza cadastro |
-| `DELETE` | `/registries/{id}?category=` | Tenant Bearer | soft delete de cadastro |
-| `GET` | `/modules/{slug}` | Tenant Bearer | registros genéricos paginados |
-| `POST` | `/modules/{slug}` | Tenant Bearer | cria registro genérico |
-| `PATCH` | `/modules/{slug}/{id}` | Tenant Bearer | atualiza registro genérico |
-| `DELETE` | `/modules/{slug}/{id}` | Tenant Bearer | soft delete de registro genérico |
-| `GET` | `/users/search?q=` | Tenant Bearer | autocomplete de usuários ativos (max 10) |
-| `GET` | `/procedures` | Tenant Bearer | procedimentos paginados do tenant |
-| `POST` | `/procedures` | Tenant Bearer | cria procedimento |
-| `PATCH` | `/procedures/{id}` | Tenant Bearer | atualiza procedimento |
-| `DELETE` | `/procedures/{id}` | Tenant Bearer | soft delete de procedimento |
+| `GET` | `/users` | `user.view` | usuários paginados do tenant |
+| `GET` | `/users/search?q=` | `user.view` | autocomplete de usuários ativos (max 10) |
+| `POST` | `/users` | `user.create` | cria usuário |
+| `PATCH` | `/users/{id}` | `user.edit` | atualiza usuário |
+| `DELETE` | `/users/{id}` | `user.delete` | soft delete de usuário |
+| `GET` | `/roles` | `user.view` | lista roles do tenant com contagem de usuários |
+| `GET` | `/roles/{id}` | `user.view` | detalhe do role com permissões |
+| `POST` | `/roles` | `user.edit` | cria role com permissões |
+| `PATCH` | `/roles/{id}` | `user.edit` | atualiza role/permissões |
+| `DELETE` | `/roles/{id}` | `user.edit` | exclui role (só se sem usuários) |
+| `GET` | `/roles/permissions` | `user.view` | lista todas as permissões agrupadas por módulo |
+| `GET` | `/registries` | `registry.view` | cadastros (setores, locais e funções) |
+| `POST` | `/registries` | `registry.create` | cria cadastro |
+| `PATCH` | `/registries/{id}?category=` | `registry.edit` | atualiza cadastro |
+| `DELETE` | `/registries/{id}?category=` | `registry.delete` | soft delete de cadastro |
+| `GET` | `/meetings` | `meeting.view` | reuniões paginadas do tenant |
+| `GET` | `/meetings/{id}` | `meeting.view` | detalhe com participantes e pautas |
+| `POST` | `/meetings` | `meeting.create` | cria reunião com participantes e pautas |
+| `PATCH` | `/meetings/{id}` | `meeting.edit` | atualiza reunião |
+| `DELETE` | `/meetings/{id}` | `meeting.delete` | soft delete de reunião |
+| `POST` | `/meetings/{id}/clone` | `meeting.create` | duplica reunião |
+| `POST` | `/meetings/{id}/subjects` | `meeting.edit` | adiciona pauta |
+| `PATCH` | `/meetings/{id}/subjects/{sid}` | `meeting.edit` | atualiza pauta (toggle resolved) |
+| `DELETE` | `/meetings/{id}/subjects/{sid}` | `meeting.edit` | remove pauta |
+| `GET` | `/shift-reports` | `shift_report.view` | relatórios de turno paginados (filtro por data) |
+| `GET` | `/shift-reports/{id}` | `shift_report.view` | detalhe do relatório |
+| `POST` | `/shift-reports` | `shift_report.create` | cria relatório de turno |
+| `PATCH` | `/shift-reports/{id}` | `shift_report.edit` | atualiza relatório |
+| `DELETE` | `/shift-reports/{id}` | `shift_report.delete` | soft delete de relatório |
+| `GET` | `/modules/{slug}` | `module.view` | registros genéricos paginados |
+| `POST` | `/modules/{slug}` | `module.create` | cria registro genérico |
+| `PATCH` | `/modules/{slug}/{id}` | `module.edit` | atualiza registro genérico |
+| `DELETE` | `/modules/{slug}/{id}` | `module.delete` | soft delete de registro genérico |
+| `GET` | `/procedures` | `procedure.view` | procedimentos paginados do tenant |
+| `POST` | `/procedures` | `procedure.create` | cria procedimento |
+| `PATCH` | `/procedures/{id}` | `procedure.edit` | atualiza procedimento |
+| `DELETE` | `/procedures/{id}` | `procedure.delete` | soft delete de procedimento |
 | `GET` | `/notifications` | Tenant Bearer | notificações in-app paginadas do usuário |
 | `PATCH` | `/notifications/{id}/read` | Tenant Bearer | marca notificação como lida |
 | `POST` | `/notifications/read-all` | Tenant Bearer | marca todas as notificações como lidas |
-| `GET` | `/settings/evolution` | Tenant Bearer | configuração da Evolution API |
-| `POST` | `/settings/evolution` | Tenant Bearer | salva configuração da Evolution API |
-| `GET` | `/settings/brevo` | Tenant Bearer | configuração do Brevo (e-mail) |
-| `POST` | `/settings/brevo` | Tenant Bearer | salva configuração do Brevo |
+| `GET` | `/notifications/preferences` | Tenant Bearer | preferências de notificação do usuário |
+| `PUT` | `/notifications/preferences/{module}` | Tenant Bearer | atualiza preferência de um módulo |
+| `GET` | `/settings/evolution` | `settings.view` | configuração da Evolution API |
+| `POST` | `/settings/evolution` | `settings.edit` | salva configuração da Evolution API |
+| `GET` | `/settings/brevo` | `settings.view` | configuração do Brevo (e-mail) |
+| `POST` | `/settings/brevo` | `settings.edit` | salva configuração do Brevo |
+| `GET` | `/settings/notification-recipients` | `settings.view` | destinatários por módulo |
+| `PUT` | `/settings/notification-recipients/{module}` | `settings.edit` | define destinatários de um módulo |
 | `POST` | `/attachments` | Tenant Bearer (multipart) | upload de anexo para entidade |
 | `GET` | `/attachments?entity_type=&entity_id=` | Tenant Bearer | lista anexos de uma entidade |
 | `GET` | `/attachments/{id}/download` | Tenant Bearer | download do arquivo |
@@ -216,7 +243,7 @@ A timeline agrega eventos de auditoria de um registro e os apresenta como thread
 
 Retorna todos os eventos do registro em ordem cronológica. Cada item inclui `id`, `event_type`, `user` (nome), `message` (para comentários e anexos), `changes` (para updates) e `created_at`.
 
-Entity types válidos: `occurrence`, `fiscal_request`, `procedure`, `reunioes`, `relatorios-turno`, `inspecoes`, `diarios-obra`, `manutencao`, `mural`.
+Entity types válidos: `occurrence`, `fiscal_request`, `procedure`, `meeting`, `shift_report`, `inspecoes`, `diarios-obra`, `manutencao`, `mural`.
 
 Tipos de evento renderizados:
 
@@ -332,7 +359,7 @@ Exclusão lógica do cadastro. O `category` é obrigatório como query parameter
 
 Endpoint unificado para módulos operacionais que compartilham a mesma estrutura: reuniões, relatórios de turno, inspeções, diário de obra, manutenção e mural. O `{slug}` identifica o módulo.
 
-Slugs válidos: `reunioes`, `relatorios-turno`, `inspecoes`, `diarios-obra`, `manutencao`, `mural`.
+Slugs válidos: `inspecoes`, `diarios-obra`, `manutencao`, `mural`. (Reuniões e relatórios de turno foram promovidos para tabelas dedicadas — ver `/meetings` e `/shift-reports`.)
 
 Registros importados da V1 possuem `legacy_id` e `payload` JSON com dados ricos (subjects, participants, frequencies, items de conferência, etc.) preservados da estrutura original.
 
@@ -404,6 +431,32 @@ Marca uma notificação como lida. Idempotente — se já lida, retorna sem alte
 
 Marca todas as notificações não lidas do usuário como lidas. Responde `204`.
 
+#### `GET /notifications/preferences`
+
+Lista preferências de notificação do usuário autenticado para todos os módulos válidos. Módulos sem preferência salva retornam `in_app: true, email: true` (default). Responde `[{module, in_app, email}]`.
+
+Módulos válidos: `occurrences`, `fiscal_requests`, `meetings`, `shift_reports`, `procedures`, `inspections`, `maintenance`, `modules`.
+
+#### `PUT /notifications/preferences/{module}`
+
+Atualiza preferência de notificação do usuário para um módulo. Body: `{in_app: bool, email: bool}`. Retorna `{module, in_app, email}`. Retorna `400` se o módulo for inválido.
+
+### Destinatários por módulo
+
+Configuração a nível de empresa — define quais usuários recebem notificações de cada módulo por padrão (além dos envolvidos diretos no registro). Armazenado em `company_settings` com chave `notification_recipients`.
+
+#### `GET /settings/notification-recipients`
+
+Lista destinatários configurados para todos os módulos. Requer `settings.view`. Responde `[{module, user_ids}]`.
+
+#### `PUT /settings/notification-recipients/{module}`
+
+Define a lista de `user_ids` que recebem notificações de um módulo. Requer `settings.edit`. Body: `{user_ids: [int]}`. Retorna `{module, user_ids}`. Retorna `400` se o módulo for inválido.
+
+### Registro de entrega
+
+Cada notificação inclui o campo `email_sent_at` (datetime ou null) que indica quando o e-mail correspondente foi enviado com sucesso via Brevo. O campo é preenchido automaticamente pelo sistema — não há endpoint para alterá-lo.
+
 ### Auditoria dos novos endpoints
 
 | `entity_type` | `event_type` | Quando |
@@ -440,6 +493,125 @@ Download do arquivo com `Content-Disposition: attachment`. Isolado por `company_
 #### `DELETE /attachments/{id}`
 
 Exclui o anexo do MinIO e do banco. Registra evento de auditoria `attachment_remove` com o nome do arquivo. Responde `204`. Retorna `404` se o anexo não existir ou pertencer a outro tenant.
+
+### ACL (Controle de Acesso)
+
+O sistema de permissões usa uma factory `require_permission(code)` em `app/core/permissions.py`. Cada endpoint protegido declara a permissão necessária via `Annotated[AuthenticatedUser, require_permission("modulo.acao")]`. O JWT já carrega `permissions: list[str]` populadas a partir do role do usuário. A permissão wildcard `*` (Administrador) bypassa todas as verificações.
+
+#### Permissões disponíveis
+
+| Módulo | Códigos |
+| --- | --- |
+| occurrence | `occurrence.view`, `.create`, `.edit`, `.delete` |
+| fiscal_request | `fiscal_request.view`, `.create`, `.edit`, `.delete` |
+| user | `user.view`, `.create`, `.edit`, `.delete` |
+| registry | `registry.view`, `.create`, `.edit`, `.delete` |
+| module | `module.view`, `.create`, `.edit`, `.delete` |
+| procedure | `procedure.view`, `.create`, `.edit`, `.delete` |
+| settings | `settings.view`, `.edit` |
+| meeting | `meeting.view`, `.create`, `.edit`, `.delete` |
+| shift_report | `shift_report.view`, `.create`, `.edit`, `.delete` |
+| system | `*` (acesso total) |
+
+Sem a permissão necessária, a API retorna `403 Forbidden` com `{"code": "forbidden", "required": "modulo.acao"}`.
+
+#### Roles (`/roles`)
+
+CRUD de cargos por tenant. Cada role tem um conjunto de permissões atribuídas via tabela junction `role_permissions`. A exclusão de um role só é permitida se nenhum usuário estiver atribuído a ele (retorna `409 role_has_users`).
+
+### Ocorrências — funcionalidades adicionais
+
+#### `GET /occurrences/{id}`
+
+Detalhe de uma ocorrência com participantes. Retorna `OccurrenceDetail` com campos adicionais: `unit`, `participants: [{id, name}]` e `notify_user_ids`.
+
+#### `POST /occurrences/{id}/clone`
+
+Duplica uma ocorrência. Copia todos os campos, participantes e notificações. O título recebe prefixo "Cópia de ". O status volta para 1 (Em andamento). Timeline e anexos não são copiados. Retorna `201` com a nova ocorrência.
+
+#### `GET /occurrences/{id}/pdf`
+
+Exporta a ocorrência em PDF (reportlab). Inclui: header com nome da empresa, metadata (status, setor, local, responsável, prazo), descrição, participantes e histórico completo da timeline. Retorna `StreamingResponse` com `Content-Disposition: attachment`.
+
+#### Participantes de ocorrências
+
+A criação e atualização de ocorrências agora aceitam `participant_ids: list[int]` para vincular participantes. Os participantes são armazenados na tabela `occurrence_participants` (junction com chave composta `occurrence_id` + `user_id`).
+
+### Reuniões (`/meetings`)
+
+Reuniões foram promovidas de `module_records` para tabelas dedicadas: `meetings`, `meeting_participants` e `meeting_subjects`. Dados existentes foram migrados automaticamente.
+
+#### Modelo
+
+- `meetings`: title, description, scheduled_at (datetime), location, status, owner_user_id, notify_user_ids, deleted_at
+- `meeting_participants`: meeting_id, user_id, role (organizer/attendee/optional)
+- `meeting_subjects`: meeting_id, title, description, sort_order, resolved (boolean)
+
+#### `POST /meetings`
+
+Cria uma reunião com participantes e pautas em uma única chamada.
+
+```json
+{
+  "title": "Alinhamento operacional semanal",
+  "scheduled_at": "2026-06-25T09:00:00",
+  "location": "Sala de reuniões",
+  "status": "Agendada",
+  "owner_user_id": 1,
+  "participants": [
+    {"user_id": 2, "role": "attendee"},
+    {"user_id": 3, "role": "organizer"}
+  ],
+  "subjects": [
+    {"title": "Revisão de indicadores", "sort_order": 0},
+    {"title": "Planejamento da semana", "sort_order": 1}
+  ],
+  "notify_user_ids": [2, 3]
+}
+```
+
+#### Pautas (`/meetings/{id}/subjects`)
+
+- `POST /meetings/{id}/subjects` — adiciona pauta
+- `PATCH /meetings/{id}/subjects/{sid}` — atualiza pauta (toggle resolved, reorder)
+- `DELETE /meetings/{id}/subjects/{sid}` — remove pauta
+
+#### `POST /meetings/{id}/clone`
+
+Duplica a reunião com participantes e pautas. Título com prefixo "Cópia de ". Status volta para "Agendada".
+
+#### Timeline e anexos
+
+Reuniões usam os mesmos endpoints genéricos de timeline (`entity_type="meeting"`) e anexos. Toda mutação gera `AuditEvent`.
+
+### Relatórios de turno (`/shift-reports`)
+
+Relatórios de turno foram promovidos de `module_records` para a tabela `shift_reports`. Dados existentes foram migrados automaticamente.
+
+#### Modelo
+
+- `shift_reports`: title, description, shift_date (date), shift_type (morning/afternoon/night), status, started_at, ended_at, owner_user_id, notify_user_ids, deleted_at
+
+#### `GET /shift-reports`
+
+Lista relatórios com paginação, busca e filtro por data. Aceita query params opcionais `date_from` e `date_to` (formato `YYYY-MM-DD`).
+
+#### `POST /shift-reports`
+
+```json
+{
+  "title": "Turno manhã — Bloco A",
+  "shift_date": "2026-06-20",
+  "shift_type": "morning",
+  "status": "Em andamento",
+  "owner_user_id": 1,
+  "description": "Passagem de turno com pendências do noturno."
+}
+```
+
+#### Timeline e anexos
+
+Relatórios usam `entity_type="shift_report"` para timeline e anexos.
 
 ### Infraestrutura: MinIO
 
