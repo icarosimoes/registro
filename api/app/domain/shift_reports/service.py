@@ -33,12 +33,7 @@ async def list_shift_reports(
         filters.append(ShiftReport.shift_date >= date_from)
     if date_to:
         filters.append(ShiftReport.shift_date <= date_to)
-    total = (
-        await session.scalar(
-            select(func.count(ShiftReport.id)).where(*filters)
-        )
-        or 0
-    )
+    total = await session.scalar(select(func.count(ShiftReport.id)).where(*filters)) or 0
     rows = (
         await session.execute(
             select(ShiftReport, User.name)
@@ -130,9 +125,7 @@ async def create_shift_report(
         notify_user_ids=notify_user_ids,
     )
     owner_name = (
-        await session.scalar(
-            select(User.name).where(User.id == record.owner_user_id)
-        )
+        await session.scalar(select(User.name).where(User.id == record.owner_user_id))
         if record.owner_user_id
         else None
     )
@@ -157,11 +150,7 @@ async def update_shift_report(
     )
     if record is None:
         return None
-    before = {
-        k: str(getattr(record, k))
-        for k in updates
-        if k != "notify_user_ids"
-    }
+    before = {k: str(getattr(record, k)) for k in updates if k != "notify_user_ids"}
     for field, value in updates.items():
         setattr(record, field, value)
     diff = compute_diff(
@@ -196,9 +185,7 @@ async def update_shift_report(
             detail=detail,
         )
     owner_name = (
-        await session.scalar(
-            select(User.name).where(User.id == record.owner_user_id)
-        )
+        await session.scalar(select(User.name).where(User.id == record.owner_user_id))
         if record.owner_user_id
         else None
     )

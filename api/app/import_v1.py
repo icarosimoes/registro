@@ -278,15 +278,19 @@ async def import_meetings(
 
     subjects_by_meeting: dict[int, list[dict]] = {}
     for s in subjects:
-        subjects_by_meeting.setdefault(s["meetings_id"], []).append({
-            "subject": s["subject"],
-            "obs": _str(s.get("obs_subject")),
-        })
+        subjects_by_meeting.setdefault(s["meetings_id"], []).append(
+            {
+                "subject": s["subject"],
+                "obs": _str(s.get("obs_subject")),
+            }
+        )
     for s in new_subjects:
-        subjects_by_meeting.setdefault(s["meetings_id"], []).append({
-            "subject": s["subject"],
-            "obs": _str(s.get("obs_subject")),
-        })
+        subjects_by_meeting.setdefault(s["meetings_id"], []).append(
+            {
+                "subject": s["subject"],
+                "obs": _str(s.get("obs_subject")),
+            }
+        )
 
     count = 0
     for m in meetings:
@@ -327,22 +331,28 @@ async def import_meetings(
                 )
             )
             if not existing:
-                target.add(MeetingParticipant(
-                    meeting_id=item.id, user_id=uid, role="attendee",
-                ))
+                target.add(
+                    MeetingParticipant(
+                        meeting_id=item.id,
+                        user_id=uid,
+                        role="attendee",
+                    )
+                )
 
         meeting_subjects = subjects_by_meeting.get(m["id"], [])
-        existing_subjects = (await target.scalars(
-            select(MeetingSubject).where(MeetingSubject.meeting_id == item.id)
-        )).all()
+        existing_subjects = (
+            await target.scalars(select(MeetingSubject).where(MeetingSubject.meeting_id == item.id))
+        ).all()
         if not existing_subjects:
             for idx, s in enumerate(meeting_subjects):
-                target.add(MeetingSubject(
-                    meeting_id=item.id,
-                    title=s["subject"][:255],
-                    description=s.get("obs"),
-                    sort_order=idx,
-                ))
+                target.add(
+                    MeetingSubject(
+                        meeting_id=item.id,
+                        title=s["subject"][:255],
+                        description=s.get("obs"),
+                        sort_order=idx,
+                    )
+                )
 
         count += 1
     return count
@@ -366,50 +376,60 @@ async def import_shift_reports(
 
     freq_by_report: dict[int, list[dict]] = {}
     for f in frequencies:
-        freq_by_report.setdefault(f["shift_reports_id"], []).append({
-            "employee": f.get("employee"),
-            "occupation": f.get("occupation"),
-            "func_id": functions.get(f["func_id"]) if f.get("func_id") else None,
-        })
+        freq_by_report.setdefault(f["shift_reports_id"], []).append(
+            {
+                "employee": f.get("employee"),
+                "occupation": f.get("occupation"),
+                "func_id": functions.get(f["func_id"]) if f.get("func_id") else None,
+            }
+        )
 
     maint_by_report: dict[int, list[dict]] = {}
     for m in maintenances:
-        maint_by_report.setdefault(m["shift_reports_id"], []).append({
-            "uh": m.get("uh"),
-            "status": m.get("status"),
-            "reason": _str(m.get("reason")),
-            "providence": _str(m.get("providence")),
-            "location_id": locations.get(m["local_id"]) if m.get("local_id") else None,
-            "occurrence_id": (
-                occurrences_map.get(m["occurrences_id"]) if m.get("occurrences_id") else None
-            ),
-        })
+        maint_by_report.setdefault(m["shift_reports_id"], []).append(
+            {
+                "uh": m.get("uh"),
+                "status": m.get("status"),
+                "reason": _str(m.get("reason")),
+                "providence": _str(m.get("providence")),
+                "location_id": locations.get(m["local_id"]) if m.get("local_id") else None,
+                "occurrence_id": (
+                    occurrences_map.get(m["occurrences_id"]) if m.get("occurrences_id") else None
+                ),
+            }
+        )
 
     compl_by_report: dict[int, list[dict]] = {}
     for c in complaints:
-        compl_by_report.setdefault(c["shift_reports_id"], []).append({
-            "problem": _str(c.get("problem")),
-            "providence": _str(c.get("providence")),
-            "occurrence_id": (
-                occurrences_map.get(c["occurrences_id"]) if c.get("occurrences_id") else None
-            ),
-        })
+        compl_by_report.setdefault(c["shift_reports_id"], []).append(
+            {
+                "problem": _str(c.get("problem")),
+                "providence": _str(c.get("providence")),
+                "occurrence_id": (
+                    occurrences_map.get(c["occurrences_id"]) if c.get("occurrences_id") else None
+                ),
+            }
+        )
 
     extra_by_report: dict[int, list[dict]] = {}
     for e in extras:
-        extra_by_report.setdefault(e["shift_reports_id"], []).append({
-            "extrawork": _str(e.get("extrawork")),
-            "reasons": _str(e.get("reasons")),
-        })
+        extra_by_report.setdefault(e["shift_reports_id"], []).append(
+            {
+                "extrawork": _str(e.get("extrawork")),
+                "reasons": _str(e.get("reasons")),
+            }
+        )
 
     comment_by_report: dict[int, list[dict]] = {}
     for c in comments:
-        comment_by_report.setdefault(c["shift_reports_id"], []).append({
-            "comments": _str(c.get("comments")),
-            "occurrence_id": (
-                occurrences_map.get(c["occurrences_id"]) if c.get("occurrences_id") else None
-            ),
-        })
+        comment_by_report.setdefault(c["shift_reports_id"], []).append(
+            {
+                "comments": _str(c.get("comments")),
+                "occurrence_id": (
+                    occurrences_map.get(c["occurrences_id"]) if c.get("occurrences_id") else None
+                ),
+            }
+        )
 
     count = 0
     for r in reports:
@@ -464,12 +484,14 @@ async def import_occurrence_children(
     for c in occ_comments:
         new_occ_id = occurrences_map.get(c["occurrences_id"])
         if new_occ_id:
-            comments_by_occ.setdefault(new_occ_id, []).append({
-                "legacy_id": c["id"],
-                "comments": _str(c.get("comments")),
-                "user_id": users.get(c["users_id"]) if c.get("users_id") else None,
-                "created_at": str(c.get("created_at") or ""),
-            })
+            comments_by_occ.setdefault(new_occ_id, []).append(
+                {
+                    "legacy_id": c["id"],
+                    "comments": _str(c.get("comments")),
+                    "user_id": users.get(c["users_id"]) if c.get("users_id") else None,
+                    "created_at": str(c.get("created_at") or ""),
+                }
+            )
 
     participants_by_occ: dict[int, list[int]] = {}
     for p in occ_participants:
@@ -508,16 +530,16 @@ async def import_check_suites(
 
     items_by_suite: dict[int, list[dict]] = {}
     for i in items:
-        items_by_suite.setdefault(i["check_suite_id"], []).append({
-            "item": _str(i.get("item")),
-            "valuation": i.get("valuation"),
-            "register": _str(i.get("register")),
-            "occurrence_id": (
-                occurrences_map.get(i["occurrences_id"])
-                if i.get("occurrences_id")
-                else None
-            ),
-        })
+        items_by_suite.setdefault(i["check_suite_id"], []).append(
+            {
+                "item": _str(i.get("item")),
+                "valuation": i.get("valuation"),
+                "register": _str(i.get("register")),
+                "occurrence_id": (
+                    occurrences_map.get(i["occurrences_id"]) if i.get("occurrences_id") else None
+                ),
+            }
+        )
 
     count = 0
     for s in suites:
@@ -567,12 +589,14 @@ async def import_audit_reports(
     def group_items(rows: list[dict]) -> dict[int, list[dict]]:
         by_report: dict[int, list[dict]] = {}
         for r in rows:
-            by_report.setdefault(r["audit_report_id"], []).append({
-                "reserve": _str(r.get("reserve")),
-                "name": _str(r.get("name")),
-                "pax": r.get("pax"),
-                "deleted_at": str(r.get("deleted_at") or ""),
-            })
+            by_report.setdefault(r["audit_report_id"], []).append(
+                {
+                    "reserve": _str(r.get("reserve")),
+                    "name": _str(r.get("name")),
+                    "pax": r.get("pax"),
+                    "deleted_at": str(r.get("deleted_at") or ""),
+                }
+            )
         return by_report
 
     items1_by = group_items(items1)
@@ -591,8 +615,10 @@ async def import_audit_reports(
         )
         if item is None:
             item = ModuleRecord(
-                company_id=company.id, module="manutencao",
-                legacy_id=r["id"], category="Auditoria Noturna",
+                company_id=company.id,
+                module="manutencao",
+                legacy_id=r["id"],
+                category="Auditoria Noturna",
             )
             target.add(item)
 

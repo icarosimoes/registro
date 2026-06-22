@@ -11,7 +11,10 @@ from app.core.storage import (
 from app.models import Attachment
 
 ALLOWED_ENTITY_TYPES = {
-    "fiscal_request", "occurrence", "procedure", "module_record",
+    "fiscal_request",
+    "occurrence",
+    "procedure",
+    "module_record",
 }
 
 
@@ -35,13 +38,16 @@ async def create_attachment(
     if error:
         return error
 
-    count = await session.scalar(
-        select(func.count(Attachment.id)).where(
-            Attachment.company_id == company_id,
-            Attachment.entity_type == entity_type,
-            Attachment.entity_id == entity_id,
+    count = (
+        await session.scalar(
+            select(func.count(Attachment.id)).where(
+                Attachment.company_id == company_id,
+                Attachment.entity_type == entity_type,
+                Attachment.entity_id == entity_id,
+            )
         )
-    ) or 0
+        or 0
+    )
     if count >= max_per_entity:
         return f"Limite de {max_per_entity} anexos por registro atingido"
 
@@ -85,14 +91,15 @@ async def list_attachments(
         Attachment.entity_type == entity_type,
         Attachment.entity_id == entity_id,
     ]
-    total = await session.scalar(
-        select(func.count(Attachment.id)).where(*filters),
-    ) or 0
+    total = (
+        await session.scalar(
+            select(func.count(Attachment.id)).where(*filters),
+        )
+        or 0
+    )
     records = (
         await session.scalars(
-            select(Attachment)
-            .where(*filters)
-            .order_by(Attachment.created_at.asc())
+            select(Attachment).where(*filters).order_by(Attachment.created_at.asc())
         )
     ).all()
     return list(records), total

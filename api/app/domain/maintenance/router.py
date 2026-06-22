@@ -69,15 +69,27 @@ async def export_maintenance(
 ) -> StreamingResponse:
     rows = await export_records(session, user.company_id, search, status)
     headers = [
-        "ID", "Título", "Descrição", "Categoria", "Status",
-        "Prioridade", "Responsável", "Criado em", "Atualizado em",
+        "ID",
+        "Título",
+        "Descrição",
+        "Categoria",
+        "Status",
+        "Prioridade",
+        "Responsável",
+        "Criado em",
+        "Atualizado em",
     ]
     data = [
         [
-            rec.id, rec.title, rec.description or "",
-            rec.category or "", rec.status or "",
-            rec.priority or "", owner_name or "",
-            rec.created_at, rec.updated_at,
+            rec.id,
+            rec.title,
+            rec.description or "",
+            rec.category or "",
+            rec.status or "",
+            rec.priority or "",
+            owner_name or "",
+            rec.created_at,
+            rec.updated_at,
         ]
         for rec, owner_name in rows
     ]

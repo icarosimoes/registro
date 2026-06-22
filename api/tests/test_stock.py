@@ -14,7 +14,9 @@ def _item_body(name="Item teste", **kw):
 @pytest.mark.asyncio
 async def test_create_and_list_items(client):
     r = await client.post(
-        f"{PREFIX}/items", json=_item_body(), headers=auth_header(TENANT_A),
+        f"{PREFIX}/items",
+        json=_item_body(),
+        headers=auth_header(TENANT_A),
     )
     assert r.status_code == 201
     data = r.json()
@@ -28,7 +30,9 @@ async def test_create_and_list_items(client):
 @pytest.mark.asyncio
 async def test_get_item_by_id(client):
     r = await client.post(
-        f"{PREFIX}/items", json=_item_body("Get item"), headers=auth_header(TENANT_A),
+        f"{PREFIX}/items",
+        json=_item_body("Get item"),
+        headers=auth_header(TENANT_A),
     )
     item_id = r.json()["id"]
 
@@ -40,7 +44,9 @@ async def test_get_item_by_id(client):
 @pytest.mark.asyncio
 async def test_update_item(client):
     r = await client.post(
-        f"{PREFIX}/items", json=_item_body("Before"), headers=auth_header(TENANT_A),
+        f"{PREFIX}/items",
+        json=_item_body("Before"),
+        headers=auth_header(TENANT_A),
     )
     item_id = r.json()["id"]
 
@@ -56,7 +62,9 @@ async def test_update_item(client):
 @pytest.mark.asyncio
 async def test_delete_item(client):
     r = await client.post(
-        f"{PREFIX}/items", json=_item_body("To delete"), headers=auth_header(TENANT_A),
+        f"{PREFIX}/items",
+        json=_item_body("To delete"),
+        headers=auth_header(TENANT_A),
     )
     item_id = r.json()["id"]
 
@@ -70,7 +78,9 @@ async def test_delete_item(client):
 @pytest.mark.asyncio
 async def test_create_movement(client):
     r = await client.post(
-        f"{PREFIX}/items", json=_item_body("Mov item"), headers=auth_header(TENANT_A),
+        f"{PREFIX}/items",
+        json=_item_body("Mov item"),
+        headers=auth_header(TENANT_A),
     )
     item_id = r.json()["id"]
 
@@ -93,7 +103,9 @@ async def test_list_movements(client):
 @pytest.mark.asyncio
 async def test_cross_tenant_item_isolation(client):
     r = await client.post(
-        f"{PREFIX}/items", json=_item_body("Tenant A item"), headers=auth_header(TENANT_A),
+        f"{PREFIX}/items",
+        json=_item_body("Tenant A item"),
+        headers=auth_header(TENANT_A),
     )
     item_id = r.json()["id"]
 

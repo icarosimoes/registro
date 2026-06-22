@@ -189,15 +189,17 @@ async def _recent_all(session: AsyncSession, company_id: int) -> list[dict]:
 
     result = []
     for row in rows:
-        result.append({
-            "id": row.id,
-            "title": row.title or "Sem título",
-            "module": row.module or "",
-            "area": row.area or "Geral",
-            "owner": row.owner or "Não atribuído",
-            "status": row.status or "Em andamento",
-            "updated_at": row.updated_at,
-        })
+        result.append(
+            {
+                "id": row.id,
+                "title": row.title or "Sem título",
+                "module": row.module or "",
+                "area": row.area or "Geral",
+                "owner": row.owner or "Não atribuído",
+                "status": row.status or "Em andamento",
+                "updated_at": row.updated_at,
+            }
+        )
 
     await cache_set(cache_key, result, TTL_RECENT)
     return result
@@ -218,41 +220,44 @@ async def _compute_kpis(session: AsyncSession, company_id: int) -> dict:
     fr_base = [FiscalRequest.company_id == company_id]
 
     # --- Work Orders ---
-    wo_total = await session.scalar(
-        select(func.count(WorkOrder.id)).where(*wo_base)
-    ) or 0
+    wo_total = await session.scalar(select(func.count(WorkOrder.id)).where(*wo_base)) or 0
 
     wo_by_status = dict(
-        (await session.execute(
-            select(WorkOrder.status, func.count(WorkOrder.id))
-            .where(*wo_base)
-            .group_by(WorkOrder.status)
-        )).all()
+        (
+            await session.execute(
+                select(WorkOrder.status, func.count(WorkOrder.id))
+                .where(*wo_base)
+                .group_by(WorkOrder.status)
+            )
+        ).all()
     )
 
     wo_by_priority = dict(
-        (await session.execute(
-            select(WorkOrder.priority, func.count(WorkOrder.id))
-            .where(*wo_base)
-            .group_by(WorkOrder.priority)
-        )).all()
+        (
+            await session.execute(
+                select(WorkOrder.priority, func.count(WorkOrder.id))
+                .where(*wo_base)
+                .group_by(WorkOrder.priority)
+            )
+        ).all()
     )
 
     wo_by_category = dict(
-        (await session.execute(
-            select(
-                func.coalesce(WorkOrder.category, "Geral"),
-                func.count(WorkOrder.id),
+        (
+            await session.execute(
+                select(
+                    func.coalesce(WorkOrder.category, "Geral"),
+                    func.count(WorkOrder.id),
+                )
+                .where(*wo_base)
+                .group_by(WorkOrder.category)
             )
-            .where(*wo_base)
-            .group_by(WorkOrder.category)
-        )).all()
+        ).all()
     )
 
     wo_completed = (
         await session.execute(
-            select(WorkOrder.started_at, WorkOrder.completed_at)
-            .where(
+            select(WorkOrder.started_at, WorkOrder.completed_at).where(
                 *wo_base,
                 WorkOrder.started_at.isnot(None),
                 WorkOrder.completed_at.isnot(None),
@@ -268,64 +273,90 @@ async def _compute_kpis(session: AsyncSession, company_id: int) -> dict:
         round(sum(resolution_hours) / len(resolution_hours), 1) if resolution_hours else None
     )
 
-    wo_sla_total = await session.scalar(
-        select(func.count(WorkOrder.id)).where(
-            *wo_base,
-            WorkOrder.sla_deadline.isnot(None),
-            WorkOrder.status.in_(["concluida", "validada"]),
+    wo_sla_total = (
+        await session.scalar(
+            select(func.count(WorkOrder.id)).where(
+                *wo_base,
+                WorkOrder.sla_deadline.isnot(None),
+                WorkOrder.status.in_(["concluida", "validada"]),
+            )
         )
-    ) or 0
-    wo_sla_met = await session.scalar(
-        select(func.count(WorkOrder.id)).where(
-            *wo_base,
-            WorkOrder.sla_deadline.isnot(None),
-            WorkOrder.status.in_(["concluida", "validada"]),
-            WorkOrder.completed_at <= WorkOrder.sla_deadline,
+        or 0
+    )
+    wo_sla_met = (
+        await session.scalar(
+            select(func.count(WorkOrder.id)).where(
+                *wo_base,
+                WorkOrder.sla_deadline.isnot(None),
+                WorkOrder.status.in_(["concluida", "validada"]),
+                WorkOrder.completed_at <= WorkOrder.sla_deadline,
+            )
         )
-    ) or 0
-    sla_compliance_pct = (
-        round(wo_sla_met / wo_sla_total * 100) if wo_sla_total > 0 else None
+        or 0
+    )
+    sla_compliance_pct = round(wo_sla_met / wo_sla_total * 100) if wo_sla_total > 0 else None
+
+    wo_overdue = (
+        await session.scalar(
+            select(func.count(WorkOrder.id)).where(
+                *wo_base,
+                WorkOrder.sla_deadline.isnot(None),
+                WorkOrder.sla_deadline < now,
+                WorkOrder.status.notin_(["concluida", "validada"]),
+            )
+        )
+        or 0
     )
 
-    wo_overdue = await session.scalar(
-        select(func.count(WorkOrder.id)).where(
-            *wo_base,
-            WorkOrder.sla_deadline.isnot(None),
-            WorkOrder.sla_deadline < now,
-            WorkOrder.status.notin_(["concluida", "validada"]),
+    wo_created_week = (
+        await session.scalar(
+            select(func.count(WorkOrder.id)).where(*wo_base, WorkOrder.created_at >= week_ago)
         )
-    ) or 0
-
-    wo_created_week = await session.scalar(
-        select(func.count(WorkOrder.id)).where(*wo_base, WorkOrder.created_at >= week_ago)
-    ) or 0
-    wo_completed_week = await session.scalar(
-        select(func.count(WorkOrder.id)).where(
-            *wo_base, WorkOrder.completed_at >= week_ago, WorkOrder.completed_at.isnot(None),
+        or 0
+    )
+    wo_completed_week = (
+        await session.scalar(
+            select(func.count(WorkOrder.id)).where(
+                *wo_base,
+                WorkOrder.completed_at >= week_ago,
+                WorkOrder.completed_at.isnot(None),
+            )
         )
-    ) or 0
+        or 0
+    )
 
     # --- Occurrences ---
     occ_by_status = {
         "em_andamento": await session.scalar(
             select(func.count(Occurrence.id)).where(*occ_base, Occurrence.status == 1)
-        ) or 0,
+        )
+        or 0,
         "concluido": await session.scalar(
             select(func.count(Occurrence.id)).where(*occ_base, Occurrence.status == 2)
-        ) or 0,
+        )
+        or 0,
         "aguardando": await session.scalar(
             select(func.count(Occurrence.id)).where(*occ_base, Occurrence.status == 3)
-        ) or 0,
+        )
+        or 0,
     }
 
-    occ_completed_month = await session.scalar(
-        select(func.count(Occurrence.id)).where(
-            *occ_base, Occurrence.status == 2, Occurrence.updated_at >= month_start,
+    occ_completed_month = (
+        await session.scalar(
+            select(func.count(Occurrence.id)).where(
+                *occ_base,
+                Occurrence.status == 2,
+                Occurrence.updated_at >= month_start,
+            )
         )
-    ) or 0
-    occ_total_month = await session.scalar(
-        select(func.count(Occurrence.id)).where(*occ_base, Occurrence.created_at >= month_start)
-    ) or 0
+        or 0
+    )
+    occ_total_month = (
+        await session.scalar(
+            select(func.count(Occurrence.id)).where(*occ_base, Occurrence.created_at >= month_start)
+        )
+        or 0
+    )
     occ_completion_rate = (
         round(occ_completed_month / occ_total_month * 100) if occ_total_month > 0 else None
     )
@@ -345,61 +376,75 @@ async def _compute_kpis(session: AsyncSession, company_id: int) -> dict:
     ).all()
     occ_by_sector = {name: count for name, count in occ_by_sector_rows}
 
-    occ_overdue = await session.scalar(
-        select(func.count(Occurrence.id)).where(
-            *occ_base,
-            Occurrence.deadline.isnot(None),
-            Occurrence.deadline < now.date(),
-            Occurrence.status.in_([1, 3]),
+    occ_overdue = (
+        await session.scalar(
+            select(func.count(Occurrence.id)).where(
+                *occ_base,
+                Occurrence.deadline.isnot(None),
+                Occurrence.deadline < now.date(),
+                Occurrence.status.in_([1, 3]),
+            )
         )
-    ) or 0
+        or 0
+    )
 
     # --- Fiscal Requests ---
     fr_by_status = dict(
-        (await session.execute(
-            select(FiscalRequest.status, func.count(FiscalRequest.id))
-            .where(*fr_base)
-            .group_by(FiscalRequest.status)
-        )).all()
+        (
+            await session.execute(
+                select(FiscalRequest.status, func.count(FiscalRequest.id))
+                .where(*fr_base)
+                .group_by(FiscalRequest.status)
+            )
+        ).all()
     )
 
     fr_by_type = dict(
-        (await session.execute(
-            select(FiscalRequest.request_type, func.count(FiscalRequest.id))
-            .where(*fr_base)
-            .group_by(FiscalRequest.request_type)
-            .order_by(func.count(FiscalRequest.id).desc())
-            .limit(8)
-        )).all()
+        (
+            await session.execute(
+                select(FiscalRequest.request_type, func.count(FiscalRequest.id))
+                .where(*fr_base)
+                .group_by(FiscalRequest.request_type)
+                .order_by(func.count(FiscalRequest.id).desc())
+                .limit(8)
+            )
+        ).all()
     )
 
-    fr_sla_total = await session.scalar(
-        select(func.count(FiscalRequest.id)).where(
-            *fr_base,
-            FiscalRequest.sla_deadline.isnot(None),
-            FiscalRequest.status == "Concluído",
+    fr_sla_total = (
+        await session.scalar(
+            select(func.count(FiscalRequest.id)).where(
+                *fr_base,
+                FiscalRequest.sla_deadline.isnot(None),
+                FiscalRequest.status == "Concluído",
+            )
         )
-    ) or 0
-    fr_sla_met = await session.scalar(
-        select(func.count(FiscalRequest.id)).where(
-            *fr_base,
-            FiscalRequest.sla_deadline.isnot(None),
-            FiscalRequest.status == "Concluído",
-            FiscalRequest.updated_at <= FiscalRequest.sla_deadline,
-        )
-    ) or 0
-    fr_sla_compliance = (
-        round(fr_sla_met / fr_sla_total * 100) if fr_sla_total > 0 else None
+        or 0
     )
-
-    fr_overdue = await session.scalar(
-        select(func.count(FiscalRequest.id)).where(
-            *fr_base,
-            FiscalRequest.sla_deadline.isnot(None),
-            FiscalRequest.sla_deadline < now,
-            FiscalRequest.status != "Concluído",
+    fr_sla_met = (
+        await session.scalar(
+            select(func.count(FiscalRequest.id)).where(
+                *fr_base,
+                FiscalRequest.sla_deadline.isnot(None),
+                FiscalRequest.status == "Concluído",
+                FiscalRequest.updated_at <= FiscalRequest.sla_deadline,
+            )
         )
-    ) or 0
+        or 0
+    )
+    fr_sla_compliance = round(fr_sla_met / fr_sla_total * 100) if fr_sla_total > 0 else None
+
+    fr_overdue = (
+        await session.scalar(
+            select(func.count(FiscalRequest.id)).where(
+                *fr_base,
+                FiscalRequest.sla_deadline.isnot(None),
+                FiscalRequest.sla_deadline < now,
+                FiscalRequest.status != "Concluído",
+            )
+        )
+        or 0
+    )
 
     # --- Weekly trend (last 7 days) ---
     trend = []
@@ -408,27 +453,44 @@ async def _compute_kpis(session: AsyncSession, company_id: int) -> dict:
         day_start = datetime.combine(day, datetime.min.time())
         day_end = day_start + timedelta(days=1)
 
-        wo_day = await session.scalar(
-            select(func.count(WorkOrder.id)).where(
-                *wo_base, WorkOrder.created_at >= day_start, WorkOrder.created_at < day_end,
+        wo_day = (
+            await session.scalar(
+                select(func.count(WorkOrder.id)).where(
+                    *wo_base,
+                    WorkOrder.created_at >= day_start,
+                    WorkOrder.created_at < day_end,
+                )
             )
-        ) or 0
-        occ_day = await session.scalar(
-            select(func.count(Occurrence.id)).where(
-                *occ_base, Occurrence.created_at >= day_start, Occurrence.created_at < day_end,
+            or 0
+        )
+        occ_day = (
+            await session.scalar(
+                select(func.count(Occurrence.id)).where(
+                    *occ_base,
+                    Occurrence.created_at >= day_start,
+                    Occurrence.created_at < day_end,
+                )
             )
-        ) or 0
-        fr_day = await session.scalar(
-            select(func.count(FiscalRequest.id)).where(
-                *fr_base, FiscalRequest.created_at >= day_start, FiscalRequest.created_at < day_end,
+            or 0
+        )
+        fr_day = (
+            await session.scalar(
+                select(func.count(FiscalRequest.id)).where(
+                    *fr_base,
+                    FiscalRequest.created_at >= day_start,
+                    FiscalRequest.created_at < day_end,
+                )
             )
-        ) or 0
-        trend.append({
-            "date": day.isoformat(),
-            "work_orders": wo_day,
-            "occurrences": occ_day,
-            "fiscal_requests": fr_day,
-        })
+            or 0
+        )
+        trend.append(
+            {
+                "date": day.isoformat(),
+                "work_orders": wo_day,
+                "occurrences": occ_day,
+                "fiscal_requests": fr_day,
+            }
+        )
 
     result = {
         "work_orders": {

@@ -58,6 +58,7 @@ class TestCalculateBusinessDeadline:
         )
         expected_local_hour = 14  # 10 + 4 = 14h local
         from zoneinfo import ZoneInfo
+
         dl_local = deadline.replace(tzinfo=UTC).astimezone(ZoneInfo("America/Sao_Paulo"))
         assert dl_local.hour == expected_local_hour
         assert dl_local.weekday() == 0  # still Monday
@@ -68,6 +69,7 @@ class TestCalculateBusinessDeadline:
             monday_10am, sla_hours=10, timezone="America/Sao_Paulo"
         )
         from zoneinfo import ZoneInfo
+
         dl_local = deadline.replace(tzinfo=UTC).astimezone(ZoneInfo("America/Sao_Paulo"))
         assert dl_local.weekday() == 1  # Tuesday
         assert dl_local.hour == 10  # 8h left Mon + 2h Tue = 10h
@@ -78,15 +80,15 @@ class TestCalculateBusinessDeadline:
             friday_10am, sla_hours=10, timezone="America/Sao_Paulo"
         )
         from zoneinfo import ZoneInfo
+
         dl_local = deadline.replace(tzinfo=UTC).astimezone(ZoneInfo("America/Sao_Paulo"))
         assert dl_local.weekday() == 0  # Monday
 
     def test_starts_on_weekend_moves_to_monday(self):
         saturday = datetime(2026, 6, 27, 10, 0, 0, tzinfo=UTC)
-        deadline = calculate_business_deadline(
-            saturday, sla_hours=2, timezone="America/Sao_Paulo"
-        )
+        deadline = calculate_business_deadline(saturday, sla_hours=2, timezone="America/Sao_Paulo")
         from zoneinfo import ZoneInfo
+
         dl_local = deadline.replace(tzinfo=UTC).astimezone(ZoneInfo("America/Sao_Paulo"))
         assert dl_local.weekday() == 0  # Monday
         assert dl_local.hour == 10  # 8h start + 2h
@@ -97,6 +99,7 @@ class TestCalculateBusinessDeadline:
             monday_22utc, sla_hours=2, timezone="America/Sao_Paulo"
         )
         from zoneinfo import ZoneInfo
+
         dl_local = deadline.replace(tzinfo=UTC).astimezone(ZoneInfo("America/Sao_Paulo"))
         assert dl_local.weekday() == 1  # Tuesday
         assert dl_local.hour == 10
@@ -108,6 +111,7 @@ class TestCalculateBusinessDeadline:
             monday_10am, sla_hours=2, timezone="America/Sao_Paulo", holidays=holidays
         )
         from zoneinfo import ZoneInfo
+
         dl_local = deadline.replace(tzinfo=UTC).astimezone(ZoneInfo("America/Sao_Paulo"))
         assert dl_local.weekday() == 1  # Tuesday
 
@@ -117,6 +121,7 @@ class TestCalculateBusinessDeadline:
             monday_14utc, sla_hours=4, timezone="America/New_York"
         )
         from zoneinfo import ZoneInfo
+
         dl_local = deadline.replace(tzinfo=UTC).astimezone(ZoneInfo("America/New_York"))
         assert dl_local.hour == 14
         assert dl_local.weekday() == 0
@@ -132,6 +137,7 @@ class TestCalculateBusinessDeadline:
             monday_10am, sla_hours=24, timezone="America/Sao_Paulo"
         )
         from zoneinfo import ZoneInfo
+
         dl_local = deadline.replace(tzinfo=UTC).astimezone(ZoneInfo("America/Sao_Paulo"))
         assert dl_local.weekday() == 2  # Wednesday (8+10+6 = 24)
         assert dl_local.hour == 14  # 24 - 8 (Mon) - 10 (Tue) = 6h into Wed → 8+6=14

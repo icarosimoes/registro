@@ -41,6 +41,7 @@ def auth(token: str) -> dict[str, str]:
 @pytest.mark.asyncio
 async def test_token_carries_correct_company_id():
     from app.core.security import decode_access_token
+
     tok_a = token_for(TENANT_A, user_id=1)
     tok_b = token_for(TENANT_B, user_id=2)
     claims_a = decode_access_token(tok_a, JWT_SECRET)
@@ -56,6 +57,7 @@ async def test_token_with_wrong_secret_is_rejected():
     import jwt as pyjwt
 
     from app.core.security import decode_access_token
+
     tok = token_for(TENANT_A)
     with pytest.raises(pyjwt.InvalidSignatureError):
         decode_access_token(tok, "wrong-secret-that-is-also-long-enough")
@@ -72,6 +74,7 @@ async def test_tokens_for_different_tenants_are_distinct():
 async def test_company_id_cannot_be_spoofed_in_token():
     """Token company_id is set at creation time and cannot be changed."""
     from app.core.security import decode_access_token
+
     tok = token_for(TENANT_A, user_id=1)
     claims = decode_access_token(tok, JWT_SECRET)
     assert claims["company_id"] == TENANT_A
@@ -90,12 +93,23 @@ ENDPOINTS_GET = [
 
 ENDPOINTS_POST = [
     ("/api/v1/occurrences", {"title": "Cross-tenant test", "status": 1}),
-    ("/api/v1/users", {
-        "name": "Ghost", "email": "ghost@test.com", "password": "test1234",
-    }),
-    ("/api/v1/fiscal-requests", {
-        "request_type": "Test", "title": "T", "requester": "X", "payload": {},
-    }),
+    (
+        "/api/v1/users",
+        {
+            "name": "Ghost",
+            "email": "ghost@test.com",
+            "password": "test1234",
+        },
+    ),
+    (
+        "/api/v1/fiscal-requests",
+        {
+            "request_type": "Test",
+            "title": "T",
+            "requester": "X",
+            "payload": {},
+        },
+    ),
     ("/api/v1/modules/reunioes", {"title": "Meeting"}),
 ]
 
@@ -110,8 +124,12 @@ async def test_no_token_returns_401(client):
 @pytest.mark.asyncio
 async def test_expired_token_returns_401(client):
     expired = create_access_token(
-        subject=1, company_id=TENANT_A, role_id=1, permissions=[],
-        secret=JWT_SECRET, minutes=-1,
+        subject=1,
+        company_id=TENANT_A,
+        role_id=1,
+        permissions=[],
+        secret=JWT_SECRET,
+        minutes=-1,
     )
     for path in ENDPOINTS_GET:
         r = await client.get(path, headers=auth(expired))

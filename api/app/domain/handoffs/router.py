@@ -25,11 +25,17 @@ router = APIRouter(prefix="/handoffs", tags=["handoffs"])
 def _to_out(row) -> schemas.HandoffOut:
     h = row[0]
     return schemas.HandoffOut(
-        id=h.id, title=h.title, description=h.description,
-        priority=h.priority, category=h.category,
-        target_shift=h.target_shift, target_date=h.target_date,
-        status=h.status, shift_report_id=h.shift_report_id,
-        read_at=h.read_at, read_by_user_id=h.read_by_user_id,
+        id=h.id,
+        title=h.title,
+        description=h.description,
+        priority=h.priority,
+        category=h.category,
+        target_shift=h.target_shift,
+        target_date=h.target_date,
+        status=h.status,
+        shift_report_id=h.shift_report_id,
+        read_at=h.read_at,
+        read_by_user_id=h.read_by_user_id,
         read_by_name=getattr(row, "read_by_name", None),
         resolved_at=h.resolved_at,
         resolved_by_user_id=h.resolved_by_user_id,
@@ -37,7 +43,8 @@ def _to_out(row) -> schemas.HandoffOut:
         resolution_notes=h.resolution_notes,
         created_by_user_id=h.created_by_user_id,
         created_by_name=getattr(row, "created_by_name", None),
-        created_at=h.created_at, updated_at=h.updated_at,
+        created_at=h.created_at,
+        updated_at=h.updated_at,
     )
 
 
@@ -45,19 +52,28 @@ def _to_out(row) -> schemas.HandoffOut:
 async def list_shift_handoffs(
     user: Annotated[AuthenticatedUser, require_permission("handoff.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
-    page: int = 1, page_size: int = 25,
+    page: int = 1,
+    page_size: int = 25,
     target_date: date | None = None,
     target_shift: str | None = None,
     status: str | None = None,
     search: str | None = None,
 ):
     rows, total = await list_handoffs(
-        session, user.company_id, page, page_size,
-        target_date, target_shift, status, search,
+        session,
+        user.company_id,
+        page,
+        page_size,
+        target_date,
+        target_shift,
+        status,
+        search,
     )
     return schemas.HandoffList(
         items=[_to_out(r) for r in rows],
-        total=total, page=page, page_size=page_size,
+        total=total,
+        page=page,
+        page_size=page_size,
     )
 
 
@@ -70,7 +86,10 @@ async def get_pending_handoffs(
 ):
     d = target_date or date.today()
     rows = await pending_for_shift(
-        session, user.company_id, d, target_shift,
+        session,
+        user.company_id,
+        d,
+        target_shift,
     )
     return [_to_out(r) for r in rows]
 
@@ -94,7 +113,10 @@ async def create_shift_handoff(
     session: Annotated[AsyncSession, Depends(require_session)],
 ):
     row = await create_handoff(
-        session, user.company_id, user.id, **body.model_dump(),
+        session,
+        user.company_id,
+        user.id,
+        **body.model_dump(),
     )
     return _to_out(row)
 
@@ -110,7 +132,11 @@ async def update_shift_handoff(
     if not updates:
         raise HTTPException(422, detail="Nenhum campo alterado")
     row = await update_handoff(
-        session, user.company_id, user.id, handoff_id, updates,
+        session,
+        user.company_id,
+        user.id,
+        handoff_id,
+        updates,
     )
     if row is None:
         raise HTTPException(404, detail="Pendência não encontrada")
@@ -137,8 +163,11 @@ async def resolve_shift_handoff(
     session: Annotated[AsyncSession, Depends(require_session)],
 ):
     row = await resolve_handoff(
-        session, user.company_id, user.id,
-        handoff_id, body.resolution_notes,
+        session,
+        user.company_id,
+        user.id,
+        handoff_id,
+        body.resolution_notes,
     )
     if row is None:
         raise HTTPException(404, detail="Pendência não encontrada")
@@ -152,6 +181,9 @@ async def delete_shift_handoff(
     session: Annotated[AsyncSession, Depends(require_session)],
 ):
     if not await delete_handoff(
-        session, user.company_id, user.id, handoff_id,
+        session,
+        user.company_id,
+        user.id,
+        handoff_id,
     ):
         raise HTTPException(404, detail="Pendência não encontrada")

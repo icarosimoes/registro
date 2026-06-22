@@ -70,12 +70,16 @@ async def get_inspection_suite(
         else None
     )
     items = (
-        await session.execute(
-            select(InspectionSuiteItem)
-            .where(InspectionSuiteItem.suite_id == suite_id)
-            .order_by(InspectionSuiteItem.sort_order)
+        (
+            await session.execute(
+                select(InspectionSuiteItem)
+                .where(InspectionSuiteItem.suite_id == suite_id)
+                .order_by(InspectionSuiteItem.sort_order)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return {
         "suite": record,
         "owner_name": owner_name,

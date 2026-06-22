@@ -8,20 +8,39 @@ from botocore.exceptions import ClientError
 from app.core.config import get_settings
 
 ALLOWED_EXTENSIONS = {
-    ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg",
-    ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".csv",
-    ".txt", ".zip", ".rar", ".7z",
+    ".jpg",
+    ".jpeg",
+    ".png",
+    ".gif",
+    ".webp",
+    ".svg",
+    ".pdf",
+    ".doc",
+    ".docx",
+    ".xls",
+    ".xlsx",
+    ".csv",
+    ".txt",
+    ".zip",
+    ".rar",
+    ".7z",
 }
 
 ALLOWED_CONTENT_TYPES = {
-    "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml",
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+    "image/svg+xml",
     "application/pdf",
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "application/vnd.ms-excel",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    "text/csv", "text/plain",
-    "application/zip", "application/x-rar-compressed",
+    "text/csv",
+    "text/plain",
+    "application/zip",
+    "application/x-rar-compressed",
     "application/x-7z-compressed",
 }
 
@@ -48,7 +67,10 @@ def ensure_bucket() -> None:
 
 
 def build_object_key(
-    company_id: int, entity_type: str, entity_id: int, filename: str,
+    company_id: int,
+    entity_type: str,
+    entity_id: int,
+    filename: str,
 ) -> str:
     ext = ""
     if "." in filename:
@@ -57,7 +79,9 @@ def build_object_key(
 
 
 def upload_file(
-    data: bytes, key: str, content_type: str,
+    data: bytes,
+    key: str,
+    content_type: str,
 ) -> str:
     settings = get_settings()
     client = _get_client()
@@ -110,13 +134,16 @@ MAGIC_SIGNATURES: dict[bytes, set[str]] = {
 
 def _check_magic(data: bytes, content_type: str) -> bool:
     for signature, allowed_types in MAGIC_SIGNATURES.items():
-        if data[:len(signature)] == signature:
+        if data[: len(signature)] == signature:
             return content_type in allowed_types
     return True
 
 
 def validate_file(
-    filename: str, content_type: str, size: int, data: bytes | None = None,
+    filename: str,
+    content_type: str,
+    size: int,
+    data: bytes | None = None,
 ) -> str | None:
     settings = get_settings()
     max_bytes = settings.attachment_max_size_mb * 1024 * 1024

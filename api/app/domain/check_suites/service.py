@@ -20,9 +20,7 @@ async def list_check_suites(
     ]
     if search:
         pattern = f"%{search.strip()}%"
-        filters.append(
-            or_(CheckSuite.name.ilike(pattern), CheckSuite.description.ilike(pattern))
-        )
+        filters.append(or_(CheckSuite.name.ilike(pattern), CheckSuite.description.ilike(pattern)))
     total = await session.scalar(select(func.count(CheckSuite.id)).where(*filters)) or 0
     item_count = (
         select(func.count(CheckSuiteItem.id))
@@ -63,12 +61,16 @@ async def get_check_suite(
         else None
     )
     items = (
-        await session.execute(
-            select(CheckSuiteItem)
-            .where(CheckSuiteItem.suite_id == suite_id)
-            .order_by(CheckSuiteItem.sort_order)
+        (
+            await session.execute(
+                select(CheckSuiteItem)
+                .where(CheckSuiteItem.suite_id == suite_id)
+                .order_by(CheckSuiteItem.sort_order)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return {
         "suite": record,
         "owner_name": owner_name,
@@ -135,9 +137,7 @@ async def update_check_suite(
     for field, value in updates.items():
         setattr(record, field, value)
     if items is not None:
-        await session.execute(
-            delete(CheckSuiteItem).where(CheckSuiteItem.suite_id == suite_id)
-        )
+        await session.execute(delete(CheckSuiteItem).where(CheckSuiteItem.suite_id == suite_id))
         for item in items:
             session.add(CheckSuiteItem(suite_id=suite_id, **item))
     diff = compute_diff(before, {k: str(v) for k, v in audit_fields.items()})

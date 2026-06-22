@@ -69,14 +69,27 @@ async def export_occurrences_endpoint(
 ) -> StreamingResponse:
     rows = await export_occurrences(session, user.company_id, search)
     headers = [
-        "ID", "Título", "Descrição", "Setor", "Local",
-        "Responsável", "Status", "Prazo", "Atualizado em",
+        "ID",
+        "Título",
+        "Descrição",
+        "Setor",
+        "Local",
+        "Responsável",
+        "Status",
+        "Prazo",
+        "Atualizado em",
     ]
     data = [
         [
-            occ.id, occ.title, occ.description or "",
-            sector or "", location or "", owner or "",
-            status_label(occ.status), occ.deadline, occ.updated_at,
+            occ.id,
+            occ.title,
+            occ.description or "",
+            sector or "",
+            location or "",
+            owner or "",
+            status_label(occ.status),
+            occ.deadline,
+            occ.updated_at,
         ]
         for occ, sector, location, owner in rows
     ]
@@ -156,18 +169,12 @@ async def update_occurrence_endpoint(
 @router.get("/{occurrence_id}", response_model=OccurrenceDetail)
 async def get_occurrence_endpoint(
     occurrence_id: int,
-    user: Annotated[
-        AuthenticatedUser, require_permission("occurrence.view")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("occurrence.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> OccurrenceDetail:
-    result = await get_occurrence(
-        session, user.company_id, occurrence_id
-    )
+    result = await get_occurrence(session, user.company_id, occurrence_id)
     if result is None:
-        raise HTTPException(
-            status_code=404, detail={"code": "not_found"}
-        )
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
     record, (sector, location, owner), participants = result
     return OccurrenceDetail(
         id=record.id,
@@ -181,10 +188,7 @@ async def get_occurrence_endpoint(
         deadline=record.deadline,
         updated_at=record.updated_at,
         unit=record.unit,
-        participants=[
-            ParticipantSummary(id=uid, name=name)
-            for uid, name in participants
-        ],
+        participants=[ParticipantSummary(id=uid, name=name) for uid, name in participants],
         notify_user_ids=record.notify_user_ids,
     )
 
@@ -203,9 +207,7 @@ async def delete_occurrence_endpoint(
 @router.post("/{occurrence_id}/clone", response_model=OccurrenceSummary, status_code=201)
 async def clone_occurrence_endpoint(
     occurrence_id: int,
-    user: Annotated[
-        AuthenticatedUser, require_permission("occurrence.create")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("occurrence.create")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> OccurrenceSummary:
     result = await clone_occurrence(
@@ -217,9 +219,7 @@ async def clone_occurrence_endpoint(
         occurrence_id,
     )
     if result is None:
-        raise HTTPException(
-            status_code=404, detail={"code": "not_found"}
-        )
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
     record, (sector_name, location_name, owner_name) = result
     return OccurrenceSummary(
         id=record.id,
@@ -238,26 +238,18 @@ async def clone_occurrence_endpoint(
 @router.get("/{occurrence_id}/pdf")
 async def occurrence_pdf_endpoint(
     occurrence_id: int,
-    user: Annotated[
-        AuthenticatedUser, require_permission("occurrence.view")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("occurrence.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> StreamingResponse:
-    result = await get_occurrence(
-        session, user.company_id, occurrence_id
-    )
+    result = await get_occurrence(session, user.company_id, occurrence_id)
     if result is None:
-        raise HTTPException(
-            status_code=404, detail={"code": "not_found"}
-        )
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
     record, (sector, location, owner), participants = result
 
     from app.domain.occurrences.pdf import generate_occurrence_pdf
     from app.domain.timeline.service import get_timeline
 
-    timeline = await get_timeline(
-        session, user.company_id, "occurrence", occurrence_id
-    )
+    timeline = await get_timeline(session, user.company_id, "occurrence", occurrence_id)
     buf = generate_occurrence_pdf(
         company_name=user.company_name,
         occurrence=record,
@@ -271,9 +263,5 @@ async def occurrence_pdf_endpoint(
     return StreamingResponse(
         buf,
         media_type="application/pdf",
-        headers={
-            "Content-Disposition": (
-                f'attachment; filename="{filename}"'
-            )
-        },
+        headers={"Content-Disposition": (f'attachment; filename="{filename}"')},
     )

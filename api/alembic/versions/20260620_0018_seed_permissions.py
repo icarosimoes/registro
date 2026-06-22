@@ -5,8 +5,9 @@ Revises: 20260620_0017
 Create Date: 2026-06-20
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260620_0018"
 down_revision = "20260620_0017"
@@ -65,9 +66,7 @@ def upgrade() -> None:
             {"code": code, "name": name, "module": module},
         )
 
-    wildcard_id = conn.execute(
-        sa.text("SELECT id FROM permissions WHERE code = '*'")
-    ).scalar()
+    wildcard_id = conn.execute(sa.text("SELECT id FROM permissions WHERE code = '*'")).scalar()
 
     companies = conn.execute(sa.text("SELECT id FROM companies")).fetchall()
     for (company_id,) in companies:
@@ -90,17 +89,13 @@ def upgrade() -> None:
             role_id = existing_admin
 
         existing_rp = conn.execute(
-            sa.text(
-                "SELECT 1 FROM role_permissions "
-                "WHERE role_id = :rid AND permission_id = :pid"
-            ),
+            sa.text("SELECT 1 FROM role_permissions WHERE role_id = :rid AND permission_id = :pid"),
             {"rid": role_id, "pid": wildcard_id},
         ).scalar()
         if not existing_rp:
             conn.execute(
                 sa.text(
-                    "INSERT INTO role_permissions (role_id, permission_id) "
-                    "VALUES (:rid, :pid)"
+                    "INSERT INTO role_permissions (role_id, permission_id) VALUES (:rid, :pid)"
                 ),
                 {"rid": role_id, "pid": wildcard_id},
             )

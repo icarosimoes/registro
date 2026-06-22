@@ -94,28 +94,18 @@ async def _sync_participants(
     from sqlalchemy import delete as sa_delete
 
     await session.execute(
-        sa_delete(OccurrenceParticipant).where(
-            OccurrenceParticipant.occurrence_id == occurrence_id
-        )
+        sa_delete(OccurrenceParticipant).where(OccurrenceParticipant.occurrence_id == occurrence_id)
     )
     for uid in participant_ids:
-        session.add(
-            OccurrenceParticipant(
-                occurrence_id=occurrence_id, user_id=uid
-            )
-        )
+        session.add(OccurrenceParticipant(occurrence_id=occurrence_id, user_id=uid))
 
 
-async def _get_participants(
-    session: AsyncSession, occurrence_id: int
-) -> list[tuple[int, str]]:
+async def _get_participants(session: AsyncSession, occurrence_id: int) -> list[tuple[int, str]]:
     rows = (
         await session.execute(
             select(OccurrenceParticipant.user_id, User.name)
             .join(User, User.id == OccurrenceParticipant.user_id)
-            .where(
-                OccurrenceParticipant.occurrence_id == occurrence_id
-            )
+            .where(OccurrenceParticipant.occurrence_id == occurrence_id)
             .order_by(User.name)
         )
     ).all()
@@ -220,11 +210,7 @@ async def update_occurrence(
     if record is None:
         return None
     participant_ids = updates.pop("participant_ids", None)
-    before = {
-        k: str(getattr(record, k))
-        for k in updates
-        if k != "notify_user_ids"
-    }
+    before = {k: str(getattr(record, k)) for k in updates if k != "notify_user_ids"}
     for field, value in updates.items():
         setattr(record, field, value)
     record.updated_by_user_id = user_id

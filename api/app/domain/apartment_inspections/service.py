@@ -28,9 +28,7 @@ async def list_apartment_inspections(
                 ApartmentInspection.notes.ilike(pattern),
             )
         )
-    total = (
-        await session.scalar(select(func.count(ApartmentInspection.id)).where(*filters)) or 0
-    )
+    total = await session.scalar(select(func.count(ApartmentInspection.id)).where(*filters)) or 0
     rows = (
         await session.execute(
             select(ApartmentInspection, User.name)
@@ -44,9 +42,7 @@ async def list_apartment_inspections(
     return rows, total
 
 
-async def _get_items(
-    session: AsyncSession, inspection_id: int
-) -> list[ApartmentInspectionItem]:
+async def _get_items(session: AsyncSession, inspection_id: int) -> list[ApartmentInspectionItem]:
     result = await session.execute(
         select(ApartmentInspectionItem)
         .where(ApartmentInspectionItem.inspection_id == inspection_id)

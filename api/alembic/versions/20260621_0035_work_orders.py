@@ -5,8 +5,9 @@ Revises: 20260621_0034
 Create Date: 2026-06-21
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260621_0035"
 down_revision = "20260621_0034"
@@ -49,7 +50,9 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["company_id"], ["companies.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["location_id"], ["locations.id"], ondelete="SET NULL"),
         sa.ForeignKeyConstraint(["occurrence_id"], ["occurrences.id"], ondelete="SET NULL"),
-        sa.ForeignKeyConstraint(["maintenance_id"], ["maintenance_records.id"], ondelete="SET NULL"),
+        sa.ForeignKeyConstraint(
+            ["maintenance_id"], ["maintenance_records.id"], ondelete="SET NULL"
+        ),
         sa.ForeignKeyConstraint(["assigned_user_id"], ["users.id"], ondelete="SET NULL"),
         sa.ForeignKeyConstraint(["created_by_user_id"], ["users.id"], ondelete="SET NULL"),
         sa.ForeignKeyConstraint(["validated_by_user_id"], ["users.id"], ondelete="SET NULL"),
@@ -59,9 +62,7 @@ def upgrade() -> None:
     op.create_index("ix_work_orders_status", "work_orders", ["company_id", "status"])
 
     # RLS
-    op.execute(
-        "ALTER TABLE work_orders ENABLE ROW LEVEL SECURITY"
-    )
+    op.execute("ALTER TABLE work_orders ENABLE ROW LEVEL SECURITY")
     op.execute(
         "CREATE POLICY tenant_isolation ON work_orders "
         "USING (company_id = current_setting('app.current_company_id')::int)"

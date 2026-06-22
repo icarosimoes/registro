@@ -36,6 +36,7 @@ async def _log_platform_audit(
 # Tenants
 # ---------------------------------------------------------------------------
 
+
 async def create_tenant(
     session: AsyncSession,
     *,
@@ -86,24 +87,29 @@ async def get_tenant_detail(session: AsyncSession, tenant_id: int) -> dict[str, 
     )
     if company is None:
         return None
-    users_count = await session.scalar(
-        select(func.count(User.id)).where(
-            User.company_id == tenant_id,
-            User.deleted_at.is_(None),
-            User.active.is_(True),
+    users_count = (
+        await session.scalar(
+            select(func.count(User.id)).where(
+                User.company_id == tenant_id,
+                User.deleted_at.is_(None),
+                User.active.is_(True),
+            )
         )
-    ) or 0
-    sub = await session.scalar(
-        select(Subscription).where(Subscription.company_id == tenant_id)
+        or 0
     )
+    sub = await session.scalar(select(Subscription).where(Subscription.company_id == tenant_id))
     invoices: list[Invoice] = []
     if sub:
         invoices = list(
-            (await session.execute(
-                select(Invoice)
-                .where(Invoice.subscription_id == sub.id)
-                .order_by(Invoice.due_date.desc())
-            )).scalars().all()
+            (
+                await session.execute(
+                    select(Invoice)
+                    .where(Invoice.subscription_id == sub.id)
+                    .order_by(Invoice.due_date.desc())
+                )
+            )
+            .scalars()
+            .all()
         )
     return {
         "company": company,
@@ -172,6 +178,7 @@ async def soft_delete_tenant(
 # ---------------------------------------------------------------------------
 # Plans
 # ---------------------------------------------------------------------------
+
 
 async def create_plan(
     session: AsyncSession,
@@ -276,21 +283,24 @@ async def soft_delete_plan(
 # Subscriptions
 # ---------------------------------------------------------------------------
 
+
 async def get_subscription_with_invoices(
     session: AsyncSession,
     subscription_id: int,
 ) -> dict[str, Any] | None:
-    sub = await session.scalar(
-        select(Subscription).where(Subscription.id == subscription_id)
-    )
+    sub = await session.scalar(select(Subscription).where(Subscription.id == subscription_id))
     if sub is None:
         return None
     invoices = list(
-        (await session.execute(
-            select(Invoice)
-            .where(Invoice.subscription_id == subscription_id)
-            .order_by(Invoice.due_date.desc())
-        )).scalars().all()
+        (
+            await session.execute(
+                select(Invoice)
+                .where(Invoice.subscription_id == subscription_id)
+                .order_by(Invoice.due_date.desc())
+            )
+        )
+        .scalars()
+        .all()
     )
     return {"subscription": sub, "invoices": invoices}
 
@@ -302,9 +312,7 @@ async def update_subscription(
     updates: dict[str, Any],
     actor_id: int,
 ) -> Subscription | None:
-    sub = await session.scalar(
-        select(Subscription).where(Subscription.id == subscription_id)
-    )
+    sub = await session.scalar(select(Subscription).where(Subscription.id == subscription_id))
     if sub is None:
         return None
     changed: dict[str, Any] = {}
@@ -330,6 +338,7 @@ async def update_subscription(
 # ---------------------------------------------------------------------------
 # Asaas provisioning
 # ---------------------------------------------------------------------------
+
 
 def _asaas_client(settings: Settings) -> AsaasClient:
     return AsaasClient(api_key=settings.asaas_api_key, base_url=settings.asaas_api_url)
@@ -374,16 +383,12 @@ async def provision_asaas_subscription(
     settings: Settings,
     actor_id: int,
 ) -> str:
-    sub = await session.scalar(
-        select(Subscription).where(Subscription.id == subscription_id)
-    )
+    sub = await session.scalar(select(Subscription).where(Subscription.id == subscription_id))
     if sub is None:
         raise ValueError("subscription_not_found")
     if sub.billing_provider_subscription_id:
         return sub.billing_provider_subscription_id
-    company = await session.scalar(
-        select(Company).where(Company.id == sub.company_id)
-    )
+    company = await session.scalar(select(Company).where(Company.id == sub.company_id))
     if not company or not company.asaas_customer_id:
         raise ValueError("company_has_no_asaas_customer")
     plan = sub.plan
@@ -415,20 +420,24 @@ async def provision_asaas_subscription(
 # Lifecycle: trial expiration, suspension, reactivation
 # ---------------------------------------------------------------------------
 
+
 async def process_trial_expirations(
     session: AsyncSession,
     actor_id: int | None = None,
 ) -> list[dict[str, Any]]:
     now = datetime.now(UTC).replace(tzinfo=None)
     expired = (
-        await session.execute(
-            select(Subscription)
-            .where(
-                Subscription.status == "trial",
-                Subscription.trial_ends_at < now,
+        (
+            await session.execute(
+                select(Subscription).where(
+                    Subscription.status == "trial",
+                    Subscription.trial_ends_at < now,
+                )
             )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     processed = []
     for sub in expired:
         sub.status = "past_due"
@@ -441,11 +450,13 @@ async def process_trial_expirations(
             target_id=sub.id,
             payload={"company_id": sub.company_id},
         )
-        processed.append({
-            "company_id": sub.company_id,
-            "company_name": sub.company.name if sub.company else str(sub.company_id),
-            "action": "trial_expired",
-        })
+        processed.append(
+            {
+                "company_id": sub.company_id,
+                "company_name": sub.company.name if sub.company else str(sub.company_id),
+                "action": "trial_expired",
+            }
+        )
     if processed:
         await session.commit()
     return processed
@@ -459,21 +470,22 @@ async def process_suspensions(
     now = datetime.now(UTC).replace(tzinfo=None)
     cutoff = now - timedelta(days=grace_days)
     overdue = (
-        await session.execute(
-            select(Subscription)
-            .where(
-                Subscription.status == "past_due",
-                Subscription.past_due_since < cutoff,
+        (
+            await session.execute(
+                select(Subscription).where(
+                    Subscription.status == "past_due",
+                    Subscription.past_due_since < cutoff,
+                )
             )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     processed = []
     for sub in overdue:
         sub.status = "suspended"
         sub.suspended_at = now
-        company = await session.scalar(
-            select(Company).where(Company.id == sub.company_id)
-        )
+        company = await session.scalar(select(Company).where(Company.id == sub.company_id))
         if company:
             company.status = "suspended"
         await _log_platform_audit(
@@ -484,11 +496,13 @@ async def process_suspensions(
             target_id=sub.id,
             payload={"company_id": sub.company_id},
         )
-        processed.append({
-            "company_id": sub.company_id,
-            "company_name": company.name if company else str(sub.company_id),
-            "action": "suspended",
-        })
+        processed.append(
+            {
+                "company_id": sub.company_id,
+                "company_name": company.name if company else str(sub.company_id),
+                "action": "suspended",
+            }
+        )
     if processed:
         await session.commit()
     return processed
@@ -500,18 +514,14 @@ async def reactivate_tenant(
     *,
     actor_id: int,
 ) -> Subscription | None:
-    sub = await session.scalar(
-        select(Subscription).where(Subscription.id == subscription_id)
-    )
+    sub = await session.scalar(select(Subscription).where(Subscription.id == subscription_id))
     if sub is None:
         return None
     sub.status = "active"
     sub.suspended_at = None
     sub.past_due_since = None
     sub.overdue_warned_at = None
-    company = await session.scalar(
-        select(Company).where(Company.id == sub.company_id)
-    )
+    company = await session.scalar(select(Company).where(Company.id == sub.company_id))
     if company:
         company.status = "active"
     await _log_platform_audit(
@@ -531,6 +541,7 @@ async def reactivate_tenant(
 # Reconciliation
 # ---------------------------------------------------------------------------
 
+
 async def reconcile_billing(
     session: AsyncSession,
     settings: Settings,
@@ -538,12 +549,16 @@ async def reconcile_billing(
     auto_correct: bool = False,
 ) -> list[dict[str, Any]]:
     subs = (
-        await session.execute(
-            select(Subscription).where(
-                Subscription.billing_provider_subscription_id.isnot(None),
+        (
+            await session.execute(
+                select(Subscription).where(
+                    Subscription.billing_provider_subscription_id.isnot(None),
+                )
             )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     if not subs:
         return []
     client = _asaas_client(settings)
@@ -552,13 +567,15 @@ async def reconcile_billing(
         try:
             remote = await client.get_subscription(sub.billing_provider_subscription_id)
         except Exception:
-            discrepancies.append({
-                "subscription_id": sub.id,
-                "company_id": sub.company_id,
-                "local_status": sub.status,
-                "remote_status": "fetch_error",
-                "corrected": False,
-            })
+            discrepancies.append(
+                {
+                    "subscription_id": sub.id,
+                    "company_id": sub.company_id,
+                    "local_status": sub.status,
+                    "remote_status": "fetch_error",
+                    "corrected": False,
+                }
+            )
             continue
         remote_status = remote.get("status", "").lower()
         local_status = sub.status
@@ -567,13 +584,15 @@ async def reconcile_billing(
             if auto_correct:
                 sub.status = remote_status
                 corrected = True
-            discrepancies.append({
-                "subscription_id": sub.id,
-                "company_id": sub.company_id,
-                "local_status": local_status,
-                "remote_status": remote_status,
-                "corrected": corrected,
-            })
+            discrepancies.append(
+                {
+                    "subscription_id": sub.id,
+                    "company_id": sub.company_id,
+                    "local_status": local_status,
+                    "remote_status": remote_status,
+                    "corrected": corrected,
+                }
+            )
             await _log_platform_audit(
                 session,
                 actor_id=actor_id,

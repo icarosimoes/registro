@@ -55,9 +55,7 @@ async def list_orders(
     if priority:
         filters.append(WorkOrder.priority == priority)
 
-    total = await session.scalar(
-        select(func.count(WorkOrder.id)).where(*filters)
-    ) or 0
+    total = await session.scalar(select(func.count(WorkOrder.id)).where(*filters)) or 0
 
     rows = (
         await session.execute(
@@ -78,7 +76,9 @@ async def list_orders(
 
 
 async def get_order(
-    session: AsyncSession, company_id: int, order_id: int,
+    session: AsyncSession,
+    company_id: int,
+    order_id: int,
 ) -> tuple | None:
     assigned = User.__table__.alias("assigned")
     created_by = User.__table__.alias("created_by")
@@ -143,17 +143,27 @@ async def create_order(
     session.add(rec)
     await session.flush()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="work_order", entity_id=rec.id, event_type="create",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="work_order",
+        entity_id=rec.id,
+        event_type="create",
     )
     await session.commit()
     await invalidate_dashboard(company_id)
     await session.refresh(rec)
 
     await notify_record_event(
-        session, company_id=company_id, actor_name=user_name, actor_email=user_email,
-        event="create", title=rec.title, module="Ordem de Serviço",
-        owner_user_id=assigned_user_id, notify_user_ids=notify_user_ids,
+        session,
+        company_id=company_id,
+        actor_name=user_name,
+        actor_email=user_email,
+        event="create",
+        title=rec.title,
+        module="Ordem de Serviço",
+        owner_user_id=assigned_user_id,
+        notify_user_ids=notify_user_ids,
     )
 
     return await get_order(session, company_id, rec.id)
@@ -188,9 +198,13 @@ async def update_order(
     )
     if diff:
         await record_event(
-            session, company_id=company_id, user_id=user_id,
-            entity_type="work_order", entity_id=rec.id,
-            event_type="update", diff=diff,
+            session,
+            company_id=company_id,
+            user_id=user_id,
+            entity_type="work_order",
+            entity_id=rec.id,
+            event_type="update",
+            diff=diff,
         )
     await session.commit()
     await invalidate_dashboard(company_id)
@@ -198,10 +212,17 @@ async def update_order(
     if diff:
         detail = "; ".join(f"{k}: {v}" for k, v in diff.items())
         await notify_record_event(
-            session, company_id=company_id, actor_name=user_name, actor_email=user_email,
-            event="update", title=rec.title, module="Ordem de Serviço",
-            owner_user_id=rec.assigned_user_id, created_by_user_id=rec.created_by_user_id,
-            notify_user_ids=rec.notify_user_ids, detail=detail,
+            session,
+            company_id=company_id,
+            actor_name=user_name,
+            actor_email=user_email,
+            event="update",
+            title=rec.title,
+            module="Ordem de Serviço",
+            owner_user_id=rec.assigned_user_id,
+            created_by_user_id=rec.created_by_user_id,
+            notify_user_ids=rec.notify_user_ids,
+            detail=detail,
         )
 
     return await get_order(session, company_id, order_id)
@@ -234,9 +255,7 @@ async def transition_order(
     if target_status not in allowed:
         from_label = STATUS_LABELS.get(rec.status, rec.status)
         to_label = STATUS_LABELS.get(target_status, target_status)
-        raise ValueError(
-            f"Transição não permitida: {from_label} → {to_label}"
-        )
+        raise ValueError(f"Transição não permitida: {from_label} → {to_label}")
 
     old_status = rec.status
     rec.status = target_status
@@ -258,9 +277,13 @@ async def transition_order(
     }
 
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="work_order", entity_id=rec.id,
-        event_type="update", diff=diff,
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="work_order",
+        entity_id=rec.id,
+        event_type="update",
+        diff=diff,
     )
     await session.commit()
     await invalidate_dashboard(company_id)
@@ -269,17 +292,27 @@ async def transition_order(
     if notes:
         detail += f" | {notes}"
     await notify_record_event(
-        session, company_id=company_id, actor_name=user_name, actor_email=user_email,
-        event="update", title=rec.title, module="Ordem de Serviço",
-        owner_user_id=rec.assigned_user_id, created_by_user_id=rec.created_by_user_id,
-        notify_user_ids=rec.notify_user_ids, detail=detail,
+        session,
+        company_id=company_id,
+        actor_name=user_name,
+        actor_email=user_email,
+        event="update",
+        title=rec.title,
+        module="Ordem de Serviço",
+        owner_user_id=rec.assigned_user_id,
+        created_by_user_id=rec.created_by_user_id,
+        notify_user_ids=rec.notify_user_ids,
+        detail=detail,
     )
 
     return await get_order(session, company_id, order_id)
 
 
 async def delete_order(
-    session: AsyncSession, company_id: int, user_id: int, order_id: int,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    order_id: int,
 ) -> bool:
     rec = await session.scalar(
         select(WorkOrder).where(
@@ -292,8 +325,12 @@ async def delete_order(
         return False
     rec.deleted_at = datetime.now()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="work_order", entity_id=rec.id, event_type="delete",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="work_order",
+        entity_id=rec.id,
+        event_type="delete",
     )
     await session.commit()
     await invalidate_dashboard(company_id)
@@ -301,7 +338,8 @@ async def delete_order(
 
 
 async def count_by_status(
-    session: AsyncSession, company_id: int,
+    session: AsyncSession,
+    company_id: int,
 ) -> dict[str, int]:
     rows = (
         await session.execute(

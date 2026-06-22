@@ -27,18 +27,26 @@ def generate_occurrence_pdf(
 ) -> io.BytesIO:
     buf = io.BytesIO()
     doc = SimpleDocTemplate(
-        buf, pagesize=A4,
-        leftMargin=2 * cm, rightMargin=2 * cm,
-        topMargin=2 * cm, bottomMargin=2 * cm,
+        buf,
+        pagesize=A4,
+        leftMargin=2 * cm,
+        rightMargin=2 * cm,
+        topMargin=2 * cm,
+        bottomMargin=2 * cm,
     )
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle(
-        "OccTitle", parent=styles["Heading1"], fontSize=16,
+        "OccTitle",
+        parent=styles["Heading1"],
+        fontSize=16,
         spaceAfter=6,
     )
     h2 = ParagraphStyle(
-        "H2", parent=styles["Heading2"], fontSize=12,
-        spaceBefore=12, spaceAfter=6,
+        "H2",
+        parent=styles["Heading2"],
+        fontSize=12,
+        spaceBefore=12,
+        spaceAfter=6,
     )
     body = styles["BodyText"]
 
@@ -57,25 +65,25 @@ def generate_occurrence_pdf(
         ["Unidade", occurrence.unit or "—"],
         [
             "Prazo",
-            occurrence.deadline.strftime("%d/%m/%Y")
-            if occurrence.deadline
-            else "—",
+            occurrence.deadline.strftime("%d/%m/%Y") if occurrence.deadline else "—",
         ],
         [
             "Criado em",
-            occurrence.created_at.strftime("%d/%m/%Y %H:%M")
-            if occurrence.created_at
-            else "—",
+            occurrence.created_at.strftime("%d/%m/%Y %H:%M") if occurrence.created_at else "—",
         ],
     ]
     t = Table(meta, colWidths=[4 * cm, 12 * cm])
-    t.setStyle(TableStyle([
-        ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
-        ("FONTSIZE", (0, 0), (-1, -1), 10),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-        ("TOPPADDING", (0, 0), (-1, -1), 2),
-        ("VALIGN", (0, 0), (-1, -1), "TOP"),
-    ]))
+    t.setStyle(
+        TableStyle(
+            [
+                ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 10),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ("TOPPADDING", (0, 0), (-1, -1), 2),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ]
+        )
+    )
     elements.append(t)
 
     if occurrence.description:
@@ -97,9 +105,7 @@ def generate_occurrence_pdf(
             etype = entry.get("event_type", "")
             msg = entry.get("message", "")
             if etype == "comment" and msg:
-                elements.append(
-                    Paragraph(f"<b>{user}</b> ({ts}): {msg}", body)
-                )
+                elements.append(Paragraph(f"<b>{user}</b> ({ts}): {msg}", body))
             elif etype == "create":
                 elements.append(
                     Paragraph(
@@ -109,14 +115,8 @@ def generate_occurrence_pdf(
                 )
             elif etype == "update":
                 diff = entry.get("diff", {})
-                changes = "; ".join(
-                    f"{k}: {v}" for k, v in diff.items()
-                )
-                elements.append(
-                    Paragraph(
-                        f"<b>{user}</b> ({ts}): {changes}", body
-                    )
-                )
+                changes = "; ".join(f"{k}: {v}" for k, v in diff.items())
+                elements.append(Paragraph(f"<b>{user}</b> ({ts}): {changes}", body))
 
     doc.build(elements)
     buf.seek(0)

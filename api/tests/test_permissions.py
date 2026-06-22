@@ -29,25 +29,19 @@ async def test_occurrences_list_forbidden_without_permission(client):
 
 @pytest.mark.asyncio
 async def test_occurrences_list_forbidden_with_wrong_permission(client):
-    r = await client.get(
-        f"{PREFIX}/occurrences", headers=auth_with(["bulletin.view"])
-    )
+    r = await client.get(f"{PREFIX}/occurrences", headers=auth_with(["bulletin.view"]))
     assert r.status_code == 403
 
 
 @pytest.mark.asyncio
 async def test_occurrences_list_allowed_with_permission(client):
-    r = await client.get(
-        f"{PREFIX}/occurrences", headers=auth_with(["occurrence.view"])
-    )
+    r = await client.get(f"{PREFIX}/occurrences", headers=auth_with(["occurrence.view"]))
     assert r.status_code == 200
 
 
 @pytest.mark.asyncio
 async def test_occurrences_create_forbidden_without_permission(client):
-    r = await client.post(
-        f"{PREFIX}/occurrences", headers=auth_none(), json={}
-    )
+    r = await client.post(f"{PREFIX}/occurrences", headers=auth_none(), json={})
     assert r.status_code == 403
     assert r.json()["detail"]["required"] == "occurrence.create"
 
@@ -76,25 +70,19 @@ async def test_bulletin_list_forbidden_without_permission(client):
 
 @pytest.mark.asyncio
 async def test_bulletin_list_forbidden_with_wrong_permission(client):
-    r = await client.get(
-        f"{PREFIX}/bulletin", headers=auth_with(["occurrence.view"])
-    )
+    r = await client.get(f"{PREFIX}/bulletin", headers=auth_with(["occurrence.view"]))
     assert r.status_code == 403
 
 
 @pytest.mark.asyncio
 async def test_bulletin_list_allowed_with_permission(client):
-    r = await client.get(
-        f"{PREFIX}/bulletin", headers=auth_with(["bulletin.view"])
-    )
+    r = await client.get(f"{PREFIX}/bulletin", headers=auth_with(["bulletin.view"]))
     assert r.status_code == 200
 
 
 @pytest.mark.asyncio
 async def test_bulletin_create_forbidden_without_permission(client):
-    r = await client.post(
-        f"{PREFIX}/bulletin", headers=auth_none(), json={}
-    )
+    r = await client.post(f"{PREFIX}/bulletin", headers=auth_none(), json={})
     assert r.status_code == 403
     assert r.json()["detail"]["required"] == "bulletin.create"
 
@@ -123,25 +111,19 @@ async def test_maintenance_list_forbidden_without_permission(client):
 
 @pytest.mark.asyncio
 async def test_maintenance_list_forbidden_with_wrong_permission(client):
-    r = await client.get(
-        f"{PREFIX}/maintenance", headers=auth_with(["checklist.view"])
-    )
+    r = await client.get(f"{PREFIX}/maintenance", headers=auth_with(["checklist.view"]))
     assert r.status_code == 403
 
 
 @pytest.mark.asyncio
 async def test_maintenance_list_allowed_with_permission(client):
-    r = await client.get(
-        f"{PREFIX}/maintenance", headers=auth_with(["maintenance.view"])
-    )
+    r = await client.get(f"{PREFIX}/maintenance", headers=auth_with(["maintenance.view"]))
     assert r.status_code == 200
 
 
 @pytest.mark.asyncio
 async def test_maintenance_create_forbidden_without_permission(client):
-    r = await client.post(
-        f"{PREFIX}/maintenance", headers=auth_none(), json={}
-    )
+    r = await client.post(f"{PREFIX}/maintenance", headers=auth_none(), json={})
     assert r.status_code == 403
     assert r.json()["detail"]["required"] == "maintenance.create"
 
@@ -163,9 +145,7 @@ async def test_maintenance_create_allowed_with_permission(client):
 
 @pytest.mark.asyncio
 async def test_checklists_templates_forbidden_without_permission(client):
-    r = await client.get(
-        f"{PREFIX}/checklists/templates", headers=auth_none()
-    )
+    r = await client.get(f"{PREFIX}/checklists/templates", headers=auth_none())
     assert r.status_code == 403
     assert r.json()["detail"]["required"] == "checklist.view"
 
@@ -190,9 +170,7 @@ async def test_checklists_templates_allowed_with_permission(client):
 
 @pytest.mark.asyncio
 async def test_checklists_create_forbidden_without_permission(client):
-    r = await client.post(
-        f"{PREFIX}/checklists/templates", headers=auth_none(), json={}
-    )
+    r = await client.post(f"{PREFIX}/checklists/templates", headers=auth_none(), json={})
     assert r.status_code == 403
     assert r.json()["detail"]["required"] == "checklist.create"
 

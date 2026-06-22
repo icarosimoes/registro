@@ -27,10 +27,14 @@ def _next_due_from(current: date, recurrence: str) -> date:
 
 # ─── Templates ────────────────────────────────────────────────────────────────
 
+
 async def list_templates(
-    session: AsyncSession, company_id: int,
-    page: int, page_size: int,
-    search: str | None = None, active_only: bool = False,
+    session: AsyncSession,
+    company_id: int,
+    page: int,
+    page_size: int,
+    search: str | None = None,
+    active_only: bool = False,
 ) -> tuple[list, int]:
     filters = [
         ChecklistTemplate.company_id == company_id,
@@ -71,7 +75,9 @@ async def list_templates(
 
 
 async def get_template(
-    session: AsyncSession, company_id: int, template_id: int,
+    session: AsyncSession,
+    company_id: int,
+    template_id: int,
 ) -> dict | None:
     rec = await session.scalar(
         select(ChecklistTemplate).where(
@@ -88,12 +94,16 @@ async def get_template(
             select(User.name).where(User.id == rec.assigned_user_id)
         )
     items = (
-        await session.execute(
-            select(ChecklistTemplateItem)
-            .where(ChecklistTemplateItem.template_id == template_id)
-            .order_by(ChecklistTemplateItem.sort_order)
+        (
+            await session.execute(
+                select(ChecklistTemplateItem)
+                .where(ChecklistTemplateItem.template_id == template_id)
+                .order_by(ChecklistTemplateItem.sort_order)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return {
         "template": rec,
         "assigned_user_name": assigned_name,
@@ -102,10 +112,17 @@ async def get_template(
 
 
 async def create_template(
-    session: AsyncSession, company_id: int, user_id: int,
-    *, name: str, description: str | None, recurrence: str,
-    category: str | None, assigned_user_id: int | None,
-    next_due: date | None, items: list[dict],
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    *,
+    name: str,
+    description: str | None,
+    recurrence: str,
+    category: str | None,
+    assigned_user_id: int | None,
+    next_due: date | None,
+    items: list[dict],
 ) -> dict:
     if recurrence not in CHECKLIST_RECURRENCE_TYPES:
         raise ValueError(f"Recorrência inválida: {recurrence}")
@@ -113,17 +130,25 @@ async def create_template(
         next_due = date.today() + timedelta(days=RECURRENCE_DAYS.get(recurrence, 7))
 
     rec = ChecklistTemplate(
-        company_id=company_id, name=name, description=description,
-        recurrence=recurrence, category=category,
-        assigned_user_id=assigned_user_id, next_due=next_due,
+        company_id=company_id,
+        name=name,
+        description=description,
+        recurrence=recurrence,
+        category=category,
+        assigned_user_id=assigned_user_id,
+        next_due=next_due,
     )
     session.add(rec)
     await session.flush()
     for item in items:
         session.add(ChecklistTemplateItem(template_id=rec.id, **item))
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="checklist_template", entity_id=rec.id, event_type="create",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="checklist_template",
+        entity_id=rec.id,
+        event_type="create",
     )
     await session.commit()
     await session.refresh(rec)
@@ -131,8 +156,11 @@ async def create_template(
 
 
 async def update_template(
-    session: AsyncSession, company_id: int, user_id: int,
-    template_id: int, updates: dict,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    template_id: int,
+    updates: dict,
 ) -> dict | None:
     rec = await session.scalar(
         select(ChecklistTemplate).where(
@@ -162,16 +190,23 @@ async def update_template(
     diff = compute_diff(before, {k: str(v) for k, v in updates.items()})
     if diff:
         await record_event(
-            session, company_id=company_id, user_id=user_id,
-            entity_type="checklist_template", entity_id=rec.id,
-            event_type="update", diff=diff,
+            session,
+            company_id=company_id,
+            user_id=user_id,
+            entity_type="checklist_template",
+            entity_id=rec.id,
+            event_type="update",
+            diff=diff,
         )
     await session.commit()
     return await get_template(session, company_id, template_id)
 
 
 async def delete_template(
-    session: AsyncSession, company_id: int, user_id: int, template_id: int,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    template_id: int,
 ) -> bool:
     rec = await session.scalar(
         select(ChecklistTemplate).where(
@@ -184,8 +219,12 @@ async def delete_template(
         return False
     rec.deleted_at = datetime.now()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="checklist_template", entity_id=rec.id, event_type="delete",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="checklist_template",
+        entity_id=rec.id,
+        event_type="delete",
     )
     await session.commit()
     return True
@@ -193,9 +232,12 @@ async def delete_template(
 
 # ─── Executions ───────────────────────────────────────────────────────────────
 
+
 async def list_executions(
-    session: AsyncSession, company_id: int,
-    page: int, page_size: int,
+    session: AsyncSession,
+    company_id: int,
+    page: int,
+    page_size: int,
     template_id: int | None = None,
     status: str | None = None,
 ) -> tuple[list, int]:
@@ -208,9 +250,7 @@ async def list_executions(
     if status:
         filters.append(ChecklistExecution.status == status)
 
-    total = await session.scalar(
-        select(func.count(ChecklistExecution.id)).where(*filters)
-    ) or 0
+    total = await session.scalar(select(func.count(ChecklistExecution.id)).where(*filters)) or 0
 
     completed_by = User.__table__.alias("completed_by")
 
@@ -258,9 +298,7 @@ async def export_executions(
                 completed_by.c.name.label("completed_by_name"),
             )
             .join(ChecklistTemplate, ChecklistTemplate.id == ChecklistExecution.template_id)
-            .outerjoin(
-                completed_by, completed_by.c.id == ChecklistExecution.completed_by_user_id
-            )
+            .outerjoin(completed_by, completed_by.c.id == ChecklistExecution.completed_by_user_id)
             .where(*filters)
             .order_by(ChecklistExecution.due_date.desc(), ChecklistExecution.id.desc())
             .limit(MAX_EXPORT_ROWS)
@@ -270,7 +308,9 @@ async def export_executions(
 
 
 async def get_execution(
-    session: AsyncSession, company_id: int, execution_id: int,
+    session: AsyncSession,
+    company_id: int,
+    execution_id: int,
 ) -> dict | None:
     completed_by = User.__table__.alias("completed_by")
     row = (
@@ -293,19 +333,27 @@ async def get_execution(
         return None
 
     items = (
-        await session.execute(
-            select(ChecklistExecutionItem)
-            .where(ChecklistExecutionItem.execution_id == execution_id)
-            .order_by(ChecklistExecutionItem.sort_order)
+        (
+            await session.execute(
+                select(ChecklistExecutionItem)
+                .where(ChecklistExecutionItem.execution_id == execution_id)
+                .order_by(ChecklistExecutionItem.sort_order)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     return {"row": row, "items": items}
 
 
 async def toggle_item(
-    session: AsyncSession, company_id: int, user_id: int,
-    execution_id: int, item_id: int, checked: bool,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    execution_id: int,
+    item_id: int,
+    checked: bool,
 ) -> dict | None:
     exec_rec = await session.scalar(
         select(ChecklistExecution).where(
@@ -333,8 +381,11 @@ async def toggle_item(
 
 
 async def complete_execution(
-    session: AsyncSession, company_id: int, user_id: int,
-    execution_id: int, notes: str | None = None,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    execution_id: int,
+    notes: str | None = None,
 ) -> dict | None:
     rec = await session.scalar(
         select(ChecklistExecution).where(
@@ -352,8 +403,12 @@ async def complete_execution(
         rec.notes = notes
 
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="checklist_execution", entity_id=rec.id, event_type="update",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="checklist_execution",
+        entity_id=rec.id,
+        event_type="update",
         diff={"status": {"from": "pendente", "to": "concluido"}},
     )
     await session.commit()
@@ -362,32 +417,42 @@ async def complete_execution(
 
 # ─── Generation ───────────────────────────────────────────────────────────────
 
+
 async def generate_due_executions(
-    session: AsyncSession, company_id: int,
+    session: AsyncSession,
+    company_id: int,
 ) -> list[int]:
     today = date.today()
     templates = (
-        await session.execute(
-            select(ChecklistTemplate).where(
-                ChecklistTemplate.company_id == company_id,
-                ChecklistTemplate.deleted_at.is_(None),
-                ChecklistTemplate.active.is_(True),
-                ChecklistTemplate.next_due <= today,
+        (
+            await session.execute(
+                select(ChecklistTemplate).where(
+                    ChecklistTemplate.company_id == company_id,
+                    ChecklistTemplate.deleted_at.is_(None),
+                    ChecklistTemplate.active.is_(True),
+                    ChecklistTemplate.next_due <= today,
+                )
             )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     created_ids: list[int] = []
     now = datetime.now()
 
     for tmpl in templates:
         items = (
-            await session.execute(
-                select(ChecklistTemplateItem)
-                .where(ChecklistTemplateItem.template_id == tmpl.id)
-                .order_by(ChecklistTemplateItem.sort_order)
+            (
+                await session.execute(
+                    select(ChecklistTemplateItem)
+                    .where(ChecklistTemplateItem.template_id == tmpl.id)
+                    .order_by(ChecklistTemplateItem.sort_order)
+                )
             )
-        ).scalars().all()
+            .scalars()
+            .all()
+        )
 
         execution = ChecklistExecution(
             company_id=company_id,
@@ -399,11 +464,13 @@ async def generate_due_executions(
         await session.flush()
 
         for item in items:
-            session.add(ChecklistExecutionItem(
-                execution_id=execution.id,
-                label=item.label,
-                sort_order=item.sort_order,
-            ))
+            session.add(
+                ChecklistExecutionItem(
+                    execution_id=execution.id,
+                    label=item.label,
+                    sort_order=item.sort_order,
+                )
+            )
 
         tmpl.last_generated_at = now
         tmpl.next_due = _next_due_from(tmpl.next_due, tmpl.recurrence)

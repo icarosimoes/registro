@@ -132,24 +132,31 @@ async def create_from_chess(
         diff={"chess_user_id": chess_user_id, "hotel": settings.chess_hotel_company_slug},
     )
     module_recipient_ids = await get_module_recipients(
-        session, company_id, "fiscal_requests",
+        session,
+        company_id,
+        "fiscal_requests",
     )
     if module_recipient_ids:
         target_ids = [uid for uid in module_recipient_ids if uid != registro_user.id]
     else:
-        target_ids = list((
-            await session.scalars(
-                select(User.id).where(
-                    User.company_id == company_id,
-                    User.active.is_(True),
-                    User.deleted_at.is_(None),
-                    User.id != registro_user.id,
+        target_ids = list(
+            (
+                await session.scalars(
+                    select(User.id).where(
+                        User.company_id == company_id,
+                        User.active.is_(True),
+                        User.deleted_at.is_(None),
+                        User.id != registro_user.id,
+                    )
                 )
-            )
-        ).all())
+            ).all()
+        )
 
     prefs = await _load_preferences(
-        session, company_id, target_ids, "fiscal_requests",
+        session,
+        company_id,
+        target_ids,
+        "fiscal_requests",
     )
     title_text = request_type
     if apartment:

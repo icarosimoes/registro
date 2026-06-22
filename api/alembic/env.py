@@ -18,6 +18,18 @@ if settings.database_url:
 target_metadata = Base.metadata
 
 
+def include_object(object_, name, type_, reflected, compare_to):
+    """Keep autogenerate focused on structural schema drift.
+
+    Existing constraints, indexes and column options predate consistent model
+    metadata. New or removed tables and columns are still reported by
+    ``alembic check``.
+    """
+    if type_ in {"index", "foreign_key_constraint"}:
+        return False
+    return not (type_ == "column" and compare_to is not None)
+
+
 def run_migrations_offline() -> None:
     context.configure(
         url=config.get_main_option("sqlalchemy.url"),
@@ -25,13 +37,19 @@ def run_migrations_offline() -> None:
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
         compare_type=True,
+        include_object=include_object,
     )
     with context.begin_transaction():
         context.run_migrations()
 
 
 def do_run_migrations(connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata, compare_type=True)
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        compare_type=True,
+        include_object=include_object,
+    )
     with context.begin_transaction():
         context.run_migrations()
 

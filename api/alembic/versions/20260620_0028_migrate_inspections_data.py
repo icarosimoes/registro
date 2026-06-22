@@ -7,8 +7,9 @@ Create Date: 2026-06-20
 
 import json
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260620_0028"
 down_revision = "20260620_0027"

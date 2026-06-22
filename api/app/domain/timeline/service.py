@@ -93,9 +93,9 @@ async def get_timeline(
         if event.event_type == "comment":
             message = event.diff.get("message") if event.diff else None
         elif event.event_type == "attachment_add":
-            message = f"Anexou \"{event.diff.get('filename', '?')}\"" if event.diff else None
+            message = f'Anexou "{event.diff.get("filename", "?")}"' if event.diff else None
         elif event.event_type == "attachment_remove":
-            message = f"Removeu anexo \"{event.diff.get('filename', '?')}\"" if event.diff else None
+            message = f'Removeu anexo "{event.diff.get("filename", "?")}"' if event.diff else None
         elif event.diff:
             changes = event.diff
         items.append(

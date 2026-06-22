@@ -28,9 +28,7 @@ router = APIRouter(prefix="/shift-reports", tags=["shift-reports"])
 
 @router.get("", response_model=ShiftReportListResponse)
 async def list_shift_reports_endpoint(
-    user: Annotated[
-        AuthenticatedUser, require_permission("shift_report.view")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("shift_report.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
@@ -71,18 +69,12 @@ async def list_shift_reports_endpoint(
 @router.get("/{report_id}", response_model=ShiftReportDetail)
 async def get_shift_report_endpoint(
     report_id: int,
-    user: Annotated[
-        AuthenticatedUser, require_permission("shift_report.view")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("shift_report.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> ShiftReportDetail:
-    result = await get_shift_report(
-        session, user.company_id, report_id
-    )
+    result = await get_shift_report(session, user.company_id, report_id)
     if result is None:
-        raise HTTPException(
-            status_code=404, detail={"code": "not_found"}
-        )
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
     report, owner_name = result
     return ShiftReportDetail(
         id=report.id,
@@ -119,14 +111,10 @@ async def get_shift_report_endpoint(
     )
 
 
-@router.post(
-    "", response_model=ShiftReportSummary, status_code=201
-)
+@router.post("", response_model=ShiftReportSummary, status_code=201)
 async def create_shift_report_endpoint(
     body: ShiftReportCreate,
-    user: Annotated[
-        AuthenticatedUser, require_permission("shift_report.create")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("shift_report.create")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> ShiftReportSummary:
     record, owner_name = await create_shift_report(
@@ -158,15 +146,11 @@ async def create_shift_report_endpoint(
     )
 
 
-@router.patch(
-    "/{report_id}", response_model=ShiftReportSummary
-)
+@router.patch("/{report_id}", response_model=ShiftReportSummary)
 async def update_shift_report_endpoint(
     report_id: int,
     body: ShiftReportUpdate,
-    user: Annotated[
-        AuthenticatedUser, require_permission("shift_report.edit")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("shift_report.edit")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> ShiftReportSummary:
     updates = body.model_dump(exclude_none=True)
@@ -180,9 +164,7 @@ async def update_shift_report_endpoint(
         updates,
     )
     if result is None:
-        raise HTTPException(
-            status_code=404, detail={"code": "not_found"}
-        )
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
     record, owner_name = result
     return ShiftReportSummary(
         id=record.id,
@@ -200,15 +182,9 @@ async def update_shift_report_endpoint(
 @router.delete("/{report_id}", status_code=204)
 async def delete_shift_report_endpoint(
     report_id: int,
-    user: Annotated[
-        AuthenticatedUser, require_permission("shift_report.delete")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("shift_report.delete")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
-    deleted = await delete_shift_report(
-        session, user.company_id, user.id, report_id
-    )
+    deleted = await delete_shift_report(session, user.company_id, user.id, report_id)
     if not deleted:
-        raise HTTPException(
-            status_code=404, detail={"code": "not_found"}
-        )
+        raise HTTPException(status_code=404, detail={"code": "not_found"})

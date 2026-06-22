@@ -63,9 +63,7 @@ def _next_business_morning(
     work_end: int,
     holidays: set[str] | None,
 ) -> datetime:
-    next_day = (dt + timedelta(days=1)).replace(
-        hour=work_start, minute=0, second=0, microsecond=0
-    )
+    next_day = (dt + timedelta(days=1)).replace(hour=work_start, minute=0, second=0, microsecond=0)
     while not _is_business_day(next_day, holidays):
         next_day += timedelta(days=1)
     return next_day

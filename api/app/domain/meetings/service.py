@@ -28,11 +28,7 @@ async def list_meetings(
             )
         )
 
-    total = (
-        await session.scalar(
-            select(func.count(Meeting.id)).where(*filters)
-        )
-    ) or 0
+    total = (await session.scalar(select(func.count(Meeting.id)).where(*filters))) or 0
 
     participant_count = (
         select(func.count(MeetingParticipant.id))
@@ -103,21 +99,22 @@ async def get_meeting(
                 User.name,
             )
             .join(User, User.id == MeetingParticipant.user_id)
-            .where(
-                MeetingParticipant.meeting_id == meeting_id
-            )
+            .where(MeetingParticipant.meeting_id == meeting_id)
             .order_by(MeetingParticipant.id)
         )
     ).all()
 
     subject_rows = (
-        await session.execute(
-            select(MeetingSubject).where(
-                MeetingSubject.meeting_id == meeting_id
+        (
+            await session.execute(
+                select(MeetingSubject)
+                .where(MeetingSubject.meeting_id == meeting_id)
+                .order_by(MeetingSubject.sort_order)
             )
-            .order_by(MeetingSubject.sort_order)
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     participant_count = len(participant_rows)
     subject_count = len(subject_rows)
@@ -247,22 +244,15 @@ async def update_meeting(
 
     participants = updates.pop("participants", None)
 
-    audit_fields = {
-        k: v for k, v in updates.items()
-        if k != "notify_user_ids"
-    }
-    before = {
-        k: str(getattr(record, k)) for k in audit_fields
-    }
+    audit_fields = {k: v for k, v in updates.items() if k != "notify_user_ids"}
+    before = {k: str(getattr(record, k)) for k in audit_fields}
 
     for field, value in updates.items():
         setattr(record, field, value)
 
     if participants is not None:
         await session.execute(
-            delete(MeetingParticipant).where(
-                MeetingParticipant.meeting_id == meeting_id
-            )
+            delete(MeetingParticipant).where(MeetingParticipant.meeting_id == meeting_id)
         )
         for p in participants:
             session.add(
@@ -292,9 +282,7 @@ async def update_meeting(
     await session.refresh(record)
 
     if diff:
-        detail = "; ".join(
-            f"{k}: {v}" for k, v in diff.items()
-        )
+        detail = "; ".join(f"{k}: {v}" for k, v in diff.items())
         await notify_record_event(
             session,
             company_id=company_id,
@@ -309,9 +297,7 @@ async def update_meeting(
             detail=detail,
         )
 
-    return await get_meeting(
-        session, company_id, record.id
-    )
+    return await get_meeting(session, company_id, record.id)
 
 
 async def delete_meeting(
@@ -361,20 +347,24 @@ async def clone_meeting(
         return None
 
     participant_rows = (
-        await session.execute(
-            select(MeetingParticipant).where(
-                MeetingParticipant.meeting_id == meeting_id
+        (
+            await session.execute(
+                select(MeetingParticipant).where(MeetingParticipant.meeting_id == meeting_id)
             )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     subject_rows = (
-        await session.execute(
-            select(MeetingSubject).where(
-                MeetingSubject.meeting_id == meeting_id
+        (
+            await session.execute(
+                select(MeetingSubject).where(MeetingSubject.meeting_id == meeting_id)
             )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     return await create_meeting(
         session,
@@ -388,10 +378,7 @@ async def clone_meeting(
         location=original.location,
         status="Agendada",
         owner_user_id=original.owner_user_id,
-        participants=[
-            {"user_id": p.user_id, "role": p.role}
-            for p in participant_rows
-        ],
+        participants=[{"user_id": p.user_id, "role": p.role} for p in participant_rows],
         subjects=[
             {
                 "title": s.title,
@@ -472,15 +459,11 @@ async def update_subject(
     if subject is None:
         return None
 
-    before = {
-        k: str(getattr(subject, k)) for k in updates
-    }
+    before = {k: str(getattr(subject, k)) for k in updates}
     for field, value in updates.items():
         setattr(subject, field, value)
 
-    diff = compute_diff(
-        before, {k: str(v) for k, v in updates.items()}
-    )
+    diff = compute_diff(before, {k: str(v) for k, v in updates.items()})
     if diff:
         await record_event(
             session,

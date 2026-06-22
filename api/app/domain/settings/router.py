@@ -32,6 +32,7 @@ async def get_company_setting(session: AsyncSession, company_id: int, key: str) 
 
 # ── Evolution API ──
 
+
 class EvolutionConfig(BaseModel):
     api_url: str
     api_key: str
@@ -98,8 +99,11 @@ async def evolution_status(
     if not value.get("api_key"):
         return EvolutionStatus(connected=False, detail="Credenciais não configuradas")
     from app.integrations.evolution import check_connection
+
     result = await check_connection(
-        api_url=value["api_url"], api_key=value["api_key"], instance=value["instance"],
+        api_url=value["api_url"],
+        api_key=value["api_key"],
+        instance=value["instance"],
     )
     state = result.get("state") or result.get("instance", {}).get("state", "unknown")
     return EvolutionStatus(connected=(state == "open"), state=state)
@@ -116,9 +120,13 @@ async def evolution_test_send(
     if not value.get("api_key"):
         raise HTTPException(status_code=422, detail={"code": "not_configured"})
     from app.integrations.evolution import send_text
+
     result = await send_text(
-        api_url=value["api_url"], api_key=value["api_key"],
-        instance=value["instance"], to=body.to, text=body.text,
+        api_url=value["api_url"],
+        api_key=value["api_key"],
+        instance=value["instance"],
+        to=body.to,
+        text=body.text,
     )
     if result is None:
         raise HTTPException(status_code=502, detail={"code": "send_failed"})
@@ -126,6 +134,7 @@ async def evolution_test_send(
 
 
 # ── Brevo (E-mail transacional) ──
+
 
 class BrevoConfig(BaseModel):
     api_key: str
@@ -179,8 +188,14 @@ async def save_brevo(
 # ── Destinatários de notificação por módulo ──
 
 VALID_MODULES = [
-    "occurrences", "fiscal_requests", "meetings", "shift_reports",
-    "procedures", "inspections", "maintenance", "modules",
+    "occurrences",
+    "fiscal_requests",
+    "meetings",
+    "shift_reports",
+    "procedures",
+    "inspections",
+    "maintenance",
+    "modules",
 ]
 
 
@@ -194,7 +209,9 @@ class ModuleRecipientsUpdate(BaseModel):
 
 
 async def get_module_recipients(
-    session: AsyncSession, company_id: int, module: str,
+    session: AsyncSession,
+    company_id: int,
+    module: str,
 ) -> list[int]:
     data = await get_company_setting(session, company_id, "notification_recipients")
     return data.get(module, [])
@@ -206,10 +223,7 @@ async def list_all_recipients(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> list[ModuleRecipientsOut]:
     data = await get_company_setting(session, user.company_id, "notification_recipients")
-    return [
-        ModuleRecipientsOut(module=mod, user_ids=data.get(mod, []))
-        for mod in VALID_MODULES
-    ]
+    return [ModuleRecipientsOut(module=mod, user_ids=data.get(mod, [])) for mod in VALID_MODULES]
 
 
 @router.put(
@@ -231,10 +245,12 @@ async def update_module_recipients(
         row.value = value
         flag_modified(row, "value")
     else:
-        session.add(CompanySetting(
-            company_id=user.company_id,
-            key="notification_recipients",
-            value={module: body.user_ids},
-        ))
+        session.add(
+            CompanySetting(
+                company_id=user.company_id,
+                key="notification_recipients",
+                value={module: body.user_ids},
+            )
+        )
     await session.commit()
     return ModuleRecipientsOut(module=module, user_ids=body.user_ids)

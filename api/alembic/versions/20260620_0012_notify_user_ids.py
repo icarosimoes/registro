@@ -3,6 +3,7 @@
 from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "20260620_0012"
@@ -13,7 +14,10 @@ depends_on: str | Sequence[str] | None = None
 
 def upgrade() -> None:
     op.add_column("occurrences", sa.Column("notify_user_ids", sa.JSON, nullable=True))
-    op.add_column("module_records", sa.Column("created_by_user_id", sa.Integer, sa.ForeignKey("users.id"), nullable=True))
+    op.add_column(
+        "module_records",
+        sa.Column("created_by_user_id", sa.Integer, sa.ForeignKey("users.id"), nullable=True),
+    )
     op.add_column("module_records", sa.Column("notify_user_ids", sa.JSON, nullable=True))
 
 

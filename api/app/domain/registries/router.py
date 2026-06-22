@@ -89,17 +89,26 @@ async def list_registries_endpoint(
     category: str | None = None,
 ) -> RegistryListResponse:
     rows, total = await list_registries(
-        session, user.company_id, page, page_size, search, category,
+        session,
+        user.company_id,
+        page,
+        page_size,
+        search,
+        category,
     )
     return RegistryListResponse(
         items=[
             RegistrySummary(
-                id=row.id, name=row.name,
-                category=row.category, updated_at=row.updated_at,
+                id=row.id,
+                name=row.name,
+                category=row.category,
+                updated_at=row.updated_at,
             )
             for row in rows
         ],
-        total=total, page=page, page_size=page_size,
+        total=total,
+        page=page,
+        page_size=page_size,
     )
 
 
@@ -118,8 +127,10 @@ async def create_registry_endpoint(
     if record is None:
         raise HTTPException(status_code=400, detail={"code": "invalid_category"})
     return RegistrySummary(
-        id=record.id, name=record.name,
-        category=body.category, updated_at=record.updated_at,
+        id=record.id,
+        name=record.name,
+        category=body.category,
+        updated_at=record.updated_at,
     )
 
 
@@ -137,8 +148,10 @@ async def update_registry_endpoint(
     if result is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
     return RegistrySummary(
-        id=result.id, name=result.name,
-        category=category, updated_at=result.updated_at,
+        id=result.id,
+        name=result.name,
+        category=category,
+        updated_at=result.updated_at,
     )
 
 

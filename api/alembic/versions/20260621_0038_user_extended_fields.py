@@ -5,8 +5,9 @@ Revises: 20260621_0037
 Create Date: 2026-06-21
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260621_0038"
 down_revision = "20260621_0037"

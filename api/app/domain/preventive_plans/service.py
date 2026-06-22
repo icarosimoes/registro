@@ -66,7 +66,9 @@ async def list_plans(
 
 
 async def get_plan(
-    session: AsyncSession, company_id: int, plan_id: int,
+    session: AsyncSession,
+    company_id: int,
+    plan_id: int,
 ) -> tuple | None:
     assigned = User.__table__.alias("assigned")
     loc = Location.__table__.alias("loc")
@@ -90,7 +92,10 @@ async def get_plan(
 
 
 async def create_plan(
-    session: AsyncSession, company_id: int, user_id: int, **fields,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    **fields,
 ) -> tuple:
     if fields.get("recurrence") and fields["recurrence"] not in RECURRENCE_TYPES:
         raise ValueError(f"Recorrência inválida: {fields['recurrence']}")
@@ -105,8 +110,12 @@ async def create_plan(
     session.add(rec)
     await session.flush()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="preventive_plan", entity_id=rec.id, event_type="create",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="preventive_plan",
+        entity_id=rec.id,
+        event_type="create",
     )
     await session.commit()
     await session.refresh(rec)
@@ -114,7 +123,11 @@ async def create_plan(
 
 
 async def update_plan(
-    session: AsyncSession, company_id: int, user_id: int, plan_id: int, updates: dict,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    plan_id: int,
+    updates: dict,
 ) -> tuple | None:
     rec = await session.scalar(
         select(PreventivePlan).where(
@@ -136,16 +149,23 @@ async def update_plan(
     diff = compute_diff(before, {k: str(v) for k, v in updates.items()})
     if diff:
         await record_event(
-            session, company_id=company_id, user_id=user_id,
-            entity_type="preventive_plan", entity_id=rec.id,
-            event_type="update", diff=diff,
+            session,
+            company_id=company_id,
+            user_id=user_id,
+            entity_type="preventive_plan",
+            entity_id=rec.id,
+            event_type="update",
+            diff=diff,
         )
     await session.commit()
     return await get_plan(session, company_id, plan_id)
 
 
 async def delete_plan(
-    session: AsyncSession, company_id: int, user_id: int, plan_id: int,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    plan_id: int,
 ) -> bool:
     rec = await session.scalar(
         select(PreventivePlan).where(
@@ -158,28 +178,39 @@ async def delete_plan(
         return False
     rec.deleted_at = datetime.now()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="preventive_plan", entity_id=rec.id, event_type="delete",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="preventive_plan",
+        entity_id=rec.id,
+        event_type="delete",
     )
     await session.commit()
     return True
 
 
 async def generate_due_orders(
-    session: AsyncSession, company_id: int, user_id: int,
-    user_name: str, user_email: str,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    user_name: str,
+    user_email: str,
 ) -> list[int]:
     today = date.today()
     plans = (
-        await session.execute(
-            select(PreventivePlan).where(
-                PreventivePlan.company_id == company_id,
-                PreventivePlan.deleted_at.is_(None),
-                PreventivePlan.active.is_(True),
-                PreventivePlan.next_due <= today,
+        (
+            await session.execute(
+                select(PreventivePlan).where(
+                    PreventivePlan.company_id == company_id,
+                    PreventivePlan.deleted_at.is_(None),
+                    PreventivePlan.active.is_(True),
+                    PreventivePlan.next_due <= today,
+                )
             )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     created_ids: list[int] = []
     now = datetime.now()
@@ -207,8 +238,12 @@ async def generate_due_orders(
         await session.flush()
 
         await record_event(
-            session, company_id=company_id, user_id=user_id,
-            entity_type="work_order", entity_id=wo.id, event_type="create",
+            session,
+            company_id=company_id,
+            user_id=user_id,
+            entity_type="work_order",
+            entity_id=wo.id,
+            event_type="create",
         )
 
         plan.last_generated_at = now
@@ -219,8 +254,12 @@ async def generate_due_orders(
         await session.commit()
 
         await notify_record_event(
-            session, company_id=company_id, actor_name=user_name, actor_email=user_email,
-            event="create", title=f"{len(created_ids)} OS preventivas geradas",
+            session,
+            company_id=company_id,
+            actor_name=user_name,
+            actor_email=user_email,
+            event="create",
+            title=f"{len(created_ids)} OS preventivas geradas",
             module="Manutenção Preventiva",
         )
 

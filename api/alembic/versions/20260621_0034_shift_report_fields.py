@@ -5,8 +5,9 @@ Revises: 20260621_0033
 Create Date: 2026-06-21
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260621_0034"
 down_revision = "20260621_0033"
@@ -42,7 +43,8 @@ def upgrade() -> None:
         op.add_column("shift_reports", sa.Column(name, col_type, nullable=True))
 
     conn = op.get_bind()
-    conn.execute(sa.text("""
+    conn.execute(
+        sa.text("""
         UPDATE shift_reports sr
         SET
             supervisor = mr.payload->>'supervisor',
@@ -55,7 +57,8 @@ def upgrade() -> None:
         WHERE mr.module = 'relatorios-turno'
           AND mr.company_id = sr.company_id
           AND mr.title = sr.title
-    """))
+    """)
+    )
 
 
 def downgrade() -> None:

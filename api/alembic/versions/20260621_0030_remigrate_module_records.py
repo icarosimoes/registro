@@ -16,8 +16,9 @@ import os
 from datetime import datetime
 
 import bcrypt
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260621_0030"
 down_revision = "20260620_0029"
@@ -88,13 +89,17 @@ def upgrade() -> None:
                 ":created_by, :notify, :created_at, :updated_at) RETURNING id"
             ),
             {
-                "company_id": r[1], "title": r[2],
+                "company_id": r[1],
+                "title": r[2],
                 "description": r[3],
                 "scheduled_at": scheduled_at,
                 "location": location,
                 "status": r[5] or "Agendada",
-                "owner": r[6], "created_by": r[7], "notify": r[8],
-                "created_at": r[10], "updated_at": r[11],
+                "owner": r[6],
+                "created_by": r[7],
+                "notify": r[8],
+                "created_at": r[10],
+                "updated_at": r[11],
             },
         )
         new_id = result.scalar()
@@ -154,12 +159,17 @@ def upgrade() -> None:
                 ":created_by, :notify, :created_at, :updated_at) RETURNING id"
             ),
             {
-                "company_id": r[1], "title": r[2], "description": r[3],
+                "company_id": r[1],
+                "title": r[2],
+                "description": r[3],
                 "shift_date": shift_date,
                 "shift_type": shift_type,
                 "status": r[5] or "Em andamento",
-                "owner": r[6], "created_by": r[7], "notify": r[8],
-                "created_at": r[10], "updated_at": r[11],
+                "owner": r[6],
+                "created_by": r[7],
+                "notify": r[8],
+                "created_at": r[10],
+                "updated_at": r[11],
             },
         )
         new_id = result.scalar()
@@ -185,32 +195,24 @@ def upgrade() -> None:
     # o frontend usa /modules/inspecoes e /modules/manutencao (genérico).
 
     # --- Ensure legacy-admin role has wildcard permission ---
-    aero = conn.execute(
-        sa.text("SELECT id FROM companies WHERE slug = 'aero-hotel'")
-    ).scalar()
+    aero = conn.execute(sa.text("SELECT id FROM companies WHERE slug = 'aero-hotel'")).scalar()
     if aero:
         legacy_role = conn.execute(
-            sa.text(
-                "SELECT id FROM roles WHERE company_id = :cid AND code = 'legacy-admin'"
-            ),
+            sa.text("SELECT id FROM roles WHERE company_id = :cid AND code = 'legacy-admin'"),
             {"cid": aero},
         ).scalar()
-        wildcard = conn.execute(
-            sa.text("SELECT id FROM permissions WHERE code = '*'")
-        ).scalar()
+        wildcard = conn.execute(sa.text("SELECT id FROM permissions WHERE code = '*'")).scalar()
         if legacy_role and wildcard:
             already = conn.execute(
                 sa.text(
-                    "SELECT 1 FROM role_permissions "
-                    "WHERE role_id = :rid AND permission_id = :pid"
+                    "SELECT 1 FROM role_permissions WHERE role_id = :rid AND permission_id = :pid"
                 ),
                 {"rid": legacy_role, "pid": wildcard},
             ).scalar()
             if not already:
                 conn.execute(
                     sa.text(
-                        "INSERT INTO role_permissions (role_id, permission_id) "
-                        "VALUES (:rid, :pid)"
+                        "INSERT INTO role_permissions (role_id, permission_id) VALUES (:rid, :pid)"
                     ),
                     {"rid": legacy_role, "pid": wildcard},
                 )
@@ -219,9 +221,7 @@ def upgrade() -> None:
     if aero:
         demo_email = "demo@aerohotel.local"
         existing = conn.execute(
-            sa.text(
-                "SELECT id FROM users WHERE company_id = :cid AND email = :email"
-            ),
+            sa.text("SELECT id FROM users WHERE company_id = :cid AND email = :email"),
             {"cid": aero, "email": demo_email},
         ).scalar()
         if not existing:
@@ -242,9 +242,11 @@ def upgrade() -> None:
                     "CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
                 ),
                 {
-                    "cid": aero, "rid": admin_role,
+                    "cid": aero,
+                    "rid": admin_role,
                     "name": "Demo Aero Hotel",
-                    "email": demo_email, "pwd": hashed,
+                    "email": demo_email,
+                    "pwd": hashed,
                 },
             )
 

@@ -58,22 +58,10 @@ def _build_detail(data: dict) -> WorkDiaryDetail:
         owner=data["owner_name"],
         owner_user_id=d.owner_user_id,
         updated_at=d.updated_at,
-        activities=[
-            WorkDiaryActivitySummary(**a)
-            for a in data["activities"]
-        ],
-        teams=[
-            WorkDiaryTeamSummary(**t)
-            for t in data["teams"]
-        ],
-        equipment=[
-            WorkDiaryEquipmentSummary(**e)
-            for e in data["equipment"]
-        ],
-        observations=[
-            WorkDiaryObservationSummary(**o)
-            for o in data["observations"]
-        ],
+        activities=[WorkDiaryActivitySummary(**a) for a in data["activities"]],
+        teams=[WorkDiaryTeamSummary(**t) for t in data["teams"]],
+        equipment=[WorkDiaryEquipmentSummary(**e) for e in data["equipment"]],
+        observations=[WorkDiaryObservationSummary(**o) for o in data["observations"]],
     )
 
 
@@ -85,9 +73,7 @@ async def list_work_diaries_endpoint(
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
     search: str | None = None,
 ) -> WorkDiaryListResponse:
-    rows, total = await list_work_diaries(
-        session, user.company_id, page, page_size, search
-    )
+    rows, total = await list_work_diaries(session, user.company_id, page, page_size, search)
     return WorkDiaryListResponse(
         items=[
             WorkDiarySummary(
@@ -108,17 +94,13 @@ async def list_work_diaries_endpoint(
     )
 
 
-@router.get(
-    "/{diary_id}", response_model=WorkDiaryDetail
-)
+@router.get("/{diary_id}", response_model=WorkDiaryDetail)
 async def get_work_diary_endpoint(
     diary_id: int,
     user: ViewUser,
     session: Session,
 ) -> WorkDiaryDetail:
-    data = await get_work_diary(
-        session, user.company_id, diary_id
-    )
+    data = await get_work_diary(session, user.company_id, diary_id)
     if data is None:
         raise HTTPException(
             status_code=404,
@@ -127,34 +109,16 @@ async def get_work_diary_endpoint(
     return _build_detail(data)
 
 
-@router.post(
-    "", response_model=WorkDiaryDetail, status_code=201
-)
+@router.post("", response_model=WorkDiaryDetail, status_code=201)
 async def create_work_diary_endpoint(
     body: WorkDiaryCreate,
     user: CreateUser,
     session: Session,
 ) -> WorkDiaryDetail:
-    activities = (
-        [a.model_dump() for a in body.activities]
-        if body.activities
-        else None
-    )
-    teams = (
-        [t.model_dump() for t in body.teams]
-        if body.teams
-        else None
-    )
-    equipment = (
-        [e.model_dump() for e in body.equipment]
-        if body.equipment
-        else None
-    )
-    observations = (
-        [o.model_dump() for o in body.observations]
-        if body.observations
-        else None
-    )
+    activities = [a.model_dump() for a in body.activities] if body.activities else None
+    teams = [t.model_dump() for t in body.teams] if body.teams else None
+    equipment = [e.model_dump() for e in body.equipment] if body.equipment else None
+    observations = [o.model_dump() for o in body.observations] if body.observations else None
     data = await create_work_diary(
         session,
         user.company_id,
@@ -173,9 +137,7 @@ async def create_work_diary_endpoint(
     return _build_detail(data)
 
 
-@router.patch(
-    "/{diary_id}", response_model=WorkDiaryDetail
-)
+@router.patch("/{diary_id}", response_model=WorkDiaryDetail)
 async def update_work_diary_endpoint(
     diary_id: int,
     body: WorkDiaryUpdate,
@@ -208,9 +170,7 @@ async def delete_work_diary_endpoint(
     user: DeleteUser,
     session: Session,
 ) -> None:
-    deleted = await delete_work_diary(
-        session, user.company_id, user.id, diary_id
-    )
+    deleted = await delete_work_diary(session, user.company_id, user.id, diary_id)
     if not deleted:
         raise HTTPException(
             status_code=404,

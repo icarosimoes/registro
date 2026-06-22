@@ -18,13 +18,14 @@ from app.domain.attachments.service import (
 )
 from app.domain.auth.repository import AuthenticatedUser
 
-_UNSAFE_FILENAME_RE = re.compile(r'[^\w\s\-\.\(\)]', re.UNICODE)
+_UNSAFE_FILENAME_RE = re.compile(r"[^\w\s\-\.\(\)]", re.UNICODE)
 
 
 def _sanitize_filename(name: str) -> str:
     name = name.rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
     name = _UNSAFE_FILENAME_RE.sub("_", name).strip(". ")
     return name or "download"
+
 
 router = APIRouter(tags=["attachments"])
 
@@ -72,7 +73,10 @@ async def list_attachments_endpoint(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> AttachmentListResponse:
     records, total = await list_attachments(
-        session, user.company_id, entity_type, entity_id,
+        session,
+        user.company_id,
+        entity_type,
+        entity_id,
     )
     return AttachmentListResponse(
         items=[
@@ -123,7 +127,10 @@ async def delete_attachment_endpoint(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
     deleted = await delete_attachment(
-        session, user.company_id, attachment_id, user_id=user.id,
+        session,
+        user.company_id,
+        attachment_id,
+        user_id=user.id,
     )
     if not deleted:
         raise HTTPException(status_code=404, detail={"code": "not_found"})

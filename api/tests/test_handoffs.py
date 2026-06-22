@@ -40,7 +40,9 @@ async def test_update(client):
     hid = r.json()["id"]
 
     r = await client.patch(
-        f"{PREFIX}/{hid}", json={"title": "After"}, headers=auth_header(TENANT_A),
+        f"{PREFIX}/{hid}",
+        json={"title": "After"},
+        headers=auth_header(TENANT_A),
     )
     assert r.status_code == 200
     assert r.json()["title"] == "After"
@@ -98,7 +100,9 @@ async def test_cross_tenant_isolation(client):
     assert r.status_code == 404
 
     r = await client.patch(
-        f"{PREFIX}/{hid}", json={"title": "Hack"}, headers=auth_header(TENANT_B, 2),
+        f"{PREFIX}/{hid}",
+        json={"title": "Hack"},
+        headers=auth_header(TENANT_B, 2),
     )
     assert r.status_code == 404
 

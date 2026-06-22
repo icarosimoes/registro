@@ -56,8 +56,10 @@ async def search_users(
         pattern = f"%{q.strip()}%"
         filters.append(or_(User.name.ilike(pattern), User.email.ilike(pattern)))
     rows = (
-        await session.execute(select(User).where(*filters).order_by(User.name).limit(10))
-    ).scalars().all()
+        (await session.execute(select(User).where(*filters).order_by(User.name).limit(10)))
+        .scalars()
+        .all()
+    )
     return list(rows)
 
 
@@ -249,22 +251,33 @@ async def invite_user(
 ) -> User | None:
     temp_password = secrets.token_urlsafe(24)
     record = await create_user(
-        session, company_id, actor_id,
-        name=name, email=email, phone=phone,
-        password=temp_password, role_id=role_id, active=active,
-        job_title=job_title, sector_id=sector_id,
+        session,
+        company_id,
+        actor_id,
+        name=name,
+        email=email,
+        phone=phone,
+        password=temp_password,
+        role_id=role_id,
+        active=active,
+        job_title=job_title,
+        sector_id=sector_id,
     )
     if record is None:
         return None
 
     from app.core.security import create_invite_token
+
     settings = get_settings()
     token = create_invite_token(
-        user_id=record.id, company_id=company_id, secret=settings.jwt_secret,
+        user_id=record.id,
+        company_id=company_id,
+        secret=settings.jwt_secret,
     )
     invite_url = f"{settings.registro_web_url}/definir-senha?token={token}"
 
     from app.integrations.brevo import send_email
+
     await send_email(
         api_key=settings.brevo_api_key,
         from_address=settings.mail_from_address,

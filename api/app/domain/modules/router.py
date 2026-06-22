@@ -73,13 +73,19 @@ async def list_records_endpoint(
     return ModuleRecordListResponse(
         items=[
             ModuleRecordSummary(
-                id=rec.id, title=rec.title, description=rec.description,
-                category=rec.category, owner=owner_name or "Não atribuído",
-                status=rec.status, updated_at=rec.updated_at,
+                id=rec.id,
+                title=rec.title,
+                description=rec.description,
+                category=rec.category,
+                owner=owner_name or "Não atribuído",
+                status=rec.status,
+                updated_at=rec.updated_at,
             )
             for rec, owner_name in rows
         ],
-        total=total, page=page, page_size=page_size,
+        total=total,
+        page=page,
+        page_size=page_size,
     )
 
 
@@ -92,14 +98,27 @@ async def create_record_endpoint(
 ) -> ModuleRecordSummary:
     _validate_module(module_slug)
     record, owner_name = await create_record(
-        session, user.company_id, user.id, user.name, user.email, module_slug,
-        title=body.title, description=body.description, category=body.category,
-        status=body.status, owner_user_id=body.owner_user_id, notify_user_ids=body.notify_user_ids,
+        session,
+        user.company_id,
+        user.id,
+        user.name,
+        user.email,
+        module_slug,
+        title=body.title,
+        description=body.description,
+        category=body.category,
+        status=body.status,
+        owner_user_id=body.owner_user_id,
+        notify_user_ids=body.notify_user_ids,
     )
     return ModuleRecordSummary(
-        id=record.id, title=record.title, description=record.description,
-        category=record.category, owner=owner_name or "Não atribuído",
-        status=record.status, updated_at=record.updated_at,
+        id=record.id,
+        title=record.title,
+        description=record.description,
+        category=record.category,
+        owner=owner_name or "Não atribuído",
+        status=record.status,
+        updated_at=record.updated_at,
     )
 
 
@@ -114,16 +133,26 @@ async def update_record_endpoint(
     _validate_module(module_slug)
     updates = body.model_dump(exclude_none=True)
     result = await update_record(
-        session, user.company_id, user.id, user.name, user.email,
-        module_slug, record_id, updates,
+        session,
+        user.company_id,
+        user.id,
+        user.name,
+        user.email,
+        module_slug,
+        record_id,
+        updates,
     )
     if result is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
     record, owner_name = result
     return ModuleRecordSummary(
-        id=record.id, title=record.title, description=record.description,
-        category=record.category, owner=owner_name or "Não atribuído",
-        status=record.status, updated_at=record.updated_at,
+        id=record.id,
+        title=record.title,
+        description=record.description,
+        category=record.category,
+        owner=owner_name or "Não atribuído",
+        status=record.status,
+        updated_at=record.updated_at,
     )
 
 

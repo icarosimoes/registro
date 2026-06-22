@@ -73,16 +73,21 @@ def guess_content_type(filepath: Path) -> str:
 
 
 async def migrate_user_avatars(
-    company_id: int, storage_dir: Path, dry_run: bool, report: MigrationReport,
+    company_id: int,
+    storage_dir: Path,
+    dry_run: bool,
+    report: MigrationReport,
 ) -> None:
     async with SessionLocal() as session:
-        users = (await session.scalars(
-            select(User).where(
-                User.company_id == company_id,
-                User.avatar_url.isnot(None),
-                User.avatar_url != "",
+        users = (
+            await session.scalars(
+                select(User).where(
+                    User.company_id == company_id,
+                    User.avatar_url.isnot(None),
+                    User.avatar_url != "",
+                )
             )
-        )).all()
+        ).all()
         for user in users:
             if user.avatar_url and user.avatar_url.startswith(f"{company_id}/"):
                 report.skipped += 1
@@ -90,33 +95,34 @@ async def migrate_user_avatars(
             path = resolve_path(storage_dir, user.avatar_url)
             if not path:
                 report.missing_file += 1
-                report.errors.append(
-                    f"user {user.id}: arquivo não encontrado: {user.avatar_url}"
-                )
+                report.errors.append(f"user {user.id}: arquivo não encontrado: {user.avatar_url}")
                 continue
             key = build_object_key(company_id, "user-avatar", user.id, path.name)
             if not dry_run:
                 data = path.read_bytes()
                 upload_file(data, key, guess_content_type(path))
-                await session.execute(
-                    update(User).where(User.id == user.id).values(avatar_url=key)
-                )
+                await session.execute(update(User).where(User.id == user.id).values(avatar_url=key))
             report.migrated += 1
         if not dry_run:
             await session.commit()
 
 
 async def migrate_occurrence_files(
-    company_id: int, storage_dir: Path, dry_run: bool, report: MigrationReport,
+    company_id: int,
+    storage_dir: Path,
+    dry_run: bool,
+    report: MigrationReport,
 ) -> None:
     async with SessionLocal() as session:
-        items = (await session.scalars(
-            select(Occurrence).where(
-                Occurrence.company_id == company_id,
-                Occurrence.file.isnot(None),
-                Occurrence.file != "",
+        items = (
+            await session.scalars(
+                select(Occurrence).where(
+                    Occurrence.company_id == company_id,
+                    Occurrence.file.isnot(None),
+                    Occurrence.file != "",
+                )
             )
-        )).all()
+        ).all()
         for item in items:
             if item.file and item.file.startswith(f"{company_id}/"):
                 report.skipped += 1
@@ -124,9 +130,7 @@ async def migrate_occurrence_files(
             path = resolve_path(storage_dir, item.file)
             if not path:
                 report.missing_file += 1
-                report.errors.append(
-                    f"occurrence {item.id}: arquivo não encontrado: {item.file}"
-                )
+                report.errors.append(f"occurrence {item.id}: arquivo não encontrado: {item.file}")
                 continue
             key = build_object_key(company_id, "occurrence", item.id, path.name)
             if not dry_run:
@@ -141,16 +145,21 @@ async def migrate_occurrence_files(
 
 
 async def migrate_procedure_files(
-    company_id: int, storage_dir: Path, dry_run: bool, report: MigrationReport,
+    company_id: int,
+    storage_dir: Path,
+    dry_run: bool,
+    report: MigrationReport,
 ) -> None:
     async with SessionLocal() as session:
-        items = (await session.scalars(
-            select(Procedure).where(
-                Procedure.company_id == company_id,
-                Procedure.file.isnot(None),
-                Procedure.file != "",
+        items = (
+            await session.scalars(
+                select(Procedure).where(
+                    Procedure.company_id == company_id,
+                    Procedure.file.isnot(None),
+                    Procedure.file != "",
+                )
             )
-        )).all()
+        ).all()
         for item in items:
             if not item.file:
                 continue
@@ -165,9 +174,7 @@ async def migrate_procedure_files(
                 path = resolve_path(storage_dir, raw_path)
                 if not path:
                     report.missing_file += 1
-                    report.errors.append(
-                        f"procedure {item.id}: arquivo não encontrado: {raw_path}"
-                    )
+                    report.errors.append(f"procedure {item.id}: arquivo não encontrado: {raw_path}")
                     new_entries.append(entry)
                     continue
                 key = build_object_key(company_id, "procedure", item.id, path.name)
@@ -188,13 +195,16 @@ async def migrate_procedure_files(
 
 
 async def migrate_shift_report_payload_files(
-    company_id: int, storage_dir: Path, dry_run: bool, report: MigrationReport,
+    company_id: int,
+    storage_dir: Path,
+    dry_run: bool,
+    report: MigrationReport,
 ) -> None:
     """ShiftReport uploads are referenced in the payload JSON from import_v1."""
     async with SessionLocal() as session:
-        items = (await session.scalars(
-            select(ShiftReport).where(ShiftReport.company_id == company_id)
-        )).all()
+        items = (
+            await session.scalars(select(ShiftReport).where(ShiftReport.company_id == company_id))
+        ).all()
         for item in items:
             if not item.payload:
                 continue
@@ -211,9 +221,7 @@ async def run(storage_dir: Path, dry_run: bool) -> dict:
         ensure_bucket()
 
     async with SessionLocal() as session:
-        company = await session.scalar(
-            select(Company).where(Company.slug == TENANT_SLUG)
-        )
+        company = await session.scalar(select(Company).where(Company.slug == TENANT_SLUG))
         if not company:
             raise RuntimeError(
                 f"Tenant '{TENANT_SLUG}' não encontrado. Rode import_v1.py primeiro."

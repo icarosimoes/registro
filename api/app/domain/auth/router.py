@@ -164,6 +164,7 @@ async def set_password(
         ) from exc
 
     from app.models import User
+
     record = await session.scalar(
         select(User).where(
             User.id == user_id,
@@ -178,6 +179,7 @@ async def set_password(
     record.email_verified_at = datetime.now(UTC)
 
     from app.core.audit import record_event
+
     await record_event(
         session,
         company_id=company_id,

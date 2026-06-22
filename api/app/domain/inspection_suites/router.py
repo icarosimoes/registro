@@ -28,7 +28,11 @@ async def list_inspection_suites(
     search: str | None = None,
 ) -> InspectionSuiteListResponse:
     rows, total = await service.list_inspection_suites(
-        session, user.company_id, page, page_size, search,
+        session,
+        user.company_id,
+        page,
+        page_size,
+        search,
     )
     return InspectionSuiteListResponse(
         items=[
@@ -96,7 +100,11 @@ async def update_inspection_suite(
     if not updates:
         raise HTTPException(status_code=422, detail={"code": "no_fields"})
     detail = await service.update_inspection_suite(
-        session, user.company_id, user.id, suite_id, updates,
+        session,
+        user.company_id,
+        user.id,
+        suite_id,
+        updates,
     )
     if detail is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
@@ -110,7 +118,10 @@ async def delete_inspection_suite(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
     deleted = await service.delete_inspection_suite(
-        session, user.company_id, user.id, suite_id,
+        session,
+        user.company_id,
+        user.id,
+        suite_id,
     )
     if not deleted:
         raise HTTPException(status_code=404, detail={"code": "not_found"})

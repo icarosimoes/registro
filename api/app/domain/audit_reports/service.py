@@ -24,12 +24,7 @@ async def list_audit_reports(
         filters.append(AuditReport.report_date >= date_from)
     if date_to:
         filters.append(AuditReport.report_date <= date_to)
-    total = (
-        await session.scalar(
-            select(func.count(AuditReport.id)).where(*filters)
-        )
-        or 0
-    )
+    total = await session.scalar(select(func.count(AuditReport.id)).where(*filters)) or 0
     rows = (
         await session.execute(
             select(AuditReport, User.name)
@@ -67,12 +62,16 @@ async def get_audit_report(
     report = row[0]
     auditor_name = row[1]
     items = (
-        await session.execute(
-            select(AuditReportItem)
-            .where(AuditReportItem.report_id == report.id)
-            .order_by(AuditReportItem.sort_order, AuditReportItem.id)
+        (
+            await session.execute(
+                select(AuditReportItem)
+                .where(AuditReportItem.report_id == report.id)
+                .order_by(AuditReportItem.sort_order, AuditReportItem.id)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return report, auditor_name, list(items)
 
 
@@ -81,11 +80,7 @@ async def _sync_items(
     report_id: int,
     items_input: list[dict],
 ) -> None:
-    await session.execute(
-        sa_delete(AuditReportItem).where(
-            AuditReportItem.report_id == report_id
-        )
-    )
+    await session.execute(sa_delete(AuditReportItem).where(AuditReportItem.report_id == report_id))
     for item_data in items_input:
         session.add(AuditReportItem(report_id=report_id, **item_data))
 
@@ -125,19 +120,21 @@ async def create_audit_report(
     await session.commit()
     await session.refresh(report)
     auditor_name = (
-        await session.scalar(
-            select(User.name).where(User.id == report.auditor_user_id)
-        )
+        await session.scalar(select(User.name).where(User.id == report.auditor_user_id))
         if report.auditor_user_id
         else None
     )
     report_items = (
-        await session.execute(
-            select(AuditReportItem)
-            .where(AuditReportItem.report_id == report.id)
-            .order_by(AuditReportItem.sort_order, AuditReportItem.id)
+        (
+            await session.execute(
+                select(AuditReportItem)
+                .where(AuditReportItem.report_id == report.id)
+                .order_by(AuditReportItem.sort_order, AuditReportItem.id)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return report, auditor_name, list(report_items)
 
 
@@ -177,19 +174,21 @@ async def update_audit_report(
     await session.commit()
     await session.refresh(report)
     auditor_name = (
-        await session.scalar(
-            select(User.name).where(User.id == report.auditor_user_id)
-        )
+        await session.scalar(select(User.name).where(User.id == report.auditor_user_id))
         if report.auditor_user_id
         else None
     )
     report_items = (
-        await session.execute(
-            select(AuditReportItem)
-            .where(AuditReportItem.report_id == report.id)
-            .order_by(AuditReportItem.sort_order, AuditReportItem.id)
+        (
+            await session.execute(
+                select(AuditReportItem)
+                .where(AuditReportItem.report_id == report.id)
+                .order_by(AuditReportItem.sort_order, AuditReportItem.id)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
     return report, auditor_name, list(report_items)
 
 

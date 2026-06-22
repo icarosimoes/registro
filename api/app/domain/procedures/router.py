@@ -34,12 +34,17 @@ async def list_procedures_endpoint(
     return ProcedureListResponse(
         items=[
             ProcedureSummary(
-                id=p.id, name=p.name, link=p.link, file=p.file,
+                id=p.id,
+                name=p.name,
+                link=p.link,
+                file=p.file,
                 updated_at=p.updated_at,
             )
             for p in rows
         ],
-        total=total, page=page, page_size=page_size,
+        total=total,
+        page=page,
+        page_size=page_size,
     )
 
 
@@ -50,11 +55,18 @@ async def create_procedure_endpoint(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> ProcedureSummary:
     record = await create_procedure(
-        session, user.company_id, user.id,
-        name=body.name, link=body.link, file=body.file,
+        session,
+        user.company_id,
+        user.id,
+        name=body.name,
+        link=body.link,
+        file=body.file,
     )
     return ProcedureSummary(
-        id=record.id, name=record.name, link=record.link, file=record.file,
+        id=record.id,
+        name=record.name,
+        link=record.link,
+        file=record.file,
         updated_at=record.updated_at,
     )
 
@@ -71,7 +83,10 @@ async def update_procedure_endpoint(
     if record is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
     return ProcedureSummary(
-        id=record.id, name=record.name, link=record.link, file=record.file,
+        id=record.id,
+        name=record.name,
+        link=record.link,
+        file=record.file,
         updated_at=record.updated_at,
     )
 

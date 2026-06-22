@@ -18,13 +18,11 @@ async def list_permissions(session: AsyncSession) -> list:
         return [SimpleNamespace(**p) for p in hit]
 
     rows = (
-        await session.execute(
-            select(Permission).order_by(Permission.module, Permission.code)
-        )
-    ).scalars().all()
-    serialized = [
-        {"id": p.id, "code": p.code, "name": p.name, "module": p.module} for p in rows
-    ]
+        (await session.execute(select(Permission).order_by(Permission.module, Permission.code)))
+        .scalars()
+        .all()
+    )
+    serialized = [{"id": p.id, "code": p.code, "name": p.name, "module": p.module} for p in rows]
     await cache_set(cache_key, serialized, TTL_PERMISSIONS)
     return list(rows)
 
@@ -57,9 +55,7 @@ async def list_roles(
     return rows, total
 
 
-async def get_role(
-    session: AsyncSession, company_id: int, role_id: int
-) -> Role | None:
+async def get_role(session: AsyncSession, company_id: int, role_id: int) -> Role | None:
     return (
         await session.execute(
             select(Role)
@@ -84,10 +80,10 @@ async def create_role(
 
     if permission_codes:
         perms = (
-            await session.execute(
-                select(Permission).where(Permission.code.in_(permission_codes))
-            )
-        ).scalars().all()
+            (await session.execute(select(Permission).where(Permission.code.in_(permission_codes))))
+            .scalars()
+            .all()
+        )
         role.permissions = list(perms)
 
     await session.flush()
@@ -128,10 +124,14 @@ async def update_role(
         if sorted(permission_codes) != old_codes:
             diff["permissions"] = {"from": old_codes, "to": sorted(permission_codes)}
             perms = (
-                await session.execute(
-                    select(Permission).where(Permission.code.in_(permission_codes))
+                (
+                    await session.execute(
+                        select(Permission).where(Permission.code.in_(permission_codes))
+                    )
                 )
-            ).scalars().all()
+                .scalars()
+                .all()
+            )
             role.permissions = list(perms)
 
     if diff:
@@ -158,9 +158,7 @@ async def delete_role(
         return False
 
     user_count = await session.scalar(
-        select(func.count(User.id)).where(
-            User.role_id == role_id, User.deleted_at.is_(None)
-        )
+        select(func.count(User.id)).where(User.role_id == role_id, User.deleted_at.is_(None))
     )
     if user_count and user_count > 0:
         return "has_users"

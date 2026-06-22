@@ -51,9 +51,7 @@ async def get_timeline_endpoint(
     return TimelineResponse(items=[TimelineEntry(**item) for item in items])
 
 
-@router.post(
-    "/{entity_type}/{entity_id}/comment", response_model=TimelineEntry, status_code=201
-)
+@router.post("/{entity_type}/{entity_id}/comment", response_model=TimelineEntry, status_code=201)
 async def add_comment_endpoint(
     entity_type: str,
     entity_id: int,
@@ -69,7 +67,13 @@ async def add_comment_endpoint(
         raise HTTPException(status_code=404, detail={"code": "not_found"})
 
     result = await add_comment(
-        session, user.company_id, user.id, user.name, user.email,
-        entity_type, entity_id, body.message.strip(),
+        session,
+        user.company_id,
+        user.id,
+        user.name,
+        user.email,
+        entity_type,
+        entity_id,
+        body.message.strip(),
     )
     return TimelineEntry(**result)

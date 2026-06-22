@@ -59,9 +59,7 @@ async def list_meetings_endpoint(
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
     search: str | None = None,
 ) -> MeetingListResponse:
-    rows, total = await list_meetings(
-        session, user.company_id, page, page_size, search
-    )
+    rows, total = await list_meetings(session, user.company_id, page, page_size, search)
     return MeetingListResponse(
         items=[
             MeetingSummary(
@@ -76,8 +74,7 @@ async def list_meetings_endpoint(
                 subject_count=s_count,
                 updated_at=meeting.updated_at,
             )
-            for meeting, owner_name, p_count, s_count
-            in rows
+            for meeting, owner_name, p_count, s_count in rows
         ],
         total=total,
         page=page,
@@ -98,29 +95,19 @@ def _build_detail(data: dict) -> MeetingDetail:
         participant_count=data["participant_count"],
         subject_count=data["subject_count"],
         updated_at=m.updated_at,
-        participants=[
-            ParticipantSummary(**p)
-            for p in data["participants"]
-        ],
-        subjects=[
-            SubjectSummary(**s)
-            for s in data["subjects"]
-        ],
+        participants=[ParticipantSummary(**p) for p in data["participants"]],
+        subjects=[SubjectSummary(**s) for s in data["subjects"]],
         notify_user_ids=m.notify_user_ids,
     )
 
 
-@router.get(
-    "/{meeting_id}", response_model=MeetingDetail
-)
+@router.get("/{meeting_id}", response_model=MeetingDetail)
 async def get_meeting_endpoint(
     meeting_id: int,
     user: ViewUser,
     session: Session,
 ) -> MeetingDetail:
-    data = await get_meeting(
-        session, user.company_id, meeting_id
-    )
+    data = await get_meeting(session, user.company_id, meeting_id)
     if data is None:
         raise HTTPException(
             status_code=404,
@@ -135,9 +122,7 @@ async def meeting_pdf_endpoint(
     user: ViewUser,
     session: Session,
 ) -> StreamingResponse:
-    data = await get_meeting(
-        session, user.company_id, meeting_id
-    )
+    data = await get_meeting(session, user.company_id, meeting_id)
     if data is None:
         raise HTTPException(
             status_code=404,
@@ -147,9 +132,7 @@ async def meeting_pdf_endpoint(
     from app.domain.meetings.pdf import generate_meeting_pdf
     from app.domain.timeline.service import get_timeline
 
-    timeline = await get_timeline(
-        session, user.company_id, "meeting", meeting_id
-    )
+    timeline = await get_timeline(session, user.company_id, "meeting", meeting_id)
     buf = generate_meeting_pdf(
         company_name=user.company_name,
         meeting=data["meeting"],
@@ -162,32 +145,18 @@ async def meeting_pdf_endpoint(
     return StreamingResponse(
         buf,
         media_type="application/pdf",
-        headers={
-            "Content-Disposition": (
-                f'attachment; filename="{filename}"'
-            )
-        },
+        headers={"Content-Disposition": (f'attachment; filename="{filename}"')},
     )
 
 
-@router.post(
-    "", response_model=MeetingDetail, status_code=201
-)
+@router.post("", response_model=MeetingDetail, status_code=201)
 async def create_meeting_endpoint(
     body: MeetingCreate,
     user: CreateUser,
     session: Session,
 ) -> MeetingDetail:
-    participants = (
-        [p.model_dump() for p in body.participants]
-        if body.participants
-        else None
-    )
-    subjects = (
-        [s.model_dump() for s in body.subjects]
-        if body.subjects
-        else None
-    )
+    participants = [p.model_dump() for p in body.participants] if body.participants else None
+    subjects = [s.model_dump() for s in body.subjects] if body.subjects else None
     data = await create_meeting(
         session,
         user.company_id,
@@ -207,9 +176,7 @@ async def create_meeting_endpoint(
     return _build_detail(data)
 
 
-@router.patch(
-    "/{meeting_id}", response_model=MeetingDetail
-)
+@router.patch("/{meeting_id}", response_model=MeetingDetail)
 async def update_meeting_endpoint(
     meeting_id: int,
     body: MeetingUpdate,
@@ -219,7 +186,8 @@ async def update_meeting_endpoint(
     updates = body.model_dump(exclude_none=True)
     if "participants" in updates:
         updates["participants"] = [
-            p.model_dump() for p in body.participants  # type: ignore
+            p.model_dump()
+            for p in body.participants  # type: ignore
         ]
     data = await update_meeting(
         session,
@@ -244,9 +212,7 @@ async def delete_meeting_endpoint(
     user: DeleteUser,
     session: Session,
 ) -> None:
-    deleted = await delete_meeting(
-        session, user.company_id, user.id, meeting_id
-    )
+    deleted = await delete_meeting(session, user.company_id, user.id, meeting_id)
     if not deleted:
         raise HTTPException(
             status_code=404,

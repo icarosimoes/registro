@@ -2,8 +2,9 @@
 
 from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision: str = "20260620_0017"
 down_revision: str = "20260620_0016"
@@ -28,9 +29,7 @@ def _drop_fk_safe(table: str, constraint: str) -> None:
 def _drop_index_safe(index_name: str, table_name: str) -> None:
     conn = op.get_bind()
     result = conn.execute(
-        sa.text(
-            "SELECT 1 FROM pg_indexes WHERE indexname = :name AND tablename = :table"
-        ),
+        sa.text("SELECT 1 FROM pg_indexes WHERE indexname = :name AND tablename = :table"),
         {"name": index_name, "table": table_name},
     ).scalar()
     if result:
@@ -52,14 +51,17 @@ def upgrade() -> None:
     conn = op.get_bind()
 
     def _index_exists(name: str) -> bool:
-        return bool(conn.execute(
-            sa.text("SELECT 1 FROM pg_indexes WHERE indexname = :name"),
-            {"name": name},
-        ).scalar())
+        return bool(
+            conn.execute(
+                sa.text("SELECT 1 FROM pg_indexes WHERE indexname = :name"),
+                {"name": name},
+            ).scalar()
+        )
 
     if not _index_exists("ix_attachments_company_entity"):
         op.create_index(
-            "ix_attachments_company_entity", "attachments",
+            "ix_attachments_company_entity",
+            "attachments",
             ["company_id", "entity_type", "entity_id"],
         )
     _drop_index_safe("ix_attachments_entity_type", "attachments")
@@ -67,20 +69,23 @@ def upgrade() -> None:
 
     if not _index_exists("ix_audit_events_company_entity"):
         op.create_index(
-            "ix_audit_events_company_entity", "audit_events",
+            "ix_audit_events_company_entity",
+            "audit_events",
             ["company_id", "entity_type", "entity_id"],
         )
     _drop_index_safe("ix_audit_events_entity", "audit_events")
 
     if not _index_exists("ix_fiscal_requests_company_status"):
         op.create_index(
-            "ix_fiscal_requests_company_status", "fiscal_requests",
+            "ix_fiscal_requests_company_status",
+            "fiscal_requests",
             ["company_id", "status"],
         )
 
     if not _index_exists("ix_notifications_user_unread"):
         op.create_index(
-            "ix_notifications_user_unread", "notifications",
+            "ix_notifications_user_unread",
+            "notifications",
             ["user_id", "read_at"],
         )
 

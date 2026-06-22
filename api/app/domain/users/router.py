@@ -116,11 +116,17 @@ async def _to_summary(session: AsyncSession, record) -> UserSummary:
     role_name = await get_role_name(session, record.role_id)
     sector_name = await get_sector_name(session, record.sector_id)
     return UserSummary(
-        id=record.id, name=record.name, email=record.email, phone=record.phone,
-        role_id=record.role_id, role_name=role_name,
-        job_title=record.job_title, sector_name=sector_name,
+        id=record.id,
+        name=record.name,
+        email=record.email,
+        phone=record.phone,
+        role_id=record.role_id,
+        role_name=role_name,
+        job_title=record.job_title,
+        sector_name=sector_name,
         avatar_url=record.avatar_url,
-        active=record.active, updated_at=record.updated_at,
+        active=record.active,
+        updated_at=record.updated_at,
     )
 
 
@@ -153,15 +159,23 @@ async def list_users_endpoint(
     return UserListResponse(
         items=[
             UserSummary(
-                id=u.id, name=u.name, email=u.email, phone=u.phone,
-                role_id=u.role_id, role_name=role_name,
-                job_title=u.job_title, sector_name=sector_name,
+                id=u.id,
+                name=u.name,
+                email=u.email,
+                phone=u.phone,
+                role_id=u.role_id,
+                role_name=role_name,
+                job_title=u.job_title,
+                sector_name=sector_name,
                 avatar_url=u.avatar_url,
-                active=u.active, updated_at=u.updated_at,
+                active=u.active,
+                updated_at=u.updated_at,
             )
             for u, role_name, sector_name in rows
         ],
-        total=total, page=page, page_size=page_size,
+        total=total,
+        page=page,
+        page_size=page_size,
     )
 
 
@@ -182,10 +196,17 @@ async def create_user_endpoint(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> UserSummary:
     record = await create_user(
-        session, user.company_id, user.id,
-        name=body.name, email=body.email, phone=body.phone,
-        password=body.password, role_id=body.role_id, active=body.active,
-        job_title=body.job_title, sector_id=body.sector_id,
+        session,
+        user.company_id,
+        user.id,
+        name=body.name,
+        email=body.email,
+        phone=body.phone,
+        password=body.password,
+        role_id=body.role_id,
+        active=body.active,
+        job_title=body.job_title,
+        sector_id=body.sector_id,
     )
     if record is None:
         raise HTTPException(
@@ -218,10 +239,16 @@ async def invite_user_endpoint(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> UserSummary:
     record = await invite_user(
-        session, user.company_id, user.id,
-        name=body.name, email=body.email, phone=body.phone,
-        role_id=body.role_id, job_title=body.job_title,
-        sector_id=body.sector_id, active=body.active,
+        session,
+        user.company_id,
+        user.id,
+        name=body.name,
+        email=body.email,
+        phone=body.phone,
+        role_id=body.role_id,
+        job_title=body.job_title,
+        sector_id=body.sector_id,
+        active=body.active,
     )
     if record is None:
         raise HTTPException(
@@ -244,8 +271,12 @@ async def upload_avatar_endpoint(
         raise HTTPException(status_code=400, detail={"code": "file_too_large"})
     try:
         record = await upload_avatar(
-            session, user.company_id, user.id, user_id,
-            data=data, filename=file.filename or "avatar.jpg",
+            session,
+            user.company_id,
+            user.id,
+            user_id,
+            data=data,
+            filename=file.filename or "avatar.jpg",
             content_type=file.content_type or "image/jpeg",
         )
     except ValueError as e:

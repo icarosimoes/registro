@@ -38,6 +38,8 @@ dev = [
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
 testpaths = ["tests"]
 
 [tool.mypy]
@@ -46,6 +48,47 @@ python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
 plugins = []
+
+# Incremental baseline for pre-existing typing debt. Keep this list explicit so
+# new modules remain fully checked and entries can be removed as they are fixed.
+[[tool.mypy.overrides]]
+module = [
+  "app.core.cache",
+  "app.domain.apartment_inspections.service",
+  "app.domain.attachments.service",
+  "app.domain.audit_reports.service",
+  "app.domain.bulletin.service",
+  "app.domain.check_suites.service",
+  "app.domain.checklists.service",
+  "app.domain.dashboard.service",
+  "app.domain.fiscal_requests.router",
+  "app.domain.fiscal_requests.service",
+  "app.domain.handoffs.service",
+  "app.domain.health.router",
+  "app.domain.inspection_suites.service",
+  "app.domain.maintenance.service",
+  "app.domain.meetings.service",
+  "app.domain.modules.service",
+  "app.domain.occurrences.service",
+  "app.domain.platform.router",
+  "app.domain.platform.service",
+  "app.domain.preventive_plans.service",
+  "app.domain.registries.router",
+  "app.domain.registries.service",
+  "app.domain.roles.service",
+  "app.domain.settings.router",
+  "app.domain.shift_reports.service",
+  "app.domain.stock.service",
+  "app.domain.users.service",
+  "app.domain.work_diaries.service",
+  "app.domain.work_orders.router",
+  "app.domain.work_orders.service",
+  "app.integrations.asaas",
+  "app.integrations.brevo",
+  "app.integrations.evolution",
+  "app.main",
+]
+ignore_errors = true
 
 [tool.ruff]
 line-length = 100

@@ -17,14 +17,16 @@ async def record_event(
 ) -> None:
     if event_type == "update" and not diff:
         return
-    session.add(AuditEvent(
-        company_id=company_id,
-        user_id=user_id,
-        entity_type=entity_type,
-        entity_id=entity_id,
-        event_type=event_type,
-        diff=diff,
-    ))
+    session.add(
+        AuditEvent(
+            company_id=company_id,
+            user_id=user_id,
+            entity_type=entity_type,
+            entity_id=entity_id,
+            event_type=event_type,
+            diff=diff,
+        )
+    )
 
 
 def compute_diff(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any] | None:

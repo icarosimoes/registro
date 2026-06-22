@@ -34,7 +34,9 @@ async def health(
 async def readiness() -> ReadinessResponse:
     if engine is None:
         return ReadinessResponse(
-            status="not_configured", database="not_configured", cache="unavailable",
+            status="not_configured",
+            database="not_configured",
+            cache="unavailable",
         )
     async with engine.connect() as connection:
         await connection.execute(text("SELECT 1"))

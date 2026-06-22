@@ -1,4 +1,3 @@
-import asyncio
 import os
 
 import pytest
@@ -15,13 +14,6 @@ TENANT_B = 2
 
 _TEST_DB_URL = os.environ.get("TEST_DATABASE_URL") or os.environ.get("DATABASE_URL")
 USE_POSTGRES = bool(_TEST_DB_URL and "postgresql" in _TEST_DB_URL)
-
-
-@pytest.fixture(scope="session")
-def event_loop():
-    loop = asyncio.new_event_loop()
-    yield loop
-    loop.close()
 
 
 @pytest.fixture(scope="session")
@@ -132,10 +124,9 @@ def app(test_session_factory):
             try:
                 yield session
             finally:
-                if USE_POSTGRES:
-                    from sqlalchemy import text
-
-                    await session.execute(text("RESET app.current_company_id"))
+                # SET LOCAL is transaction-scoped; rolling back also keeps a
+                # failed request from poisoning the connection pool.
+                await session.rollback()
 
     from typing import Annotated
 
@@ -162,7 +153,8 @@ def app(test_session_factory):
             from sqlalchemy import text
 
             await session.execute(
-                text("SET LOCAL app.current_company_id = :cid"), {"cid": str(cid)}
+                text("SELECT set_config('app.current_company_id', :cid, true)"),
+                {"cid": str(cid)},
             )
 
         return AuthenticatedUser(

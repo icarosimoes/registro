@@ -5,8 +5,9 @@ Revises: 20260621_0038
 Create Date: 2026-06-21
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260621_0039"
 down_revision = "20260621_0038"
@@ -21,19 +22,29 @@ ROLE_DEFINITIONS = {
     "recepcao": {
         "name": "Recepção",
         "include": {
-            "occurrence.view", "occurrence.create", "occurrence.edit", "occurrence.delete",
-            "fiscal_request.view", "fiscal_request.create",
-            "fiscal_request.edit", "fiscal_request.delete",
+            "occurrence.view",
+            "occurrence.create",
+            "occurrence.edit",
+            "occurrence.delete",
+            "fiscal_request.view",
+            "fiscal_request.create",
+            "fiscal_request.edit",
+            "fiscal_request.delete",
             "registry.view",
             "meeting.view",
-            "shift_report.view", "shift_report.create",
-            "shift_report.edit", "shift_report.delete",
+            "shift_report.view",
+            "shift_report.create",
+            "shift_report.edit",
+            "shift_report.delete",
         },
     },
     "governanca": {
         "name": "Governança",
         "include": {
-            "occurrence.view", "occurrence.create", "occurrence.edit", "occurrence.delete",
+            "occurrence.view",
+            "occurrence.create",
+            "occurrence.edit",
+            "occurrence.delete",
             "registry.view",
             "procedure.view",
             "shift_report.view",
@@ -42,7 +53,9 @@ ROLE_DEFINITIONS = {
     "manutencao": {
         "name": "Manutenção",
         "include": {
-            "occurrence.view", "occurrence.create", "occurrence.edit",
+            "occurrence.view",
+            "occurrence.create",
+            "occurrence.edit",
             "registry.view",
             "procedure.view",
         },
@@ -50,8 +63,10 @@ ROLE_DEFINITIONS = {
     "financeiro": {
         "name": "Financeiro",
         "include": {
-            "fiscal_request.view", "fiscal_request.create",
-            "fiscal_request.edit", "fiscal_request.delete",
+            "fiscal_request.view",
+            "fiscal_request.create",
+            "fiscal_request.edit",
+            "fiscal_request.delete",
             "settings.view",
             "occurrence.view",
         },
@@ -74,9 +89,7 @@ def upgrade() -> None:
     for (company_id,) in companies:
         for code, defn in ROLE_DEFINITIONS.items():
             existing = conn.execute(
-                sa.text(
-                    "SELECT id FROM roles WHERE company_id = :cid AND code = :code"
-                ),
+                sa.text("SELECT id FROM roles WHERE company_id = :cid AND code = :code"),
                 {"cid": company_id, "code": code},
             ).scalar()
 

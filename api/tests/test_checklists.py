@@ -19,7 +19,9 @@ def _template_body(name="Check teste", **kw):
 @pytest.mark.asyncio
 async def test_create_and_list_templates(client):
     r = await client.post(
-        f"{PREFIX}/templates", json=_template_body(), headers=auth_header(TENANT_A),
+        f"{PREFIX}/templates",
+        json=_template_body(),
+        headers=auth_header(TENANT_A),
     )
     assert r.status_code == 201
     data = r.json()
@@ -34,7 +36,9 @@ async def test_create_and_list_templates(client):
 @pytest.mark.asyncio
 async def test_get_template_by_id(client):
     r = await client.post(
-        f"{PREFIX}/templates", json=_template_body("Get tmpl"), headers=auth_header(TENANT_A),
+        f"{PREFIX}/templates",
+        json=_template_body("Get tmpl"),
+        headers=auth_header(TENANT_A),
     )
     tid = r.json()["id"]
 
@@ -46,7 +50,9 @@ async def test_get_template_by_id(client):
 @pytest.mark.asyncio
 async def test_update_template(client):
     r = await client.post(
-        f"{PREFIX}/templates", json=_template_body("Before"), headers=auth_header(TENANT_A),
+        f"{PREFIX}/templates",
+        json=_template_body("Before"),
+        headers=auth_header(TENANT_A),
     )
     tid = r.json()["id"]
 
@@ -62,7 +68,9 @@ async def test_update_template(client):
 @pytest.mark.asyncio
 async def test_delete_template(client):
     r = await client.post(
-        f"{PREFIX}/templates", json=_template_body("To delete"), headers=auth_header(TENANT_A),
+        f"{PREFIX}/templates",
+        json=_template_body("To delete"),
+        headers=auth_header(TENANT_A),
     )
     tid = r.json()["id"]
 

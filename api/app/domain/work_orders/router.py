@@ -66,11 +66,19 @@ async def list_work_orders(
     priority: str | None = None,
 ) -> WorkOrderListResponse:
     rows, total = await list_orders(
-        session, user.company_id, page, page_size, search, status, priority,
+        session,
+        user.company_id,
+        page,
+        page_size,
+        search,
+        status,
+        priority,
     )
     return WorkOrderListResponse(
         items=[_to_out(row) for row in rows],
-        total=total, page=page, page_size=page_size,
+        total=total,
+        page=page,
+        page_size=page_size,
     )
 
 
@@ -107,12 +115,21 @@ async def create_work_order(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> WorkOrderOut:
     row = await create_order(
-        session, user.company_id, user.id, user.name, user.email,
-        title=body.title, description=body.description, priority=body.priority,
-        category=body.category, location_id=body.location_id,
-        occurrence_id=body.occurrence_id, maintenance_id=body.maintenance_id,
+        session,
+        user.company_id,
+        user.id,
+        user.name,
+        user.email,
+        title=body.title,
+        description=body.description,
+        priority=body.priority,
+        category=body.category,
+        location_id=body.location_id,
+        occurrence_id=body.occurrence_id,
+        maintenance_id=body.maintenance_id,
         assigned_user_id=body.assigned_user_id,
-        notify_user_ids=body.notify_user_ids, sla_hours=body.sla_hours,
+        notify_user_ids=body.notify_user_ids,
+        sla_hours=body.sla_hours,
     )
     return _to_out(row)
 
@@ -128,7 +145,13 @@ async def update_work_order(
     if not updates:
         raise HTTPException(status_code=422, detail={"code": "no_fields"})
     row = await update_order(
-        session, user.company_id, user.id, user.name, user.email, order_id, updates,
+        session,
+        user.company_id,
+        user.id,
+        user.name,
+        user.email,
+        order_id,
+        updates,
     )
     if row is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
@@ -145,8 +168,14 @@ async def transition_work_order(
 ) -> WorkOrderOut:
     try:
         row = await transition_order(
-            session, user.company_id, user.id, user.name, user.email,
-            order_id, target_status, notes=body.notes if body else None,
+            session,
+            user.company_id,
+            user.id,
+            user.name,
+            user.email,
+            order_id,
+            target_status,
+            notes=body.notes if body else None,
         )
     except ValueError as exc:
         raise HTTPException(

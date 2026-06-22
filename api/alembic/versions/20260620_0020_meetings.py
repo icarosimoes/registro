@@ -5,8 +5,9 @@ Revises: 20260620_0019
 Create Date: 2026-06-20
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260620_0020"
 down_revision = "20260620_0019"
@@ -18,7 +19,12 @@ def upgrade() -> None:
     op.create_table(
         "meetings",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("company_id", sa.Integer, sa.ForeignKey("companies.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "company_id",
+            sa.Integer,
+            sa.ForeignKey("companies.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("title", sa.String(255), nullable=False),
         sa.Column("description", sa.Text),
         sa.Column("scheduled_at", sa.DateTime),
@@ -37,8 +43,15 @@ def upgrade() -> None:
     op.create_table(
         "meeting_participants",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("meeting_id", sa.Integer, sa.ForeignKey("meetings.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("user_id", sa.Integer, sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "meeting_id",
+            sa.Integer,
+            sa.ForeignKey("meetings.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
+        sa.Column(
+            "user_id", sa.Integer, sa.ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+        ),
         sa.Column("role", sa.String(20), server_default="attendee"),
         sa.Column("created_at", sa.DateTime, server_default=sa.func.now()),
         sa.UniqueConstraint("meeting_id", "user_id", name="uq_meeting_participant"),
@@ -47,7 +60,12 @@ def upgrade() -> None:
     op.create_table(
         "meeting_subjects",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("meeting_id", sa.Integer, sa.ForeignKey("meetings.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "meeting_id",
+            sa.Integer,
+            sa.ForeignKey("meetings.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("title", sa.String(255), nullable=False),
         sa.Column("description", sa.Text),
         sa.Column("sort_order", sa.Integer, server_default="0"),

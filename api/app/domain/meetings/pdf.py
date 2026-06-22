@@ -30,18 +30,26 @@ def generate_meeting_pdf(
 ) -> io.BytesIO:
     buf = io.BytesIO()
     doc = SimpleDocTemplate(
-        buf, pagesize=A4,
-        leftMargin=2 * cm, rightMargin=2 * cm,
-        topMargin=2 * cm, bottomMargin=2 * cm,
+        buf,
+        pagesize=A4,
+        leftMargin=2 * cm,
+        rightMargin=2 * cm,
+        topMargin=2 * cm,
+        bottomMargin=2 * cm,
     )
     styles = getSampleStyleSheet()
     title_style = ParagraphStyle(
-        "MeetTitle", parent=styles["Heading1"], fontSize=16,
+        "MeetTitle",
+        parent=styles["Heading1"],
+        fontSize=16,
         spaceAfter=6,
     )
     h2 = ParagraphStyle(
-        "H2", parent=styles["Heading2"], fontSize=12,
-        spaceBefore=12, spaceAfter=6,
+        "H2",
+        parent=styles["Heading2"],
+        fontSize=12,
+        spaceBefore=12,
+        spaceAfter=6,
     )
     body = styles["BodyText"]
 
@@ -60,25 +68,25 @@ def generate_meeting_pdf(
         ["Responsável", owner_name],
         [
             "Data/Hora",
-            meeting.scheduled_at.strftime("%d/%m/%Y %H:%M")
-            if meeting.scheduled_at
-            else "—",
+            meeting.scheduled_at.strftime("%d/%m/%Y %H:%M") if meeting.scheduled_at else "—",
         ],
         [
             "Criado em",
-            meeting.created_at.strftime("%d/%m/%Y %H:%M")
-            if meeting.created_at
-            else "—",
+            meeting.created_at.strftime("%d/%m/%Y %H:%M") if meeting.created_at else "—",
         ],
     ]
     t = Table(meta, colWidths=[4 * cm, 12 * cm])
-    t.setStyle(TableStyle([
-        ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
-        ("FONTSIZE", (0, 0), (-1, -1), 10),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-        ("TOPPADDING", (0, 0), (-1, -1), 2),
-        ("VALIGN", (0, 0), (-1, -1), "TOP"),
-    ]))
+    t.setStyle(
+        TableStyle(
+            [
+                ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 10),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                ("TOPPADDING", (0, 0), (-1, -1), 2),
+                ("VALIGN", (0, 0), (-1, -1), "TOP"),
+            ]
+        )
+    )
     elements.append(t)
 
     if meeting.description:
@@ -92,13 +100,17 @@ def generate_meeting_pdf(
             role_label = ROLE_LABELS.get(p.get("role", ""), p.get("role", ""))
             p_data.append([p.get("name", "—"), role_label])
         pt = Table(p_data, colWidths=[10 * cm, 6 * cm])
-        pt.setStyle(TableStyle([
-            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-            ("FONTSIZE", (0, 0), (-1, -1), 10),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
-            ("TOPPADDING", (0, 0), (-1, -1), 2),
-            ("LINEBELOW", (0, 0), (-1, 0), 0.5, (0, 0, 0)),
-        ]))
+        pt.setStyle(
+            TableStyle(
+                [
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, -1), 10),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                    ("TOPPADDING", (0, 0), (-1, -1), 2),
+                    ("LINEBELOW", (0, 0), (-1, 0), 0.5, (0, 0, 0)),
+                ]
+            )
+        )
         elements.append(pt)
 
     if subjects:
@@ -106,9 +118,7 @@ def generate_meeting_pdf(
         for i, s in enumerate(subjects, 1):
             check = "✓" if s.get("resolved") else "○"
             title = s.get("title", "")
-            elements.append(
-                Paragraph(f"{check} {i}. {title}", body)
-            )
+            elements.append(Paragraph(f"{check} {i}. {title}", body))
             if s.get("description"):
                 elements.append(
                     Paragraph(
@@ -127,9 +137,7 @@ def generate_meeting_pdf(
             etype = entry.get("event_type", "")
             msg = entry.get("message", "")
             if etype == "comment" and msg:
-                elements.append(
-                    Paragraph(f"<b>{user}</b> ({ts}): {msg}", body)
-                )
+                elements.append(Paragraph(f"<b>{user}</b> ({ts}): {msg}", body))
             elif etype == "create":
                 elements.append(
                     Paragraph(
@@ -140,14 +148,8 @@ def generate_meeting_pdf(
             elif etype == "update":
                 diff = entry.get("changes", entry.get("diff", {}))
                 if diff:
-                    changes = "; ".join(
-                        f"{k}: {v}" for k, v in diff.items()
-                    )
-                    elements.append(
-                        Paragraph(
-                            f"<b>{user}</b> ({ts}): {changes}", body
-                        )
-                    )
+                    changes = "; ".join(f"{k}: {v}" for k, v in diff.items())
+                    elements.append(Paragraph(f"<b>{user}</b> ({ts}): {changes}", body))
 
     doc.build(elements)
     buf.seek(0)

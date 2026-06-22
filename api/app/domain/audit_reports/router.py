@@ -63,9 +63,7 @@ def _detail(report, auditor_name: str | None, items) -> AuditReportDetail:
 
 @router.get("", response_model=AuditReportListResponse)
 async def list_audit_reports_endpoint(
-    user: Annotated[
-        AuthenticatedUser, require_permission("audit_report.view")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("audit_report.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
@@ -91,18 +89,12 @@ async def list_audit_reports_endpoint(
 @router.get("/{report_id}", response_model=AuditReportDetail)
 async def get_audit_report_endpoint(
     report_id: int,
-    user: Annotated[
-        AuthenticatedUser, require_permission("audit_report.view")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("audit_report.view")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> AuditReportDetail:
-    result = await get_audit_report(
-        session, user.company_id, report_id
-    )
+    result = await get_audit_report(session, user.company_id, report_id)
     if result is None:
-        raise HTTPException(
-            status_code=404, detail={"code": "not_found"}
-        )
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
     report, auditor_name, items = result
     return _detail(report, auditor_name, items)
 
@@ -110,14 +102,10 @@ async def get_audit_report_endpoint(
 @router.post("", response_model=AuditReportDetail, status_code=201)
 async def create_audit_report_endpoint(
     body: AuditReportCreate,
-    user: Annotated[
-        AuthenticatedUser, require_permission("audit_report.create")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("audit_report.create")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> AuditReportDetail:
-    items_dicts = (
-        [item.model_dump() for item in body.items] if body.items else None
-    )
+    items_dicts = [item.model_dump() for item in body.items] if body.items else None
     report, auditor_name, items = await create_audit_report(
         session,
         user.company_id,
@@ -136,15 +124,14 @@ async def create_audit_report_endpoint(
 async def update_audit_report_endpoint(
     report_id: int,
     body: AuditReportUpdate,
-    user: Annotated[
-        AuthenticatedUser, require_permission("audit_report.edit")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("audit_report.edit")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> AuditReportDetail:
     updates = body.model_dump(exclude_none=True)
     if "items" in updates:
         updates["items"] = [
-            item.model_dump() for item in body.items  # type: ignore[union-attr]
+            item.model_dump()
+            for item in body.items  # type: ignore[union-attr]
         ]
     result = await update_audit_report(
         session,
@@ -154,9 +141,7 @@ async def update_audit_report_endpoint(
         updates,
     )
     if result is None:
-        raise HTTPException(
-            status_code=404, detail={"code": "not_found"}
-        )
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
     report, auditor_name, items = result
     return _detail(report, auditor_name, items)
 
@@ -164,15 +149,9 @@ async def update_audit_report_endpoint(
 @router.delete("/{report_id}", status_code=204)
 async def delete_audit_report_endpoint(
     report_id: int,
-    user: Annotated[
-        AuthenticatedUser, require_permission("audit_report.delete")
-    ],
+    user: Annotated[AuthenticatedUser, require_permission("audit_report.delete")],
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> None:
-    deleted = await delete_audit_report(
-        session, user.company_id, user.id, report_id
-    )
+    deleted = await delete_audit_report(session, user.company_id, user.id, report_id)
     if not deleted:
-        raise HTTPException(
-            status_code=404, detail={"code": "not_found"}
-        )
+        raise HTTPException(status_code=404, detail={"code": "not_found"})

@@ -51,11 +51,18 @@ async def list_preventive_plans(
     active_only: bool = False,
 ):
     rows, total = await list_plans(
-        session, user.company_id, page, page_size, search, active_only,
+        session,
+        user.company_id,
+        page,
+        page_size,
+        search,
+        active_only,
     )
     return schemas.PreventivePlanList(
         items=[_row_to_out(r) for r in rows],
-        total=total, page=page, page_size=page_size,
+        total=total,
+        page=page,
+        page_size=page_size,
     )
 
 
@@ -79,7 +86,10 @@ async def create_preventive_plan(
 ):
     try:
         row = await create_plan(
-            session, user.company_id, user.id, **body.model_dump(),
+            session,
+            user.company_id,
+            user.id,
+            **body.model_dump(),
         )
     except ValueError as exc:
         raise HTTPException(422, detail=str(exc)) from None
@@ -98,7 +108,11 @@ async def update_preventive_plan(
         raise HTTPException(422, detail="Nenhum campo alterado")
     try:
         row = await update_plan(
-            session, user.company_id, user.id, plan_id, updates,
+            session,
+            user.company_id,
+            user.id,
+            plan_id,
+            updates,
         )
     except ValueError as exc:
         raise HTTPException(422, detail=str(exc)) from None
@@ -123,6 +137,10 @@ async def generate_orders(
     session: Annotated[AsyncSession, Depends(require_session)],
 ):
     ids = await generate_due_orders(
-        session, user.company_id, user.id, user.name, user.email,
+        session,
+        user.company_id,
+        user.id,
+        user.name,
+        user.email,
     )
     return schemas.GenerateResult(generated=len(ids), work_order_ids=ids)

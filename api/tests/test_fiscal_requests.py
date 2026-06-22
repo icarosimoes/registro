@@ -44,7 +44,8 @@ async def test_list_with_search(client):
     protocol = resp.json()["protocol"]
 
     r = await client.get(
-        f"{FR_URL}?search={protocol}", headers=HEADERS_A,
+        f"{FR_URL}?search={protocol}",
+        headers=HEADERS_A,
     )
     assert r.status_code == 200
     items = r.json()["items"]

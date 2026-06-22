@@ -3,6 +3,7 @@
 from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "20260620_0013"
@@ -15,7 +16,13 @@ def upgrade() -> None:
     op.create_table(
         "notifications",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("company_id", sa.Integer, sa.ForeignKey("companies.id", ondelete="CASCADE"), nullable=False, index=True),
+        sa.Column(
+            "company_id",
+            sa.Integer,
+            sa.ForeignKey("companies.id", ondelete="CASCADE"),
+            nullable=False,
+            index=True,
+        ),
         sa.Column("user_id", sa.Integer, sa.ForeignKey("users.id"), nullable=False, index=True),
         sa.Column("title", sa.String(255), nullable=False),
         sa.Column("body", sa.Text, nullable=True),

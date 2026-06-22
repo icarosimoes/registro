@@ -34,11 +34,7 @@ async def list_work_diaries(
             )
         )
 
-    total = (
-        await session.scalar(
-            select(func.count(WorkDiary.id)).where(*filters)
-        )
-    ) or 0
+    total = (await session.scalar(select(func.count(WorkDiary.id)).where(*filters))) or 0
 
     rows = (
         await session.execute(
@@ -59,40 +55,54 @@ async def list_work_diaries(
     return rows, total
 
 
-async def _load_children(
-    session: AsyncSession, diary_id: int
-) -> dict:
+async def _load_children(session: AsyncSession, diary_id: int) -> dict:
     activities = (
-        await session.execute(
-            select(WorkDiaryActivity)
-            .where(WorkDiaryActivity.diary_id == diary_id)
-            .order_by(WorkDiaryActivity.sort_order)
+        (
+            await session.execute(
+                select(WorkDiaryActivity)
+                .where(WorkDiaryActivity.diary_id == diary_id)
+                .order_by(WorkDiaryActivity.sort_order)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     teams = (
-        await session.execute(
-            select(WorkDiaryTeam)
-            .where(WorkDiaryTeam.diary_id == diary_id)
-            .order_by(WorkDiaryTeam.sort_order)
+        (
+            await session.execute(
+                select(WorkDiaryTeam)
+                .where(WorkDiaryTeam.diary_id == diary_id)
+                .order_by(WorkDiaryTeam.sort_order)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     equipment = (
-        await session.execute(
-            select(WorkDiaryEquipment)
-            .where(WorkDiaryEquipment.diary_id == diary_id)
-            .order_by(WorkDiaryEquipment.sort_order)
+        (
+            await session.execute(
+                select(WorkDiaryEquipment)
+                .where(WorkDiaryEquipment.diary_id == diary_id)
+                .order_by(WorkDiaryEquipment.sort_order)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     observations = (
-        await session.execute(
-            select(WorkDiaryObservation)
-            .where(WorkDiaryObservation.diary_id == diary_id)
-            .order_by(WorkDiaryObservation.sort_order)
+        (
+            await session.execute(
+                select(WorkDiaryObservation)
+                .where(WorkDiaryObservation.diary_id == diary_id)
+                .order_by(WorkDiaryObservation.sort_order)
+            )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     return {
         "activities": [
@@ -154,9 +164,7 @@ async def get_work_diary(
         return None
 
     owner_name = (
-        await session.scalar(
-            select(User.name).where(User.id == record.owner_user_id)
-        )
+        await session.scalar(select(User.name).where(User.id == record.owner_user_id))
         if record.owner_user_id
         else None
     )
@@ -181,36 +189,26 @@ async def _sync_children(
 ) -> None:
     if activities is not None:
         await session.execute(
-            delete(WorkDiaryActivity).where(
-                WorkDiaryActivity.diary_id == diary_id
-            )
+            delete(WorkDiaryActivity).where(WorkDiaryActivity.diary_id == diary_id)
         )
         for a in activities:
             session.add(WorkDiaryActivity(diary_id=diary_id, **a))
 
     if teams is not None:
-        await session.execute(
-            delete(WorkDiaryTeam).where(
-                WorkDiaryTeam.diary_id == diary_id
-            )
-        )
+        await session.execute(delete(WorkDiaryTeam).where(WorkDiaryTeam.diary_id == diary_id))
         for t in teams:
             session.add(WorkDiaryTeam(diary_id=diary_id, **t))
 
     if equipment is not None:
         await session.execute(
-            delete(WorkDiaryEquipment).where(
-                WorkDiaryEquipment.diary_id == diary_id
-            )
+            delete(WorkDiaryEquipment).where(WorkDiaryEquipment.diary_id == diary_id)
         )
         for e in equipment:
             session.add(WorkDiaryEquipment(diary_id=diary_id, **e))
 
     if observations is not None:
         await session.execute(
-            delete(WorkDiaryObservation).where(
-                WorkDiaryObservation.diary_id == diary_id
-            )
+            delete(WorkDiaryObservation).where(WorkDiaryObservation.diary_id == diary_id)
         )
         for o in observations:
             session.add(WorkDiaryObservation(diary_id=diary_id, **o))

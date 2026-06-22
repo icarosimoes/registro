@@ -167,9 +167,7 @@ async def track_chess_hotel_tickets(
     )
 
 
-@router.get(
-    "/integrations/chess-hotel/tickets/{protocol}", response_model=FiscalRequestTracking
-)
+@router.get("/integrations/chess-hotel/tickets/{protocol}", response_model=FiscalRequestTracking)
 async def track_chess_hotel_ticket(
     protocol: str,
     email: str,
@@ -194,9 +192,7 @@ async def list_fiscal_requests_endpoint(
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
     search: str | None = None,
 ) -> FiscalRequestListResponse:
-    records, total = await list_fiscal_requests(
-        session, user.company_id, page, page_size, search
-    )
+    records, total = await list_fiscal_requests(session, user.company_id, page, page_size, search)
     return FiscalRequestListResponse(
         items=[_to_summary(item) for item in records],
         total=total,
@@ -234,9 +230,7 @@ async def update_fiscal_request_endpoint(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> FiscalRequestSummary:
     updates = body.model_dump(exclude_none=True)
-    record = await update_fiscal_request(
-        session, user.company_id, user.id, request_id, updates
-    )
+    record = await update_fiscal_request(session, user.company_id, user.id, request_id, updates)
     if record is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
     return _to_summary(record)

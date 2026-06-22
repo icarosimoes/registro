@@ -19,8 +19,14 @@ from app.models import Notification, NotificationPreference
 router = APIRouter(prefix="/notifications", tags=["notifications"])
 
 VALID_MODULES = [
-    "occurrences", "fiscal_requests", "meetings", "shift_reports",
-    "procedures", "inspections", "maintenance", "modules",
+    "occurrences",
+    "fiscal_requests",
+    "meetings",
+    "shift_reports",
+    "procedures",
+    "inspections",
+    "maintenance",
+    "modules",
 ]
 
 
@@ -41,9 +47,12 @@ async def list_notifications(
         filters.append(Notification.read_at.is_(None))
 
     total = await session.scalar(select(func.count(Notification.id)).where(*filters)) or 0
-    unread = await session.scalar(
-        select(func.count(Notification.id)).where(*base_filters, Notification.read_at.is_(None))
-    ) or 0
+    unread = (
+        await session.scalar(
+            select(func.count(Notification.id)).where(*base_filters, Notification.read_at.is_(None))
+        )
+        or 0
+    )
 
     rows = (
         await session.scalars(
@@ -57,9 +66,14 @@ async def list_notifications(
     return NotificationListResponse(
         items=[
             NotificationOut(
-                id=n.id, title=n.title, body=n.body, category=n.category,
-                entity_type=n.entity_type, entity_id=n.entity_id,
-                read_at=n.read_at, email_sent_at=n.email_sent_at,
+                id=n.id,
+                title=n.title,
+                body=n.body,
+                category=n.category,
+                entity_type=n.entity_type,
+                entity_id=n.entity_id,
+                read_at=n.read_at,
+                email_sent_at=n.email_sent_at,
                 created_at=n.created_at,
             )
             for n in rows
@@ -91,9 +105,14 @@ async def mark_as_read(
         await session.commit()
         await session.refresh(record)
     return NotificationOut(
-        id=record.id, title=record.title, body=record.body, category=record.category,
-        entity_type=record.entity_type, entity_id=record.entity_id,
-        read_at=record.read_at, email_sent_at=record.email_sent_at,
+        id=record.id,
+        title=record.title,
+        body=record.body,
+        category=record.category,
+        entity_type=record.entity_type,
+        entity_id=record.entity_id,
+        read_at=record.read_at,
+        email_sent_at=record.email_sent_at,
         created_at=record.created_at,
     )
 

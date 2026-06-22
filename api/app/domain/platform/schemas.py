@@ -58,6 +58,7 @@ class PlanResponse(BaseModel):
 # Tenant CRUD
 # ---------------------------------------------------------------------------
 
+
 class TenantCreate(BaseModel):
     name: str = Field(min_length=1, max_length=160)
     slug: str = Field(min_length=1, max_length=100)
@@ -121,6 +122,7 @@ class TenantDetail(BaseModel):
 # Plan CRUD
 # ---------------------------------------------------------------------------
 
+
 class PlanCreate(BaseModel):
     code: str = Field(min_length=1, max_length=60)
     name: str = Field(min_length=1, max_length=120)
@@ -146,6 +148,7 @@ class PlanUpdate(BaseModel):
 # Subscription
 # ---------------------------------------------------------------------------
 
+
 class SubscriptionUpdate(BaseModel):
     plan_id: int | None = None
     status: str | None = None
@@ -159,6 +162,7 @@ class SubscriptionWithInvoices(BaseModel):
 # ---------------------------------------------------------------------------
 # Billing lifecycle
 # ---------------------------------------------------------------------------
+
 
 class LifecycleProcessed(BaseModel):
     company_id: int

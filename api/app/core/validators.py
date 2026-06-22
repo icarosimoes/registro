@@ -19,8 +19,10 @@ def validate_cpf(digits: str) -> bool:
 def validate_cnpj(digits: str) -> bool:
     if len(digits) != 14 or digits == digits[0] * 14:
         return False
-    for i, weights in ((12, (5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2)),
-                       (13, (6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2))):
+    for i, weights in (
+        (12, (5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2)),
+        (13, (6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2)),
+    ):
         total = sum(int(digits[j]) * weights[j] for j in range(i))
         digit = 11 - (total % 11)
         if digit >= 10:

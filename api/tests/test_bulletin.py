@@ -54,7 +54,9 @@ async def test_cross_tenant_isolation(client):
     pid = r.json()["id"]
 
     r = await client.patch(
-        f"{PREFIX}/{pid}", json={"title": "Hack"}, headers=auth_header(TENANT_B, 2),
+        f"{PREFIX}/{pid}",
+        json={"title": "Hack"},
+        headers=auth_header(TENANT_B, 2),
     )
     assert r.status_code == 404
 

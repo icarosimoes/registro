@@ -62,6 +62,7 @@ async def current_platform_user(
 # Auth
 # ---------------------------------------------------------------------------
 
+
 @router.post("/auth/login", response_model=PlatformTokenResponse)
 @limiter.limit("10/minute")
 async def platform_login(
@@ -108,6 +109,7 @@ async def platform_login(
 # Metrics
 # ---------------------------------------------------------------------------
 
+
 @router.get("/metrics", response_model=PlatformMetricsResponse)
 async def platform_metrics(
     _: Annotated[PlatformUser, Depends(current_platform_user)],
@@ -145,6 +147,7 @@ async def platform_metrics(
 # ---------------------------------------------------------------------------
 # Tenants CRUD
 # ---------------------------------------------------------------------------
+
 
 @router.get("/tenants", response_model=list[TenantSummary])
 async def list_tenants(
@@ -246,6 +249,7 @@ async def delete_tenant(
 # Plans CRUD
 # ---------------------------------------------------------------------------
 
+
 @router.get("/plans", response_model=list[PlanResponse])
 async def list_plans(
     _: Annotated[PlatformUser, Depends(current_platform_user)],
@@ -311,6 +315,7 @@ async def delete_plan(
 # Subscriptions
 # ---------------------------------------------------------------------------
 
+
 @router.get("/subscriptions/{subscription_id}", response_model=SubscriptionDetail)
 async def get_subscription(
     subscription_id: int,
@@ -334,7 +339,10 @@ async def update_subscription(
     if not updates:
         raise HTTPException(status_code=422, detail={"code": "no_fields"})
     sub = await service.update_subscription(
-        session, subscription_id, updates=updates, actor_id=admin.id,
+        session,
+        subscription_id,
+        updates=updates,
+        actor_id=admin.id,
     )
     if sub is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
@@ -345,6 +353,7 @@ async def update_subscription(
 # ---------------------------------------------------------------------------
 # Billing lifecycle
 # ---------------------------------------------------------------------------
+
 
 @router.post("/billing/process-expirations", response_model=LifecycleResponse)
 async def process_expirations(
@@ -376,7 +385,10 @@ async def reconcile(
     auto_correct: bool = QueryParam(False),
 ) -> dict:
     discrepancies = await service.reconcile_billing(
-        session, settings, actor_id=admin.id, auto_correct=auto_correct,
+        session,
+        settings,
+        actor_id=admin.id,
+        auto_correct=auto_correct,
     )
     return {"discrepancies": discrepancies}
 
@@ -397,6 +409,7 @@ async def reactivate_subscription(
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
 
 def _build_subscription_detail(sub: Subscription, invoices: list) -> SubscriptionDetail:
     return SubscriptionDetail(

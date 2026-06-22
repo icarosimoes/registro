@@ -8,8 +8,10 @@ from app.models import ShiftHandoff, User
 
 
 async def list_handoffs(
-    session: AsyncSession, company_id: int,
-    page: int, page_size: int,
+    session: AsyncSession,
+    company_id: int,
+    page: int,
+    page_size: int,
     target_date: date | None = None,
     target_shift: str | None = None,
     status: str | None = None,
@@ -34,9 +36,12 @@ async def list_handoffs(
             )
         )
 
-    total = await session.scalar(
-        select(func.count(ShiftHandoff.id)).where(*filters),
-    ) or 0
+    total = (
+        await session.scalar(
+            select(func.count(ShiftHandoff.id)).where(*filters),
+        )
+        or 0
+    )
 
     created_by = User.__table__.alias("created_by")
     read_by = User.__table__.alias("read_by")
@@ -63,7 +68,9 @@ async def list_handoffs(
 
 
 async def get_handoff(
-    session: AsyncSession, company_id: int, handoff_id: int,
+    session: AsyncSession,
+    company_id: int,
+    handoff_id: int,
 ) -> tuple | None:
     created_by = User.__table__.alias("created_by")
     read_by = User.__table__.alias("read_by")
@@ -90,18 +97,27 @@ async def get_handoff(
 
 
 async def create_handoff(
-    session: AsyncSession, company_id: int, user_id: int, **fields,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    **fields,
 ) -> tuple:
     if not fields.get("target_date"):
         fields["target_date"] = date.today()
     rec = ShiftHandoff(
-        company_id=company_id, created_by_user_id=user_id, **fields,
+        company_id=company_id,
+        created_by_user_id=user_id,
+        **fields,
     )
     session.add(rec)
     await session.flush()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="shift_handoff", entity_id=rec.id, event_type="create",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="shift_handoff",
+        entity_id=rec.id,
+        event_type="create",
     )
     await session.commit()
     await session.refresh(rec)
@@ -109,8 +125,11 @@ async def create_handoff(
 
 
 async def update_handoff(
-    session: AsyncSession, company_id: int, user_id: int,
-    handoff_id: int, updates: dict,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    handoff_id: int,
+    updates: dict,
 ) -> tuple | None:
     rec = await session.scalar(
         select(ShiftHandoff).where(
@@ -127,16 +146,22 @@ async def update_handoff(
     diff = compute_diff(before, {k: str(v) for k, v in updates.items()})
     if diff:
         await record_event(
-            session, company_id=company_id, user_id=user_id,
-            entity_type="shift_handoff", entity_id=rec.id,
-            event_type="update", diff=diff,
+            session,
+            company_id=company_id,
+            user_id=user_id,
+            entity_type="shift_handoff",
+            entity_id=rec.id,
+            event_type="update",
+            diff=diff,
         )
     await session.commit()
     return await get_handoff(session, company_id, handoff_id)
 
 
 async def mark_read(
-    session: AsyncSession, company_id: int, user_id: int,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
     handoff_id: int,
 ) -> tuple | None:
     rec = await session.scalar(
@@ -153,8 +178,11 @@ async def mark_read(
         rec.read_by_user_id = user_id
         rec.status = "lido"
         await record_event(
-            session, company_id=company_id, user_id=user_id,
-            entity_type="shift_handoff", entity_id=rec.id,
+            session,
+            company_id=company_id,
+            user_id=user_id,
+            entity_type="shift_handoff",
+            entity_id=rec.id,
             event_type="update",
             diff={"status": {"from": "pendente", "to": "lido"}},
         )
@@ -163,8 +191,11 @@ async def mark_read(
 
 
 async def resolve_handoff(
-    session: AsyncSession, company_id: int, user_id: int,
-    handoff_id: int, resolution_notes: str | None = None,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    handoff_id: int,
+    resolution_notes: str | None = None,
 ) -> tuple | None:
     rec = await session.scalar(
         select(ShiftHandoff).where(
@@ -186,8 +217,11 @@ async def resolve_handoff(
         rec.read_by_user_id = user_id
 
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="shift_handoff", entity_id=rec.id,
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="shift_handoff",
+        entity_id=rec.id,
         event_type="update",
         diff={"status": {"from": old_status, "to": "resolvido"}},
     )
@@ -196,7 +230,9 @@ async def resolve_handoff(
 
 
 async def delete_handoff(
-    session: AsyncSession, company_id: int, user_id: int,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
     handoff_id: int,
 ) -> bool:
     rec = await session.scalar(
@@ -210,8 +246,11 @@ async def delete_handoff(
         return False
     rec.deleted_at = datetime.now()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="shift_handoff", entity_id=rec.id,
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="shift_handoff",
+        entity_id=rec.id,
         event_type="delete",
     )
     await session.commit()
@@ -219,8 +258,10 @@ async def delete_handoff(
 
 
 async def pending_for_shift(
-    session: AsyncSession, company_id: int,
-    target_date: date, target_shift: str | None = None,
+    session: AsyncSession,
+    company_id: int,
+    target_date: date,
+    target_shift: str | None = None,
 ) -> list:
     filters = [
         ShiftHandoff.company_id == company_id,

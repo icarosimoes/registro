@@ -80,11 +80,12 @@ async def get_role_endpoint(
 
     from app.models import User
 
-    uc = await session.scalar(
-        select(func.count(User.id)).where(
-            User.role_id == role_id, User.deleted_at.is_(None)
+    uc = (
+        await session.scalar(
+            select(func.count(User.id)).where(User.role_id == role_id, User.deleted_at.is_(None))
         )
-    ) or 0
+        or 0
+    )
     return _to_summary(role, uc)
 
 
@@ -126,11 +127,12 @@ async def update_role_endpoint(
 
     from app.models import User
 
-    uc = await session.scalar(
-        select(func.count(User.id)).where(
-            User.role_id == role_id, User.deleted_at.is_(None)
+    uc = (
+        await session.scalar(
+            select(func.count(User.id)).where(User.role_id == role_id, User.deleted_at.is_(None))
         )
-    ) or 0
+        or 0
+    )
     return _to_summary(role, uc)
 
 

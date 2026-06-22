@@ -5,8 +5,9 @@ Revises: 20260620_0021
 Create Date: 2026-06-20
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260620_0022"
 down_revision = "20260620_0021"
@@ -18,7 +19,12 @@ def upgrade() -> None:
     op.create_table(
         "shift_reports",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("company_id", sa.Integer, sa.ForeignKey("companies.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "company_id",
+            sa.Integer,
+            sa.ForeignKey("companies.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("title", sa.String(255), nullable=False),
         sa.Column("description", sa.Text),
         sa.Column("shift_date", sa.Date),

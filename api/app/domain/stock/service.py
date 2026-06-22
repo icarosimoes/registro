@@ -9,8 +9,10 @@ from app.models.operations import MOVEMENT_TYPES
 
 
 async def list_items(
-    session: AsyncSession, company_id: int,
-    page: int, page_size: int,
+    session: AsyncSession,
+    company_id: int,
+    page: int,
+    page_size: int,
     search: str | None = None,
     below_min_only: bool = False,
 ) -> tuple[list, int]:
@@ -20,15 +22,16 @@ async def list_items(
     ]
     if search:
         pattern = f"%{search.strip()}%"
-        filters.append(
-            or_(StockItem.name.ilike(pattern), StockItem.category.ilike(pattern))
-        )
+        filters.append(or_(StockItem.name.ilike(pattern), StockItem.category.ilike(pattern)))
     if below_min_only:
         filters.append(StockItem.current_quantity < StockItem.min_quantity)
 
-    total = await session.scalar(
-        select(func.count(StockItem.id)).where(*filters),
-    ) or 0
+    total = (
+        await session.scalar(
+            select(func.count(StockItem.id)).where(*filters),
+        )
+        or 0
+    )
 
     loc = Location.__table__.alias("loc")
     rows = (
@@ -45,7 +48,9 @@ async def list_items(
 
 
 async def get_item(
-    session: AsyncSession, company_id: int, item_id: int,
+    session: AsyncSession,
+    company_id: int,
+    item_id: int,
 ) -> tuple | None:
     loc = Location.__table__.alias("loc")
     return (
@@ -62,14 +67,21 @@ async def get_item(
 
 
 async def create_item(
-    session: AsyncSession, company_id: int, user_id: int, **fields,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    **fields,
 ) -> tuple:
     rec = StockItem(company_id=company_id, **fields)
     session.add(rec)
     await session.flush()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="stock_item", entity_id=rec.id, event_type="create",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="stock_item",
+        entity_id=rec.id,
+        event_type="create",
     )
     await session.commit()
     await session.refresh(rec)
@@ -77,8 +89,11 @@ async def create_item(
 
 
 async def update_item(
-    session: AsyncSession, company_id: int, user_id: int,
-    item_id: int, updates: dict,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    item_id: int,
+    updates: dict,
 ) -> tuple | None:
     rec = await session.scalar(
         select(StockItem).where(
@@ -95,16 +110,23 @@ async def update_item(
     diff = compute_diff(before, {k: str(v) for k, v in updates.items()})
     if diff:
         await record_event(
-            session, company_id=company_id, user_id=user_id,
-            entity_type="stock_item", entity_id=rec.id,
-            event_type="update", diff=diff,
+            session,
+            company_id=company_id,
+            user_id=user_id,
+            entity_type="stock_item",
+            entity_id=rec.id,
+            event_type="update",
+            diff=diff,
         )
     await session.commit()
     return await get_item(session, company_id, item_id)
 
 
 async def delete_item(
-    session: AsyncSession, company_id: int, user_id: int, item_id: int,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    item_id: int,
 ) -> bool:
     rec = await session.scalar(
         select(StockItem).where(
@@ -117,17 +139,27 @@ async def delete_item(
         return False
     rec.deleted_at = datetime.now()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="stock_item", entity_id=rec.id, event_type="delete",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="stock_item",
+        entity_id=rec.id,
+        event_type="delete",
     )
     await session.commit()
     return True
 
 
 async def create_movement(
-    session: AsyncSession, company_id: int, user_id: int,
-    *, item_id: int, movement_type: str, quantity: int,
-    reason: str | None, work_order_id: int | None,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    *,
+    item_id: int,
+    movement_type: str,
+    quantity: int,
+    reason: str | None,
+    work_order_id: int | None,
     occurrence_id: int | None,
 ) -> dict:
     if movement_type not in MOVEMENT_TYPES:
@@ -157,16 +189,23 @@ async def create_movement(
         item.current_quantity = quantity
 
     mov = StockMovement(
-        company_id=company_id, item_id=item_id,
-        movement_type=movement_type, quantity=quantity,
-        reason=reason, work_order_id=work_order_id,
-        occurrence_id=occurrence_id, user_id=user_id,
+        company_id=company_id,
+        item_id=item_id,
+        movement_type=movement_type,
+        quantity=quantity,
+        reason=reason,
+        work_order_id=work_order_id,
+        occurrence_id=occurrence_id,
+        user_id=user_id,
     )
     session.add(mov)
     await session.flush()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="stock_item", entity_id=item_id,
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="stock_item",
+        entity_id=item_id,
         event_type="update",
         diff={"movimento": movement_type, "quantidade": str(quantity)},
     )
@@ -184,17 +223,22 @@ async def create_movement(
 
 
 async def list_movements(
-    session: AsyncSession, company_id: int,
-    page: int, page_size: int,
+    session: AsyncSession,
+    company_id: int,
+    page: int,
+    page_size: int,
     item_id: int | None = None,
 ) -> tuple[list, int]:
     filters = [StockMovement.company_id == company_id]
     if item_id:
         filters.append(StockMovement.item_id == item_id)
 
-    total = await session.scalar(
-        select(func.count(StockMovement.id)).where(*filters),
-    ) or 0
+    total = (
+        await session.scalar(
+            select(func.count(StockMovement.id)).where(*filters),
+        )
+        or 0
+    )
 
     rows = (
         await session.execute(

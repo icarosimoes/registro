@@ -5,8 +5,9 @@ Revises: 20260621_0035
 Create Date: 2026-06-21
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260621_0036"
 down_revision = "20260621_0035"
@@ -18,7 +19,12 @@ def upgrade() -> None:
     op.create_table(
         "preventive_plans",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("company_id", sa.Integer, sa.ForeignKey("companies.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "company_id",
+            sa.Integer,
+            sa.ForeignKey("companies.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("name", sa.String(255), nullable=False),
         sa.Column("description", sa.Text),
         sa.Column("recurrence", sa.String(20), nullable=False),
@@ -34,12 +40,19 @@ def upgrade() -> None:
         sa.Column("created_at", sa.DateTime, server_default=sa.func.now()),
         sa.Column("updated_at", sa.DateTime, server_default=sa.func.now(), onupdate=sa.func.now()),
     )
-    op.create_index("ix_preventive_plans_company_active", "preventive_plans", ["company_id", "active"])
+    op.create_index(
+        "ix_preventive_plans_company_active", "preventive_plans", ["company_id", "active"]
+    )
 
     op.create_table(
         "checklist_templates",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("company_id", sa.Integer, sa.ForeignKey("companies.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "company_id",
+            sa.Integer,
+            sa.ForeignKey("companies.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("name", sa.String(255), nullable=False),
         sa.Column("description", sa.Text),
         sa.Column("recurrence", sa.String(20), nullable=False),
@@ -56,7 +69,12 @@ def upgrade() -> None:
     op.create_table(
         "checklist_template_items",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("template_id", sa.Integer, sa.ForeignKey("checklist_templates.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "template_id",
+            sa.Integer,
+            sa.ForeignKey("checklist_templates.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("label", sa.String(255), nullable=False),
         sa.Column("sort_order", sa.Integer, server_default="0"),
     )
@@ -64,23 +82,42 @@ def upgrade() -> None:
     op.create_table(
         "checklist_executions",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("company_id", sa.Integer, sa.ForeignKey("companies.id", ondelete="CASCADE"), nullable=False),
-        sa.Column("template_id", sa.Integer, sa.ForeignKey("checklist_templates.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "company_id",
+            sa.Integer,
+            sa.ForeignKey("companies.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
+        sa.Column(
+            "template_id",
+            sa.Integer,
+            sa.ForeignKey("checklist_templates.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("due_date", sa.Date, nullable=False),
         sa.Column("status", sa.String(40), server_default="pendente"),
         sa.Column("completed_at", sa.DateTime),
-        sa.Column("completed_by_user_id", sa.Integer, sa.ForeignKey("users.id", ondelete="SET NULL")),
+        sa.Column(
+            "completed_by_user_id", sa.Integer, sa.ForeignKey("users.id", ondelete="SET NULL")
+        ),
         sa.Column("notes", sa.Text),
         sa.Column("deleted_at", sa.DateTime),
         sa.Column("created_at", sa.DateTime, server_default=sa.func.now()),
         sa.Column("updated_at", sa.DateTime, server_default=sa.func.now(), onupdate=sa.func.now()),
     )
-    op.create_index("ix_checklist_exec_company_due", "checklist_executions", ["company_id", "due_date"])
+    op.create_index(
+        "ix_checklist_exec_company_due", "checklist_executions", ["company_id", "due_date"]
+    )
 
     op.create_table(
         "checklist_execution_items",
         sa.Column("id", sa.Integer, primary_key=True, autoincrement=True),
-        sa.Column("execution_id", sa.Integer, sa.ForeignKey("checklist_executions.id", ondelete="CASCADE"), nullable=False),
+        sa.Column(
+            "execution_id",
+            sa.Integer,
+            sa.ForeignKey("checklist_executions.id", ondelete="CASCADE"),
+            nullable=False,
+        ),
         sa.Column("label", sa.String(255), nullable=False),
         sa.Column("sort_order", sa.Integer, server_default="0"),
         sa.Column("checked", sa.Boolean, server_default=sa.text("false")),

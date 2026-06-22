@@ -5,8 +5,9 @@ Revises: 20260620_0022
 Create Date: 2026-06-20
 """
 
-from alembic import op
 import sqlalchemy as sa
+
+from alembic import op
 
 revision = "20260620_0023"
 down_revision = "20260620_0022"
@@ -42,10 +43,16 @@ def upgrade() -> None:
                 ":created_by, :notify, :created_at, :updated_at) RETURNING id"
             ),
             {
-                "company_id": r[1], "title": r[2], "description": r[3],
-                "shift_type": shift_type, "status": r[5] or "Em andamento",
-                "owner": r[6], "created_by": r[7], "notify": r[8],
-                "created_at": r[9], "updated_at": r[10],
+                "company_id": r[1],
+                "title": r[2],
+                "description": r[3],
+                "shift_type": shift_type,
+                "status": r[5] or "Em andamento",
+                "owner": r[6],
+                "created_by": r[7],
+                "notify": r[8],
+                "created_at": r[9],
+                "updated_at": r[10],
             },
         )
         new_id = result.scalar()

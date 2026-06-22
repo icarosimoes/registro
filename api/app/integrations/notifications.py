@@ -82,9 +82,7 @@ async def _load_preferences(
     return prefs
 
 
-def _build_html(
-    action: str, title: str, module: str, actor: str, detail: str | None = None
-) -> str:
+def _build_html(action: str, title: str, module: str, actor: str, detail: str | None = None) -> str:
     detail_block = f"<p style='color:#555'>{detail}</p>" if detail else ""
     return f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
@@ -164,18 +162,14 @@ async def prepare_notifications(
 
     pref_module = ENTITY_TO_MODULE.get(entity_type or "", "")
     if pref_module:
-        module_recipient_ids = await get_module_recipients(
-            session, company_id, pref_module
-        )
+        module_recipient_ids = await get_module_recipients(session, company_id, pref_module)
         recipient_ids.update(module_recipient_ids)
 
     recipients = await _resolve_users(session, list(recipient_ids))
     if not recipients:
         return None
 
-    prefs = await _load_preferences(
-        session, company_id, [r["id"] for r in recipients], pref_module
-    )
+    prefs = await _load_preferences(session, company_id, [r["id"] for r in recipients], pref_module)
 
     notification_body = f"{actor_name} · {module}"
     if detail:
@@ -249,9 +243,7 @@ async def prepare_notifications(
             user_pref = prefs.get(r["id"], {"in_app": True, "email": True})
             if not user_pref.get("whatsapp", True):
                 continue
-            phone = await session.scalar(
-                select(User.phone).where(User.id == r["id"])
-            )
+            phone = await session.scalar(select(User.phone).where(User.id == r["id"]))
             if not phone:
                 continue
             whatsapp_tasks.append(_WhatsAppTask(phone=phone, text=whatsapp_text))

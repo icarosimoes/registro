@@ -98,9 +98,7 @@ class Occurrence(Base, TenantMixin, LegacyEntityMixin, TimestampMixin):
 
 class FiscalRequest(Base, TenantMixin, TimestampMixin):
     __tablename__ = "fiscal_requests"
-    __table_args__ = (
-        Index("ix_fiscal_requests_company_status", "company_id", "status"),
-    )
+    __table_args__ = (Index("ix_fiscal_requests_company_status", "company_id", "status"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     protocol: Mapped[str] = mapped_column(String(40), unique=True)
@@ -110,10 +108,12 @@ class FiscalRequest(Base, TenantMixin, TimestampMixin):
     requester: Mapped[str] = mapped_column(String(160))
     requester_email: Mapped[str | None] = mapped_column(String(255), index=True)
     requester_user_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"), index=True,
+        ForeignKey("users.id", ondelete="SET NULL"),
+        index=True,
     )
     responsible_user_id: Mapped[int | None] = mapped_column(
-        ForeignKey("users.id", ondelete="SET NULL"), index=True,
+        ForeignKey("users.id", ondelete="SET NULL"),
+        index=True,
     )
     chess_user_id: Mapped[str | None] = mapped_column(String(80))
     reservation_number: Mapped[str | None] = mapped_column(String(80))
@@ -164,9 +164,7 @@ class ModuleRecord(Base, TenantMixin, TimestampMixin):
 
 class Notification(Base, TenantMixin):
     __tablename__ = "notifications"
-    __table_args__ = (
-        Index("ix_notifications_user_unread", "user_id", "read_at"),
-    )
+    __table_args__ = (Index("ix_notifications_user_unread", "user_id", "read_at"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
@@ -211,7 +209,8 @@ class Attachment(Base, TenantMixin):
         ForeignKey("users.id"),
     )
     created_at: Mapped[datetime] = mapped_column(
-        DateTime, server_default=func.now(),
+        DateTime,
+        server_default=func.now(),
     )
 
 
@@ -219,10 +218,12 @@ class OccurrenceParticipant(Base):
     __tablename__ = "occurrence_participants"
 
     occurrence_id: Mapped[int] = mapped_column(
-        ForeignKey("occurrences.id", ondelete="CASCADE"), primary_key=True,
+        ForeignKey("occurrences.id", ondelete="CASCADE"),
+        primary_key=True,
     )
     user_id: Mapped[int] = mapped_column(
-        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        primary_key=True,
     )
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
@@ -248,9 +249,7 @@ class Meeting(Base, TenantMixin, LegacyEntityMixin, TimestampMixin):
 
 class MeetingParticipant(Base):
     __tablename__ = "meeting_participants"
-    __table_args__ = (
-        UniqueConstraint("meeting_id", "user_id", name="uq_meeting_participant"),
-    )
+    __table_args__ = (UniqueConstraint("meeting_id", "user_id", name="uq_meeting_participant"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     meeting_id: Mapped[int] = mapped_column(
@@ -377,9 +376,7 @@ class InspectionSuiteItem(Base):
 
 class ApartmentInspection(Base, TenantMixin, TimestampMixin):
     __tablename__ = "apartment_inspections"
-    __table_args__ = (
-        Index("ix_apartment_inspections_type", "company_id", "inspection_type"),
-    )
+    __table_args__ = (Index("ix_apartment_inspections_type", "company_id", "inspection_type"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     unit: Mapped[str | None] = mapped_column(String(80))
@@ -555,9 +552,7 @@ WORK_ORDER_STATUSES = ("aberta", "em_andamento", "aguardando_material", "conclui
 
 class WorkOrder(Base, TenantMixin, TimestampMixin):
     __tablename__ = "work_orders"
-    __table_args__ = (
-        Index("ix_work_orders_status", "company_id", "status"),
-    )
+    __table_args__ = (Index("ix_work_orders_status", "company_id", "status"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     title: Mapped[str] = mapped_column(String(255))
@@ -601,9 +596,7 @@ MOVEMENT_TYPES = ("entrada", "saida", "ajuste")
 
 class StockItem(Base, TenantMixin, TimestampMixin):
     __tablename__ = "stock_items"
-    __table_args__ = (
-        Index("ix_stock_items_company", "company_id"),
-    )
+    __table_args__ = (Index("ix_stock_items_company", "company_id"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255))
@@ -619,9 +612,7 @@ class StockItem(Base, TenantMixin, TimestampMixin):
 
 class StockMovement(Base, TenantMixin, TimestampMixin):
     __tablename__ = "stock_movements"
-    __table_args__ = (
-        Index("ix_stock_movements_item", "item_id"),
-    )
+    __table_args__ = (Index("ix_stock_movements_item", "item_id"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     item_id: Mapped[int] = mapped_column(
@@ -650,9 +641,7 @@ HANDOFF_STATUS = ("pendente", "lido", "resolvido")
 
 class ShiftHandoff(Base, TenantMixin, TimestampMixin):
     __tablename__ = "shift_handoffs"
-    __table_args__ = (
-        Index("ix_shift_handoffs_company_date", "company_id", "target_date"),
-    )
+    __table_args__ = (Index("ix_shift_handoffs_company_date", "company_id", "target_date"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     shift_report_id: Mapped[int | None] = mapped_column(
@@ -689,9 +678,7 @@ RECURRENCE_TYPES = ("daily", "weekly", "biweekly", "monthly", "quarterly", "semi
 
 class PreventivePlan(Base, TenantMixin, TimestampMixin):
     __tablename__ = "preventive_plans"
-    __table_args__ = (
-        Index("ix_preventive_plans_company_active", "company_id", "active"),
-    )
+    __table_args__ = (Index("ix_preventive_plans_company_active", "company_id", "active"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255))
@@ -749,9 +736,7 @@ class ChecklistTemplateItem(Base):
 
 class ChecklistExecution(Base, TenantMixin, TimestampMixin):
     __tablename__ = "checklist_executions"
-    __table_args__ = (
-        Index("ix_checklist_exec_company_due", "company_id", "due_date"),
-    )
+    __table_args__ = (Index("ix_checklist_exec_company_due", "company_id", "due_date"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     template_id: Mapped[int] = mapped_column(
