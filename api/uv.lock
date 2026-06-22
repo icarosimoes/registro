@@ -1354,6 +1354,7 @@ dependencies = [
     { name = "boto3" },
     { name = "cryptography" },
     { name = "fastapi" },
+    { name = "httpx" },
     { name = "openpyxl" },
     { name = "pydantic-settings" },
     { name = "pyjwt" },
@@ -1369,7 +1370,6 @@ dependencies = [
 [package.optional-dependencies]
 dev = [
     { name = "aiosqlite" },
-    { name = "httpx" },
     { name = "mypy" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
@@ -1390,7 +1390,7 @@ requires-dist = [
     { name = "boto3", specifier = ">=1.38,<2" },
     { name = "cryptography", specifier = ">=46.0.6,<47" },
     { name = "fastapi", specifier = ">=0.115,<1" },
-    { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.28,<1" },
+    { name = "httpx", specifier = ">=0.28,<1" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.13,<2" },
     { name = "openpyxl", specifier = ">=3.1,<4" },
     { name = "pydantic-settings", specifier = ">=2.6,<3" },
