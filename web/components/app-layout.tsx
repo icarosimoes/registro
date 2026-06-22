@@ -14,7 +14,7 @@ import type { TenantUser } from "@/lib/api";
 import { NotificationPanel, NotificationBadge } from "./notification-panel";
 
 const navOperation = [
-  { slug: "dashboard", label: "Visão geral", icon: Home, href: "/dashboard" },
+  { slug: "dashboard", label: "Dashboard", icon: Home, href: "/dashboard" },
   { slug: "ocorrencias", label: "Ocorrências", icon: FileClock, href: "/ocorrencias" },
   { slug: "ordens-servico", label: "Ordens de Serviço", icon: ClipboardList, href: "/ordens-servico" },
   { slug: "reunioes", label: "Reuniões", icon: Users, href: "/reunioes" },
