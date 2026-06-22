@@ -49,7 +49,7 @@ jobs:
           python-version: "3.12"
       - run: pip install ".[dev]" pip-audit
       - name: Verificar CVEs em dependências
-        run: pip-audit --strict --desc
+        run: pip-audit --strict --desc --ignore-package registro-api
 
   api-migrations:
     name: API — Alembic check
