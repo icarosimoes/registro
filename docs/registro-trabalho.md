@@ -15,6 +15,16 @@
 - Seed inicial corrigido para reutilizar permissões criadas pelas migrations, mantendo execução idempotente em PostgreSQL novo.
 - Routers do Registro alinhados ao certificate resolver `letsencrypt` configurado no Traefik compartilhado da VPS.
 
+### Deploy concluído
+
+- Stack `registro` publicada no Swarm com API 2 réplicas, web 2, admin 1, PostgreSQL 1, Redis 1, MinIO 1 e backup 1.
+- Migrations Alembic aplicadas até `20260621_0039` por tarefa única e removível.
+- Seed inicial executado; credenciais aleatórias ficaram somente em `/opt/registro/initial-credentials.txt`, modo `0600`.
+- Front e API publicados em `https://registro.solidsd.com.br`; painel em `https://painel.registro.solidsd.com.br`.
+- Registro DNS do painel colocado em DNS-only porque o certificado Universal do Cloudflare não cobre subdomínio de segundo nível; o origin usa certificado Let’s Encrypt válido.
+- Validado: health, readiness com banco/cache conectados, TLS, frontend, painel, login tenant, login platform e checksum do primeiro backup.
+- Workflow de imagens limitado a mudanças em `api/`, `web/`, `admin/` ou no próprio workflow, evitando rebuild em commits apenas documentais.
+
 ## 2026-06-21 — Controle de Estoque e Pendências de Turno
 
 ### Controle de materiais e estoque
