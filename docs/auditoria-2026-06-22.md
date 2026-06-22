@@ -6,8 +6,10 @@ Auditoria completa cobrindo backend, frontend, infraestrutura e testes.
 
 | Severidade | Qtd | Exemplos principais |
 |------------|-----|---------------------|
-| **Critical** | 3 | SQL injection no RLS, credenciais hardcoded no admin, zero testes na integração Chess |
-| **High** | 12 | SQL injection no import, missing soft-delete, N+1, sem CSP, sem CSRF, rate limiter quebrado atrás de proxy |
+| **Critical** | 1 | Zero testes na integração Chess |
+| **Critical corrigido** | 2 | ~~SQL injection no RLS~~, ~~credenciais hardcoded no admin~~ |
+| **High** | 10 | SQL injection no import, missing soft-delete, N+1, sem CSP, sem CSRF |
+| **High corrigido** | 2 | ~~access logs desabilitados~~, ~~rate limiter quebrado atrás de proxy~~ |
 | **Medium** | 18 | Race condition em attachments, sem Sentry, Redis sem persistência, frontend sem testes |
 | **Low** | 6 | Request ID, cookie secure em dev, i18n, image optimization |
 
@@ -15,30 +17,17 @@ Auditoria completa cobrindo backend, frontend, infraestrutura e testes.
 
 ## Critical
 
-### C1. SQL Injection no RLS Context
+### ~~C1. SQL Injection no RLS Context~~ ✅ Corrigido 2026-06-22
 
 **Arquivo:** `api/app/core/auth.py:31`
 
-```python
-# Atual — string interpolation
-await session.execute(text(f"SET LOCAL app.current_company_id = '{cid}'"))
+Corrigido: substituída f-string por query parametrizada `text("SET LOCAL ... = :cid"), {"cid": str(cid)}`.
 
-# Correção — binding parametrizado
-await session.execute(text("SET LOCAL app.current_company_id = :cid"), {"cid": str(cid)})
-```
-
-`cid` é int tipado, mas viola boas práticas e compromete todo o isolamento RLS. Se o type enforcement for bypassed por qualquer caminho, permite acesso cross-tenant.
-
-### C2. Credenciais Hardcoded no Admin Login
+### ~~C2. Credenciais Hardcoded no Admin Login~~ ✅ Corrigido 2026-06-22
 
 **Arquivo:** `admin/app/(auth)/login/page.tsx`
 
-```html
-<input defaultValue="admin@registro.local" />
-<input defaultValue="RegistroAdmin@123" />
-```
-
-Credenciais visíveis no código-fonte, git history e build artifacts. Qualquer pessoa com acesso ao código pode autenticar no painel admin.
+Corrigido: removidos `defaultValue` com email e senha. Substituídos por `placeholder` genérico.
 
 ### C3. Zero Testes na Integração Chess Hotel
 
@@ -105,17 +94,17 @@ Proteção de rota feita em cada page individualmente via `currentTenantUser()` 
 
 `platformFetch()` não implementa refresh no 401. Usuários admin perdem sessão sem retry.
 
-### H9. Access Logs Desabilitados em Produção
+### ~~H9. Access Logs Desabilitados em Produção~~ ✅ Corrigido 2026-06-22
 
 **Arquivo:** `api/Dockerfile:35`
 
-`--no-access-log` no Uvicorn elimina logs HTTP. Impede auditoria de requests, detecção de brute force e análise de performance.
+Corrigido: trocado `--no-access-log` por `--access-log`.
 
-### H10. Rate Limiter Quebrado Atrás de Proxy
+### ~~H10. Rate Limiter Quebrado Atrás de Proxy~~ ✅ Corrigido 2026-06-22
 
 **Arquivo:** `api/app/core/rate_limit.py`
 
-Usa `get_remote_address` mas Traefik faz proxy — todos os requests vêm do mesmo IP, compartilhando um único rate limit. Deve usar `X-Forwarded-For`.
+Corrigido: função `_get_client_ip` lê `X-Forwarded-For` + `ProxyHeadersMiddleware` adicionado em `main.py`.
 
 ### H11. Deploy Automático Sem Approval Gate
 

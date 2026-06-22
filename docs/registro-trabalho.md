@@ -1,5 +1,31 @@
 # Registro de trabalho
 
+## 2026-06-22 — Sprint 1 de segurança e screenshots Chess Hotel
+
+### Correções de segurança (Sprint 1)
+
+- **SQL injection no RLS context** (`api/app/core/auth.py:31`): substituída f-string interpolation por query parametrizada (`text("SET LOCAL ... = :cid"), {"cid": str(cid)}`).
+- **Credenciais hardcoded no admin login** (`admin/app/(auth)/login/page.tsx`): removidos `defaultValue` com email e senha do formulário. Substituídos por `placeholder` genérico e texto informativo.
+- **Access logs em produção** (`api/Dockerfile:35`): trocado `--no-access-log` por `--access-log` no CMD de produção para permitir auditoria de requests HTTP.
+- **Rate limiter atrás de proxy** (`api/app/core/rate_limit.py`): substituído `get_remote_address` do slowapi por função customizada `_get_client_ip` que lê `X-Forwarded-For`. Adicionado `ProxyHeadersMiddleware` do uvicorn em `api/app/main.py` para resolver IP real do Traefik.
+
+### Screenshots na integração Chess Hotel
+
+- Adicionado campo `screenshots` (array de strings base64) ao schema `FiscalRequestCreate` com limite de 5 imagens.
+- No router, após criar o chamado, cada screenshot é decodificado, formato detectado por magic bytes (PNG/JPEG/WebP), e salvo como attachment no MinIO via `create_attachment` existente.
+- Screenshots inválidos são logados e ignorados — não bloqueiam a criação do chamado.
+- Campo `attachments_count` adicionado à resposta `FiscalRequestCreated`.
+- Screenshots excluídos do payload JSON (não armazena base64 no banco).
+- Documentação `chess-hotel-api.md` atualizada com seção Screenshots, campo na tabela e exemplo com base64.
+
+### Postman Collection
+
+- Gerado `docs/integracoes/chess-hotel-api.postman_collection.json` com todos os 4 endpoints da integração Chess Hotel.
+- Variáveis de collection: `base_url`, `integration_key`, `hotel_slug`.
+- Autenticação por API Key (`X-Registro-Key`) configurada na collection.
+- Exemplos de request e response (sucesso e erros) em cada endpoint.
+- Request "2b" dedicado mostrando exemplo com screenshot base64.
+
 ## 2026-06-22 — CI/CD, cobertura e deploy automático
 
 ### CI — pip-audit e cobertura
