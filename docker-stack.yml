@@ -122,7 +122,7 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.registro-api.rule=Host(`${REGISTRO_WEB_HOST}`) && PathPrefix(`/api/v1`)
+        - traefik.http.routers.registro-api.rule=Host(`${REGISTRO_API_HOST}`)
         - traefik.http.routers.registro-api.entrypoints=websecure
         - traefik.http.routers.registro-api.tls.certresolver=letsencrypt
         - traefik.http.routers.registro-api.priority=100

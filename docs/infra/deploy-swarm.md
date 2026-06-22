@@ -44,13 +44,14 @@ Arquivo local `/opt/registro/.env.prod`, nunca versionado:
 
 ```env
 REGISTRO_WEB_HOST=registro.solidsd.com.br
+REGISTRO_API_HOST=api.registro.solidsd.com.br
 REGISTRO_ADMIN_HOST=painel.registro.solidsd.com.br
 REGISTRO_WEB_ORIGIN=https://registro.solidsd.com.br
 IMAGE_TAG=sha-<sha-completo>
 GHCR_PAT=...
 ```
 
-A API é publicada no mesmo host do produto sob `/api/v1`; não exige terceiro DNS.
+A API é publicada em `api.registro.solidsd.com.br`; seus endpoints permanecem sob `/api/v1`.
 
 ## Deploy
 
@@ -74,7 +75,7 @@ docker service ps registro_api
 docker service ps registro_web
 docker service ps registro_admin
 docker service logs --tail 100 registro_api
-curl -fsS "https://${REGISTRO_WEB_HOST}/api/v1/health"
+curl -fsS "https://${REGISTRO_API_HOST}/api/v1/health"
 ```
 
 ## Rollback

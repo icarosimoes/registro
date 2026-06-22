@@ -1,5 +1,11 @@
 # Registro de trabalho
 
+## 2026-06-22 — Host dedicado para API
+
+- Rota pública da API movida para `api.registro.solidsd.com.br`.
+- Front e painel continuam consumindo `http://api:8000/api/v1` internamente no overlay do Swarm.
+- DNS aponta diretamente para a VPS e o TLS é emitido pelo resolver `letsencrypt` do Traefik.
+
 ## 2026-06-22 — Preparação do deploy Swarm
 
 - Definidos os hosts `registro.solidsd.com.br` e `painel.registro.solidsd.com.br`.
