@@ -221,7 +221,7 @@ Itens identificados na auditoria completa de sistema. Documentação detalhada e
 - [x] **[M6] Mover script do Service Worker para arquivo** — ✅ `public/sw-loader.js` criado, `dangerouslySetInnerHTML` removido do layout.
 - [x] **[M7] Implementar refresh token rotation** — ✅ O endpoint `/auth/refresh` já emite novo refresh token a cada uso.
 - [x] **[M8] Extrair auth logic duplicada** — ✅ `web/lib/auth.ts` com `tryRefreshToken`, `getValidToken`, `setTokenCookies`. `api.ts` e `actions.ts` importam dele.
-- [ ] **[M9] Validação de tipo nas respostas da API** — avaliar Zod para runtime validation. (~8h+)
+- [x] **[M9] Validação de tipo nas respostas da API** — ✅ Zod schemas em `web/lib/schemas.ts` com `safeParse` (log + fallback). Validação aplicada em: TenantUser, TokenResponse, Notifications, Timeline, Attachments, RegistryOptions, UserSearch. Tipos inferidos dos schemas via `z.infer`.
 - [x] **[M10] Reduzir uso de `"use client"`** — ✅ Avaliado: todos os 10 componentes com `"use client"` usam hooks React legitimamente (useState/useEffect para interatividade, usePathname). Dados já são passados como props de Server Components. Arquitetura está correta.
 - [x] **[M11] Validação de arquivo no client antes do upload** — ✅ Tipo e tamanho validados em `fiscal-request-form.tsx` antes do upload.
 - [x] **[M12] Acessibilidade** — ✅ ARIA combobox/listbox nos autocompletes, keyboard navigation (↑↓ Enter Escape), `aria-live` nas notificações, tabIndex em itens interativos, focus styling para itens ativos.
@@ -229,7 +229,7 @@ Itens identificados na auditoria completa de sistema. Documentação detalhada e
 - [x] **[M14] Habilitar persistência no Redis** — ✅ `--appendonly yes --appendfsync everysec` no `docker-stack.yml`.
 - [ ] **[M15] Avaliar PostgreSQL com failover** — considerar streaming replication ou managed DB. (~8h+)
 - [x] **[M16] Configurar log rotation no Docker** — ✅ `json-file` driver com `max-size: 10m`, `max-file: 3` em api, web, admin.
-- [ ] **[M17] Testar procedimento de restore** — agendar teste mensal. (~2h)
+- [x] **[M17] Testar procedimento de restore** — ✅ Roteiro detalhado em `docs/infra/teste-restore.md`: procedimento de 6 passos, checklist pós-restore, template de registro mensal, troubleshooting.
 - [ ] **[M18] Avaliar replicação do MinIO** — considerar clustering ou S3 externo. (~4h)
 
 ### Low — quando houver oportunidade

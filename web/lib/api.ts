@@ -1,16 +1,11 @@
+import { z } from "zod";
+
 import { getValidToken, tryRefreshToken } from "./auth";
+import { safeParse, TenantUserSchema } from "./schemas";
 
 const apiUrl = process.env.API_URL ?? "http://localhost:8000/api/v1";
 
-export type TenantUser = {
-  id: number;
-  name: string;
-  email: string;
-  phone: string | null;
-  company_id: number;
-  role_name: string | null;
-  permissions: string[];
-};
+export type TenantUser = z.infer<typeof TenantUserSchema>;
 
 export async function currentTenantUser(): Promise<TenantUser> {
   const token = await getValidToken();
@@ -26,13 +21,13 @@ export async function currentTenantUser(): Promise<TenantUser> {
       cache: "no-store",
     });
     if (!retry.ok) throw new Error("unauthorized");
-    return retry.json() as Promise<TenantUser>;
+    return safeParse(TenantUserSchema, await retry.json());
   }
   if (!response.ok) throw new Error("api_error");
-  return response.json() as Promise<TenantUser>;
+  return safeParse(TenantUserSchema, await response.json());
 }
 
-export async function tenantFetch<T>(path: string): Promise<T> {
+export async function tenantFetch<T>(path: string, schema?: z.ZodType<T>): Promise<T> {
   const token = await getValidToken();
   const response = await fetch(`${apiUrl}${path}`, {
     headers: { Authorization: `Bearer ${token}` },
@@ -46,8 +41,10 @@ export async function tenantFetch<T>(path: string): Promise<T> {
       cache: "no-store",
     });
     if (!retry.ok) throw new Error("api_error");
-    return retry.json() as Promise<T>;
+    const data = await retry.json();
+    return schema ? safeParse(schema, data) : (data as T);
   }
   if (!response.ok) throw new Error("api_error");
-  return response.json() as Promise<T>;
+  const data = await response.json();
+  return schema ? safeParse(schema, data) : (data as T);
 }

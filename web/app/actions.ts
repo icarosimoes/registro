@@ -4,6 +4,16 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { setTokenCookies, tryRefreshToken } from "@/lib/auth";
+import {
+  AttachmentItemSchema,
+  NotificationListSchema,
+  RegistryOptionSchema,
+  safeParse,
+  TimelineEntrySchema,
+  TokenResponseSchema,
+  UserOptionSchema,
+} from "@/lib/schemas";
+import { z } from "zod";
 
 const apiUrl = process.env.API_URL ?? "http://localhost:8000/api/v1";
 
@@ -44,11 +54,7 @@ export async function loginAction(
     return { ok: false, error: "E-mail ou senha inválidos." };
   }
 
-  const data = (await response.json()) as {
-    access_token: string;
-    refresh_token: string;
-    expires_in: number;
-  };
+  const data = safeParse(TokenResponseSchema, await response.json());
   await setTokenCookies(data);
   return { ok: true };
 }
@@ -344,10 +350,7 @@ export async function deleteModuleRecordAction(moduleSlug: string, id: number): 
 
 // --- Registry Options ---
 
-export interface RegistryOption {
-  id: number;
-  name: string;
-}
+export type RegistryOption = z.infer<typeof RegistryOptionSchema>;
 
 export async function fetchRegistryOptions(
   category: string,
@@ -356,7 +359,7 @@ export async function fetchRegistryOptions(
     `/registries/options/${encodeURIComponent(category)}`,
   );
   if (!response.ok) return [];
-  return response.json();
+  return safeParse(z.array(RegistryOptionSchema), await response.json());
 }
 
 // --- Procedures ---
@@ -394,20 +397,13 @@ export async function deleteProcedureAction(id: number): Promise<MutationResult>
   return { ok: true };
 }
 
-export interface TimelineEntry {
-  id: number;
-  event_type: string;
-  user: string;
-  message: string | null;
-  changes: Record<string, { from: string; to: string }> | null;
-  created_at: string;
-}
+export type TimelineEntry = z.infer<typeof TimelineEntrySchema>;
 
 export async function fetchTimeline(entityType: string, entityId: number): Promise<TimelineEntry[]> {
   const response = await authedFetch(`/timeline/${entityType}/${entityId}`);
   if (!response.ok) return [];
   const data = await response.json();
-  return data.items ?? [];
+  return safeParse(z.array(TimelineEntrySchema), data.items ?? []);
 }
 
 export async function addCommentAction(entityType: string, entityId: number, message: string): Promise<MutationResult> {
@@ -422,31 +418,16 @@ export async function addCommentAction(entityType: string, entityId: number, mes
   return { ok: true, data: await response.json() };
 }
 
-export interface NotificationItem {
-  id: number;
-  title: string;
-  body: string | null;
-  category: string;
-  entity_type: string | null;
-  entity_id: number | null;
-  read_at: string | null;
-  created_at: string;
-}
+export type NotificationItem = z.infer<typeof NotificationItemSchema>;
 
-export interface NotificationListResult {
-  items: NotificationItem[];
-  total: number;
-  unread: number;
-  page: number;
-  page_size: number;
-}
+export type NotificationListResult = z.infer<typeof NotificationListSchema>;
 
 export async function fetchNotifications(page = 1, unreadOnly = false): Promise<NotificationListResult> {
   const params = new URLSearchParams({ page: String(page), page_size: "20" });
   if (unreadOnly) params.set("unread_only", "true");
   const response = await authedFetch(`/notifications?${params}`);
   if (!response.ok) return { items: [], total: 0, unread: 0, page: 1, page_size: 20 };
-  return response.json();
+  return safeParse(NotificationListSchema, await response.json());
 }
 
 export async function markNotificationRead(id: number): Promise<void> {
@@ -469,16 +450,7 @@ export async function updateProfileAction(body: { name?: string; phone?: string;
 
 // --- Attachments ---
 
-export interface AttachmentItem {
-  id: number;
-  entity_type: string;
-  entity_id: number;
-  filename: string;
-  content_type: string;
-  size_bytes: number;
-  uploaded_by_user_id: number;
-  created_at: string;
-}
+export type AttachmentItem = z.infer<typeof AttachmentItemSchema>;
 
 export async function uploadAttachmentAction(
   entityType: string,
@@ -541,7 +513,7 @@ export async function fetchAttachments(
   const response = await authedFetch(`/attachments?${params}`);
   if (!response.ok) return [];
   const data = await response.json();
-  return data.items ?? [];
+  return safeParse(z.array(AttachmentItemSchema), data.items ?? []);
 }
 
 export async function deleteAttachmentAction(
@@ -609,16 +581,12 @@ export async function saveBrevoSettings(body: { api_key: string; from_address: s
   return { ok: true, data: await response.json() };
 }
 
-export interface UserOption {
-  id: number;
-  name: string;
-  email: string;
-}
+export type UserOption = z.infer<typeof UserOptionSchema>;
 
 export async function searchUsers(q: string): Promise<UserOption[]> {
   const response = await authedFetch(`/users/search?q=${encodeURIComponent(q)}`);
   if (!response.ok) return [];
-  return response.json();
+  return safeParse(z.array(UserOptionSchema), await response.json());
 }
 
 // --- Meetings ---
