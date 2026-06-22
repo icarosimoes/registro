@@ -195,8 +195,9 @@ export function DashboardShell({ user, metrics }: { user?: TenantUser; metrics?:
   const displayName = user?.name ?? "Usuário";
   const firstName = displayName.split(" ")[0];
 
+  const [mounted, setMounted] = useState(false);
   const [greetingData, setGreetingData] = useState({ greeting: "", dateLabel: "" });
-  useEffect(() => setGreetingData(formatGreeting()), []);
+  useEffect(() => { setMounted(true); setGreetingData(formatGreeting()); }, []);
   const { greeting, dateLabel } = greetingData;
 
   const tickets: Ticket[] = useMemo(() => {
@@ -208,9 +209,9 @@ export function DashboardShell({ user, metrics }: { user?: TenantUser; metrics?:
       area: item.area,
       owner: item.owner,
       status: item.status as TicketStatus,
-      updatedAt: formatRelativeTime(item.updated_at),
+      updatedAt: mounted ? formatRelativeTime(item.updated_at) : "",
     }));
-  }, [metrics]);
+  }, [metrics, mounted]);
 
   const openOccurrences = metrics?.open_occurrences ?? 0;
   const myOccurrences = metrics?.my_occurrences ?? 0;
