@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { Suspense, useState, useTransition } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { setPasswordAction } from "@/app/actions";
 
-export default function SetPasswordPage() {
+function SetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get("token") ?? "";
@@ -87,5 +87,22 @@ export default function SetPasswordPage() {
         </form>
       </div>
     </main>
+  );
+}
+
+export default function SetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="auth-page">
+          <div className="auth-card">
+            <h1>Definir senha</h1>
+            <p>Carregando convite…</p>
+          </div>
+        </main>
+      }
+    >
+      <SetPasswordForm />
+    </Suspense>
   );
 }

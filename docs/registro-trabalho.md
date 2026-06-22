@@ -10,6 +10,7 @@
 - Configuração S3 da API passou a aceitar credenciais por arquivos de secret.
 - Redis documentado como implementado para dashboard, permissões e readiness.
 - Criado workflow de publicação das três imagens no GHCR com tags imutáveis por SHA.
+- Corrigida a página `/definir-senha` para renderizar `useSearchParams` sob `Suspense`, permitindo o build de produção do Next.js.
 
 ## 2026-06-21 — Controle de Estoque e Pendências de Turno
 
