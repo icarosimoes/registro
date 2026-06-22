@@ -1,9 +1,9 @@
 """Dispara notificações por email (Brevo) e in-app ao criar/atualizar registros."""
 
 import asyncio
-import logging
 from datetime import datetime
 
+import structlog
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -11,7 +11,7 @@ from app.domain.settings.router import get_company_setting, get_module_recipient
 from app.integrations.brevo import send_email
 from app.models import Notification, NotificationPreference, User
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 ENTITY_TO_MODULE: dict[str, str] = {
     "occurrence": "occurrences",
@@ -26,14 +26,21 @@ ENTITY_TO_MODULE: dict[str, str] = {
 async def _resolve_users(session: AsyncSession, user_ids: list[int]) -> list[dict]:
     if not user_ids:
         return []
-    rows = (await session.execute(
-        select(User.id, User.name, User.email).where(User.id.in_(user_ids), User.active.is_(True))
-    )).all()
+    rows = (
+        await session.execute(
+            select(User.id, User.name, User.email).where(
+                User.id.in_(user_ids), User.active.is_(True)
+            )
+        )
+    ).all()
     return [{"id": r.id, "name": r.name, "email": r.email} for r in rows]
 
 
 async def _load_preferences(
-    session: AsyncSession, company_id: int, user_ids: list[int], module: str,
+    session: AsyncSession,
+    company_id: int,
+    user_ids: list[int],
+    module: str,
 ) -> dict[int, dict[str, bool]]:
     """Returns {user_id: {"in_app": bool, "email": bool}} for the given module."""
     if not user_ids or not module:
@@ -67,7 +74,9 @@ def _build_html(action: str, title: str, module: str, actor: str, detail: str | 
         <p style="color:#555;margin:0 0 4px"><strong>Por:</strong> {actor}</p>
         {detail_block}
         <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0"/>
-        <p style="font-size:12px;color:#999">Você recebeu este email porque é responsável ou está na lista de notificados.</p>
+        <p style="font-size:12px;color:#999">
+          Você recebeu este email porque é responsável ou notificado.
+        </p>
       </div>
     </div>
     """
@@ -131,14 +140,19 @@ async def notify_record_event(
     pref_module = ENTITY_TO_MODULE.get(entity_type or "", "")
     if pref_module:
         module_recipient_ids = await get_module_recipients(
-            session, company_id, pref_module,
+            session,
+            company_id,
+            pref_module,
         )
         recipient_ids.update(module_recipient_ids)
 
     recipients = await _resolve_users(session, list(recipient_ids))
 
     prefs = await _load_preferences(
-        session, company_id, [r["id"] for r in recipients], pref_module,
+        session,
+        company_id,
+        [r["id"] for r in recipients],
+        pref_module,
     )
 
     notification_body = f"{actor_name} · {module}"
@@ -182,22 +196,29 @@ async def notify_record_event(
         if not user_pref["email"]:
             continue
         notif_record = next(
-            (n for n, ri in created_notifications if ri["id"] == r["id"]), None,
+            (n for n, ri in created_notifications if ri["id"] == r["id"]),
+            None,
         )
-        email_tasks.append((notif_record, send_email(
-            api_key=api_key,
-            from_address=from_address,
-            from_name=from_name,
-            to_email=r["email"],
-            to_name=r["name"],
-            subject=subject,
-            html=html,
-            reply_to=actor_email,
-        )))
+        email_tasks.append(
+            (
+                notif_record,
+                send_email(
+                    api_key=api_key,
+                    from_address=from_address,
+                    from_name=from_name,
+                    to_email=r["email"],
+                    to_name=r["name"],
+                    subject=subject,
+                    html=html,
+                    reply_to=actor_email,
+                ),
+            )
+        )
 
     if email_tasks:
         results = await asyncio.gather(
-            *[t for _, t in email_tasks], return_exceptions=True,
+            *[t for _, t in email_tasks],
+            return_exceptions=True,
         )
         now = datetime.now()
         for (notif_record, _), result in zip(email_tasks, results, strict=True):
@@ -220,9 +241,7 @@ async def notify_record_event(
             user_pref = prefs.get(r["id"], {"in_app": True, "email": True})
             if not user_pref.get("whatsapp", True):
                 continue
-            phone = await session.scalar(
-                select(User.phone).where(User.id == r["id"])
-            )
+            phone = await session.scalar(select(User.phone).where(User.id == r["id"]))
             if not phone:
                 continue
             try:
@@ -234,4 +253,4 @@ async def notify_record_event(
                     text=whatsapp_text,
                 )
             except Exception:
-                logger.warning("WhatsApp send failed for user %s", r["id"])
+                logger.warning("whatsapp_send_failed", user_id=r["id"])

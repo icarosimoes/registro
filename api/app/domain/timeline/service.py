@@ -151,7 +151,12 @@ async def add_comment(
     module_label = module_labels.get(entity_type, entity_type)
 
     if entity_type == "occurrence":
-        record = await session.scalar(select(Occurrence).where(Occurrence.id == entity_id))
+        record = await session.scalar(
+            select(Occurrence).where(
+                Occurrence.id == entity_id,
+                Occurrence.company_id == company_id,
+            )
+        )
         if record:
             await notify_record_event(
                 session,
@@ -168,7 +173,10 @@ async def add_comment(
             )
     elif entity_type == "fiscal_request":
         record = await session.scalar(
-            select(FiscalRequest).where(FiscalRequest.id == entity_id)
+            select(FiscalRequest).where(
+                FiscalRequest.id == entity_id,
+                FiscalRequest.company_id == company_id,
+            )
         )
         if record:
             await notify_record_event(

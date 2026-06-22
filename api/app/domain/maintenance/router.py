@@ -1,12 +1,17 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import require_session
 from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
+from app.domain.maintenance.schemas import (
+    MaintenanceCreate,
+    MaintenanceListResponse,
+    MaintenanceOut,
+    MaintenanceUpdate,
+)
 from app.domain.maintenance.service import (
     create_record,
     delete_record,
@@ -16,49 +21,6 @@ from app.domain.maintenance.service import (
 )
 
 router = APIRouter(prefix="/maintenance", tags=["maintenance"])
-
-
-class MaintenanceOut(BaseModel):
-    id: int
-    title: str
-    description: str | None = None
-    category: str | None = None
-    status: str
-    priority: str | None = None
-    location_id: int | None = None
-    owner_user_id: int | None = None
-    owner_name: str | None = None
-    created_at: str
-    updated_at: str
-
-
-class MaintenanceListResponse(BaseModel):
-    items: list[MaintenanceOut]
-    total: int
-    page: int
-    page_size: int
-
-
-class MaintenanceCreate(BaseModel):
-    title: str
-    description: str | None = None
-    category: str | None = None
-    status: str = "Em andamento"
-    priority: str | None = None
-    location_id: int | None = None
-    owner_user_id: int | None = None
-    notify_user_ids: list[int] | None = None
-
-
-class MaintenanceUpdate(BaseModel):
-    title: str | None = None
-    description: str | None = None
-    category: str | None = None
-    status: str | None = None
-    priority: str | None = None
-    location_id: int | None = None
-    owner_user_id: int | None = None
-    notify_user_ids: list[int] | None = None
 
 
 def _to_out(rec, owner_name: str | None) -> MaintenanceOut:
@@ -89,7 +51,9 @@ async def list_maintenance(
     rows, total = await list_records(session, user.company_id, page, page_size, search, status)
     return MaintenanceListResponse(
         items=[_to_out(rec, name) for rec, name in rows],
-        total=total, page=page, page_size=page_size,
+        total=total,
+        page=page,
+        page_size=page_size,
     )
 
 
@@ -112,10 +76,19 @@ async def create_maintenance(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> MaintenanceOut:
     rec, owner_name = await create_record(
-        session, user.company_id, user.id, user.name, user.email,
-        title=body.title, description=body.description, category=body.category,
-        status=body.status, priority=body.priority, location_id=body.location_id,
-        owner_user_id=body.owner_user_id, notify_user_ids=body.notify_user_ids,
+        session,
+        user.company_id,
+        user.id,
+        user.name,
+        user.email,
+        title=body.title,
+        description=body.description,
+        category=body.category,
+        status=body.status,
+        priority=body.priority,
+        location_id=body.location_id,
+        owner_user_id=body.owner_user_id,
+        notify_user_ids=body.notify_user_ids,
     )
     return _to_out(rec, owner_name)
 
@@ -131,7 +104,13 @@ async def update_maintenance(
     if not updates:
         raise HTTPException(status_code=422, detail={"code": "no_fields"})
     result = await update_record(
-        session, user.company_id, user.id, user.name, user.email, record_id, updates,
+        session,
+        user.company_id,
+        user.id,
+        user.name,
+        user.email,
+        record_id,
+        updates,
     )
     if result is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})

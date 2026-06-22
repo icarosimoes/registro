@@ -1,14 +1,16 @@
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from pydantic import BaseModel, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth import current_user
 from app.core.dependencies import require_session
 from app.core.permissions import require_permission
+from app.core.rate_limit import limiter
 from app.domain.auth.repository import AuthenticatedUser
+from app.domain.auth.schemas import validate_password_strength
 from app.domain.users.service import (
     create_user,
     delete_user,
@@ -47,6 +49,11 @@ class UserCreate(BaseModel):
     role_id: int | None = None
     active: bool = True
 
+    @field_validator("password")
+    @classmethod
+    def check_password(cls, v: str) -> str:
+        return validate_password_strength(v)
+
 
 class UserUpdate(BaseModel):
     name: str | None = None
@@ -56,11 +63,25 @@ class UserUpdate(BaseModel):
     role_id: int | None = None
     active: bool | None = None
 
+    @field_validator("password")
+    @classmethod
+    def check_password(cls, v: str | None) -> str | None:
+        if v is not None:
+            return validate_password_strength(v)
+        return v
+
 
 class ProfileUpdate(BaseModel):
     name: str | None = None
     phone: str | None = None
     password: str | None = None
+
+    @field_validator("password")
+    @classmethod
+    def check_password(cls, v: str | None) -> str | None:
+        if v is not None:
+            return validate_password_strength(v)
+        return v
 
 
 class UserOption(BaseModel):
@@ -70,7 +91,9 @@ class UserOption(BaseModel):
 
 
 @router.patch("/me", response_model=UserSummary)
+@limiter.limit("10/minute")
 async def update_profile_endpoint(
+    request: Request,
     body: ProfileUpdate,
     user: Annotated[AuthenticatedUser, Depends(current_user)],
     session: Annotated[AsyncSession, Depends(require_session)],
@@ -131,7 +154,10 @@ async def create_user_endpoint(
         password=body.password, role_id=body.role_id, active=body.active,
     )
     if record is None:
-        raise HTTPException(status_code=409, detail={"code": "email_exists"})
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "conflict", "message": "Não foi possível criar o usuário"},
+        )
     role_name = await get_role_name(session, record.role_id)
     return UserSummary(
         id=record.id, name=record.name, email=record.email, phone=record.phone,

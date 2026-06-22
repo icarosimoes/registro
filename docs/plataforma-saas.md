@@ -2,21 +2,23 @@
 
 ## Estado implementado
 
-O Compose sobe uma base MySQL nova e isolada, executa Alembic e cria dados fictícios. Ela serve para desenvolver a nova aplicação e não representa o banco Laravel.
+O Compose sobe PostgreSQL 17 com RLS, MinIO, API, Web e Admin. Alembic executa migrations e seed fictício na primeira subida. O MySQL sobe apenas sob demanda via profile `mysql-import` para importação do dump V1.
 
 | Componente | URL local | Responsabilidade |
 | --- | --- | --- |
 | Web do tenant | `http://localhost:3000` | produto Registro |
 | API | `http://localhost:8000` | regras tenant e plataforma |
 | Painel admin | `http://localhost:3001/login` | operação comercial cross-tenant |
-| MySQL | `localhost:3307` | banco de desenvolvimento |
+| PostgreSQL | `localhost:5433` | banco principal com RLS |
+| MinIO | `localhost:9000` (API), `localhost:9001` (console) | storage S3-compatible para anexos |
 
 Credenciais de demonstração:
 
 | Contexto | E-mail | Senha | Tenant |
 | --- | --- | --- | --- |
-| tenant | `icaro@registro.local` | `Registro@123` | `empresa-demo` |
-| tenant | `ana@registro.local` | `Registro@123` | `filial-teste` |
+| tenant (Aero Hotel) | `demo@aerohotel.local` | `Registro@123` | `aero-hotel` |
+| tenant (demo) | `icaro@registro.local` | `Registro@123` | `empresa-demo` |
+| tenant (demo) | `ana@registro.local` | `Registro@123` | `filial-teste` |
 | plataforma | `admin@registro.local` | `RegistroAdmin@123` | não se aplica |
 
 Essas credenciais são somente locais. Em produção o seed exige senhas fornecidas por secret/env e não exibe credenciais na interface.
@@ -25,17 +27,27 @@ Essas credenciais são somente locais. Em produção o seed exige senhas forneci
 
 O login tenant recebe apenas e-mail e senha. Se o e-mail pertencer a um único tenant, entra direto. Se pertencer a mais de um, a API retorna `422 multi_tenant` com a lista de empresas para o front exibir um seletor; o segundo envio inclui `company_id`. O JWT carrega `company_id`, e a consulta revalida usuário, empresa, status e exclusão lógica. O token administrativo usa outro tipo, outro endpoint e outra tabela; não pode ser usado em `/auth/me`.
 
-No MySQL, cada repository filtra `company_id` explicitamente. Na futura migração para PostgreSQL será adicionada RLS como terceira camada, sem remover o filtro da aplicação.
+O PostgreSQL aplica RLS (Row-Level Security) em 24+ tabelas com `company_id`. O GUC `app.current_company_id` é setado via `SET LOCAL` na dependency `current_user`. Rotas platform (admin) operam como superuser com `BYPASSRLS`.
 
 ## Painel administrativo
 
-O painel separado consulta métricas agregadas, tenants e planos. O token fica em cookie `httpOnly`, criado por Server Action. As primeiras rotas são somente leitura; futuras mutações deverão exigir permissão de plataforma e gravar `platform_audit_logs`.
+O painel admin foi reescrito no padrão Jarvis/Aloji com Tailwind CSS 4, Lucide icons e Sonner (toasts). Funcionalidades implementadas:
+
+- **Dashboard**: 4 stat cards (empresas, trial, inadimplentes, MRR) com dados reais da API `/platform/metrics`.
+- **Empresas**: tabela com busca, badges de status (trial/ativo/inadimplente/suspenso/cancelado), menu de ações por assinatura (suspender/reativar/cancelar), modal de criação de tenant, delete com confirmação.
+- **Planos**: cards com preço formatado em BRL, limites e status ativo/inativo.
+- **Auditoria**: tabela de logs administrativos da plataforma (`platform_audit_logs`).
+- **Auth**: Server Actions + httpOnly cookies.
+- **API proxy**: route handler `/api/proxy/[...path]` para mutations client-side proxeadas para `/platform/*`.
+
+## Comercial e cobrança (implementado)
+
+- CRUD auditado de tenants, planos e assinaturas — endpoints platform com POST/GET/PATCH/DELETE, todos auditados via `PlatformAuditLog`.
+- Lifecycle: trial 14 dias → past_due (expiração) → suspended (7 dias de tolerância, bloqueia login) → reativação via endpoint admin.
+- Asaas sandbox: `AsaasClient` async com httpx, webhook autenticado e idempotente (dedup via `webhook_events`), reconciliação periódica (`POST /platform/billing/reconcile`).
 
 ## Próximas capacidades
 
-- CRUD de tenants e planos com auditoria;
-- convite e recuperação de acesso;
-- política de trial, tolerância e suspensão;
-- Asaas sandbox, webhooks idempotentes e reconciliação;
-- dashboard do tenant consumindo a API;
-- testes automatizados de isolamento em cada domínio.
+- Convite e recuperação de acesso.
+- Asaas produção com credenciais reais e política comercial definida.
+- Dashboard do tenant consumindo métricas SaaS.

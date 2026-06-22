@@ -109,8 +109,6 @@ async def create_inspection_suite(
     if items:
         for item in items:
             session.add(InspectionSuiteItem(suite_id=record.id, **item))
-    await session.commit()
-    await session.refresh(record)
     await record_event(
         session,
         company_id=company_id,
@@ -120,6 +118,7 @@ async def create_inspection_suite(
         event_type="create",
     )
     await session.commit()
+    await session.refresh(record)
     return await get_inspection_suite(session, company_id, record.id)  # type: ignore
 
 

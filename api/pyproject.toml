@@ -26,6 +26,7 @@ mysql-import = [
   "asyncmy>=0.2.10,<1",
 ]
 dev = [
+  "aiosqlite>=0.20,<1",
   "httpx>=0.28,<1",
   "mypy>=1.13,<2",
   "pytest>=8.3,<9",

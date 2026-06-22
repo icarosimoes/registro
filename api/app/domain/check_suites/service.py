@@ -100,8 +100,6 @@ async def create_check_suite(
     if items:
         for item in items:
             session.add(CheckSuiteItem(suite_id=record.id, **item))
-    await session.commit()
-    await session.refresh(record)
     await record_event(
         session,
         company_id=company_id,
@@ -111,6 +109,7 @@ async def create_check_suite(
         event_type="create",
     )
     await session.commit()
+    await session.refresh(record)
     return await get_check_suite(session, company_id, record.id)  # type: ignore
 
 

@@ -424,7 +424,6 @@ async def import_shift_reports(
             target.add(item)
 
         beginning = str(r.get("beginning") or "")[:16]
-        end = str(r.get("end") or "")[:16]
         supervisor = _str(r.get("supervisor")) or ""
         item.title = f"Turno {beginning} — {supervisor}".strip(" —")
         item.shift_date = _dt(r.get("beginning")).date() if r.get("beginning") else None
@@ -489,7 +488,11 @@ async def import_occurrence_children(
         occ.notify_user_ids = participants_by_occ.get(occ_id)
         updated += 1
 
-    return {"comments": len(occ_comments), "participants": len(occ_participants), "occurrences_updated": updated}
+    return {
+        "comments": len(occ_comments),
+        "participants": len(occ_participants),
+        "occurrences_updated": updated,
+    }
 
 
 async def import_check_suites(
@@ -509,7 +512,11 @@ async def import_check_suites(
             "item": _str(i.get("item")),
             "valuation": i.get("valuation"),
             "register": _str(i.get("register")),
-            "occurrence_id": occurrences_map.get(i["occurrences_id"]) if i.get("occurrences_id") else None,
+            "occurrence_id": (
+                occurrences_map.get(i["occurrences_id"])
+                if i.get("occurrences_id")
+                else None
+            ),
         })
 
     count = 0

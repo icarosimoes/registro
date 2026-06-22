@@ -140,14 +140,13 @@ async def create_order(
         sla_deadline=sla_deadline,
     )
     session.add(rec)
-    await session.commit()
-    await session.refresh(rec)
-
+    await session.flush()
     await record_event(
         session, company_id=company_id, user_id=user_id,
         entity_type="work_order", entity_id=rec.id, event_type="create",
     )
     await session.commit()
+    await session.refresh(rec)
 
     await notify_record_event(
         session, company_id=company_id, actor_name=user_name, actor_email=user_email,

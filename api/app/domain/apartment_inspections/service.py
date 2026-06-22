@@ -127,11 +127,9 @@ async def create_apartment_inspection(
         notes=notes,
     )
     session.add(record)
-    await session.commit()
-    await session.refresh(record)
+    await session.flush()
     if items:
         await _sync_items(session, record.id, items)
-        await session.commit()
     await record_event(
         session,
         company_id=company_id,
@@ -141,6 +139,7 @@ async def create_apartment_inspection(
         event_type="create",
     )
     await session.commit()
+    await session.refresh(record)
     inspector_name = (
         await session.scalar(select(User.name).where(User.id == record.inspector_user_id))
         if record.inspector_user_id

@@ -1,4 +1,5 @@
 import asyncio
+import os
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -12,6 +13,9 @@ JWT_SECRET = "test-secret-with-at-least-32-characters-here"
 TENANT_A = 1
 TENANT_B = 2
 
+_TEST_DB_URL = os.environ.get("TEST_DATABASE_URL") or os.environ.get("DATABASE_URL")
+USE_POSTGRES = bool(_TEST_DB_URL and "postgresql" in _TEST_DB_URL)
+
 
 @pytest.fixture(scope="session")
 def event_loop():
@@ -22,6 +26,8 @@ def event_loop():
 
 @pytest.fixture(scope="session")
 def test_engine():
+    if USE_POSTGRES:
+        return create_async_engine(_TEST_DB_URL, echo=False)
     return create_async_engine(
         "sqlite+aiosqlite:///:memory:",
         connect_args={"check_same_thread": False},
@@ -36,6 +42,8 @@ def test_session_factory(test_engine):
 
 @pytest.fixture(scope="session", autouse=True)
 async def create_tables(test_engine):
+    if USE_POSTGRES:
+        return
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
@@ -45,14 +53,28 @@ async def seed_data(test_session_factory, create_tables):
     from app.models import Company, Role, User
 
     async with test_session_factory() as s:
-        s.add(Company(
-            id=TENANT_A, name="Hotel A", slug="hotel-a",
-            status="active", timezone="America/Sao_Paulo",
-        ))
-        s.add(Company(
-            id=TENANT_B, name="Hotel B", slug="hotel-b",
-            status="active", timezone="America/New_York",
-        ))
+        existing = await s.get(Company, TENANT_A)
+        if existing:
+            return
+
+        s.add(
+            Company(
+                id=TENANT_A,
+                name="Hotel A",
+                slug="hotel-a",
+                status="active",
+                timezone="America/Sao_Paulo",
+            )
+        )
+        s.add(
+            Company(
+                id=TENANT_B,
+                name="Hotel B",
+                slug="hotel-b",
+                status="active",
+                timezone="America/New_York",
+            )
+        )
         await s.flush()
 
         s.add(Role(id=1, company_id=TENANT_A, code="admin", name="Admin"))
@@ -60,14 +82,28 @@ async def seed_data(test_session_factory, create_tables):
         await s.flush()
 
         pw = "$2b$12$LJ3m4ys3Lf5UXOAZ3dDkheNPZ8XNfMsZFHmH7.KGZv6JqRiW8gzAi"
-        s.add(User(
-            id=1, company_id=TENANT_A, name="User A",
-            email="a@test.com", password=pw, role_id=1, active=True,
-        ))
-        s.add(User(
-            id=2, company_id=TENANT_B, name="User B",
-            email="b@test.com", password=pw, role_id=2, active=True,
-        ))
+        s.add(
+            User(
+                id=1,
+                company_id=TENANT_A,
+                name="User A",
+                email="a@test.com",
+                password=pw,
+                role_id=1,
+                active=True,
+            )
+        )
+        s.add(
+            User(
+                id=2,
+                company_id=TENANT_B,
+                name="User B",
+                email="b@test.com",
+                password=pw,
+                role_id=2,
+                active=True,
+            )
+        )
         await s.commit()
 
 
@@ -88,12 +124,18 @@ def app(test_session_factory):
 
     test_settings = Settings(
         jwt_secret=JWT_SECRET,
-        database_url="sqlite+aiosqlite:///:memory:",
+        database_url=_TEST_DB_URL or "sqlite+aiosqlite:///:memory:",
     )
 
     async def _test_session():
         async with test_session_factory() as session:
-            yield session
+            try:
+                yield session
+            finally:
+                if USE_POSTGRES:
+                    from sqlalchemy import text
+
+                    await session.execute(text("RESET app.current_company_id"))
 
     from typing import Annotated
 
@@ -102,8 +144,9 @@ def app(test_session_factory):
 
     _oauth2 = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
-    async def _current_user_no_rls(
+    async def _current_user_test(
         token: Annotated[str, Depends(_oauth2)],
+        session: Annotated[AsyncSession, Depends(require_session)],
     ):
         from fastapi import HTTPException
 
@@ -113,13 +156,22 @@ def app(test_session_factory):
             claims = decode_access_token(token, test_settings.jwt_secret)
         except Exception as exc:
             raise HTTPException(status_code=401, detail={"code": "invalid_token"}) from exc
+
+        cid = int(claims["company_id"])
+        if USE_POSTGRES:
+            from sqlalchemy import text
+
+            await session.execute(
+                text("SET LOCAL app.current_company_id = :cid"), {"cid": str(cid)}
+            )
+
         return AuthenticatedUser(
             id=int(claims["sub"]),
             name=f"User {claims['sub']}",
             email=f"user{claims['sub']}@test.com",
             phone=None,
             password_hash="",
-            company_id=int(claims["company_id"]),
+            company_id=cid,
             company_name="Test Hotel",
             role_id=int(claims.get("role_id", 1)),
             role_name="admin",
@@ -128,7 +180,7 @@ def app(test_session_factory):
 
     fastapi_app.dependency_overrides[get_settings] = lambda: test_settings
     fastapi_app.dependency_overrides[require_session] = _test_session
-    fastapi_app.dependency_overrides[current_user] = _current_user_no_rls
+    fastapi_app.dependency_overrides[current_user] = _current_user_test
 
     yield fastapi_app
 
@@ -143,7 +195,8 @@ async def client(app):
 
 
 def make_token(
-    company_id: int, user_id: int = 1,
+    company_id: int,
+    user_id: int = 1,
     permissions: list[str] | None = None,
 ) -> str:
     return create_access_token(

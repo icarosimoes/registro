@@ -1,14 +1,13 @@
-from typing import Literal
+from typing import Annotated, Literal
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy import text
 
-from app.core.config import get_settings
+from app.core.config import Settings, get_settings
 from app.core.database import engine
 
 router = APIRouter(prefix="/health", tags=["health"])
-settings = get_settings()
 
 
 class HealthResponse(BaseModel):
@@ -23,7 +22,9 @@ class ReadinessResponse(BaseModel):
 
 
 @router.get("", response_model=HealthResponse)
-async def health() -> HealthResponse:
+async def health(
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> HealthResponse:
     return HealthResponse(service=settings.app_name, environment=settings.environment)
 
 

@@ -1,6 +1,7 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import require_session
@@ -126,6 +127,47 @@ async def get_meeting_endpoint(
             detail={"code": "not_found"},
         )
     return _build_detail(data)
+
+
+@router.get("/{meeting_id}/pdf")
+async def meeting_pdf_endpoint(
+    meeting_id: int,
+    user: ViewUser,
+    session: Session,
+) -> StreamingResponse:
+    data = await get_meeting(
+        session, user.company_id, meeting_id
+    )
+    if data is None:
+        raise HTTPException(
+            status_code=404,
+            detail={"code": "not_found"},
+        )
+
+    from app.domain.meetings.pdf import generate_meeting_pdf
+    from app.domain.timeline.service import get_timeline
+
+    timeline = await get_timeline(
+        session, user.company_id, "meeting", meeting_id
+    )
+    buf = generate_meeting_pdf(
+        company_name=user.company_name,
+        meeting=data["meeting"],
+        owner_name=data["owner_name"],
+        participants=data["participants"],
+        subjects=data["subjects"],
+        timeline=timeline,
+    )
+    filename = f"reuniao_{meeting_id}.pdf"
+    return StreamingResponse(
+        buf,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="{filename}"'
+            )
+        },
+    )
 
 
 @router.post(

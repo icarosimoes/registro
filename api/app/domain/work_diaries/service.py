@@ -253,9 +253,6 @@ async def create_work_diary(
         observations=observations,
     )
 
-    await session.commit()
-    await session.refresh(record)
-
     await record_event(
         session,
         company_id=company_id,
@@ -265,6 +262,7 @@ async def create_work_diary(
         event_type="create",
     )
     await session.commit()
+    await session.refresh(record)
 
     return await get_work_diary(session, company_id, record.id)  # type: ignore
 

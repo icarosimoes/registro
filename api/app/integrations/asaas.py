@@ -1,9 +1,9 @@
-import logging
 from typing import Any
 
 import httpx
+import structlog
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 TIMEOUT = 30.0
 
@@ -24,15 +24,24 @@ class AsaasClient:
         }
 
     async def _request(
-        self, method: str, path: str, *, json: dict | None = None, params: dict | None = None,
+        self,
+        method: str,
+        path: str,
+        *,
+        json: dict | None = None,
+        params: dict | None = None,
     ) -> dict:
         url = f"{self.base_url}{path}"
         async with httpx.AsyncClient(timeout=TIMEOUT) as client:
             resp = await client.request(
-                method, url, headers=self.headers, json=json, params=params,
+                method,
+                url,
+                headers=self.headers,
+                json=json,
+                params=params,
             )
         if resp.status_code >= 400:
-            logger.error("Asaas %s %s → %d", method, path, resp.status_code)
+            logger.error("asaas_error", method=method, path=path, status=resp.status_code)
             raise AsaasError(resp.status_code, resp.json() if resp.content else {})
         return resp.json()
 
@@ -46,12 +55,16 @@ class AsaasClient:
         cpf_cnpj: str,
         external_reference: str,
     ) -> dict:
-        return await self._request("POST", "/customers", json={
-            "name": name,
-            "email": email,
-            "cpfCnpj": cpf_cnpj,
-            "externalReference": external_reference,
-        })
+        return await self._request(
+            "POST",
+            "/customers",
+            json={
+                "name": name,
+                "email": email,
+                "cpfCnpj": cpf_cnpj,
+                "externalReference": external_reference,
+            },
+        )
 
     async def get_customer(self, customer_id: str) -> dict:
         return await self._request("GET", f"/customers/{customer_id}")
@@ -68,14 +81,18 @@ class AsaasClient:
         description: str,
         external_reference: str,
     ) -> dict:
-        return await self._request("POST", "/subscriptions", json={
-            "customer": customer_id,
-            "billingType": billing_type,
-            "value": value,
-            "cycle": cycle,
-            "description": description,
-            "externalReference": external_reference,
-        })
+        return await self._request(
+            "POST",
+            "/subscriptions",
+            json={
+                "customer": customer_id,
+                "billingType": billing_type,
+                "value": value,
+                "cycle": cycle,
+                "description": description,
+                "externalReference": external_reference,
+            },
+        )
 
     async def get_subscription(self, subscription_id: str) -> dict:
         return await self._request("GET", f"/subscriptions/{subscription_id}")

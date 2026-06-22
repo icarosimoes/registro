@@ -10,7 +10,7 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `GET` | `/health/ready` | pública | conexão do banco pronta ou não configurada |
 | `POST` | `/auth/login` | pública (10/min) | JWT access + refresh e perfil |
 | `POST` | `/auth/refresh` | pública (20/min) | renova tokens via refresh token |
-| `GET` | `/auth/me` | Bearer | perfil revalidado no MySQL |
+| `GET` | `/auth/me` | Bearer | perfil revalidado no PostgreSQL |
 | `GET` | `/occurrences` | `occurrence.view` | ocorrências paginadas e isoladas por empresa |
 | `GET` | `/occurrences/{id}` | `occurrence.view` | detalhe com participantes |
 | `POST` | `/occurrences` | `occurrence.create` | cria ocorrência |
@@ -48,6 +48,7 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `PATCH` | `/meetings/{id}` | `meeting.edit` | atualiza reunião |
 | `DELETE` | `/meetings/{id}` | `meeting.delete` | soft delete de reunião |
 | `POST` | `/meetings/{id}/clone` | `meeting.create` | duplica reunião |
+| `GET` | `/meetings/{id}/pdf` | `meeting.view` | exporta PDF da ata de reunião |
 | `POST` | `/meetings/{id}/subjects` | `meeting.edit` | adiciona pauta |
 | `PATCH` | `/meetings/{id}/subjects/{sid}` | `meeting.edit` | atualiza pauta (toggle resolved) |
 | `DELETE` | `/meetings/{id}/subjects/{sid}` | `meeting.edit` | remove pauta |
@@ -71,6 +72,8 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `PUT` | `/notifications/preferences/{module}` | Tenant Bearer | atualiza preferência de um módulo |
 | `GET` | `/settings/evolution` | `settings.view` | configuração da Evolution API |
 | `POST` | `/settings/evolution` | `settings.edit` | salva configuração da Evolution API |
+| `GET` | `/settings/evolution/status` | `settings.view` | verifica conexão com a instância Evolution |
+| `POST` | `/settings/evolution/test` | `settings.edit` | envia mensagem de teste via Evolution |
 | `GET` | `/settings/brevo` | `settings.view` | configuração do Brevo (e-mail) |
 | `POST` | `/settings/brevo` | `settings.edit` | salva configuração do Brevo |
 | `GET` | `/settings/notification-recipients` | `settings.view` | destinatários por módulo |
@@ -162,6 +165,15 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `POST` | `/handoffs/{id}/read` | `handoff.view` | marca pendência como lida |
 | `POST` | `/handoffs/{id}/resolve` | `handoff.edit` | resolve pendência com notas |
 | `DELETE` | `/handoffs/{id}` | `handoff.delete` | soft delete de pendência |
+| `GET` | `/maintenance` | `maintenance.view` | registros de manutenção paginados |
+| `GET` | `/maintenance/{id}` | `maintenance.view` | detalhe do registro de manutenção |
+| `POST` | `/maintenance` | `maintenance.create` | cria registro de manutenção |
+| `PATCH` | `/maintenance/{id}` | `maintenance.edit` | atualiza registro de manutenção |
+| `DELETE` | `/maintenance/{id}` | `maintenance.delete` | soft delete de registro de manutenção |
+| `GET` | `/bulletin` | `bulletin.view` | avisos do mural paginados |
+| `POST` | `/bulletin` | `bulletin.create` | cria aviso no mural |
+| `PATCH` | `/bulletin/{id}` | `bulletin.edit` | atualiza aviso do mural |
+| `DELETE` | `/bulletin/{id}` | `bulletin.delete` | soft delete de aviso do mural |
 
 ### Login
 
@@ -193,6 +205,7 @@ Endpoints sensíveis possuem rate limiting por IP via slowapi:
 | `POST /auth/refresh` | 20 req/min |
 | `POST /integrations/chess-hotel/users/resolve` | 30 req/min |
 | `POST /integrations/chess-hotel/tickets` | 30 req/min |
+| `POST /integrations/asaas/webhook` | 60 req/min |
 
 Exceder o limite retorna `429 Too Many Requests`.
 
@@ -220,7 +233,7 @@ Cada domínio possui um `service.py` com a lógica de negócio separada do route
 
 ## Contrato de listas
 
-Todas as listas paginadas respondem `{items, total, page, page_size}` e aceitam `page`, `page_size` e `search` (quando aplicável). Endpoints que seguem este contrato: `/occurrences`, `/fiscal-requests`, `/users`, `/registries`, `/modules/{slug}`, `/procedures` e `/notifications`.
+Todas as listas paginadas respondem `{items, total, page, page_size}` e aceitam `page`, `page_size` e `search` (quando aplicável). Endpoints que seguem este contrato: `/occurrences`, `/fiscal-requests`, `/users`, `/registries`, `/modules/{slug}`, `/procedures`, `/notifications`, `/meetings`, `/shift-reports`, `/work-orders`, `/preventive-plans`, `/checklists/templates`, `/checklists/executions`, `/stock/items`, `/stock/movements`, `/handoffs`, `/maintenance`, `/bulletin`, `/check-suites`, `/inspection-suites`, `/apartment-inspections`, `/audit-reports` e `/work-diaries`.
 
 ### Ocorrências
 
@@ -614,7 +627,7 @@ Exclusão lógica do cadastro. O `category` é obrigatório como query parameter
 
 Endpoint unificado para módulos operacionais que compartilham a mesma estrutura: reuniões, relatórios de turno, inspeções, diário de obra, manutenção e mural. O `{slug}` identifica o módulo.
 
-Slugs válidos: `inspecoes`, `diarios-obra`, `manutencao`, `mural`. (Reuniões e relatórios de turno foram promovidos para tabelas dedicadas — ver `/meetings` e `/shift-reports`.)
+Slugs válidos: `inspecoes`, `diarios-obra`, `manutencao`. (Reuniões e relatórios de turno foram promovidos para `/meetings` e `/shift-reports`; mural foi promovido para `/bulletin`.)
 
 Registros importados da V1 possuem `legacy_id` e `payload` JSON com dados ricos (subjects, participants, frequencies, items de conferência, etc.) preservados da estrutura original.
 
@@ -776,6 +789,8 @@ O sistema de permissões usa uma factory `require_permission(code)` em `app/core
 | checklist | `checklist.view`, `.create`, `.edit`, `.delete` |
 | stock | `stock.view`, `.create`, `.edit`, `.delete` |
 | handoff | `handoff.view`, `.create`, `.edit`, `.delete` |
+| maintenance | `maintenance.view`, `.create`, `.edit`, `.delete` |
+| bulletin | `bulletin.view`, `.create`, `.edit`, `.delete` |
 | system | `*` (acesso total) |
 
 Sem a permissão necessária, a API retorna `403 Forbidden` com `{"code": "forbidden", "required": "modulo.acao"}`.

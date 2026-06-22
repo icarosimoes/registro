@@ -92,8 +92,31 @@ def get_extension(filename: str) -> str:
     return ""
 
 
+MAGIC_SIGNATURES: dict[bytes, set[str]] = {
+    b"%PDF": {"application/pdf"},
+    b"\x89PNG": {"image/png"},
+    b"\xff\xd8\xff": {"image/jpeg"},
+    b"GIF87a": {"image/gif"},
+    b"GIF89a": {"image/gif"},
+    b"PK\x03\x04": {
+        "application/zip",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    },
+    b"Rar!\x1a\x07": {"application/x-rar-compressed"},
+    b"7z\xbc\xaf\x27\x1c": {"application/x-7z-compressed"},
+}
+
+
+def _check_magic(data: bytes, content_type: str) -> bool:
+    for signature, allowed_types in MAGIC_SIGNATURES.items():
+        if data[:len(signature)] == signature:
+            return content_type in allowed_types
+    return True
+
+
 def validate_file(
-    filename: str, content_type: str, size: int,
+    filename: str, content_type: str, size: int, data: bytes | None = None,
 ) -> str | None:
     settings = get_settings()
     max_bytes = settings.attachment_max_size_mb * 1024 * 1024
@@ -104,4 +127,6 @@ def validate_file(
         return f"Extensão {ext} não permitida"
     if content_type not in ALLOWED_CONTENT_TYPES:
         return f"Tipo {content_type} não permitido"
+    if data and not _check_magic(data, content_type):
+        return "Conteúdo do arquivo não corresponde ao tipo declarado"
     return None

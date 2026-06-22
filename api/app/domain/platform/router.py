@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 from typing import Annotated
 
 import jwt
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi import Query as QueryParam
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import case, func, select
@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings, get_settings
 from app.core.dependencies import require_session
+from app.core.rate_limit import limiter
 from app.core.security import create_platform_token, decode_platform_token, verify_laravel_password
 from app.domain.platform import service
 from app.domain.platform.schemas import (
@@ -62,7 +63,9 @@ async def current_platform_user(
 # ---------------------------------------------------------------------------
 
 @router.post("/auth/login", response_model=PlatformTokenResponse)
+@limiter.limit("10/minute")
 async def platform_login(
+    request: Request,
     payload: PlatformLoginRequest,
     session: Annotated[AsyncSession, Depends(require_session)],
     settings: Annotated[Settings, Depends(get_settings)],

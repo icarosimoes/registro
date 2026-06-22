@@ -66,13 +66,13 @@ async def create_item(
 ) -> tuple:
     rec = StockItem(company_id=company_id, **fields)
     session.add(rec)
-    await session.commit()
-    await session.refresh(rec)
+    await session.flush()
     await record_event(
         session, company_id=company_id, user_id=user_id,
         entity_type="stock_item", entity_id=rec.id, event_type="create",
     )
     await session.commit()
+    await session.refresh(rec)
     return await get_item(session, company_id, rec.id)
 
 
@@ -163,9 +163,7 @@ async def create_movement(
         occurrence_id=occurrence_id, user_id=user_id,
     )
     session.add(mov)
-    await session.commit()
-    await session.refresh(mov)
-
+    await session.flush()
     await record_event(
         session, company_id=company_id, user_id=user_id,
         entity_type="stock_item", entity_id=item_id,
@@ -173,6 +171,7 @@ async def create_movement(
         diff={"movimento": movement_type, "quantidade": str(quantity)},
     )
     await session.commit()
+    await session.refresh(mov)
 
     user_name = await session.scalar(
         select(User.name).where(User.id == user_id),

@@ -76,8 +76,7 @@ async def create_role(
         ).scalars().all()
         role.permissions = list(perms)
 
-    await session.commit()
-    await session.refresh(role, ["permissions"])
+    await session.flush()
 
     await record_event(
         session,
@@ -88,6 +87,7 @@ async def create_role(
         event_type="create",
     )
     await session.commit()
+    await session.refresh(role, ["permissions"])
     return role
 
 

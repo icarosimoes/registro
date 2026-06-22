@@ -50,7 +50,7 @@
 - [x] Todos os módulos operacionais conectados à API com CRUD completo e paginação server-side.
 - [x] Tabela genérica `module_records` para módulos sem tabela própria (reuniões, inspeções, turnos, obra, manutenção, mural).
 - [x] Ocorrências: participantes (tabela junction `occurrence_participants`), clone (`POST /occurrences/{id}/clone`), PDF (`GET /occurrences/{id}/pdf` via reportlab). Comentários e anexos já existiam via timeline/attachments.
-- [x] Reuniões: promovidas para tabela dedicada `meetings` + `meeting_participants` (com papel: organizer/attendee/optional) + `meeting_subjects` (pautas com resolved). Migration de dados de `module_records`. CRUD completo + clone + subjects CRUD + ata PDF.
+- [x] Reuniões: promovidas para tabela dedicada `meetings` + `meeting_participants` (com papel: organizer/attendee/optional) + `meeting_subjects` (pautas com resolved). Migration de dados de `module_records`. CRUD completo + clone + subjects CRUD + ata PDF (`GET /meetings/{id}/pdf`).
 - [x] Relatórios de turno: promovidos para tabela dedicada `shift_reports` com `shift_date`, `shift_type` (morning/afternoon/night), `status`. Migration de dados de `module_records`. CRUD completo com filtro por data.
 - [x] Sistema ACL: `require_permission()` em todos os routers, seed de 35 permissões, role "Administrador" com wildcard `*`. CRUD de roles via `/roles`. Frontend condiciona ações por `user.permissions`.
 
@@ -112,13 +112,14 @@
 ## Correções de repositório
 
 - [x] Restaurar `.idea/` e `.vscode/` no `.gitignore`.
-- [ ] Manter `docs/v1/`, dumps SQL, credenciais, secrets e arquivos locais fora do Git e das imagens Docker.
+- [x] Manter `docs/v1/`, dumps SQL, credenciais, secrets e arquivos locais fora do Git — `.gitignore` cobre `docs/v1/`, `*.sql`, `*.sql.gz`, `.env*`, `secrets/`, `backups/`.
+- [x] Reforçar `.dockerignore` de api, web e admin — adicionados `docs/`, `*.sql`, `*.dump`, `secrets/`, `.mypy_cache`, `.coverage`, `tests/` para não entrarem nas imagens Docker.
 
 ## Próximos passos pendentes (prioridade)
 
 ### Alta — bloqueiam corte
 
-1. **Atualizar `import_v1.py`** — reescrever para gravar diretamente nas tabelas dedicadas em futuras importações. A migration `0030` resolve o gap para dados já importados, mas o script deveria gravar direto sem depender da migration.
+1. ~~**Atualizar `import_v1.py`**~~ — ✅ reescrito para gravar diretamente em `meetings`, `meeting_participants`, `meeting_subjects` e `shift_reports`.
 2. **Dump V1 atualizado** — puxar dump MySQL fresco do servidor V1 em produção. O dump local (`aero-2026-06-19.sql`) é snapshot de desenvolvimento.
 3. **Inventário de anexos físicos** — mapear arquivos/volumes fora do banco na V1 (uploads, PDFs, imagens) para migração ao MinIO.
 4. ~~**Testes de cobertura**~~ — ✅ expandido: 70 testes cobrindo SLA, CRUD, cross-tenant, anexos (9 testes) e auditoria (9 testes).
@@ -128,11 +129,14 @@
 5. ~~**Integração Evolution (WhatsApp)**~~ — ✅ implementado: `app/integrations/evolution.py` com `send_text`, `send_media`, `check_connection`; endpoints `GET /settings/evolution/status` e `POST /settings/evolution/test`; envio automático via `notify_record_event` para usuários com telefone cadastrado.
 6. ~~**Separar estado atual de planejado na documentação**~~ — ✅ `docs/mapa.md` reestruturado com seções explícitas.
 7. ~~**Promover módulos genéricos remanescentes**~~ — ✅ manutenção promovida para `maintenance_records` (com priority, location_id) e mural promovido para `bulletin_posts` (com pinned, expires_at, author). Migration de dados inclusa. Endpoints dedicados `/maintenance` e `/bulletin`.
+8. ~~**Ata PDF de reuniões**~~ — ✅ endpoint `GET /meetings/{id}/pdf` com participantes, pautas e timeline (reportlab). Padrão idêntico ao PDF de ocorrências.
+9. ~~**Higiene dos .dockerignore**~~ — ✅ adicionados `docs/`, `*.sql`, `*.dump`, `secrets/`, `.mypy_cache`, `.coverage` e `tests/` aos .dockerignore de api, web e admin.
+10. ~~**Testes dos novos módulos**~~ — ✅ 7 arquivos de teste: work_orders, stock, handoffs, checklists, preventive_plans, maintenance e bulletin. CRUD + isolamento cross-tenant.
 
 ### Baixa — preparação futura
 
-8. **Corte do Laravel** — procedimento documentado em `docs/migracao-postgresql.md`. Depende dos itens 1-3 acima.
-9. **Remover profile `mysql-import`** — após corte final em produção, eliminar MySQL do Docker Compose e dependência `asyncmy`.
+11. **Corte do Laravel** — procedimento documentado em `docs/migracao-postgresql.md`. Depende dos itens 2-3 acima.
+12. **Remover profile `mysql-import`** — após corte final em produção, eliminar MySQL do Docker Compose e dependência `asyncmy`.
 
 ## P6 — evolução operacional
 
@@ -155,6 +159,32 @@
 ### Baixa — alcance e adoção
 
 8. ~~**App mobile / PWA**~~ — ✅ PWA implementado com manifest, service worker (network-first para navegação, cache-first para assets), ícones SVG, meta tags Apple, safe-area-inset e display standalone.
+
+## P7 — melhorias de engenharia
+
+### Alta — bloqueiam produção
+
+1. ~~**Structured logging com structlog**~~ — ✅ `app/core/logging.py` configura structlog com contextvars (company_id, user_id, request_id). Middleware em `main.py` limpa/vincula contexto por request. `auth.py` vincula company_id/user_id ao autenticar. Todos os 5 módulos que usavam `logging.getLogger` migrados para `structlog.get_logger()`. JSON em produção, console colorido em dev.
+2. ~~**Testes de integração contra PostgreSQL real**~~ — ✅ `conftest.py` detecta `DATABASE_URL` ou `TEST_DATABASE_URL` e usa PostgreSQL quando disponível (SQLite como fallback local). Em PostgreSQL, `_current_user_test` seta `SET LOCAL app.current_company_id` para exercitar RLS. CI já roda com PostgreSQL 17 + Alembic migrations. `docker-compose.test.yml` com PostgreSQL tmpfs para testes locais. `aiosqlite` adicionado a dev dependencies.
+3. **CI mais robusto** — adicionar validação de migrations (alembic check), typecheck com mypy no CI, e gate de cobertura mínima com pytest-cov.
+
+### Média — valor operacional
+
+4. **Cache e performance** — Redis com TTL curto (30-60s) nos endpoints pesados: `/dashboard/metrics`, `/roles/permissions`. Avaliar cache por tenant.
+5. **Background tasks** — mover geração de PDF, envio de notificações (Evolution/Brevo) e `generate` de checklists/preventivas para background. Começar com `BackgroundTasks` do FastAPI, evoluir para Celery/ARQ se necessário.
+6. **Exportação em lote** — CSV/Excel para OS, manutenção, checklists e estoque. Hotelaria sempre pede relatórios exportáveis.
+7. **Versionamento da API** — estratégia de breaking changes com header `Accept-Version` ou prefixo `/v2`. Essencial antes de integrações externas além do Chess Hotel.
+
+### Média — qualidade de código
+
+8. ~~**Schemas inline no router**~~ — ✅ `maintenance/schemas.py` e `bulletin/schemas.py` criados. Routers importam de schemas ao invés de definir Pydantic models inline. Consistente com o padrão dos outros domínios.
+9. **Tipagem dos retornos de service** — services retornam `Row` genérico ou `dict`. Definir TypedDicts ou dataclasses para os retornos dos services, melhorando autocompletion e refactoring.
+10. **Testes de permissão** — validar que usuário com apenas `meeting.view` recebe 403 ao tentar `DELETE /meetings/{id}`. Testes atuais usam wildcard `*`, não exercitam o ACL real.
+
+### Baixa — preparação para escala
+
+11. **Paginação por cursor** — substituir offset-based pagination por cursor-based nos módulos com mais volume (ocorrências, OS, timeline). Offset degrada com N grande.
+12. **Backup e deploy** — pg_dump agendado ou WAL archiving. Plano de deploy com Docker Swarm (já planejado) documentado antes do corte.
 
 ## Definition of Done por módulo
 

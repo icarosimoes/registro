@@ -22,9 +22,7 @@ async def list_posts(
     ]
     if search:
         pattern = f"%{search.strip()}%"
-        filters.append(
-            or_(BulletinPost.title.ilike(pattern), BulletinPost.body.ilike(pattern))
-        )
+        filters.append(or_(BulletinPost.title.ilike(pattern), BulletinPost.body.ilike(pattern)))
     if pinned_only:
         filters.append(BulletinPost.pinned.is_(True))
     total = await session.scalar(select(func.count(BulletinPost.id)).where(*filters)) or 0
@@ -64,16 +62,25 @@ async def create_post(
         notify_user_ids=notify_user_ids,
     )
     session.add(post)
-    await session.commit()
-    await session.refresh(post)
+    await session.flush()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="bulletin", entity_id=post.id, event_type="create",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="bulletin",
+        entity_id=post.id,
+        event_type="create",
     )
     await session.commit()
+    await session.refresh(post)
     await notify_record_event(
-        session, company_id=company_id, actor_name=user_name, actor_email=user_email,
-        event="create", title=post.title, module="Mural",
+        session,
+        company_id=company_id,
+        actor_name=user_name,
+        actor_email=user_email,
+        event="create",
+        title=post.title,
+        module="Mural",
         notify_user_ids=notify_user_ids,
     )
     return post, user_name
@@ -98,8 +105,12 @@ async def update_post(
     for field, value in updates.items():
         setattr(post, field, value)
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="bulletin", entity_id=post.id, event_type="update",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="bulletin",
+        entity_id=post.id,
+        event_type="update",
         diff=updates,
     )
     await session.commit()
@@ -108,7 +119,10 @@ async def update_post(
 
 
 async def delete_post(
-    session: AsyncSession, company_id: int, user_id: int, post_id: int,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    post_id: int,
 ) -> bool:
     post = await session.scalar(
         select(BulletinPost).where(
@@ -121,8 +135,12 @@ async def delete_post(
         return False
     post.deleted_at = datetime.now()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="bulletin", entity_id=post.id, event_type="delete",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="bulletin",
+        entity_id=post.id,
+        event_type="delete",
     )
     await session.commit()
     return True

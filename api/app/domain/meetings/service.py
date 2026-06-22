@@ -86,7 +86,9 @@ async def get_meeting(
     owner_name = (
         await session.scalar(
             select(User.name).where(
-                User.id == record.owner_user_id
+                User.id == record.owner_user_id,
+                User.company_id == company_id,
+                User.deleted_at.is_(None),
             )
         )
         if record.owner_user_id
@@ -198,9 +200,6 @@ async def create_meeting(
                 )
             )
 
-    await session.commit()
-    await session.refresh(record)
-
     await record_event(
         session,
         company_id=company_id,
@@ -210,6 +209,7 @@ async def create_meeting(
         event_type="create",
     )
     await session.commit()
+    await session.refresh(record)
 
     await notify_record_event(
         session,

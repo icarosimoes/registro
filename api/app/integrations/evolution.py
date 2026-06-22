@@ -1,10 +1,9 @@
 """Integração com Evolution API para envio de mensagens via WhatsApp."""
 
-import logging
-
 import httpx
+import structlog
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 
 async def send_text(
@@ -27,10 +26,14 @@ async def send_text(
             resp.raise_for_status()
             return resp.json()
     except httpx.HTTPStatusError as exc:
-        logger.error("Evolution API HTTP %s: %s", exc.response.status_code, exc.response.text)
+        logger.error(
+            "evolution_http_error",
+            status=exc.response.status_code,
+            body=exc.response.text,
+        )
         return None
     except httpx.RequestError as exc:
-        logger.error("Evolution API request error: %s", exc)
+        logger.error("evolution_request_error", error=str(exc))
         return None
 
 
@@ -62,10 +65,14 @@ async def send_media(
             resp.raise_for_status()
             return resp.json()
     except httpx.HTTPStatusError as exc:
-        logger.error("Evolution API HTTP %s: %s", exc.response.status_code, exc.response.text)
+        logger.error(
+            "evolution_http_error",
+            status=exc.response.status_code,
+            body=exc.response.text,
+        )
         return None
     except httpx.RequestError as exc:
-        logger.error("Evolution API request error: %s", exc)
+        logger.error("evolution_request_error", error=str(exc))
         return None
 
 

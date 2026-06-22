@@ -1,13 +1,16 @@
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+import structlog
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.core.config import get_settings
 from app.core.database import engine
+from app.core.logging import configure_logging
 from app.core.rate_limit import limiter
 from app.domain.apartment_inspections.router import router as apartment_inspections_router
 from app.domain.attachments.router import router as attachments_router
@@ -41,12 +44,30 @@ from app.domain.work_diaries.router import router as work_diaries_router
 from app.domain.work_orders.router import router as work_orders_router
 
 settings = get_settings()
+configure_logging(settings.environment)
+
+logger = structlog.get_logger()
+
+
+class RequestLoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next) -> Response:  # type: ignore[override]
+        structlog.contextvars.clear_contextvars()
+        structlog.contextvars.bind_contextvars(
+            request_id=request.headers.get("X-Request-ID", ""),
+            method=request.method,
+            path=request.url.path,
+        )
+        response: Response = await call_next(request)
+        if response.status_code >= 500:
+            logger.error("request_error", status=response.status_code)
+        return response
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     try:
         from app.core.storage import ensure_bucket
+
         ensure_bucket()
     except Exception:
         pass
@@ -71,6 +92,7 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Authorization", "Content-Type", "X-Request-ID", "X-Registro-Key"],
 )
+app.add_middleware(RequestLoggingMiddleware)
 app.include_router(health_router, prefix=settings.api_prefix)
 app.include_router(auth_router, prefix=settings.api_prefix)
 app.include_router(dashboard_router, prefix=settings.api_prefix)

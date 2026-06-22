@@ -3,3 +3,8 @@
 .next
 node_modules
 npm-debug.log*
+docs
+*.sql
+*.sql.gz
+*.dump
+secrets

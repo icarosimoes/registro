@@ -98,14 +98,13 @@ async def create_handoff(
         company_id=company_id, created_by_user_id=user_id, **fields,
     )
     session.add(rec)
-    await session.commit()
-    await session.refresh(rec)
-
+    await session.flush()
     await record_event(
         session, company_id=company_id, user_id=user_id,
         entity_type="shift_handoff", entity_id=rec.id, event_type="create",
     )
     await session.commit()
+    await session.refresh(rec)
     return await get_handoff(session, company_id, rec.id)
 
 

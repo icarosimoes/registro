@@ -53,8 +53,7 @@ async def create_registry(
         return None
     record = model(company_id=company_id, name=name)
     session.add(record)
-    await session.commit()
-    await session.refresh(record)
+    await session.flush()
     await record_event(
         session,
         company_id=company_id,
@@ -64,6 +63,7 @@ async def create_registry(
         event_type="create",
     )
     await session.commit()
+    await session.refresh(record)
     return record
 
 

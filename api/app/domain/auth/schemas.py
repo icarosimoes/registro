@@ -1,4 +1,18 @@
+import re
+
 from pydantic import BaseModel, Field, field_validator
+
+MIN_PASSWORD_LENGTH = 8
+
+
+def validate_password_strength(password: str) -> str:
+    if len(password) < MIN_PASSWORD_LENGTH:
+        raise ValueError(f"Senha deve ter no mínimo {MIN_PASSWORD_LENGTH} caracteres")
+    if not re.search(r"[a-zA-Z]", password):
+        raise ValueError("Senha deve conter pelo menos uma letra")
+    if not re.search(r"\d", password):
+        raise ValueError("Senha deve conter pelo menos um número")
+    return password
 
 
 class LoginRequest(BaseModel):

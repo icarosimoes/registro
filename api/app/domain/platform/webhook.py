@@ -1,14 +1,14 @@
-import logging
 from datetime import UTC, datetime
 from typing import Any
 
+import structlog
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import Invoice, PlatformAuditLog, Subscription, WebhookEvent
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 ASAAS_STATUS_MAP = {
     "CONFIRMED": "paid",
@@ -75,9 +75,7 @@ async def _handle_payment_confirmed(
     asaas_id = payment.get("id")
     if not asaas_id:
         return "no_payment_id"
-    invoice = await session.scalar(
-        select(Invoice).where(Invoice.external_payment_id == asaas_id)
-    )
+    invoice = await session.scalar(select(Invoice).where(Invoice.external_payment_id == asaas_id))
     if invoice is None:
         return "invoice_not_found"
     invoice.status = "paid"
@@ -93,17 +91,13 @@ async def _handle_payment_overdue(
     asaas_id = payment.get("id")
     if not asaas_id:
         return "no_payment_id"
-    invoice = await session.scalar(
-        select(Invoice).where(Invoice.external_payment_id == asaas_id)
-    )
+    invoice = await session.scalar(select(Invoice).where(Invoice.external_payment_id == asaas_id))
     if invoice:
         invoice.status = "overdue"
     sub_id = payment.get("subscription")
     if sub_id:
         sub = await session.scalar(
-            select(Subscription).where(
-                Subscription.billing_provider_subscription_id == sub_id
-            )
+            select(Subscription).where(Subscription.billing_provider_subscription_id == sub_id)
         )
         if sub and not sub.past_due_since:
             sub.past_due_since = now
@@ -121,9 +115,7 @@ async def _handle_subscription_deleted(
     if not sub_id:
         return "no_subscription_id"
     sub = await session.scalar(
-        select(Subscription).where(
-            Subscription.billing_provider_subscription_id == str(sub_id)
-        )
+        select(Subscription).where(Subscription.billing_provider_subscription_id == str(sub_id))
     )
     if sub is None:
         return "subscription_not_found"
