@@ -12,7 +12,7 @@
 
 ## Desenvolvimento
 
-O desenvolvimento usa o MySQL fictício do Compose:
+O desenvolvimento usa PostgreSQL, Redis e MinIO no Compose:
 
 ```bash
 docker compose up --build
@@ -29,27 +29,27 @@ Serviços:
 
 ```bash
 docker network create --driver overlay --attachable traefik-public
-printf '%s' 'mysql+asyncmy://...' | docker secret create registro_database_url -
+printf '%s' 'postgresql+asyncpg://registro:<senha>@db:5432/registro' | docker secret create registro_database_url -
+openssl rand -base64 48 | docker secret create registro_postgres_password -
 openssl rand -base64 48 | docker secret create registro_jwt_secret -
 mkdir -p /opt/registro
 ```
 
-O secret do banco deve apontar para o MySQL atual durante a primeira fase. Quando a migração para PostgreSQL acontecer, ele será rotacionado em procedimento próprio e validado antes do corte. A chave JWT usa um secret independente.
+PostgreSQL, Redis e MinIO fazem parte da stack e mantêm volumes locais fixados no manager. Um serviço gera backups diários em formato custom do PostgreSQL, com SHA-256 e retenção de 14 dias. A URL do banco, JWT, integração Chess e credenciais MinIO usam secrets independentes.
 
 ## Variáveis da VPS
 
 Arquivo local `/opt/registro/.env.prod`, nunca versionado:
 
 ```env
-REGISTRO_WEB_HOST=registro.exemplo.com.br
-REGISTRO_API_HOST=api.registro.exemplo.com.br
-REGISTRO_ADMIN_HOST=admin.registro.exemplo.com.br
-REGISTRO_WEB_ORIGIN=https://registro.exemplo.com.br
+REGISTRO_WEB_HOST=registro.solidsd.com.br
+REGISTRO_ADMIN_HOST=painel.registro.solidsd.com.br
+REGISTRO_WEB_ORIGIN=https://registro.solidsd.com.br
 IMAGE_TAG=sha-<sha-completo>
 GHCR_PAT=...
 ```
 
-Os domínios acima são placeholders até a definição de DNS.
+A API é publicada no mesmo host do produto sob `/api/v1`; não exige terceiro DNS.
 
 ## Deploy
 
@@ -73,7 +73,7 @@ docker service ps registro_api
 docker service ps registro_web
 docker service ps registro_admin
 docker service logs --tail 100 registro_api
-curl -fsS "https://${REGISTRO_API_HOST}/api/v1/health"
+curl -fsS "https://${REGISTRO_WEB_HOST}/api/v1/health"
 ```
 
 ## Rollback

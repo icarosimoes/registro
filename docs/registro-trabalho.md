@@ -1,5 +1,15 @@
 # Registro de trabalho
 
+## 2026-06-22 — Preparação do deploy Swarm
+
+- Definidos os hosts `registro.solidsd.com.br` e `painel.registro.solidsd.com.br`.
+- A API passou a ser publicada no host do produto sob `/api/v1`, sem terceiro DNS.
+- Stack de produção completada com PostgreSQL 17, Redis e MinIO persistentes, fixados no manager.
+- Adicionado backup diário do PostgreSQL, com checksum e retenção local de 14 dias.
+- Credenciais de PostgreSQL, MinIO, JWT e integração Chess são fornecidas por Docker Secrets.
+- Configuração S3 da API passou a aceitar credenciais por arquivos de secret.
+- Redis documentado como implementado para dashboard, permissões e readiness.
+
 ## 2026-06-21 — Controle de Estoque e Pendências de Turno
 
 ### Controle de materiais e estoque

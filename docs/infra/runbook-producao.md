@@ -28,8 +28,8 @@ docker service ps registro_api --no-trunc
 docker service ps registro_web --no-trunc
 docker service ps registro_admin --no-trunc
 docker service logs --since 10m registro_api
-curl -fsS "https://${REGISTRO_API_HOST}/api/v1/health"
-curl -fsS "https://${REGISTRO_API_HOST}/api/v1/health/ready"
+curl -fsS "https://${REGISTRO_WEB_HOST}/api/v1/health"
+curl -fsS "https://${REGISTRO_WEB_HOST}/api/v1/health/ready"
 ```
 
 Sucesso exige réplicas convergidas, health 200, readiness conectado, web e admin respondendo. `health` sozinho não comprova acesso ao banco.

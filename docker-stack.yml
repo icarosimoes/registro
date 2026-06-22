@@ -1,4 +1,84 @@
 services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: registro
+      POSTGRES_USER: registro
+      POSTGRES_PASSWORD_FILE: /run/secrets/registro_postgres_password
+    secrets:
+      - registro_postgres_password
+    networks:
+      - registro-internal
+    volumes:
+      - registro-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U registro -d registro"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER_FILE: /run/secrets/registro_s3_access_key
+      MINIO_ROOT_PASSWORD_FILE: /run/secrets/registro_s3_secret_key
+    secrets:
+      - registro_s3_access_key
+      - registro_s3_secret_key
+    networks:
+      - registro-internal
+    volumes:
+      - registro-minio-data:/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+  backup:
+    image: postgres:17-alpine
+    environment:
+      PGHOST: db
+      PGDATABASE: registro
+      PGUSER: registro
+      POSTGRES_PASSWORD_FILE: /run/secrets/registro_postgres_password
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        while true; do
+          export PGPASSWORD="$$(cat /run/secrets/registro_postgres_password)"
+          target="/backups/registro_$$(date -u +%Y%m%d_%H%M%S).dump"
+          pg_dump -Fc -f "$$target"
+          sha256sum "$$target" > "$$target.sha256"
+          find /backups -type f -mtime +14 -delete
+          sleep 86400
+        done
+    secrets:
+      - registro_postgres_password
+    networks:
+      - registro-internal
+    volumes:
+      - registro-backups:/backups
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+
   api:
     image: ghcr.io/icarosimoes/registro/api:${IMAGE_TAG:-latest}
     environment:
@@ -11,10 +91,17 @@ services:
       CHESS_HOTEL_COMPANY_SLUG: ${CHESS_HOTEL_COMPANY_SLUG:-aero-hotel}
       REGISTRO_WEB_URL: https://${REGISTRO_WEB_HOST}
       REDIS_URL: redis://redis:6379/0
+      S3_ENDPOINT_URL: http://minio:9000
+      S3_ACCESS_KEY_FILE: /run/secrets/registro_s3_access_key
+      S3_SECRET_KEY_FILE: /run/secrets/registro_s3_secret_key
+      S3_BUCKET: registro-attachments
+      S3_PUBLIC_URL: https://${REGISTRO_WEB_HOST}
     secrets:
       - registro_database_url
       - registro_jwt_secret
       - chess_hotel_integration_key
+      - registro_s3_access_key
+      - registro_s3_secret_key
     networks:
       - registro-internal
       - traefik-public
@@ -35,9 +122,10 @@ services:
       labels:
         - traefik.enable=true
         - traefik.docker.network=traefik-public
-        - traefik.http.routers.registro-api.rule=Host(`${REGISTRO_API_HOST}`)
+        - traefik.http.routers.registro-api.rule=Host(`${REGISTRO_WEB_HOST}`) && PathPrefix(`/api/v1`)
         - traefik.http.routers.registro-api.entrypoints=websecure
         - traefik.http.routers.registro-api.tls.certresolver=le
+        - traefik.http.routers.registro-api.priority=100
         - traefik.http.services.registro-api.loadbalancer.server.port=8000
 
   web:
@@ -98,6 +186,9 @@ services:
       - registro-internal
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -112,6 +203,9 @@ networks:
     external: true
 
 volumes:
+  registro-backups:
+  registro-postgres-data:
+  registro-minio-data:
   registro-redis-data:
 
 secrets:
@@ -120,4 +214,10 @@ secrets:
   registro_jwt_secret:
     external: true
   chess_hotel_integration_key:
+    external: true
+  registro_postgres_password:
+    external: true
+  registro_s3_access_key:
+    external: true
+  registro_s3_secret_key:
     external: true

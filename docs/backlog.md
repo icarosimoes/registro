@@ -170,7 +170,7 @@
 
 ### Média — valor operacional
 
-4. **Cache e performance** — Redis com TTL curto (30-60s) nos endpoints pesados: `/dashboard/metrics`, `/roles/permissions`. Avaliar cache por tenant.
+4. ~~**Cache e performance**~~ — ✅ Redis com cache por tenant no dashboard, cache global de permissões, invalidação nas mutações e readiness.
 5. ~~**Background tasks**~~ — ✅ `notify_record_event` refatorado: criação de registros in-app é síncrona (com commit), envio de email (Brevo) e WhatsApp (Evolution) é disparado em background via `asyncio.create_task`. PDF mantido inline (rápido e necessário na resposta). Evolução para Celery/ARQ se necessário.
 6. ~~**Exportação em lote**~~ — ✅ utilitário genérico `generate_xlsx()` em `app/core/export.py` (openpyxl, header estilizado, auto-width, limite 10k linhas). Endpoints `GET /export` em ocorrências, manutenção, checklists (execuções) e cadastros. Testes de permissão e validação de xlsx inclusos.
 7. **Versionamento da API** — estratégia de breaking changes com header `Accept-Version` ou prefixo `/v2`. Essencial antes de integrações externas além do Chess Hotel.

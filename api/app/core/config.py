@@ -26,7 +26,9 @@ class Settings(BaseSettings):
     registro_web_url: str = "http://localhost:3000"
     s3_endpoint_url: str = "http://localhost:9000"
     s3_access_key: str = "registro"
+    s3_access_key_file: str | None = None
     s3_secret_key: str = "registro-dev-secret"
+    s3_secret_key_file: str | None = None
     s3_bucket: str = "registro-attachments"
     s3_public_url: str = "http://localhost:9000"
     attachment_max_size_mb: int = 10
@@ -64,17 +66,25 @@ def get_settings() -> Settings:
     if settings.jwt_secret_file:
         settings.jwt_secret = Path(settings.jwt_secret_file).read_text(encoding="utf-8").strip()
     if settings.chess_hotel_integration_key_file:
-        settings.chess_hotel_integration_key = Path(
-            settings.chess_hotel_integration_key_file
-        ).read_text(encoding="utf-8").strip()
+        settings.chess_hotel_integration_key = (
+            Path(settings.chess_hotel_integration_key_file).read_text(encoding="utf-8").strip()
+        )
+    if settings.s3_access_key_file:
+        settings.s3_access_key = (
+            Path(settings.s3_access_key_file).read_text(encoding="utf-8").strip()
+        )
+    if settings.s3_secret_key_file:
+        settings.s3_secret_key = (
+            Path(settings.s3_secret_key_file).read_text(encoding="utf-8").strip()
+        )
     if settings.asaas_api_key_file:
-        settings.asaas_api_key = Path(
-            settings.asaas_api_key_file
-        ).read_text(encoding="utf-8").strip()
+        settings.asaas_api_key = (
+            Path(settings.asaas_api_key_file).read_text(encoding="utf-8").strip()
+        )
     if settings.asaas_webhook_token_file:
-        settings.asaas_webhook_token = Path(
-            settings.asaas_webhook_token_file
-        ).read_text(encoding="utf-8").strip()
+        settings.asaas_webhook_token = (
+            Path(settings.asaas_webhook_token_file).read_text(encoding="utf-8").strip()
+        )
     insecure_default = "registro-development-only-change-me"
     if settings.environment == "production" and (
         settings.jwt_secret == insecure_default or len(settings.jwt_secret) < 32
@@ -88,7 +98,5 @@ def get_settings() -> Settings:
             "CHESS_HOTEL_INTEGRATION_KEY de produção deve ter pelo menos 32 caracteres"
         )
     if settings.environment == "production" and "*" in settings.web_origins:
-        raise RuntimeError(
-            "WEB_ORIGINS não pode conter '*' em produção"
-        )
+        raise RuntimeError("WEB_ORIGINS não pode conter '*' em produção")
     return settings

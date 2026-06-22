@@ -4,7 +4,7 @@
 
 | Área | Estado | Fonte de dados |
 | --- | --- | --- |
-| Docker local | operacional | Compose (PostgreSQL + MinIO + API + Web + Admin) |
+| Docker local | operacional | Compose (PostgreSQL + Redis + MinIO + API + Web + Admin) |
 | PostgreSQL 17 | ativo com RLS em 24 tabelas, asyncpg | banco principal |
 | FastAPI | health, auth, dashboard, CRUD de todos os domínios operacionais + ordens de serviço com workflow | PostgreSQL via SQLAlchemy async |
 | Next.js | portal autenticado, todos os módulos operacionais e dashboard com dados reais | todos os módulos via API |
@@ -13,6 +13,7 @@
 | Asaas | AsaasClient async, webhook autenticado, reconciliação periódica | sandbox configurado |
 | Laravel V1 | 66 tabelas restauradas em staging | dump local (MySQL via profile `mysql-import`) |
 | Swarm | stack e runbook preparados | GHCR + secrets externos |
+| Cache | Redis com TTL, invalidação por tenant e readiness | dashboard e permissões |
 | ACL | 35 permissões, roles por empresa, wildcard `*` | seed + CRUD via `/roles` |
 | Solicitações fiscais | CRUD via API + integração Chess Hotel + SLA + anexos MinIO | `fiscal_requests` isolada por tenant |
 | Integração Chess Hotel | launcher no navbar do Chess enviando para API do Registro | `POST /integrations/chess-hotel/tickets` |
