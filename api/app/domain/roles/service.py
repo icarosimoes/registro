@@ -13,6 +13,7 @@ class RoleRow(NamedTuple):
     role: Role
     user_count: int
 
+
 TTL_PERMISSIONS = 3600
 
 

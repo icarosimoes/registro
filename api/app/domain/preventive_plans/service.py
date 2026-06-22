@@ -15,6 +15,7 @@ class PreventivePlanRow(NamedTuple):
     assigned_user_name: str | None
     location_name: str | None
 
+
 RECURRENCE_DAYS: dict[str, int] = {
     "daily": 1,
     "weekly": 7,

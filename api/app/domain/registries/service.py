@@ -14,6 +14,7 @@ class RegistryRow(NamedTuple):
     category: str
     updated_at: datetime | None
 
+
 MODELS = {"Setor": Sector, "Local": Location, "Função": Function}
 
 

@@ -42,9 +42,7 @@ def status_label(value: int) -> str:
     return STATUS_LABELS.get(value, f"Status {value}")
 
 
-async def _resolve_names(
-    session: AsyncSession, occurrence: Occurrence
-) -> OccurrenceNames:
+async def _resolve_names(session: AsyncSession, occurrence: Occurrence) -> OccurrenceNames:
     cid = occurrence.company_id
     sector_name = (
         await session.scalar(

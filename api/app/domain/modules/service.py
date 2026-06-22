@@ -13,6 +13,7 @@ class ModuleRecordRow(NamedTuple):
     record: ModuleRecord
     owner_name: str | None
 
+
 VALID_MODULES = {"inspecoes", "diarios-obra", "manutencao"}
 
 

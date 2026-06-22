@@ -26,6 +26,7 @@ class ExecutionRow(NamedTuple):
     template_name: str
     completed_by_name: str | None
 
+
 RECURRENCE_DAYS: dict[str, int] = {
     "daily": 1,
     "weekly": 7,

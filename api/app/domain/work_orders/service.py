@@ -17,6 +17,7 @@ class WorkOrderRow(NamedTuple):
     assigned_name: str | None
     created_by_name: str | None
 
+
 TRANSITIONS: dict[str, list[str]] = {
     "aberta": ["em_andamento"],
     "em_andamento": ["aberta", "aguardando_material", "concluida"],
@@ -98,9 +99,7 @@ async def list_orders_cursor(
     filters = [WorkOrder.company_id == company_id, WorkOrder.deleted_at.is_(None)]
     if search:
         pattern = f"%{search.strip()}%"
-        filters.append(
-            or_(WorkOrder.title.ilike(pattern), WorkOrder.description.ilike(pattern))
-        )
+        filters.append(or_(WorkOrder.title.ilike(pattern), WorkOrder.description.ilike(pattern)))
     if status:
         filters.append(WorkOrder.status == status)
     if priority:

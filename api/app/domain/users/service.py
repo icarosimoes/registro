@@ -18,6 +18,7 @@ class UserRow(NamedTuple):
     role_name: str | None
     sector_name: str | None
 
+
 logger = logging.getLogger(__name__)
 
 
