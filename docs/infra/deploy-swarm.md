@@ -7,6 +7,7 @@
 - Produção usa Docker Swarm; não usar `docker compose up` na VPS.
 - A VPS mantém a aplicação em `/opt/registro`.
 - Imagens são publicadas no GHCR com tag imutável `sha-<GITHUB_SHA completo>`.
+- O workflow `Publish images` publica API, web e admin em paralelo a cada push em `main`.
 - Deploy usa `--with-registry-auth` e atualização gradual `start-first`.
 - Nenhum segredo é versionado em `.env`, stack ou imagem.
 
