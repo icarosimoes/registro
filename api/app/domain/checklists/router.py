@@ -1,9 +1,11 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import require_session
+from app.core.export import generate_xlsx
 from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.checklists import schemas
@@ -11,6 +13,7 @@ from app.domain.checklists.service import (
     complete_execution,
     create_template,
     delete_template,
+    export_executions,
     generate_due_executions,
     get_execution,
     get_template,
@@ -191,6 +194,37 @@ async def list_checklist_executions(
     return schemas.ExecutionList(
         items=[_exec_to_out(r) for r in rows],
         total=total, page=page, page_size=page_size,
+    )
+
+
+@router.get("/executions/export")
+async def export_checklist_executions(
+    user: Annotated[AuthenticatedUser, require_permission("checklist.view")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+    template_id: int | None = None,
+    status: str | None = None,
+) -> StreamingResponse:
+    rows = await export_executions(
+        session, user.company_id, template_id, status,
+    )
+    headers = [
+        "ID", "Template", "Data Prevista", "Status",
+        "Concluído em", "Concluído por", "Notas",
+    ]
+    data = []
+    for row in rows:
+        exc = row[0]
+        data.append([
+            exc.id, row.template_name,
+            exc.due_date, exc.status,
+            exc.completed_at, row.completed_by_name or "",
+            exc.notes or "",
+        ])
+    buf = generate_xlsx(title="Checklists", headers=headers, rows=data)
+    return StreamingResponse(
+        buf,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": 'attachment; filename="checklists.xlsx"'},
     )
 
 

@@ -292,6 +292,31 @@ async def delete_occurrence(
     return True
 
 
+async def export_occurrences(
+    session: AsyncSession,
+    company_id: int,
+    search: str | None = None,
+) -> list[tuple]:
+    from app.core.export import MAX_EXPORT_ROWS
+
+    filters = [Occurrence.company_id == company_id, Occurrence.deleted_at.is_(None)]
+    if search:
+        pattern = f"%{search.strip()}%"
+        filters.append(or_(Occurrence.title.ilike(pattern), Occurrence.description.ilike(pattern)))
+    rows = (
+        await session.execute(
+            select(Occurrence, Sector.name, Location.name, User.name)
+            .outerjoin(Sector, Sector.id == Occurrence.sector_id)
+            .outerjoin(Location, Location.id == Occurrence.location_id)
+            .outerjoin(User, User.id == Occurrence.owner_user_id)
+            .where(*filters)
+            .order_by(Occurrence.updated_at.desc(), Occurrence.id.desc())
+            .limit(MAX_EXPORT_ROWS)
+        )
+    ).all()
+    return rows
+
+
 async def clone_occurrence(
     session: AsyncSession,
     company_id: int,

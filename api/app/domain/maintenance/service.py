@@ -44,6 +44,40 @@ async def list_records(
     return rows, total
 
 
+async def export_records(
+    session: AsyncSession,
+    company_id: int,
+    search: str | None = None,
+    status: str | None = None,
+) -> list[tuple]:
+    from app.core.export import MAX_EXPORT_ROWS
+
+    filters = [
+        MaintenanceRecord.company_id == company_id,
+        MaintenanceRecord.deleted_at.is_(None),
+    ]
+    if search:
+        pattern = f"%{search.strip()}%"
+        filters.append(
+            or_(
+                MaintenanceRecord.title.ilike(pattern),
+                MaintenanceRecord.description.ilike(pattern),
+            )
+        )
+    if status:
+        filters.append(MaintenanceRecord.status == status)
+    rows = (
+        await session.execute(
+            select(MaintenanceRecord, User.name)
+            .outerjoin(User, User.id == MaintenanceRecord.owner_user_id)
+            .where(*filters)
+            .order_by(MaintenanceRecord.updated_at.desc())
+            .limit(MAX_EXPORT_ROWS)
+        )
+    ).all()
+    return rows
+
+
 async def get_record(
     session: AsyncSession,
     company_id: int,

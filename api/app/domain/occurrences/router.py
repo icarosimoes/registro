@@ -5,6 +5,7 @@ from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import require_session
+from app.core.export import generate_xlsx
 from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.occurrences.schemas import (
@@ -19,6 +20,7 @@ from app.domain.occurrences.service import (
     clone_occurrence,
     create_occurrence,
     delete_occurrence,
+    export_occurrences,
     get_occurrence,
     list_occurrences,
     status_label,
@@ -56,6 +58,33 @@ async def list_occurrences_endpoint(
         total=total,
         page=page,
         page_size=page_size,
+    )
+
+
+@router.get("/export")
+async def export_occurrences_endpoint(
+    user: Annotated[AuthenticatedUser, require_permission("occurrence.view")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+    search: str | None = None,
+) -> StreamingResponse:
+    rows = await export_occurrences(session, user.company_id, search)
+    headers = [
+        "ID", "Título", "Descrição", "Setor", "Local",
+        "Responsável", "Status", "Prazo", "Atualizado em",
+    ]
+    data = [
+        [
+            occ.id, occ.title, occ.description or "",
+            sector or "", location or "", owner or "",
+            status_label(occ.status), occ.deadline, occ.updated_at,
+        ]
+        for occ, sector, location, owner in rows
+    ]
+    buf = generate_xlsx(title="Ocorrências", headers=headers, rows=data)
+    return StreamingResponse(
+        buf,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": 'attachment; filename="ocorrencias.xlsx"'},
     )
 
 

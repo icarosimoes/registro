@@ -232,6 +232,43 @@ async def list_executions(
     return rows, total
 
 
+async def export_executions(
+    session: AsyncSession,
+    company_id: int,
+    template_id: int | None = None,
+    status: str | None = None,
+) -> list:
+    from app.core.export import MAX_EXPORT_ROWS
+
+    filters = [
+        ChecklistExecution.company_id == company_id,
+        ChecklistExecution.deleted_at.is_(None),
+    ]
+    if template_id:
+        filters.append(ChecklistExecution.template_id == template_id)
+    if status:
+        filters.append(ChecklistExecution.status == status)
+
+    completed_by = User.__table__.alias("completed_by")
+    rows = (
+        await session.execute(
+            select(
+                ChecklistExecution,
+                ChecklistTemplate.name.label("template_name"),
+                completed_by.c.name.label("completed_by_name"),
+            )
+            .join(ChecklistTemplate, ChecklistTemplate.id == ChecklistExecution.template_id)
+            .outerjoin(
+                completed_by, completed_by.c.id == ChecklistExecution.completed_by_user_id
+            )
+            .where(*filters)
+            .order_by(ChecklistExecution.due_date.desc(), ChecklistExecution.id.desc())
+            .limit(MAX_EXPORT_ROWS)
+        )
+    ).all()
+    return rows
+
+
 async def get_execution(
     session: AsyncSession, company_id: int, execution_id: int,
 ) -> dict | None:

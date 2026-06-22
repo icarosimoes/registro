@@ -17,7 +17,7 @@ async def test_create_and_list(client):
     assert r.status_code == 201
     data = r.json()
     assert data["title"] == "Pendência teste"
-    assert data["status"] == "pending"
+    assert data["status"] == "pendente"
 
     r = await client.get(PREFIX, headers=auth_header(TENANT_A))
     assert r.status_code == 200
@@ -67,7 +67,7 @@ async def test_resolve(client):
         headers=auth_header(TENANT_A),
     )
     assert r.status_code == 200
-    assert r.json()["status"] == "resolved"
+    assert r.json()["status"] == "resolvido"
 
 
 @pytest.mark.asyncio

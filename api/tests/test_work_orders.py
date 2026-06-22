@@ -17,7 +17,7 @@ async def test_create_and_list(client):
     assert r.status_code == 201
     data = r.json()
     assert data["title"] == "OS teste"
-    assert data["status"] == "open"
+    assert data["status"] == "aberta"
 
     r = await client.get(PREFIX, headers=auth_header(TENANT_A))
     assert r.status_code == 200

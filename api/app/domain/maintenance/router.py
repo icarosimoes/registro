@@ -1,9 +1,11 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import require_session
+from app.core.export import generate_xlsx
 from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.maintenance.schemas import (
@@ -15,6 +17,7 @@ from app.domain.maintenance.schemas import (
 from app.domain.maintenance.service import (
     create_record,
     delete_record,
+    export_records,
     get_record,
     list_records,
     update_record,
@@ -54,6 +57,35 @@ async def list_maintenance(
         total=total,
         page=page,
         page_size=page_size,
+    )
+
+
+@router.get("/export")
+async def export_maintenance(
+    user: Annotated[AuthenticatedUser, require_permission("maintenance.view")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+    search: str | None = None,
+    status: str | None = None,
+) -> StreamingResponse:
+    rows = await export_records(session, user.company_id, search, status)
+    headers = [
+        "ID", "Título", "Descrição", "Categoria", "Status",
+        "Prioridade", "Responsável", "Criado em", "Atualizado em",
+    ]
+    data = [
+        [
+            rec.id, rec.title, rec.description or "",
+            rec.category or "", rec.status or "",
+            rec.priority or "", owner_name or "",
+            rec.created_at, rec.updated_at,
+        ]
+        for rec, owner_name in rows
+    ]
+    buf = generate_xlsx(title="Manutenção", headers=headers, rows=data)
+    return StreamingResponse(
+        buf,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": 'attachment; filename="manutencao.xlsx"'},
     )
 
 

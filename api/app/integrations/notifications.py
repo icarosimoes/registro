@@ -1,6 +1,9 @@
-"""Dispara notificações por email (Brevo) e in-app ao criar/atualizar registros."""
+"""Dispara notificações por email (Brevo), WhatsApp (Evolution) e in-app."""
+
+from __future__ import annotations
 
 import asyncio
+import dataclasses
 from datetime import datetime
 
 import structlog
@@ -23,6 +26,26 @@ ENTITY_TO_MODULE: dict[str, str] = {
 }
 
 
+@dataclasses.dataclass
+class _EmailTask:
+    notification_id: int | None
+    params: dict
+
+
+@dataclasses.dataclass
+class _WhatsAppTask:
+    phone: str
+    text: str
+
+
+@dataclasses.dataclass
+class PendingDelivery:
+    emails: list[_EmailTask]
+    whatsapp: list[_WhatsAppTask]
+    brevo_config: dict
+    evolution_config: dict
+
+
 async def _resolve_users(session: AsyncSession, user_ids: list[int]) -> list[dict]:
     if not user_ids:
         return []
@@ -42,7 +65,6 @@ async def _load_preferences(
     user_ids: list[int],
     module: str,
 ) -> dict[int, dict[str, bool]]:
-    """Returns {user_id: {"in_app": bool, "email": bool}} for the given module."""
     if not user_ids or not module:
         return {}
     rows = (
@@ -60,7 +82,9 @@ async def _load_preferences(
     return prefs
 
 
-def _build_html(action: str, title: str, module: str, actor: str, detail: str | None = None) -> str:
+def _build_html(
+    action: str, title: str, module: str, actor: str, detail: str | None = None
+) -> str:
     detail_block = f"<p style='color:#555'>{detail}</p>" if detail else ""
     return f"""
     <div style="font-family:sans-serif;max-width:600px;margin:0 auto">
@@ -106,7 +130,7 @@ async def create_notification(
     return record
 
 
-async def notify_record_event(
+async def prepare_notifications(
     session: AsyncSession,
     *,
     company_id: int,
@@ -121,7 +145,8 @@ async def notify_record_event(
     detail: str | None = None,
     entity_type: str | None = None,
     entity_id: int | None = None,
-) -> None:
+) -> PendingDelivery | None:
+    """Cria registros de notificação in-app e retorna dados para entrega async."""
     action_labels = {
         "create": "Novo registro criado",
         "update": "Registro atualizado",
@@ -140,19 +165,16 @@ async def notify_record_event(
     pref_module = ENTITY_TO_MODULE.get(entity_type or "", "")
     if pref_module:
         module_recipient_ids = await get_module_recipients(
-            session,
-            company_id,
-            pref_module,
+            session, company_id, pref_module
         )
         recipient_ids.update(module_recipient_ids)
 
     recipients = await _resolve_users(session, list(recipient_ids))
+    if not recipients:
+        return None
 
     prefs = await _load_preferences(
-        session,
-        company_id,
-        [r["id"] for r in recipients],
-        pref_module,
+        session, company_id, [r["id"] for r in recipients], pref_module
     )
 
     notification_body = f"{actor_name} · {module}"
@@ -179,78 +201,150 @@ async def notify_record_event(
     await session.flush()
 
     brevo = await get_company_setting(session, company_id, "brevo")
-    api_key = brevo.get("api_key")
-    if not api_key:
-        return
-
-    from_address = brevo.get("from_address", "noreply@registro.app")
-    from_name = brevo.get("from_name", "Registro")
-    html = _build_html(action_label, title, module, actor_name, detail)
-    subject = f"[Registro] {action_label}: {title}"
-
-    email_tasks: list[tuple[Notification | None, asyncio.Task]] = []  # type: ignore[type-arg]
-    for r in recipients:
-        if r["email"] == actor_email:
-            continue
-        user_pref = prefs.get(r["id"], {"in_app": True, "email": True})
-        if not user_pref["email"]:
-            continue
-        notif_record = next(
-            (n for n, ri in created_notifications if ri["id"] == r["id"]),
-            None,
-        )
-        email_tasks.append(
-            (
-                notif_record,
-                send_email(
-                    api_key=api_key,
-                    from_address=from_address,
-                    from_name=from_name,
-                    to_email=r["email"],
-                    to_name=r["name"],
-                    subject=subject,
-                    html=html,
-                    reply_to=actor_email,
-                ),
-            )
-        )
-
-    if email_tasks:
-        results = await asyncio.gather(
-            *[t for _, t in email_tasks],
-            return_exceptions=True,
-        )
-        now = datetime.now()
-        for (notif_record, _), result in zip(email_tasks, results, strict=True):
-            if notif_record and not isinstance(result, BaseException):
-                notif_record.email_sent_at = now
-        await session.flush()
-
     evolution = await get_company_setting(session, company_id, "evolution")
+
+    email_tasks: list[_EmailTask] = []
+    api_key = brevo.get("api_key")
+    if api_key:
+        from_address = brevo.get("from_address", "noreply@registro.app")
+        from_name = brevo.get("from_name", "Registro")
+        html = _build_html(action_label, title, module, actor_name, detail)
+        subject = f"[Registro] {action_label}: {title}"
+
+        for r in recipients:
+            if r["email"] == actor_email:
+                continue
+            user_pref = prefs.get(r["id"], {"in_app": True, "email": True})
+            if not user_pref["email"]:
+                continue
+            notif_record = next(
+                (n for n, ri in created_notifications if ri["id"] == r["id"]),
+                None,
+            )
+            email_tasks.append(
+                _EmailTask(
+                    notification_id=notif_record.id if notif_record else None,
+                    params={
+                        "api_key": api_key,
+                        "from_address": from_address,
+                        "from_name": from_name,
+                        "to_email": r["email"],
+                        "to_name": r["name"],
+                        "subject": subject,
+                        "html": html,
+                        "reply_to": actor_email,
+                    },
+                )
+            )
+
+    whatsapp_tasks: list[_WhatsAppTask] = []
     evo_key = evolution.get("api_key")
     if evo_key:
-        from app.integrations.evolution import send_text
-
         whatsapp_text = f"*{action_label}*\n{title}\n\nMódulo: {module}\nPor: {actor_name}"
         if detail:
             whatsapp_text += f"\n{detail}"
-
         for r in recipients:
             if r["email"] == actor_email:
                 continue
             user_pref = prefs.get(r["id"], {"in_app": True, "email": True})
             if not user_pref.get("whatsapp", True):
                 continue
-            phone = await session.scalar(select(User.phone).where(User.id == r["id"]))
+            phone = await session.scalar(
+                select(User.phone).where(User.id == r["id"])
+            )
             if not phone:
                 continue
-            try:
-                await send_text(
-                    api_url=evolution["api_url"],
-                    api_key=evo_key,
-                    instance=evolution["instance"],
-                    to=phone,
-                    text=whatsapp_text,
-                )
-            except Exception:
-                logger.warning("whatsapp_send_failed", user_id=r["id"])
+            whatsapp_tasks.append(_WhatsAppTask(phone=phone, text=whatsapp_text))
+
+    await session.commit()
+
+    if not email_tasks and not whatsapp_tasks:
+        return None
+
+    return PendingDelivery(
+        emails=email_tasks,
+        whatsapp=whatsapp_tasks,
+        brevo_config=dict(brevo),
+        evolution_config=dict(evolution),
+    )
+
+
+async def deliver_notifications(pending: PendingDelivery) -> None:
+    """Envia emails e WhatsApp. Roda em background após a resposta HTTP."""
+    from app.core.database import SessionLocal
+
+    notification_ids_sent: list[int] = []
+
+    if pending.emails:
+        results = await asyncio.gather(
+            *[send_email(**e.params) for e in pending.emails],
+            return_exceptions=True,
+        )
+        for task, result in zip(pending.emails, results, strict=True):
+            if task.notification_id and not isinstance(result, BaseException):
+                notification_ids_sent.append(task.notification_id)
+
+    if pending.whatsapp:
+        evo_key = pending.evolution_config.get("api_key")
+        if evo_key:
+            from app.integrations.evolution import send_text
+
+            for wt in pending.whatsapp:
+                try:
+                    await send_text(
+                        api_url=pending.evolution_config["api_url"],
+                        api_key=evo_key,
+                        instance=pending.evolution_config["instance"],
+                        to=wt.phone,
+                        text=wt.text,
+                    )
+                except Exception:
+                    logger.warning("whatsapp_send_failed", phone=wt.phone)
+
+    if notification_ids_sent and SessionLocal:
+        try:
+            async with SessionLocal() as session:
+                now = datetime.now()
+                for nid in notification_ids_sent:
+                    notif = await session.get(Notification, nid)
+                    if notif:
+                        notif.email_sent_at = now
+                await session.commit()
+        except Exception:
+            logger.warning("email_sent_at_update_failed")
+
+
+async def notify_record_event(
+    session: AsyncSession,
+    *,
+    company_id: int,
+    actor_name: str,
+    actor_email: str,
+    event: str,
+    title: str,
+    module: str,
+    owner_user_id: int | None = None,
+    created_by_user_id: int | None = None,
+    notify_user_ids: list[int] | None = None,
+    detail: str | None = None,
+    entity_type: str | None = None,
+    entity_id: int | None = None,
+) -> None:
+    """Wrapper: prepara notificações e dispara entrega em background."""
+    pending = await prepare_notifications(
+        session,
+        company_id=company_id,
+        actor_name=actor_name,
+        actor_email=actor_email,
+        event=event,
+        title=title,
+        module=module,
+        owner_user_id=owner_user_id,
+        created_by_user_id=created_by_user_id,
+        notify_user_ids=notify_user_ids,
+        detail=detail,
+        entity_type=entity_type,
+        entity_id=entity_id,
+    )
+    if pending:
+        asyncio.create_task(deliver_notifications(pending))

@@ -73,6 +73,41 @@ async def list_registries(
     return rows, total
 
 
+async def export_registries(
+    session: AsyncSession,
+    company_id: int,
+    search: str | None = None,
+    category: str | None = None,
+) -> list:
+    from app.core.export import MAX_EXPORT_ROWS
+
+    target_models = (
+        {category: MODELS[category]} if category and category in MODELS
+        else MODELS
+    )
+    queries = []
+    for label, model in target_models.items():
+        q = select(
+            model.id,
+            model.name,
+            cast(literal_column(f"'{label}'"), String).label("category"),
+            model.updated_at,
+        ).where(model.company_id == company_id, model.deleted_at.is_(None))
+        if search:
+            q = q.where(model.name.ilike(f"%{search.strip()}%"))
+        queries.append(q)
+
+    combined = union_all(*queries).subquery()
+    rows = (
+        await session.execute(
+            select(combined)
+            .order_by(combined.c.category, combined.c.name)
+            .limit(MAX_EXPORT_ROWS)
+        )
+    ).all()
+    return rows
+
+
 async def list_options(
     session: AsyncSession, company_id: int, category: str,
 ) -> list:

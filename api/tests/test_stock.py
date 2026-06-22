@@ -76,7 +76,7 @@ async def test_create_movement(client):
 
     r = await client.post(
         f"{PREFIX}/movements",
-        json={"item_id": item_id, "movement_type": "in", "quantity": 10},
+        json={"item_id": item_id, "movement_type": "entrada", "quantity": 10},
         headers=auth_header(TENANT_A),
     )
     assert r.status_code == 201

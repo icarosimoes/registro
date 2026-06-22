@@ -2,16 +2,19 @@ from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.dependencies import require_session
+from app.core.export import generate_xlsx
 from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.registries.service import (
     MODELS,
     create_registry,
     delete_registry,
+    export_registries,
     list_options,
     list_registries,
     update_registry,
@@ -56,6 +59,24 @@ async def registry_options(
 ) -> list[RegistryOption]:
     items = await list_options(session, user.company_id, category)
     return [RegistryOption(**i) for i in items]
+
+
+@router.get("/export")
+async def export_registries_endpoint(
+    user: Annotated[AuthenticatedUser, require_permission("registry.view")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+    search: str | None = None,
+    category: str | None = None,
+) -> StreamingResponse:
+    rows = await export_registries(session, user.company_id, search, category)
+    headers = ["ID", "Nome", "Categoria", "Atualizado em"]
+    data = [[row.id, row.name, row.category, row.updated_at] for row in rows]
+    buf = generate_xlsx(title="Cadastros", headers=headers, rows=data)
+    return StreamingResponse(
+        buf,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": 'attachment; filename="cadastros.xlsx"'},
+    )
 
 
 @router.get("", response_model=RegistryListResponse)
