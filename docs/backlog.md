@@ -171,15 +171,15 @@
 ### Média — valor operacional
 
 4. **Cache e performance** — Redis com TTL curto (30-60s) nos endpoints pesados: `/dashboard/metrics`, `/roles/permissions`. Avaliar cache por tenant.
-5. **Background tasks** — mover geração de PDF, envio de notificações (Evolution/Brevo) e `generate` de checklists/preventivas para background. Começar com `BackgroundTasks` do FastAPI, evoluir para Celery/ARQ se necessário.
-6. **Exportação em lote** — CSV/Excel para OS, manutenção, checklists e estoque. Hotelaria sempre pede relatórios exportáveis.
+5. ~~**Background tasks**~~ — ✅ `notify_record_event` refatorado: criação de registros in-app é síncrona (com commit), envio de email (Brevo) e WhatsApp (Evolution) é disparado em background via `asyncio.create_task`. PDF mantido inline (rápido e necessário na resposta). Evolução para Celery/ARQ se necessário.
+6. ~~**Exportação em lote**~~ — ✅ utilitário genérico `generate_xlsx()` em `app/core/export.py` (openpyxl, header estilizado, auto-width, limite 10k linhas). Endpoints `GET /export` em ocorrências, manutenção, checklists (execuções) e cadastros. Testes de permissão e validação de xlsx inclusos.
 7. **Versionamento da API** — estratégia de breaking changes com header `Accept-Version` ou prefixo `/v2`. Essencial antes de integrações externas além do Chess Hotel.
 
 ### Média — qualidade de código
 
 8. ~~**Schemas inline no router**~~ — ✅ `maintenance/schemas.py` e `bulletin/schemas.py` criados. Routers importam de schemas ao invés de definir Pydantic models inline. Consistente com o padrão dos outros domínios.
 9. **Tipagem dos retornos de service** — services retornam `Row` genérico ou `dict`. Definir TypedDicts ou dataclasses para os retornos dos services, melhorando autocompletion e refactoring.
-10. **Testes de permissão** — validar que usuário com apenas `meeting.view` recebe 403 ao tentar `DELETE /meetings/{id}`. Testes atuais usam wildcard `*`, não exercitam o ACL real.
+10. ~~**Testes de permissão**~~ — ✅ `test_permissions.py` com 20 testes cobrindo 4 domínios (occurrences, bulletin, maintenance, checklists). Valida 403 sem permissão, 403 com permissão errada e 200/201 com permissão específica. Suite completa: 147/147 passando.
 
 ### Baixa — preparação para escala
 
