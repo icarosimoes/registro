@@ -83,4 +83,8 @@ def get_settings() -> Settings:
         raise RuntimeError(
             "CHESS_HOTEL_INTEGRATION_KEY de produção deve ter pelo menos 32 caracteres"
         )
+    if settings.environment == "production" and "*" in settings.web_origins:
+        raise RuntimeError(
+            "WEB_ORIGINS não pode conter '*' em produção"
+        )
     return settings

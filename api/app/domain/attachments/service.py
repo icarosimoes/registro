@@ -31,7 +31,7 @@ async def create_attachment(
     if entity_type not in ALLOWED_ENTITY_TYPES:
         return f"entity_type inválido: {entity_type}"
 
-    error = validate_file(filename, content_type, len(data))
+    error = validate_file(filename, content_type, len(data), data)
     if error:
         return error
 
