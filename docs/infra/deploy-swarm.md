@@ -90,3 +90,48 @@ docker service rollback registro_admin
 ```
 
 Antes de migrations, mudanças críticas ou reboot da VPS, gerar e validar backup. Migrations futuras devem rodar uma única vez, em tarefa controlada no manager, nunca simultaneamente em todas as réplicas.
+
+## Migrations no Swarm
+
+O Alembic **não roda automaticamente** nas réplicas. Para aplicar migrations:
+
+```bash
+# Descobrir imagem atual da API
+API_IMAGE=$(docker service inspect registro_api --format '{{.Spec.TaskTemplate.ContainerSpec.Image}}')
+
+# Ler senha do PG de dentro do container do DB
+DB_CONTAINER=$(docker ps -q -f "name=registro_db" | head -1)
+PG_PASS=$(docker exec "$DB_CONTAINER" cat /run/secrets/registro_postgres_password)
+DB_URL="postgresql+asyncpg://registro:${PG_PASS}@${DB_CONTAINER}:5432/registro"
+
+# Criar rede temporária e conectar o DB
+docker network create registro-migration-temp
+docker network connect registro-migration-temp "$DB_CONTAINER"
+
+# Rodar migrations
+docker run --rm \
+  --network registro-migration-temp \
+  -e "DATABASE_URL=$DB_URL" \
+  -e "JWT_SECRET=$(openssl rand -hex 48)" \
+  -e "CHESS_HOTEL_INTEGRATION_KEY=$(openssl rand -hex 48)" \
+  -e "WEB_ORIGINS=https://localhost" \
+  -e "ENVIRONMENT=production" \
+  -e "REDIS_URL=redis://localhost:6379/0" \
+  -e "SEED_DEFAULT_PASSWORD=unused" \
+  -e "PLATFORM_ADMIN_PASSWORD=unused" \
+  "$API_IMAGE" alembic upgrade head
+
+# Limpar
+docker network disconnect registro-migration-temp "$DB_CONTAINER"
+docker network rm registro-migration-temp
+```
+
+## Importação de dados V1 (MySQL → PostgreSQL)
+
+Para importar dados de um tenant a partir de dump MySQL da V1:
+
+```bash
+bash scripts/import-v1-swarm.sh <caminho-do-dump.sql>
+```
+
+Detalhes em [importacao-legado.md](importacao-legado.md).

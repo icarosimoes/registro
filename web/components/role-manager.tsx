@@ -20,17 +20,50 @@ type RoleItem = {
 };
 
 const MODULE_LABELS: Record<string, string> = {
+  dashboard: "Dashboard",
   occurrence: "Ocorrências",
+  occurrences: "Ocorrências",
   fiscal_request: "Solicitações Fiscais",
+  fiscal: "Solicitações Fiscais",
   user: "Usuários",
+  users: "Usuários",
+  admin: "Usuários",
   registry: "Cadastros",
+  registries: "Cadastros",
   module: "Módulos",
+  modules: "Módulos",
   procedure: "Procedimentos",
-  settings: "Configurações",
+  procedures: "Procedimentos",
   meeting: "Reuniões",
+  meetings: "Reuniões",
   shift_report: "Relatórios de Turno",
+  shift_reports: "Relatórios de Turno",
+  bulletin: "Informativos",
+  bulletins: "Informativos",
+  handoff: "Passagem de Turno",
+  handoffs: "Passagem de Turno",
+  checklist: "Checklists",
+  checklists: "Checklists",
+  inspections: "Inspeções",
+  maintenance: "Manutenção",
+  preventive_plan: "Preventivas",
+  stock: "Estoque",
+  construction: "Diário de Obra",
+  work_orders: "Ordens de Serviço",
+  settings: "Configurações",
   system: "Sistema",
 };
+
+const MODULE_ORDER = [
+  "dashboard", "occurrence", "occurrences", "fiscal_request", "fiscal",
+  "user", "users", "admin", "registry", "registries",
+  "module", "modules", "procedure", "procedures",
+  "meeting", "meetings", "shift_report", "shift_reports",
+  "bulletin", "bulletins", "handoff", "handoffs",
+  "checklist", "checklists", "inspections",
+  "maintenance", "preventive_plan", "stock",
+  "construction", "work_orders", "settings",
+];
 
 export function RoleManager({
   roles: initialRoles,
@@ -209,8 +242,13 @@ export function RoleManager({
 
               <div className="permission-groups">
                 <h3>Permissões</h3>
-                {permissionGroups
-                  .filter((g) => g.module !== "system")
+                {[...permissionGroups]
+                  .filter((g) => g.module !== "system" && g.module !== "legacy")
+                  .sort((a, b) => {
+                    const ai = MODULE_ORDER.indexOf(a.module);
+                    const bi = MODULE_ORDER.indexOf(b.module);
+                    return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+                  })
                   .map((group) => {
                     const allCodes = group.permissions.map((p) => p.code);
                     const checkedCodes =
@@ -221,9 +259,11 @@ export function RoleManager({
                     return (
                       <fieldset key={group.module} className="permission-group">
                         <legend>
-                          <label>
+                          <label className="permission-group-toggle">
+                            <span>{MODULE_LABELS[group.module] ?? group.module}</span>
                             <input
                               type="checkbox"
+                              className="toggle-switch"
                               onChange={(e) => {
                                 const checkboxes =
                                   e.target.closest("fieldset")?.querySelectorAll<HTMLInputElement>(
@@ -238,21 +278,21 @@ export function RoleManager({
                                 checkedCodes.length === allCodes.length
                               }
                             />
-                            {MODULE_LABELS[group.module] ?? group.module}
                           </label>
                         </legend>
                         <div className="permission-items">
                           {group.permissions.map((perm) => (
-                            <label key={perm.code}>
+                            <label key={perm.code} className="permission-toggle">
+                              <span>{perm.name}</span>
                               <input
                                 type="checkbox"
+                                className="toggle-switch"
                                 name={`perm_${perm.code}`}
                                 defaultChecked={
                                   editing !== "new" &&
                                   editing.permission_codes.includes(perm.code)
                                 }
                               />
-                              {perm.name}
                             </label>
                           ))}
                         </div>

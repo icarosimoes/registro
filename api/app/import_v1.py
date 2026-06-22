@@ -73,6 +73,30 @@ async def get_or_create_tenant(session: AsyncSession) -> Company:
     return company
 
 
+async def ensure_admin_role(target: AsyncSession, company: Company) -> Role:
+    """Cria ou retorna o role admin com permissão wildcard para o tenant."""
+    role = await target.scalar(
+        select(Role)
+        .options(selectinload(Role.permissions))
+        .where(Role.company_id == company.id, Role.code == "admin")
+    )
+    if role is None:
+        wildcard = await target.scalar(select(Permission).where(Permission.code == "*"))
+        if wildcard is None:
+            wildcard = Permission(code="*", name="Acesso total (administrador)", module="system")
+            target.add(wildcard)
+            await target.flush()
+        role = Role(
+            company_id=company.id,
+            code="admin",
+            name="Administrador",
+            permissions=[wildcard],
+        )
+        target.add(role)
+        await target.flush()
+    return role
+
+
 async def import_permissions(target: AsyncSession, legacy: AsyncSession, company: Company) -> Role:
     role = await target.scalar(
         select(Role)
@@ -735,26 +759,18 @@ async def run() -> None:
             )
             if previous:
                 company = await target.scalar(select(Company).where(Company.slug == TENANT_SLUG))
-                role = (
-                    await target.scalar(
-                        select(Role).where(
-                            Role.company_id == company.id,
-                            Role.code == "legacy-admin",
-                        )
-                    )
-                    if company
-                    else None
-                )
-                if company and role:
-                    await create_demo_access(target, company, role)
+                if company:
+                    admin_role = await ensure_admin_role(target, company)
+                    await create_demo_access(target, company, admin_role)
                     await target.commit()
                 print(previous.report)
                 return
             started = datetime.now(UTC).replace(tzinfo=None)
             company = await get_or_create_tenant(target)
-            role = await import_permissions(target, legacy, company)
-            users = await import_users(target, legacy, company, role)
-            await create_demo_access(target, company, role)
+            admin_role = await ensure_admin_role(target, company)
+            await import_permissions(target, legacy, company)
+            users = await import_users(target, legacy, company, admin_role)
+            await create_demo_access(target, company, admin_role)
             sectors = await import_catalog(target, legacy, company, "sectors", Sector)
             locations = await import_catalog(target, legacy, company, "locals", Location)
             functions = await import_catalog(target, legacy, company, "funcs", Function)
