@@ -19,12 +19,15 @@ target_metadata = Base.metadata
 
 
 def include_object(object_, name, type_, reflected, compare_to):
-    """Filter autogenerate to structural schema changes.
+    """Filter autogenerate to avoid noisy diffs from legacy schema.
 
-    Column attribute modifications (server_default, nullable) on existing
-    columns are skipped to avoid noisy diffs from legacy schema, but new/removed
-    tables, columns, indexes and FKs are all reported.
+    Index and FK naming diverges between models and existing migrations (legacy
+    composite indexes vs model-generated single-column ones). Column attribute
+    changes (server_default, nullable) also skipped. New/removed tables and
+    columns are still reported.
     """
+    if type_ in {"index", "foreign_key_constraint"}:
+        return False
     if type_ == "column" and compare_to is not None:
         return False
     return True

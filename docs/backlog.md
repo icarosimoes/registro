@@ -238,7 +238,7 @@ Itens identificados na auditoria completa de sistema. Documentação detalhada e
 - [x] **[L2] Log de permissão específica para wildcard** — ✅ `logger.debug("permission_check", required=code, granted_via="wildcard")`.
 - [ ] **[L3] Avaliar i18n** — texto hardcoded em português. Considerar `next-intl` se multi-idioma necessário. (~8h+)
 - [x] **[L4] Configurar image optimization no Next.js** — ✅ `formats: ["image/avif", "image/webp"]` em `next.config.ts`.
-- [x] **[L5] Revisar filtros do Alembic env.py** — ✅ Index e FK agora reportados pelo autogenerate; apenas mudanças de atributo de coluna existente filtradas.
+- [x] **[L5] Revisar filtros do Alembic env.py** — ✅ Revisado: filtro de index/FK mantido pois naming diverge entre models e migrations legacy (indexes compostos vs single-column). Adicionado filtro de column attributes. Drift real (tabelas/colunas novas ou removidas) continua reportado.
 - [x] **[L6] Padronizar error response** — ✅ Padrão `{"code": "...", "message": "..."}` já consistente nos routers.
 
 ### Testes — gaps de cobertura
