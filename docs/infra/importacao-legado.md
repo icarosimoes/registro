@@ -1,48 +1,63 @@
-# Importação do Laravel (V1)
+# Importação de tenants via MySQL (V1)
 
-O importador (`api/app/import_v1.py`) lê um dump MySQL da V1 (Chess Hotel / Aero) e carrega os dados no PostgreSQL do Registro como tenant `aero-hotel`.
+O importador (`api/app/import_v1.py`) lê um dump MySQL do sistema legado (Chess Hotel / Aero) e carrega os dados no PostgreSQL do Registro como um tenant isolado.
 
-## Scripts disponíveis
+Cada hotel é um tenant separado identificado por um slug (ex: `aero-hotel`, `hotel-xyz`). O mesmo importador serve para qualquer cliente — basta passar o dump e o slug.
 
-| Script | Ambiente | Quando usar |
-| --- | --- | --- |
-| `scripts/import-v1.sh` | Docker Compose (dev local) | Desenvolvimento e testes locais |
-| `scripts/import-v1-swarm.sh` | Docker Swarm (VPS) | Staging e produção |
-
-## Desenvolvimento local
+## Uso rápido
 
 ```bash
+# Local (Docker Compose)
 bash scripts/import-v1.sh <dump.sql> [slug-do-tenant]
 
-# Exemplos:
-bash scripts/import-v1.sh docs/aero-2026-06-19.sql              # tenant: aero-hotel (default)
-bash scripts/import-v1.sh dump-cliente.sql hotel-xyz             # tenant: hotel-xyz
+# VPS (Docker Swarm)
+bash scripts/import-v1-swarm.sh <dump.sql> [slug-do-tenant]
 ```
 
-Usa o MySQL do Compose para staging, roda migrations e executa o importador.
-
-## Swarm (staging ou produção)
+O slug default é `aero-hotel`. Exemplos:
 
 ```bash
-bash scripts/import-v1-swarm.sh <dump.sql> [slug-do-tenant]
+# Aero Hotel (default)
+bash scripts/import-v1-swarm.sh docs/aero-2026-06-19.sql
 
-# Exemplos:
-bash scripts/import-v1-swarm.sh docs/aero-2026-06-19.sql              # tenant: aero-hotel (default)
-bash scripts/import-v1-swarm.sh dump-cliente.sql hotel-xyz             # tenant: hotel-xyz
-LEGACY_TENANT_NAME="Hotel XYZ" bash scripts/import-v1-swarm.sh dump.sql hotel-xyz
+# Outro hotel
+bash scripts/import-v1-swarm.sh dump-pousada-mar.sql pousada-mar
+
+# Com nome personalizado
+LEGACY_TENANT_NAME="Pousada Mar Azul" \
+  bash scripts/import-v1-swarm.sh dump-pousada-mar.sql pousada-mar
 ```
 
-O script:
+## Como funciona o script Swarm
 
-1. Copia o dump para a VPS via SCP
-2. Sobe um MySQL temporário numa rede bridge isolada
-3. Carrega o dump no MySQL
-4. Conecta o PostgreSQL do stack à rede bridge
-5. Roda `alembic upgrade head` num container efêmero da API
-6. Executa `python -m app.import_v1` no mesmo container
-7. Remove MySQL, rede bridge e dump remoto
+O script `import-v1-swarm.sh` roda da máquina local e opera na VPS via SSH:
 
-Variáveis configuráveis (com defaults):
+1. **Copia o dump** para `/tmp` na VPS via SCP
+2. **Sobe MySQL temporário** numa rede bridge isolada (`registro-v1-import`)
+3. **Carrega o dump** no MySQL
+4. **Conecta o PostgreSQL** do stack à rede bridge
+5. **Roda migrations** (`alembic upgrade head`) num container efêmero da API
+6. **Executa o importador** (`python -m app.import_v1`) no mesmo container
+7. **Limpa tudo** — remove MySQL, rede bridge e dump remoto
+
+### Por que container efêmero?
+
+No Swarm com múltiplos nós, os containers da API podem estar em nós diferentes do manager. O script cria um container efêmero no manager (onde o PostgreSQL está) usando a mesma imagem da API em produção. Isso evita problemas de rede cross-node.
+
+### asyncmy
+
+A imagem da API em produção pode não ter o driver MySQL (`asyncmy`). O script instala via `pip install` dentro do container efêmero antes de rodar o importador. O container é descartado ao final — a imagem original não é afetada.
+
+## Variáveis de ambiente
+
+### Argumentos do script
+
+| Argumento | Posição | Default | Descrição |
+| --- | --- | --- | --- |
+| `dump.sql` | 1 (obrigatório) | — | Caminho local do dump MySQL |
+| `slug` | 2 (opcional) | `aero-hotel` | Slug do tenant no Registro |
+
+### Variáveis configuráveis
 
 | Variável | Default | Descrição |
 | --- | --- | --- |
@@ -50,48 +65,60 @@ Variáveis configuráveis (com defaults):
 | `VPS_USER` | `root` | Usuário SSH |
 | `STACK_NAME` | `registro` | Nome do stack no Swarm |
 | `MYSQL_PASSWORD` | `import-v1-temp` | Senha do MySQL temporário |
-| `LEGACY_TENANT_NAME` | (derivado do slug) | Nome de exibição do tenant |
+| `LEGACY_TENANT_NAME` | derivado do slug | Nome de exibição do tenant (ex: `Pousada Mar Azul`) |
 | `LEGACY_TENANT_EMAIL` | `legado@registro.local` | E-mail do tenant |
-| `LEGACY_DEMO_PASSWORD` | (vazio) | Se definido, cria `v1-demo@registro.local` |
+| `LEGACY_DEMO_PASSWORD` | (vazio) | Se definido, cria usuário `v1-demo@registro.local` |
 
-O container efêmero usa a mesma imagem do `registro_api` no Swarm. A senha do PostgreSQL é lida de dentro do container do DB (secret montada em `/run/secrets/registro_postgres_password`). JWT e outras secrets recebem placeholders — não são usados pelo importador.
+### Derivação automática do nome
+
+Se `LEGACY_TENANT_NAME` não for informado, o nome é derivado do slug:
+- `aero-hotel` → `Aero Hotel`
+- `pousada-mar` → `Pousada Mar`
+
+Para nomes com acentos ou formatação específica, passe explicitamente.
 
 ## O que é importado
 
-| Conjunto | Tabela destino |
-| --- | --- |
-| Usuários | `users` (preserva hashes bcrypt Laravel) |
-| Setores | `sectors` |
-| Locais | `locations` |
-| Funções | `functions` |
-| Procedimentos | `procedures` |
-| Ocorrências + comentários + participantes | `occurrences` |
-| Reuniões + participantes + pautas | `meetings`, `meeting_participants`, `meeting_subjects` |
-| Relatórios de turno + sub-tabelas | `shift_reports` (payload JSON) |
-| Check suites + itens | `module_records` (module=inspecoes, payload JSON) |
-| Auditorias + itens | `module_records` (module=manutencao, payload JSON) |
-| Notificações | `notifications` |
+| Conjunto | Tabela destino | Observação |
+| --- | --- | --- |
+| Usuários | `users` | Hashes bcrypt Laravel preservados |
+| Setores | `sectors` | |
+| Locais | `locations` | |
+| Funções | `functions` | |
+| Procedimentos | `procedures` | Inclui `procedure_files` |
+| Ocorrências | `occurrences` | + comentários e participantes |
+| Reuniões | `meetings` | + `meeting_participants` + `meeting_subjects` |
+| Relatórios de turno | `shift_reports` | Sub-tabelas em payload JSON |
+| Check suites | `module_records` (module=inspecoes) | Items em payload JSON |
+| Auditorias | `module_records` (module=manutencao) | Items em payload JSON |
+| Notificações | `notifications` | Categoria `legacy` |
+
+### O que NÃO é importado
+
+- **Anexos/arquivos físicos** — uploads do Laravel ficam no filesystem do servidor antigo. Requerem migração separada ao MinIO.
+- **Configurações do sistema** — cada tenant começa com configurações padrão do Registro.
 
 ## Permissões e roles
 
-O importador cria dois roles para o tenant:
+O importador cria dois roles para cada tenant:
 
-- **admin** — role principal com permissão wildcard `*`. Todos os usuários importados recebem este role e têm acesso total ao sistema.
-- **legacy-admin** — preserva as ACLs originais do Laravel para referência. Não é usado para controle de acesso.
+- **admin** — permissão wildcard `*`, acesso total. Todos os usuários importados recebem este role.
+- **legacy-admin** — preserva as ACLs originais do Laravel (códigos como `legacy.occurrencescontroller.index`). Mantido apenas para referência, não é usado no controle de acesso.
 
-## Idempotência
+Após a importação, roles adicionais (gerente, recepção, governança, etc.) podem ser criados pela interface de Perfis do Registro.
+
+## Idempotência e reimportação
 
 - O ETL é idempotente por `(company_id, legacy_id)` — registros existentes são atualizados, novos são inseridos.
 - O checksum SHA-256 do dump é registrado em `legacy_import_runs`. Se o mesmo checksum já foi processado, o importador pula a execução.
-- Para reimportar com dump atualizado, basta rodar o script com o novo arquivo — o checksum diferente dispara uma nova execução.
+- Para reimportar com dump atualizado (dados mais recentes), rode o script com o novo arquivo — o checksum diferente dispara nova execução.
+- É seguro rodar múltiplas vezes. Não duplica dados.
 
-## Regras
+## Login após importação
 
-- O dump nunca é versionado nem incluído em imagem Docker.
-- O MySQL temporário é efêmero — só existe durante a importação.
-- Senhas Laravel bcrypt são preservadas. Login funciona com e-mail e senha da V1.
-- Se o mesmo e-mail existe em mais de um tenant, o login solicita escolha da empresa.
-- Arquivos/anexos físicos não são migrados pelo importador — requerem procedimento separado.
+- Usuários da V1 logam com **e-mail e senha do sistema antigo** (hashes bcrypt preservados).
+- Se o mesmo e-mail existir em mais de um tenant, o login solicita escolha da empresa.
+- Se `LEGACY_DEMO_PASSWORD` foi informado, existe o usuário `v1-demo@registro.local` para testes.
 
 ## Validação pós-importação
 
@@ -101,7 +128,7 @@ DB=$(docker ps -q -f "name=registro_db" | head -1)
 
 # Contagens por tenant
 docker exec "$DB" psql -U registro -c "
-  SELECT c.slug, 
+  SELECT c.slug,
     (SELECT count(*) FROM users WHERE company_id = c.id AND deleted_at IS NULL) as users,
     (SELECT count(*) FROM occurrences WHERE company_id = c.id AND deleted_at IS NULL) as occurrences,
     (SELECT count(*) FROM meetings WHERE company_id = c.id AND deleted_at IS NULL) as meetings,
@@ -109,7 +136,7 @@ docker exec "$DB" psql -U registro -c "
   FROM companies c ORDER BY c.id;
 "
 
-# Verificar roles e permissões do tenant
+# Verificar roles e permissões de um tenant específico
 docker exec "$DB" psql -U registro -c "
   SELECT r.code, r.name, string_agg(p.code, ', ') as permissions
   FROM roles r
@@ -119,17 +146,30 @@ docker exec "$DB" psql -U registro -c "
   GROUP BY r.id ORDER BY r.code;
 "
 
-# Verificar import run
-docker exec "$DB" psql -U registro -c "SELECT source, status, report FROM legacy_import_runs;"
+# Histórico de importações
+docker exec "$DB" psql -U registro -c "
+  SELECT source, status, started_at, finished_at,
+    left(checksum_sha256, 12) as checksum, report
+  FROM legacy_import_runs ORDER BY started_at DESC;
+"
 ```
 
-## Plano de produção — Aero Hotel
+## Procedimento para novo cliente
 
-O tenant `aero-hotel` é o cliente real. Procedimento para corte final:
+1. Receber o dump MySQL do cliente (`.sql`).
+2. Escolher um slug (ex: `hotel-centro`, `pousada-praia`). Usar apenas letras minúsculas, números e hífens.
+3. Rodar o importador:
+   ```bash
+   LEGACY_TENANT_NAME="Hotel Centro SP" \
+     bash scripts/import-v1-swarm.sh dump-hotel-centro.sql hotel-centro
+   ```
+4. Validar contagens (queries acima).
+5. Testar login com um usuário real do dump.
+6. Informar o cliente que pode acessar com e-mail e senha do sistema antigo.
 
-1. Gerar dump fresco do MySQL de produção da V1.
-2. Rodar `bash scripts/import-v1-swarm.sh <dump-fresco.sql>`.
-3. Validar contagens e permissões (queries acima).
-4. Testar login com usuário real da V1.
-5. Migrar anexos/volumes físicos ao MinIO (procedimento separado).
-6. Cortar acesso à V1 e apontar DNS para o Registro.
+## Regras de segurança
+
+- O dump nunca é versionado nem incluído em imagem Docker.
+- O MySQL temporário é efêmero — só existe durante a importação, é destruído no final.
+- Senhas Laravel bcrypt são preservadas. Rehash só ocorre se decidido explicitamente.
+- O dump é removido da VPS ao final do script.
