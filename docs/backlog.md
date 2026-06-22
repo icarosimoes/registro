@@ -166,25 +166,25 @@
 
 1. ~~**Structured logging com structlog**~~ — ✅ `app/core/logging.py` configura structlog com contextvars (company_id, user_id, request_id). Middleware em `main.py` limpa/vincula contexto por request. `auth.py` vincula company_id/user_id ao autenticar. Todos os 5 módulos que usavam `logging.getLogger` migrados para `structlog.get_logger()`. JSON em produção, console colorido em dev.
 2. ~~**Testes de integração contra PostgreSQL real**~~ — ✅ `conftest.py` detecta `DATABASE_URL` ou `TEST_DATABASE_URL` e usa PostgreSQL quando disponível (SQLite como fallback local). Em PostgreSQL, `_current_user_test` seta `SET LOCAL app.current_company_id` para exercitar RLS. CI já roda com PostgreSQL 17 + Alembic migrations. `docker-compose.test.yml` com PostgreSQL tmpfs para testes locais. `aiosqlite` adicionado a dev dependencies.
-3. **CI mais robusto** — adicionar validação de migrations (alembic check), typecheck com mypy no CI, e gate de cobertura mínima com pytest-cov.
+3. ~~**CI mais robusto**~~ — ✅ CI reforçado: `pip-audit --strict` para CVEs em dependências, cobertura mínima subida para 60%, `alembic heads` para detectar branches divergentes, coverage XML como artifact.
 
 ### Média — valor operacional
 
 4. ~~**Cache e performance**~~ — ✅ Redis com cache por tenant no dashboard, cache global de permissões, invalidação nas mutações e readiness.
 5. ~~**Background tasks**~~ — ✅ `notify_record_event` refatorado: criação de registros in-app é síncrona (com commit), envio de email (Brevo) e WhatsApp (Evolution) é disparado em background via `asyncio.create_task`. PDF mantido inline (rápido e necessário na resposta). Evolução para Celery/ARQ se necessário.
 6. ~~**Exportação em lote**~~ — ✅ utilitário genérico `generate_xlsx()` em `app/core/export.py` (openpyxl, header estilizado, auto-width, limite 10k linhas). Endpoints `GET /export` em ocorrências, manutenção, checklists (execuções) e cadastros. Testes de permissão e validação de xlsx inclusos.
-7. **Versionamento da API** — estratégia de breaking changes com header `Accept-Version` ou prefixo `/v2`. Essencial antes de integrações externas além do Chess Hotel.
+7. ~~**Versionamento da API**~~ — ✅ Routers agrupados em `v1_router` (APIRouter com prefix `/api/v1`) em `main.py`. Estratégia documentada em `docs/api-versionamento.md`: versionamento por prefixo de URL, regras de deprecação, exemplo de coexistência v1/v2.
 
 ### Média — qualidade de código
 
 8. ~~**Schemas inline no router**~~ — ✅ `maintenance/schemas.py` e `bulletin/schemas.py` criados. Routers importam de schemas ao invés de definir Pydantic models inline. Consistente com o padrão dos outros domínios.
-9. **Tipagem dos retornos de service** — services retornam `Row` genérico ou `dict`. Definir TypedDicts ou dataclasses para os retornos dos services, melhorando autocompletion e refactoring.
+9. ~~**Tipagem dos retornos de service**~~ — ✅ Todos os 19 services tipados com NamedTuples nomeados (ex: `OccurrenceRow`, `WorkOrderRow`, `HandoffRow`). Retornos de funções anotados com tipos concretos ao invés de `tuple` genérico. Routers continuam funcionando via unpacking posicional.
 10. ~~**Testes de permissão**~~ — ✅ `test_permissions.py` com 20 testes cobrindo 4 domínios (occurrences, bulletin, maintenance, checklists). Valida 403 sem permissão, 403 com permissão errada e 200/201 com permissão específica. Suite completa: 147/147 passando.
 
 ### Baixa — preparação para escala
 
-11. **Paginação por cursor** — substituir offset-based pagination por cursor-based nos módulos com mais volume (ocorrências, OS, timeline). Offset degrada com N grande.
-12. **Backup e deploy** — pg_dump agendado ou WAL archiving. Plano de deploy com Docker Swarm (já planejado) documentado antes do corte.
+11. ~~**Paginação por cursor**~~ — ✅ Utilitário genérico `app/core/pagination.py` com encode/decode de cursor opaco (base64). Endpoints `/cursor` adicionados em ocorrências, OS e timeline como alternativa aos endpoints offset existentes. Response: `{items, next_cursor, has_more}`.
+12. ~~**Backup e deploy**~~ — ✅ Service `backup` melhorado com validação `pg_restore --list`. Novo service `backup-minio` com `mc mirror` diário. Script `scripts/backup-restore.sh` para backup/restore manual. Documentação completa em `docs/infra/backup-restore.md` com RTO/RPO, procedimento de restore, checklist pós-restore e estratégia off-site.
 
 ## Definition of Done por módulo
 

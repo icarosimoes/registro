@@ -32,6 +32,12 @@ class WorkOrderListResponse(BaseModel):
     page_size: int
 
 
+class WorkOrderCursorResponse(BaseModel):
+    items: list[WorkOrderOut]
+    next_cursor: str | None
+    has_more: bool
+
+
 class WorkOrderCreate(BaseModel):
     title: str
     description: str | None = None

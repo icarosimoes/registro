@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import NamedTuple
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,6 +9,17 @@ from app.models import Location, StockItem, StockMovement, User
 from app.models.operations import MOVEMENT_TYPES
 
 
+class StockItemRow(NamedTuple):
+    item: StockItem
+    location_name: str | None
+
+
+class StockMovementRow(NamedTuple):
+    movement: StockMovement
+    item_name: str
+    user_name: str
+
+
 async def list_items(
     session: AsyncSession,
     company_id: int,
@@ -15,7 +27,7 @@ async def list_items(
     page_size: int,
     search: str | None = None,
     below_min_only: bool = False,
-) -> tuple[list, int]:
+) -> tuple[list[StockItemRow], int]:
     filters = [
         StockItem.company_id == company_id,
         StockItem.deleted_at.is_(None),
@@ -51,7 +63,7 @@ async def get_item(
     session: AsyncSession,
     company_id: int,
     item_id: int,
-) -> tuple | None:
+) -> StockItemRow | None:
     loc = Location.__table__.alias("loc")
     return (
         await session.execute(
@@ -71,7 +83,7 @@ async def create_item(
     company_id: int,
     user_id: int,
     **fields,
-) -> tuple:
+) -> StockItemRow:
     rec = StockItem(company_id=company_id, **fields)
     session.add(rec)
     await session.flush()
@@ -94,7 +106,7 @@ async def update_item(
     user_id: int,
     item_id: int,
     updates: dict,
-) -> tuple | None:
+) -> StockItemRow | None:
     rec = await session.scalar(
         select(StockItem).where(
             StockItem.id == item_id,
@@ -228,7 +240,7 @@ async def list_movements(
     page: int,
     page_size: int,
     item_id: int | None = None,
-) -> tuple[list, int]:
+) -> tuple[list[StockMovementRow], int]:
     filters = [StockMovement.company_id == company_id]
     if item_id:
         filters.append(StockMovement.item_id == item_id)

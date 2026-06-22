@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import NamedTuple
 
 from sqlalchemy import delete, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,13 +8,19 @@ from app.core.audit import compute_diff, record_event
 from app.models import InspectionSuite, InspectionSuiteItem, User
 
 
+class InspectionSuiteRow(NamedTuple):
+    suite: InspectionSuite
+    owner_name: str | None
+    item_count: int
+
+
 async def list_inspection_suites(
     session: AsyncSession,
     company_id: int,
     page: int,
     page_size: int,
     search: str | None = None,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[InspectionSuiteRow], int]:
     filters = [
         InspectionSuite.company_id == company_id,
         InspectionSuite.deleted_at.is_(None),

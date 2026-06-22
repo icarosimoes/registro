@@ -1,3 +1,5 @@
+from typing import NamedTuple
+
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -5,6 +7,11 @@ from sqlalchemy.orm import selectinload
 from app.core.audit import record_event
 from app.core.cache import cache_get, cache_set
 from app.models import Permission, Role, User
+
+
+class RoleRow(NamedTuple):
+    role: Role
+    user_count: int
 
 TTL_PERMISSIONS = 3600
 
@@ -32,7 +39,7 @@ async def list_roles(
     company_id: int,
     page: int,
     page_size: int,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[RoleRow], int]:
     base = [Role.company_id == company_id]
     total = await session.scalar(select(func.count(Role.id)).where(*base)) or 0
 

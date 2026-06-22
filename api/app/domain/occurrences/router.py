@@ -10,6 +10,7 @@ from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.occurrences.schemas import (
     OccurrenceCreate,
+    OccurrenceCursorResponse,
     OccurrenceDetail,
     OccurrenceListResponse,
     OccurrenceSummary,
@@ -23,6 +24,7 @@ from app.domain.occurrences.service import (
     export_occurrences,
     get_occurrence,
     list_occurrences,
+    list_occurrences_cursor,
     status_label,
     update_occurrence,
 )
@@ -58,6 +60,36 @@ async def list_occurrences_endpoint(
         total=total,
         page=page,
         page_size=page_size,
+    )
+
+
+@router.get("/cursor", response_model=OccurrenceCursorResponse)
+async def list_occurrences_cursor_endpoint(
+    user: Annotated[AuthenticatedUser, require_permission("occurrence.view")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+    cursor: str | None = None,
+    search: str | None = None,
+) -> OccurrenceCursorResponse:
+    result = await list_occurrences_cursor(session, user.company_id, limit, cursor, search)
+    return OccurrenceCursorResponse(
+        items=[
+            OccurrenceSummary(
+                id=occurrence.id,
+                legacy_id=occurrence.legacy_id,
+                title=occurrence.title,
+                description=occurrence.description,
+                category=sector_name or "Sem setor",
+                location=location_name,
+                owner=owner_name or "Não atribuído",
+                status=status_label(occurrence.status),
+                deadline=occurrence.deadline,
+                updated_at=occurrence.updated_at,
+            )
+            for occurrence, sector_name, location_name, owner_name in result.items
+        ],
+        next_cursor=result.next_cursor,
+        has_more=result.has_more,
     )
 
 

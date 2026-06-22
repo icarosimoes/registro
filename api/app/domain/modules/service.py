@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import NamedTuple
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,6 +7,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.audit import compute_diff, record_event
 from app.integrations.notifications import notify_record_event
 from app.models import ModuleRecord, User
+
+
+class ModuleRecordRow(NamedTuple):
+    record: ModuleRecord
+    owner_name: str | None
 
 VALID_MODULES = {"inspecoes", "diarios-obra", "manutencao"}
 
@@ -17,7 +23,7 @@ async def list_records(
     page: int,
     page_size: int,
     search: str | None = None,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[ModuleRecordRow], int]:
     filters = [
         ModuleRecord.company_id == company_id,
         ModuleRecord.module == module_slug,
@@ -56,7 +62,7 @@ async def create_record(
     status: str,
     owner_user_id: int | None,
     notify_user_ids: list[int] | None,
-) -> tuple[ModuleRecord, str | None]:
+) -> ModuleRecordRow:
     owner_id = owner_user_id or user_id
     record = ModuleRecord(
         company_id=company_id,
@@ -93,7 +99,7 @@ async def create_record(
         notify_user_ids=notify_user_ids,
     )
     owner_name = await session.scalar(select(User.name).where(User.id == owner_id))
-    return record, owner_name
+    return ModuleRecordRow(record, owner_name)
 
 
 async def update_record(
@@ -105,7 +111,7 @@ async def update_record(
     module_slug: str,
     record_id: int,
     updates: dict,
-) -> tuple[ModuleRecord, str | None] | None:
+) -> ModuleRecordRow | None:
     record = await session.scalar(
         select(ModuleRecord).where(
             ModuleRecord.id == record_id,
@@ -152,7 +158,7 @@ async def update_record(
         if record.owner_user_id
         else None
     )
-    return record, owner_name
+    return ModuleRecordRow(record, owner_name)
 
 
 async def delete_record(

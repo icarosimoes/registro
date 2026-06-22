@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from typing import NamedTuple
 
 from sqlalchemy import delete, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,6 +13,18 @@ from app.models import (
     User,
 )
 from app.models.operations import CHECKLIST_RECURRENCE_TYPES
+
+
+class TemplateRow(NamedTuple):
+    template: ChecklistTemplate
+    assigned_user_name: str | None
+    item_count: int
+
+
+class ExecutionRow(NamedTuple):
+    execution: ChecklistExecution
+    template_name: str
+    completed_by_name: str | None
 
 RECURRENCE_DAYS: dict[str, int] = {
     "daily": 1,
@@ -35,7 +48,7 @@ async def list_templates(
     page_size: int,
     search: str | None = None,
     active_only: bool = False,
-) -> tuple[list, int]:
+) -> tuple[list[TemplateRow], int]:
     filters = [
         ChecklistTemplate.company_id == company_id,
         ChecklistTemplate.deleted_at.is_(None),
@@ -240,7 +253,7 @@ async def list_executions(
     page_size: int,
     template_id: int | None = None,
     status: str | None = None,
-) -> tuple[list, int]:
+) -> tuple[list[ExecutionRow], int]:
     filters = [
         ChecklistExecution.company_id == company_id,
         ChecklistExecution.deleted_at.is_(None),
@@ -277,7 +290,7 @@ async def export_executions(
     company_id: int,
     template_id: int | None = None,
     status: str | None = None,
-) -> list:
+) -> list[ExecutionRow]:
     from app.core.export import MAX_EXPORT_ROWS
 
     filters = [

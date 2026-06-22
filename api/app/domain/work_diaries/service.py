@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import NamedTuple
 
 from sqlalchemy import delete, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,13 +15,18 @@ from app.models import (
 )
 
 
+class WorkDiaryRow(NamedTuple):
+    diary: WorkDiary
+    owner_name: str | None
+
+
 async def list_work_diaries(
     session: AsyncSession,
     company_id: int,
     page: int,
     page_size: int,
     search: str | None = None,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[WorkDiaryRow], int]:
     filters = [
         WorkDiary.company_id == company_id,
         WorkDiary.deleted_at.is_(None),

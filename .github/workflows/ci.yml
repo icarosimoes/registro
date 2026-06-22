@@ -36,6 +36,21 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: mypy app/ --ignore-missing-imports
 
+  api-security:
+    name: API — pip-audit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]" pip-audit
+      - name: Verificar CVEs em dependências
+        run: pip-audit --strict --desc
+
   api-migrations:
     name: API — Alembic check
     runs-on: ubuntu-latest
@@ -70,6 +85,14 @@ jobs:
         run: alembic upgrade head
       - name: Verificar que não há migrations pendentes
         run: alembic check
+      - name: Verificar que não há branches divergentes
+        run: |
+          HEADS=$(alembic heads | wc -l)
+          if [ "$HEADS" -gt 1 ]; then
+            echo "::error::Alembic tem $HEADS heads divergentes"
+            alembic heads
+            exit 1
+          fi
 
   api-test:
     name: API — pytest
@@ -103,13 +126,15 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: alembic upgrade head
       - name: Rodar testes com cobertura
-        run: pytest -v --cov=app --cov-report=term-missing --cov-fail-under=54
+        run: pytest -v --cov=app --cov-report=term-missing --cov-report=xml --cov-fail-under=60
       - name: Upload coverage
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: api/.coverage
+          path: |
+            api/.coverage
+            api/coverage.xml
 
   web-typecheck:
     name: Web — TypeScript

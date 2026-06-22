@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import NamedTuple
 
 from sqlalchemy import delete, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,13 +9,20 @@ from app.integrations.notifications import notify_record_event
 from app.models import Meeting, MeetingParticipant, MeetingSubject, User
 
 
+class MeetingRow(NamedTuple):
+    meeting: Meeting
+    owner_name: str | None
+    participant_count: int
+    subject_count: int
+
+
 async def list_meetings(
     session: AsyncSession,
     company_id: int,
     page: int,
     page_size: int,
     search: str | None = None,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[MeetingRow], int]:
     filters = [
         Meeting.company_id == company_id,
         Meeting.deleted_at.is_(None),

@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import NamedTuple
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,6 +7,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.audit import compute_diff, record_event
 from app.integrations.notifications import notify_record_event
 from app.models import ShiftReport, User
+
+
+class ShiftReportRow(NamedTuple):
+    report: ShiftReport
+    owner_name: str | None
 
 
 async def list_shift_reports(
@@ -16,7 +22,7 @@ async def list_shift_reports(
     search: str | None = None,
     date_from: date | None = None,
     date_to: date | None = None,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[ShiftReportRow], int]:
     filters = [
         ShiftReport.company_id == company_id,
         ShiftReport.deleted_at.is_(None),
@@ -54,7 +60,7 @@ async def get_shift_report(
     session: AsyncSession,
     company_id: int,
     report_id: int,
-) -> tuple[ShiftReport, str | None] | None:
+) -> ShiftReportRow | None:
     row = (
         await session.execute(
             select(ShiftReport, User.name)
@@ -68,7 +74,7 @@ async def get_shift_report(
     ).first()
     if row is None:
         return None
-    return row[0], row[1]
+    return ShiftReportRow(row[0], row[1])
 
 
 async def create_shift_report(
@@ -87,7 +93,7 @@ async def create_shift_report(
     status: str,
     owner_user_id: int | None,
     notify_user_ids: list[int] | None,
-) -> tuple[ShiftReport, str | None]:
+) -> ShiftReportRow:
     record = ShiftReport(
         company_id=company_id,
         title=title,
@@ -129,7 +135,7 @@ async def create_shift_report(
         if record.owner_user_id
         else None
     )
-    return record, owner_name
+    return ShiftReportRow(record, owner_name)
 
 
 async def update_shift_report(
@@ -140,7 +146,7 @@ async def update_shift_report(
     user_email: str,
     report_id: int,
     updates: dict,
-) -> tuple[ShiftReport, str | None] | None:
+) -> ShiftReportRow | None:
     record = await session.scalar(
         select(ShiftReport).where(
             ShiftReport.id == report_id,
@@ -189,7 +195,7 @@ async def update_shift_report(
         if record.owner_user_id
         else None
     )
-    return record, owner_name
+    return ShiftReportRow(record, owner_name)
 
 
 async def delete_shift_report(

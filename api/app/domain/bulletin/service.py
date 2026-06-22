@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import NamedTuple
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,6 +9,11 @@ from app.integrations.notifications import notify_record_event
 from app.models import BulletinPost, User
 
 
+class BulletinPostRow(NamedTuple):
+    post: BulletinPost
+    author_name: str | None
+
+
 async def list_posts(
     session: AsyncSession,
     company_id: int,
@@ -15,7 +21,7 @@ async def list_posts(
     page_size: int,
     search: str | None = None,
     pinned_only: bool = False,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[BulletinPostRow], int]:
     filters = [
         BulletinPost.company_id == company_id,
         BulletinPost.deleted_at.is_(None),
@@ -51,7 +57,7 @@ async def create_post(
     pinned: bool,
     expires_at: datetime | None,
     notify_user_ids: list[int] | None,
-) -> tuple[BulletinPost, str | None]:
+) -> BulletinPostRow:
     post = BulletinPost(
         company_id=company_id,
         title=title,
@@ -83,7 +89,7 @@ async def create_post(
         module="Mural",
         notify_user_ids=notify_user_ids,
     )
-    return post, user_name
+    return BulletinPostRow(post, user_name)
 
 
 async def update_post(

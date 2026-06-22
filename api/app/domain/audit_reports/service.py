@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import NamedTuple
 
 from sqlalchemy import delete as sa_delete
 from sqlalchemy import func, select
@@ -8,6 +9,17 @@ from app.core.audit import compute_diff, record_event
 from app.models import AuditReport, AuditReportItem, User
 
 
+class AuditReportListRow(NamedTuple):
+    report: AuditReport
+    auditor_name: str | None
+
+
+class AuditReportDetail(NamedTuple):
+    report: AuditReport
+    auditor_name: str | None
+    items: list[AuditReportItem]
+
+
 async def list_audit_reports(
     session: AsyncSession,
     company_id: int,
@@ -15,7 +27,7 @@ async def list_audit_reports(
     page_size: int,
     date_from: date | None = None,
     date_to: date | None = None,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[AuditReportListRow], int]:
     filters = [
         AuditReport.company_id == company_id,
         AuditReport.deleted_at.is_(None),
@@ -45,7 +57,7 @@ async def get_audit_report(
     session: AsyncSession,
     company_id: int,
     report_id: int,
-) -> tuple[AuditReport, str | None, list[AuditReportItem]] | None:
+) -> AuditReportDetail | None:
     row = (
         await session.execute(
             select(AuditReport, User.name)
@@ -96,7 +108,7 @@ async def create_audit_report(
     status: str,
     notes: str | None,
     items: list[dict] | None,
-) -> tuple[AuditReport, str | None, list[AuditReportItem]]:
+) -> AuditReportDetail:
     report = AuditReport(
         company_id=company_id,
         report_date=report_date,
@@ -144,7 +156,7 @@ async def update_audit_report(
     user_id: int,
     report_id: int,
     updates: dict,
-) -> tuple[AuditReport, str | None, list[AuditReportItem]] | None:
+) -> AuditReportDetail | None:
     report = await session.scalar(
         select(AuditReport).where(
             AuditReport.id == report_id,

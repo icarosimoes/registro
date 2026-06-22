@@ -8,6 +8,7 @@ from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.work_orders.schemas import (
     WorkOrderCreate,
+    WorkOrderCursorResponse,
     WorkOrderListResponse,
     WorkOrderOut,
     WorkOrderTransition,
@@ -21,6 +22,7 @@ from app.domain.work_orders.service import (
     delete_order,
     get_order,
     list_orders,
+    list_orders_cursor,
     transition_order,
     update_order,
 )
@@ -79,6 +81,26 @@ async def list_work_orders(
         total=total,
         page=page,
         page_size=page_size,
+    )
+
+
+@router.get("/cursor", response_model=WorkOrderCursorResponse)
+async def list_work_orders_cursor(
+    user: Annotated[AuthenticatedUser, require_permission("work_order.view")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+    limit: int = Query(20, ge=1, le=100),
+    cursor: str | None = None,
+    search: str | None = None,
+    status: str | None = None,
+    priority: str | None = None,
+) -> WorkOrderCursorResponse:
+    result = await list_orders_cursor(
+        session, user.company_id, limit, cursor, search, status, priority
+    )
+    return WorkOrderCursorResponse(
+        items=[_to_out(row) for row in result.items],
+        next_cursor=result.next_cursor,
+        has_more=result.has_more,
     )
 
 

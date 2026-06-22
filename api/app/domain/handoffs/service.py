@@ -1,10 +1,23 @@
 from datetime import date, datetime
+from typing import NamedTuple
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import compute_diff, record_event
 from app.models import ShiftHandoff, User
+
+
+class HandoffRow(NamedTuple):
+    handoff: ShiftHandoff
+    created_by_name: str | None
+    read_by_name: str | None
+    resolved_by_name: str | None
+
+
+class HandoffPendingRow(NamedTuple):
+    handoff: ShiftHandoff
+    created_by_name: str | None
 
 
 async def list_handoffs(
@@ -16,7 +29,7 @@ async def list_handoffs(
     target_shift: str | None = None,
     status: str | None = None,
     search: str | None = None,
-) -> tuple[list, int]:
+) -> tuple[list[HandoffRow], int]:
     filters = [
         ShiftHandoff.company_id == company_id,
         ShiftHandoff.deleted_at.is_(None),
@@ -71,7 +84,7 @@ async def get_handoff(
     session: AsyncSession,
     company_id: int,
     handoff_id: int,
-) -> tuple | None:
+) -> HandoffRow | None:
     created_by = User.__table__.alias("created_by")
     read_by = User.__table__.alias("read_by")
     resolved_by = User.__table__.alias("resolved_by")
@@ -101,7 +114,7 @@ async def create_handoff(
     company_id: int,
     user_id: int,
     **fields,
-) -> tuple:
+) -> HandoffRow | None:
     if not fields.get("target_date"):
         fields["target_date"] = date.today()
     rec = ShiftHandoff(
@@ -130,7 +143,7 @@ async def update_handoff(
     user_id: int,
     handoff_id: int,
     updates: dict,
-) -> tuple | None:
+) -> HandoffRow | None:
     rec = await session.scalar(
         select(ShiftHandoff).where(
             ShiftHandoff.id == handoff_id,
@@ -163,7 +176,7 @@ async def mark_read(
     company_id: int,
     user_id: int,
     handoff_id: int,
-) -> tuple | None:
+) -> HandoffRow | None:
     rec = await session.scalar(
         select(ShiftHandoff).where(
             ShiftHandoff.id == handoff_id,
@@ -196,7 +209,7 @@ async def resolve_handoff(
     user_id: int,
     handoff_id: int,
     resolution_notes: str | None = None,
-) -> tuple | None:
+) -> HandoffRow | None:
     rec = await session.scalar(
         select(ShiftHandoff).where(
             ShiftHandoff.id == handoff_id,
@@ -262,7 +275,7 @@ async def pending_for_shift(
     company_id: int,
     target_date: date,
     target_shift: str | None = None,
-) -> list:
+) -> list[HandoffPendingRow]:
     filters = [
         ShiftHandoff.company_id == company_id,
         ShiftHandoff.deleted_at.is_(None),

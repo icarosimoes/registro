@@ -61,11 +61,44 @@ services:
           target="/backups/registro_$$(date -u +%Y%m%d_%H%M%S).dump"
           pg_dump -Fc -f "$$target"
           sha256sum "$$target" > "$$target.sha256"
+          if pg_restore --list "$$target" > /dev/null 2>&1; then
+            echo "backup ok: $$target"
+          else
+            echo "ERRO: backup corrompido $$target" >&2
+          fi
           find /backups -type f -mtime +14 -delete
           sleep 86400
         done
     secrets:
       - registro_postgres_password
+    networks:
+      - registro-internal
+    volumes:
+      - registro-backups:/backups
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+
+  backup-minio:
+    image: minio/mc:latest
+    entrypoint: /bin/sh
+    command:
+      - -ec
+      - |
+        mc alias set local http://minio:9000 "$$(cat /run/secrets/registro_s3_access_key)" "$$(cat /run/secrets/registro_s3_secret_key)"
+        while true; do
+          mc mirror --overwrite local/registro-attachments /backups/minio/registro-attachments
+          echo "minio backup ok: $$(date -u +%Y%m%dT%H%M%SZ)"
+          sleep 86400
+        done
+    secrets:
+      - registro_s3_access_key
+      - registro_s3_secret_key
     networks:
       - registro-internal
     volumes:

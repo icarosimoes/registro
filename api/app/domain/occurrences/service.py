@@ -1,10 +1,12 @@
 from datetime import datetime
+from typing import NamedTuple
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import compute_diff, record_event
 from app.core.cache import invalidate_dashboard
+from app.core.pagination import CursorPage, paginate_by_cursor
 from app.integrations.notifications import notify_record_event
 from app.models import (
     Location,
@@ -17,13 +19,32 @@ from app.models import (
 STATUS_LABELS = {1: "Em andamento", 2: "Concluído", 3: "Aguardando"}
 
 
+class OccurrenceRow(NamedTuple):
+    occurrence: Occurrence
+    sector_name: str | None
+    location_name: str | None
+    owner_name: str | None
+
+
+class OccurrenceNames(NamedTuple):
+    sector_name: str | None
+    location_name: str | None
+    owner_name: str | None
+
+
+class OccurrenceDetail(NamedTuple):
+    record: Occurrence
+    names: OccurrenceNames
+    participants: list[tuple[int, str]]
+
+
 def status_label(value: int) -> str:
     return STATUS_LABELS.get(value, f"Status {value}")
 
 
 async def _resolve_names(
     session: AsyncSession, occurrence: Occurrence
-) -> tuple[str | None, str | None, str | None]:
+) -> OccurrenceNames:
     cid = occurrence.company_id
     sector_name = (
         await session.scalar(
@@ -58,7 +79,7 @@ async def _resolve_names(
         if occurrence.owner_user_id
         else None
     )
-    return sector_name, location_name, owner_name
+    return OccurrenceNames(sector_name, location_name, owner_name)
 
 
 async def list_occurrences(
@@ -67,7 +88,7 @@ async def list_occurrences(
     page: int,
     page_size: int,
     search: str | None = None,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[OccurrenceRow], int]:
     filters = [Occurrence.company_id == company_id, Occurrence.deleted_at.is_(None)]
     if search:
         pattern = f"%{search.strip()}%"
@@ -86,6 +107,30 @@ async def list_occurrences(
         )
     ).all()
     return rows, total
+
+
+async def list_occurrences_cursor(
+    session: AsyncSession,
+    company_id: int,
+    limit: int = 20,
+    cursor: str | None = None,
+    search: str | None = None,
+) -> CursorPage:
+    filters = [Occurrence.company_id == company_id, Occurrence.deleted_at.is_(None)]
+    if search:
+        pattern = f"%{search.strip()}%"
+        filters.append(or_(Occurrence.title.ilike(pattern), Occurrence.description.ilike(pattern)))
+
+    stmt = (
+        select(Occurrence, Sector.name, Location.name, User.name)
+        .outerjoin(Sector, Sector.id == Occurrence.sector_id)
+        .outerjoin(Location, Location.id == Occurrence.location_id)
+        .outerjoin(User, User.id == Occurrence.owner_user_id)
+        .where(*filters)
+    )
+    return await paginate_by_cursor(
+        session, stmt, id_column=Occurrence.id, cursor=cursor, limit=limit
+    )
 
 
 async def _sync_participants(
@@ -114,7 +159,7 @@ async def _get_participants(session: AsyncSession, occurrence_id: int) -> list[t
 
 async def get_occurrence(
     session: AsyncSession, company_id: int, occurrence_id: int
-) -> tuple | None:
+) -> OccurrenceDetail | None:
     record = await session.scalar(
         select(Occurrence).where(
             Occurrence.id == occurrence_id,
@@ -126,7 +171,7 @@ async def get_occurrence(
         return None
     names = await _resolve_names(session, record)
     participants = await _get_participants(session, record.id)
-    return record, names, participants
+    return OccurrenceDetail(record, names, participants)
 
 
 async def create_occurrence(
@@ -146,7 +191,7 @@ async def create_occurrence(
     owner_user_id: int | None,
     notify_user_ids: list[int] | None,
     participant_ids: list[int] | None = None,
-) -> tuple[Occurrence, tuple[str | None, str | None, str | None]]:
+) -> tuple[Occurrence, OccurrenceNames]:
     record = Occurrence(
         company_id=company_id,
         title=title,
@@ -199,7 +244,7 @@ async def update_occurrence(
     user_email: str,
     occurrence_id: int,
     updates: dict,
-) -> tuple[Occurrence, tuple[str | None, str | None, str | None]] | None:
+) -> tuple[Occurrence, OccurrenceNames] | None:
     record = await session.scalar(
         select(Occurrence).where(
             Occurrence.id == occurrence_id,
@@ -286,7 +331,7 @@ async def export_occurrences(
     session: AsyncSession,
     company_id: int,
     search: str | None = None,
-) -> list[tuple]:
+) -> list[OccurrenceRow]:
     from app.core.export import MAX_EXPORT_ROWS
 
     filters = [Occurrence.company_id == company_id, Occurrence.deleted_at.is_(None)]
@@ -314,7 +359,7 @@ async def clone_occurrence(
     user_name: str,
     user_email: str,
     occurrence_id: int,
-) -> tuple | None:
+) -> tuple[Occurrence, OccurrenceNames] | None:
     original = await session.scalar(
         select(Occurrence).where(
             Occurrence.id == occurrence_id,

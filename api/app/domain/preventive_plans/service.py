@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from typing import NamedTuple
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,6 +8,12 @@ from app.core.audit import compute_diff, record_event
 from app.integrations.notifications import notify_record_event
 from app.models import Location, PreventivePlan, User, WorkOrder
 from app.models.operations import RECURRENCE_TYPES
+
+
+class PreventivePlanRow(NamedTuple):
+    plan: PreventivePlan
+    assigned_user_name: str | None
+    location_name: str | None
 
 RECURRENCE_DAYS: dict[str, int] = {
     "daily": 1,
@@ -30,7 +37,7 @@ async def list_plans(
     page_size: int,
     search: str | None = None,
     active_only: bool = False,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[PreventivePlanRow], int]:
     filters = [
         PreventivePlan.company_id == company_id,
         PreventivePlan.deleted_at.is_(None),
@@ -69,7 +76,7 @@ async def get_plan(
     session: AsyncSession,
     company_id: int,
     plan_id: int,
-) -> tuple | None:
+) -> PreventivePlanRow | None:
     assigned = User.__table__.alias("assigned")
     loc = Location.__table__.alias("loc")
     row = (
@@ -96,7 +103,7 @@ async def create_plan(
     company_id: int,
     user_id: int,
     **fields,
-) -> tuple:
+) -> PreventivePlanRow:
     if fields.get("recurrence") and fields["recurrence"] not in RECURRENCE_TYPES:
         raise ValueError(f"Recorrência inválida: {fields['recurrence']}")
 
@@ -128,7 +135,7 @@ async def update_plan(
     user_id: int,
     plan_id: int,
     updates: dict,
-) -> tuple | None:
+) -> PreventivePlanRow | None:
     rec = await session.scalar(
         select(PreventivePlan).where(
             PreventivePlan.id == plan_id,

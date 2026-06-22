@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import NamedTuple
 
 from sqlalchemy import delete as sa_delete
 from sqlalchemy import func, or_, select
@@ -8,13 +9,24 @@ from app.core.audit import compute_diff, record_event
 from app.models import ApartmentInspection, ApartmentInspectionItem, User
 
 
+class InspectionListRow(NamedTuple):
+    inspection: ApartmentInspection
+    inspector_name: str | None
+
+
+class InspectionDetail(NamedTuple):
+    inspection: ApartmentInspection
+    inspector_name: str | None
+    items: list[ApartmentInspectionItem]
+
+
 async def list_apartment_inspections(
     session: AsyncSession,
     company_id: int,
     page: int,
     page_size: int,
     search: str | None = None,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[InspectionListRow], int]:
     filters = [
         ApartmentInspection.company_id == company_id,
         ApartmentInspection.deleted_at.is_(None),
@@ -75,7 +87,7 @@ async def _sync_items(
 
 async def get_apartment_inspection(
     session: AsyncSession, company_id: int, inspection_id: int
-) -> tuple | None:
+) -> InspectionDetail | None:
     record = await session.scalar(
         select(ApartmentInspection).where(
             ApartmentInspection.id == inspection_id,
@@ -91,7 +103,7 @@ async def get_apartment_inspection(
         else None
     )
     items = await _get_items(session, record.id)
-    return record, inspector_name, items
+    return InspectionDetail(record, inspector_name, items)
 
 
 async def create_apartment_inspection(
@@ -109,7 +121,7 @@ async def create_apartment_inspection(
     status: str,
     notes: str | None,
     items: list[dict] | None = None,
-) -> tuple:
+) -> InspectionDetail:
     record = ApartmentInspection(
         company_id=company_id,
         unit=unit,
@@ -142,7 +154,7 @@ async def create_apartment_inspection(
         else None
     )
     db_items = await _get_items(session, record.id)
-    return record, inspector_name, db_items
+    return InspectionDetail(record, inspector_name, db_items)
 
 
 async def update_apartment_inspection(
@@ -151,7 +163,7 @@ async def update_apartment_inspection(
     user_id: int,
     inspection_id: int,
     updates: dict,
-) -> tuple | None:
+) -> InspectionDetail | None:
     record = await session.scalar(
         select(ApartmentInspection).where(
             ApartmentInspection.id == inspection_id,
@@ -186,7 +198,7 @@ async def update_apartment_inspection(
         else None
     )
     db_items = await _get_items(session, record.id)
-    return record, inspector_name, db_items
+    return InspectionDetail(record, inspector_name, db_items)
 
 
 async def delete_apartment_inspection(

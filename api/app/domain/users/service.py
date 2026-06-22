@@ -1,6 +1,7 @@
 import logging
 import secrets
 from datetime import datetime
+from typing import NamedTuple
 
 import bcrypt
 from sqlalchemy import func, or_, select
@@ -10,6 +11,12 @@ from app.core.audit import compute_diff, record_event
 from app.core.config import get_settings
 from app.core.storage import build_object_key, upload_file, validate_file
 from app.models import Role, Sector, User
+
+
+class UserRow(NamedTuple):
+    user: User
+    role_name: str | None
+    sector_name: str | None
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +33,7 @@ async def list_users(
     page: int,
     page_size: int,
     search: str | None = None,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[UserRow], int]:
     filters = [User.company_id == company_id, User.deleted_at.is_(None)]
     if search:
         pattern = f"%{search.strip()}%"

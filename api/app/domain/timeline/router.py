@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -12,6 +12,7 @@ from app.domain.timeline.service import (
     VALID_ENTITY_TYPES,
     add_comment,
     get_timeline,
+    get_timeline_cursor,
     verify_entity_access,
 )
 
@@ -31,8 +32,38 @@ class TimelineResponse(BaseModel):
     items: list[TimelineEntry]
 
 
+class TimelineCursorResponse(BaseModel):
+    items: list[TimelineEntry]
+    next_cursor: str | None
+    has_more: bool
+
+
 class CommentCreate(BaseModel):
     message: str
+
+
+@router.get("/{entity_type}/{entity_id}/cursor", response_model=TimelineCursorResponse)
+async def get_timeline_cursor_endpoint(
+    entity_type: str,
+    entity_id: int,
+    user: Annotated[AuthenticatedUser, Depends(current_user)],
+    session: Annotated[AsyncSession, Depends(require_session)],
+    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+    cursor: str | None = None,
+) -> TimelineCursorResponse:
+    if entity_type not in VALID_ENTITY_TYPES:
+        raise HTTPException(status_code=400, detail={"code": "invalid_entity_type"})
+    if not await verify_entity_access(session, entity_type, entity_id, user.company_id):
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+
+    result = await get_timeline_cursor(
+        session, user.company_id, entity_type, entity_id, limit, cursor
+    )
+    return TimelineCursorResponse(
+        items=[TimelineEntry(**item) for item in result.items],
+        next_cursor=result.next_cursor,
+        has_more=result.has_more,
+    )
 
 
 @router.get("/{entity_type}/{entity_id}", response_model=TimelineResponse)

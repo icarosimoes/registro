@@ -34,6 +34,12 @@ class OccurrenceListResponse(BaseModel):
     page_size: int
 
 
+class OccurrenceCursorResponse(BaseModel):
+    items: list[OccurrenceSummary]
+    next_cursor: str | None
+    has_more: bool
+
+
 class OccurrenceCreate(BaseModel):
     title: str
     description: str | None = None

@@ -1,10 +1,18 @@
 from datetime import datetime
+from typing import NamedTuple
 
 from sqlalchemy import String, cast, func, literal_column, select, union_all
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import record_event
 from app.models import Function, Location, Sector
+
+
+class RegistryRow(NamedTuple):
+    id: int
+    name: str
+    category: str
+    updated_at: datetime | None
 
 MODELS = {"Setor": Sector, "Local": Location, "Função": Function}
 
@@ -16,7 +24,7 @@ async def list_registries(
     page_size: int,
     search: str | None = None,
     category: str | None = None,
-) -> tuple[list, int]:
+) -> tuple[list[RegistryRow], int]:
     target_models = {category: MODELS[category]} if category and category in MODELS else MODELS
 
     if len(target_models) == 1:
@@ -81,7 +89,7 @@ async def export_registries(
     company_id: int,
     search: str | None = None,
     category: str | None = None,
-) -> list:
+) -> list[RegistryRow]:
     from app.core.export import MAX_EXPORT_ROWS
 
     target_models = {category: MODELS[category]} if category and category in MODELS else MODELS

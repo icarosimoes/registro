@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import NamedTuple
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,6 +9,11 @@ from app.integrations.notifications import notify_record_event
 from app.models import MaintenanceRecord, User
 
 
+class MaintenanceRow(NamedTuple):
+    record: MaintenanceRecord
+    owner_name: str | None
+
+
 async def list_records(
     session: AsyncSession,
     company_id: int,
@@ -15,7 +21,7 @@ async def list_records(
     page_size: int,
     search: str | None = None,
     status: str | None = None,
-) -> tuple[list[tuple], int]:
+) -> tuple[list[MaintenanceRow], int]:
     filters = [
         MaintenanceRecord.company_id == company_id,
         MaintenanceRecord.deleted_at.is_(None),
@@ -49,7 +55,7 @@ async def export_records(
     company_id: int,
     search: str | None = None,
     status: str | None = None,
-) -> list[tuple]:
+) -> list[MaintenanceRow]:
     from app.core.export import MAX_EXPORT_ROWS
 
     filters = [
@@ -82,7 +88,7 @@ async def get_record(
     session: AsyncSession,
     company_id: int,
     record_id: int,
-) -> tuple[MaintenanceRecord, str | None] | None:
+) -> MaintenanceRow | None:
     row = (
         await session.execute(
             select(MaintenanceRecord, User.name)
@@ -96,7 +102,7 @@ async def get_record(
     ).first()
     if row is None:
         return None
-    return row[0], row[1]
+    return MaintenanceRow(row[0], row[1])
 
 
 async def create_record(
@@ -114,7 +120,7 @@ async def create_record(
     location_id: int | None,
     owner_user_id: int | None,
     notify_user_ids: list[int] | None,
-) -> tuple[MaintenanceRecord, str | None]:
+) -> MaintenanceRow:
     owner_id = owner_user_id or user_id
     rec = MaintenanceRecord(
         company_id=company_id,
@@ -152,7 +158,7 @@ async def create_record(
         notify_user_ids=notify_user_ids,
     )
     owner_name = await session.scalar(select(User.name).where(User.id == owner_id))
-    return rec, owner_name
+    return MaintenanceRow(rec, owner_name)
 
 
 async def update_record(
@@ -163,7 +169,7 @@ async def update_record(
     user_email: str,
     record_id: int,
     updates: dict,
-) -> tuple[MaintenanceRecord, str | None] | None:
+) -> MaintenanceRow | None:
     rec = await session.scalar(
         select(MaintenanceRecord).where(
             MaintenanceRecord.id == record_id,
@@ -209,7 +215,7 @@ async def update_record(
         if rec.owner_user_id
         else None
     )
-    return rec, owner_name
+    return MaintenanceRow(rec, owner_name)
 
 
 async def delete_record(

@@ -4,6 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import record_event
+from app.core.pagination import CursorPage, decode_cursor, encode_cursor
 from app.integrations.notifications import notify_record_event
 from app.models import (
     AuditEvent,
@@ -109,6 +110,67 @@ async def get_timeline(
             }
         )
     return items
+
+
+async def get_timeline_cursor(
+    session: AsyncSession,
+    company_id: int,
+    entity_type: str,
+    entity_id: int,
+    limit: int = 50,
+    cursor: str | None = None,
+) -> CursorPage:
+    filters = [
+        AuditEvent.company_id == company_id,
+        AuditEvent.entity_type == entity_type,
+        AuditEvent.entity_id == entity_id,
+    ]
+    if cursor:
+        after_id = decode_cursor(cursor)
+        if after_id is not None:
+            filters.append(AuditEvent.id > after_id)
+
+    rows = (
+        await session.execute(
+            select(AuditEvent, User.name)
+            .join(User, User.id == AuditEvent.user_id)
+            .where(*filters)
+            .order_by(AuditEvent.created_at.asc(), AuditEvent.id.asc())
+            .limit(limit + 1)
+        )
+    ).all()
+
+    has_more = len(rows) > limit
+    rows = rows[:limit]
+
+    items = []
+    for event, user_name in rows:
+        message = None
+        changes = None
+        if event.event_type == "comment":
+            message = event.diff.get("message") if event.diff else None
+        elif event.event_type == "attachment_add":
+            message = f'Anexou "{event.diff.get("filename", "?")}"' if event.diff else None
+        elif event.event_type == "attachment_remove":
+            message = f'Removeu anexo "{event.diff.get("filename", "?")}"' if event.diff else None
+        elif event.diff:
+            changes = event.diff
+        items.append(
+            {
+                "id": event.id,
+                "event_type": event.event_type,
+                "user": user_name,
+                "message": message,
+                "changes": changes,
+                "created_at": event.created_at,
+            }
+        )
+
+    next_cursor = None
+    if has_more and items:
+        next_cursor = encode_cursor(items[-1]["id"])
+
+    return CursorPage(items=items, next_cursor=next_cursor, has_more=has_more)
 
 
 async def add_comment(
