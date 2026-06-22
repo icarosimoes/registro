@@ -29,153 +29,8 @@ async def seed() -> None:
         if await session.scalar(select(Company.id).limit(1)):
             return
 
-        permissions = [
-            Permission(code="dashboard.view", name="Visualizar indicadores", module="dashboard"),
-            Permission(code="users.manage", name="Gerenciar usuários", module="admin"),
-            Permission(
-                code="occurrences.manage", name="Gerenciar ocorrências", module="occurrences"
-            ),
-            Permission(
-                code="check_suite.view",
-                name="Ver checklists",
-                module="inspections",
-            ),
-            Permission(
-                code="check_suite.create",
-                name="Criar checklists",
-                module="inspections",
-            ),
-            Permission(
-                code="check_suite.edit",
-                name="Editar checklists",
-                module="inspections",
-            ),
-            Permission(
-                code="check_suite.delete",
-                name="Excluir checklists",
-                module="inspections",
-            ),
-            Permission(
-                code="inspection_suite.view",
-                name="Ver suítes",
-                module="inspections",
-            ),
-            Permission(
-                code="inspection_suite.create",
-                name="Criar suítes",
-                module="inspections",
-            ),
-            Permission(
-                code="inspection_suite.edit",
-                name="Editar suítes",
-                module="inspections",
-            ),
-            Permission(
-                code="inspection_suite.delete",
-                name="Excluir suítes",
-                module="inspections",
-            ),
-            Permission(
-                code="apartment_inspection.view",
-                name="Ver vistorias",
-                module="inspections",
-            ),
-            Permission(
-                code="apartment_inspection.create",
-                name="Criar vistorias",
-                module="inspections",
-            ),
-            Permission(
-                code="apartment_inspection.edit",
-                name="Editar vistorias",
-                module="inspections",
-            ),
-            Permission(
-                code="apartment_inspection.delete",
-                name="Excluir vistorias",
-                module="inspections",
-            ),
-            Permission(
-                code="audit_report.view",
-                name="Ver auditorias",
-                module="inspections",
-            ),
-            Permission(
-                code="audit_report.create",
-                name="Criar auditorias",
-                module="inspections",
-            ),
-            Permission(
-                code="audit_report.edit",
-                name="Editar auditorias",
-                module="inspections",
-            ),
-            Permission(
-                code="audit_report.delete",
-                name="Excluir auditorias",
-                module="inspections",
-            ),
-            Permission(
-                code="work_diary.view",
-                name="Ver diário de obra",
-                module="construction",
-            ),
-            Permission(
-                code="work_diary.create",
-                name="Criar diário de obra",
-                module="construction",
-            ),
-            Permission(
-                code="work_diary.edit",
-                name="Editar diário de obra",
-                module="construction",
-            ),
-            Permission(
-                code="work_diary.delete",
-                name="Excluir diário de obra",
-                module="construction",
-            ),
-            Permission(
-                code="work_order.view",
-                name="Ver ordens de serviço",
-                module="work_orders",
-            ),
-            Permission(
-                code="work_order.create",
-                name="Criar ordens de serviço",
-                module="work_orders",
-            ),
-            Permission(
-                code="work_order.edit",
-                name="Editar ordens de serviço",
-                module="work_orders",
-            ),
-            Permission(
-                code="work_order.delete",
-                name="Excluir ordens de serviço",
-                module="work_orders",
-            ),
-        ]
-        existing_permissions = {
-            permission.code: permission
-            for permission in (
-                await session.scalars(
-                    select(Permission).where(
-                        Permission.code.in_([permission.code for permission in permissions])
-                    )
-                )
-            ).all()
-        }
-        permissions = [
-            existing_permissions.get(permission.code, permission) for permission in permissions
-        ]
-        session.add_all(
-            [
-                permission
-                for permission in permissions
-                if permission.code not in existing_permissions
-            ]
-        )
+        wildcard = Permission(code="*", name="Acesso total (administrador)", module="system")
+        session.add(wildcard)
         await session.flush()
 
         plan = Plan(
@@ -196,7 +51,7 @@ async def seed() -> None:
 
         for index, company in enumerate(companies):
             role = Role(company_id=company.id, code="admin", name="Administrador")
-            role.permissions = permissions.copy()
+            role.permissions = [wildcard]
             session.add(role)
             await session.flush()
             session.add(
