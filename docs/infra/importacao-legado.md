@@ -12,7 +12,11 @@ O importador (`api/app/import_v1.py`) lê um dump MySQL da V1 (Chess Hotel / Aer
 ## Desenvolvimento local
 
 ```bash
-bash scripts/import-v1.sh docs/aero-2026-06-19.sql
+bash scripts/import-v1.sh <dump.sql> [slug-do-tenant]
+
+# Exemplos:
+bash scripts/import-v1.sh docs/aero-2026-06-19.sql              # tenant: aero-hotel (default)
+bash scripts/import-v1.sh dump-cliente.sql hotel-xyz             # tenant: hotel-xyz
 ```
 
 Usa o MySQL do Compose para staging, roda migrations e executa o importador.
@@ -20,7 +24,12 @@ Usa o MySQL do Compose para staging, roda migrations e executa o importador.
 ## Swarm (staging ou produção)
 
 ```bash
-bash scripts/import-v1-swarm.sh docs/aero-2026-06-19.sql
+bash scripts/import-v1-swarm.sh <dump.sql> [slug-do-tenant]
+
+# Exemplos:
+bash scripts/import-v1-swarm.sh docs/aero-2026-06-19.sql              # tenant: aero-hotel (default)
+bash scripts/import-v1-swarm.sh dump-cliente.sql hotel-xyz             # tenant: hotel-xyz
+LEGACY_TENANT_NAME="Hotel XYZ" bash scripts/import-v1-swarm.sh dump.sql hotel-xyz
 ```
 
 O script:
@@ -41,6 +50,8 @@ Variáveis configuráveis (com defaults):
 | `VPS_USER` | `root` | Usuário SSH |
 | `STACK_NAME` | `registro` | Nome do stack no Swarm |
 | `MYSQL_PASSWORD` | `import-v1-temp` | Senha do MySQL temporário |
+| `LEGACY_TENANT_NAME` | (derivado do slug) | Nome de exibição do tenant |
+| `LEGACY_TENANT_EMAIL` | `legado@registro.local` | E-mail do tenant |
 | `LEGACY_DEMO_PASSWORD` | (vazio) | Se definido, cria `v1-demo@registro.local` |
 
 O container efêmero usa a mesma imagem do `registro_api` no Swarm. A senha do PostgreSQL é lida de dentro do container do DB (secret montada em `/run/secrets/registro_postgres_password`). JWT e outras secrets recebem placeholders — não são usados pelo importador.

@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
+# Importa base V1 (MySQL dump) para um tenant no ambiente local (Docker Compose).
+#
+# Uso:
+#   bash scripts/import-v1.sh <dump.sql> [slug-do-tenant]
+#
+# Exemplos:
+#   bash scripts/import-v1.sh docs/aero-2026-06-19.sql              # tenant: aero-hotel (default)
+#   bash scripts/import-v1.sh dump-cliente.sql hotel-xyz             # tenant: hotel-xyz
 set -euo pipefail
 
 DUMP_PATH="${1:-docs/aero-2026-06-19.sql}"
+TENANT_SLUG="${2:-aero-hotel}"
 STAGING_DATABASE="${LEGACY_DATABASE_NAME:-registro_v1}"
 MYSQL_USER_VALUE="${MYSQL_USER:-registro}"
 MYSQL_PASSWORD_VALUE="${MYSQL_PASSWORD:-registro}"
@@ -29,6 +38,7 @@ SQL
 
 docker compose exec -T api alembic upgrade head
 docker compose exec -T \
+  -e "LEGACY_TENANT_SLUG=${TENANT_SLUG}" \
   -e "LEGACY_DATABASE_URL=mysql+asyncmy://${MYSQL_USER_VALUE}:${MYSQL_PASSWORD_VALUE}@mysql:3306/${STAGING_DATABASE}?charset=utf8mb4" \
   -e "LEGACY_DUMP_SHA256=${CHECKSUM}" \
   -e "LEGACY_DEMO_PASSWORD=${LEGACY_DEMO_PASSWORD_VALUE}" \

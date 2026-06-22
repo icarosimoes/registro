@@ -32,8 +32,7 @@ from app.models import (
     User,
 )
 
-SOURCE = "aero-hotel"
-TENANT_SLUG = "aero-hotel"
+TENANT_SLUG = os.getenv("LEGACY_TENANT_SLUG", "aero-hotel")
 
 
 def permission_code(controller: str, action: str) -> str:
@@ -53,7 +52,7 @@ async def get_or_create_tenant(session: AsyncSession) -> Company:
     if company:
         return company
     company = Company(
-        name=os.getenv("LEGACY_TENANT_NAME", "Aero Hotel"),
+        name=os.getenv("LEGACY_TENANT_NAME", TENANT_SLUG.replace("-", " ").title()),
         slug=TENANT_SLUG,
         email=os.getenv("LEGACY_TENANT_EMAIL", "legado@registro.local"),
         status="active",
@@ -812,7 +811,7 @@ async def run() -> None:
             }
             target.add(
                 LegacyImportRun(
-                    source=SOURCE,
+                    source=TENANT_SLUG,
                     checksum_sha256=checksum,
                     status="completed",
                     report=json.dumps(report, ensure_ascii=False),

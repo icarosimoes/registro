@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
-# Importa base V1 (MySQL dump) para tenant aero-hotel em ambiente Swarm.
+# Importa base V1 (MySQL dump) para um tenant no ambiente Swarm.
 #
-# Uso local:
-#   bash scripts/import-v1-swarm.sh docs/aero-2026-06-19.sql
+# Uso:
+#   bash scripts/import-v1-swarm.sh <dump.sql> [slug-do-tenant]
+#
+# Exemplos:
+#   bash scripts/import-v1-swarm.sh docs/aero-2026-06-19.sql              # tenant: aero-hotel (default)
+#   bash scripts/import-v1-swarm.sh dump-cliente.sql hotel-xyz             # tenant: hotel-xyz
+#   LEGACY_TENANT_NAME="Hotel XYZ" bash scripts/import-v1-swarm.sh dump.sql hotel-xyz
 #
 # O script:
 #   1. Copia o dump para a VPS
@@ -12,12 +17,15 @@
 #   5. Limpa MySQL temporário e dump
 set -euo pipefail
 
-DUMP_PATH="${1:?Uso: $0 <caminho-do-dump.sql>}"
+DUMP_PATH="${1:?Uso: $0 <dump.sql> [slug-do-tenant]}"
+TENANT_SLUG="${2:-aero-hotel}"
 VPS_HOST="${VPS_HOST:-95.111.250.4}"
 VPS_USER="${VPS_USER:-root}"
 STACK_NAME="${STACK_NAME:-registro}"
 MYSQL_PASSWORD="${MYSQL_PASSWORD:-import-v1-temp}"
 MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD:-import-v1-root}"
+LEGACY_TENANT_NAME="${LEGACY_TENANT_NAME:-}"
+LEGACY_TENANT_EMAIL="${LEGACY_TENANT_EMAIL:-}"
 LEGACY_DEMO_PASSWORD="${LEGACY_DEMO_PASSWORD:-}"
 
 if [[ ! -f "$DUMP_PATH" ]]; then
@@ -31,8 +39,9 @@ MYSQL_CONTAINER="registro-v1-mysql-temp"
 MYSQL_DB="registro_v1"
 MYSQL_USER="registro"
 
-echo "==> Dump: $DUMP_PATH ($CHECKSUM)"
-echo "==> VPS:  $VPS_USER@$VPS_HOST"
+echo "==> Dump:   $DUMP_PATH ($CHECKSUM)"
+echo "==> Tenant: $TENANT_SLUG"
+echo "==> VPS:    $VPS_USER@$VPS_HOST"
 
 echo ""
 echo "==> [1/6] Copiando dump para VPS..."
@@ -125,6 +134,9 @@ docker run --rm \
   --network $BRIDGE_NET \
   --user root \
   \$COMMON_ENV \
+  -e "LEGACY_TENANT_SLUG=$TENANT_SLUG" \
+  -e "LEGACY_TENANT_NAME=$LEGACY_TENANT_NAME" \
+  -e "LEGACY_TENANT_EMAIL=$LEGACY_TENANT_EMAIL" \
   -e "LEGACY_DATABASE_URL=mysql+asyncmy://$MYSQL_USER:$MYSQL_PASSWORD@$MYSQL_CONTAINER:3306/$MYSQL_DB?charset=utf8mb4" \
   -e "LEGACY_DUMP_SHA256=$CHECKSUM" \
   -e "LEGACY_DEMO_PASSWORD=$LEGACY_DEMO_PASSWORD" \
@@ -147,5 +159,5 @@ REMOTE
 
 echo ""
 echo "==> Importação V1 finalizada com sucesso!"
-echo "    Tenant: aero-hotel"
+echo "    Tenant: $TENANT_SLUG"
 echo "    Checksum: $CHECKSUM"
