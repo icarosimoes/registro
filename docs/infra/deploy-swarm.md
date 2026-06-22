@@ -2,6 +2,8 @@
 
 ## Decisão operacional
 
+Para primeiro deploy ou troca de domínio, siga o procedimento completo em [Deploy em novo domínio](deploy-novo-dominio.md).
+
 - Todo ambiente sobe em containers Docker.
 - Desenvolvimento local usa `docker compose`.
 - Produção usa Docker Swarm; não usar `docker compose up` na VPS.
@@ -30,9 +32,12 @@ Serviços:
 
 ```bash
 docker network create --driver overlay --attachable traefik-public
-printf '%s' 'postgresql+asyncpg://registro:<senha>@db:5432/registro' | docker secret create registro_database_url -
-openssl rand -base64 48 | docker secret create registro_postgres_password -
-openssl rand -base64 48 | docker secret create registro_jwt_secret -
+db_password="$(openssl rand -hex 32)"
+jwt_secret="$(openssl rand -hex 48)"
+printf '%s' "$db_password" | docker secret create registro_postgres_password -
+printf '%s' "postgresql+asyncpg://registro:${db_password}@db:5432/registro" | docker secret create registro_database_url -
+printf '%s' "$jwt_secret" | docker secret create registro_jwt_secret -
+unset db_password jwt_secret
 mkdir -p /opt/registro
 ```
 
@@ -48,7 +53,6 @@ REGISTRO_API_HOST=api.registro.solidsd.com.br
 REGISTRO_ADMIN_HOST=painel.registro.solidsd.com.br
 REGISTRO_WEB_ORIGIN=https://registro.solidsd.com.br
 IMAGE_TAG=sha-<sha-completo>
-GHCR_PAT=...
 ```
 
 A API é publicada em `api.registro.solidsd.com.br`; seus endpoints permanecem sob `/api/v1`.
@@ -60,7 +64,6 @@ cd /opt/registro
 set -a
 . ./.env.prod
 set +a
-echo "$GHCR_PAT" | docker login ghcr.io -u icarosimoes --password-stdin
 docker stack config -c docker-stack.yml >/dev/null
 docker stack deploy -c docker-stack.yml --with-registry-auth registro
 ```

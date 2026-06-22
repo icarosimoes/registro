@@ -5,6 +5,8 @@
 - Rota pública da API movida para `api.registro.solidsd.com.br`.
 - Front e painel continuam consumindo `http://api:8000/api/v1` internamente no overlay do Swarm.
 - DNS aponta diretamente para a VPS e o TLS é emitido pelo resolver `letsencrypt` do Traefik.
+- Criado `infra/deploy-novo-dominio.md` com procedimento reproduzível, validações e troubleshooting baseado nas falhas reais do primeiro deploy.
+- Corrigido no guia principal o exemplo de secrets do PostgreSQL: senha e URL precisam derivar da mesma variável aleatória.
 
 ## 2026-06-22 — Preparação do deploy Swarm
 
