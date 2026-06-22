@@ -96,16 +96,21 @@ async def create_role(
 
     await session.flush()
 
+    role_id = role.id
     await record_event(
         session,
         company_id=company_id,
         user_id=user_id,
         entity_type="role",
-        entity_id=role.id,
+        entity_id=role_id,
         event_type="create",
     )
     await session.commit()
-    await session.refresh(role, ["permissions"])
+    role = (
+        await session.execute(
+            select(Role).options(selectinload(Role.permissions)).where(Role.id == role_id)
+        )
+    ).scalar_one()
     return role
 
 
@@ -154,7 +159,11 @@ async def update_role(
         )
 
     await session.commit()
-    await session.refresh(role, ["permissions"])
+    role = (
+        await session.execute(
+            select(Role).options(selectinload(Role.permissions)).where(Role.id == role_id)
+        )
+    ).scalar_one()
     return role
 
 

@@ -25,6 +25,7 @@ async def chess_company(session: AsyncSession) -> Company:
         select(Company).where(Company.slug == CHESS_SLUG)
     )
     if existing:
+        await session.commit()
         return existing
 
     company = Company(
@@ -34,7 +35,8 @@ async def chess_company(session: AsyncSession) -> Company:
         timezone="America/Sao_Paulo",
     )
     session.add(company)
-    await session.flush()
+    await session.commit()
+    await session.refresh(company)
     return company
 
 
@@ -48,6 +50,7 @@ async def chess_role(session: AsyncSession, chess_company: Company) -> Role:
         )
     )
     if existing:
+        await session.commit()
         return existing
 
     role = Role(
@@ -56,7 +59,8 @@ async def chess_role(session: AsyncSession, chess_company: Company) -> Role:
         name="Admin",
     )
     session.add(role)
-    await session.flush()
+    await session.commit()
+    await session.refresh(role)
     return role
 
 
@@ -72,6 +76,7 @@ async def chess_user(
         )
     )
     if existing:
+        await session.commit()
         return existing
 
     pw = "$2b$12$LJ3m4ys3Lf5UXOAZ3dDkheNPZ8XNfMsZFHmH7.KGZv6JqRiW8gzAi"
@@ -84,7 +89,8 @@ async def chess_user(
         active=True,
     )
     session.add(user)
-    await session.flush()
+    await session.commit()
+    await session.refresh(user)
     return user
 
 

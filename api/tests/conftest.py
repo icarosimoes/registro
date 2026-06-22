@@ -2,6 +2,7 @@ import os
 
 import pytest
 from httpx import ASGITransport, AsyncClient
+from sqlalchemy import text as sa_text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
@@ -97,6 +98,17 @@ async def seed_data(test_session_factory, create_tables):
             )
         )
         await s.commit()
+
+        if USE_POSTGRES:
+            async with test_session_factory() as seq_s:
+                for tbl in ("companies", "roles", "users"):
+                    await seq_s.execute(
+                        sa_text(
+                            f"SELECT setval(pg_get_serial_sequence('{tbl}', 'id'), "
+                            f"COALESCE((SELECT MAX(id) FROM {tbl}), 1))"
+                        )
+                    )
+                await seq_s.commit()
 
 
 @pytest.fixture()

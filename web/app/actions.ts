@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { setTokenCookies, tryRefreshToken } from "@/lib/auth";
 import {
   AttachmentItemSchema,
+  NotificationItemSchema,
   NotificationListSchema,
   RegistryOptionSchema,
   safeParse,

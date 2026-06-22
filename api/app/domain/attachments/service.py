@@ -46,7 +46,6 @@ async def create_attachment(
                 Attachment.entity_type == entity_type,
                 Attachment.entity_id == entity_id,
             )
-            .with_for_update()
         )
         or 0
     )
