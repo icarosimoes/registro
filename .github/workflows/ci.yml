@@ -22,6 +22,55 @@ jobs:
       - run: ruff check .
       - run: ruff format --check .
 
+  api-mypy:
+    name: API — mypy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - run: mypy app/ --ignore-missing-imports
+
+  api-migrations:
+    name: API — Alembic check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: registro_test
+          POSTGRES_USER: registro
+          POSTGRES_PASSWORD: registro
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U registro -d registro_test"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+    env:
+      DATABASE_URL: postgresql+asyncpg://registro:registro@127.0.0.1:5432/registro_test
+      JWT_SECRET: ci-test-secret-at-least-32-characters-long
+      ENVIRONMENT: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - name: Aplicar migrations
+        run: alembic upgrade head
+      - name: Verificar que não há migrations pendentes
+        run: alembic check
+
   api-test:
     name: API — pytest
     runs-on: ubuntu-latest
@@ -53,7 +102,14 @@ jobs:
           python-version: "3.12"
       - run: pip install -e ".[dev]"
       - run: alembic upgrade head
-      - run: pytest -v
+      - name: Rodar testes com cobertura
+        run: pytest -v --cov=app --cov-report=term-missing --cov-fail-under=60
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: api/.coverage
 
   web-typecheck:
     name: Web — TypeScript
