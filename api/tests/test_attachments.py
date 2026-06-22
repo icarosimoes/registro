@@ -10,9 +10,9 @@ from tests.conftest import TENANT_A, TENANT_B, auth_header
 @pytest.fixture()
 def mock_storage():
     with (
-        patch("app.core.storage.upload_file", return_value="fake/key.pdf"),
-        patch("app.core.storage.delete_file"),
-        patch("app.core.storage.download_file", return_value=(b"content", "application/pdf")),
+        patch("app.domain.attachments.service.upload_file", return_value="fake/key.pdf"),
+        patch("app.domain.attachments.service.delete_file"),
+        patch("app.domain.attachments.router.download_file", return_value=(b"content", "application/pdf")),
     ):
         yield
 
