@@ -449,7 +449,8 @@ class TestTrackTicket:
             active=True,
         )
         session.add(other_user)
-        await session.flush()
+        await session.commit()
+        await session.refresh(other_user)
 
         # Tenta rastrear com email do outro usuario
         r = await client.get(
