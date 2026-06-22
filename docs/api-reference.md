@@ -48,6 +48,7 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `PATCH` | `/meetings/{id}` | `meeting.edit` | atualiza reunião |
 | `DELETE` | `/meetings/{id}` | `meeting.delete` | soft delete de reunião |
 | `POST` | `/meetings/{id}/clone` | `meeting.create` | duplica reunião |
+| `GET` | `/meetings/{id}/pdf` | `meeting.view` | exporta PDF da ata de reunião |
 | `POST` | `/meetings/{id}/subjects` | `meeting.edit` | adiciona pauta |
 | `PATCH` | `/meetings/{id}/subjects/{sid}` | `meeting.edit` | atualiza pauta (toggle resolved) |
 | `DELETE` | `/meetings/{id}/subjects/{sid}` | `meeting.edit` | remove pauta |
