@@ -62,8 +62,7 @@ async def create_post(
         notify_user_ids=notify_user_ids,
     )
     session.add(post)
-    await session.commit()
-    await session.refresh(post)
+    await session.flush()
     await record_event(
         session,
         company_id=company_id,
@@ -73,6 +72,7 @@ async def create_post(
         event_type="create",
     )
     await session.commit()
+    await session.refresh(post)
     await notify_record_event(
         session,
         company_id=company_id,

@@ -111,11 +111,9 @@ async def create_audit_report(
         notes=notes,
     )
     session.add(report)
-    await session.commit()
-    await session.refresh(report)
+    await session.flush()
     if items:
         await _sync_items(session, report.id, items)
-        await session.commit()
     await record_event(
         session,
         company_id=company_id,
@@ -125,6 +123,7 @@ async def create_audit_report(
         event_type="create",
     )
     await session.commit()
+    await session.refresh(report)
     auditor_name = (
         await session.scalar(
             select(User.name).where(User.id == report.auditor_user_id)

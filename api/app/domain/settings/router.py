@@ -162,7 +162,11 @@ async def save_brevo(
     session: Annotated[AsyncSession, Depends(require_session)],
 ) -> BrevoRead:
     row = await _get_setting(session, user.company_id, "brevo")
-    new_value = {"api_key": body.api_key, "from_address": body.from_address, "from_name": body.from_name}
+    new_value = {
+        "api_key": body.api_key,
+        "from_address": body.from_address,
+        "from_name": body.from_name,
+    }
     if row:
         row.value = new_value
         flag_modified(row, "value")

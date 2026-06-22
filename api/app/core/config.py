@@ -80,5 +80,7 @@ def get_settings() -> Settings:
         settings.chess_hotel_integration_key == "chess-hotel-development"
         or len(settings.chess_hotel_integration_key) < 32
     ):
-        raise RuntimeError("CHESS_HOTEL_INTEGRATION_KEY de produção deve ter pelo menos 32 caracteres")
+        raise RuntimeError(
+            "CHESS_HOTEL_INTEGRATION_KEY de produção deve ter pelo menos 32 caracteres"
+        )
     return settings

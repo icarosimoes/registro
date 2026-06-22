@@ -3,7 +3,6 @@
 from unittest.mock import patch
 
 import pytest
-from httpx import ASGITransport, AsyncClient
 
 from tests.conftest import TENANT_A, TENANT_B, auth_header
 

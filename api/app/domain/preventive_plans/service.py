@@ -103,14 +103,13 @@ async def create_plan(
 
     rec = PreventivePlan(company_id=company_id, **fields)
     session.add(rec)
-    await session.commit()
-    await session.refresh(rec)
-
+    await session.flush()
     await record_event(
         session, company_id=company_id, user_id=user_id,
         entity_type="preventive_plan", entity_id=rec.id, event_type="create",
     )
     await session.commit()
+    await session.refresh(rec)
     return await get_plan(session, company_id, rec.id)
 
 

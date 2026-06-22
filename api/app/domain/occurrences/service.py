@@ -23,18 +23,37 @@ def status_label(value: int) -> str:
 async def _resolve_names(
     session: AsyncSession, occurrence: Occurrence
 ) -> tuple[str | None, str | None, str | None]:
+    cid = occurrence.company_id
     sector_name = (
-        await session.scalar(select(Sector.name).where(Sector.id == occurrence.sector_id))
+        await session.scalar(
+            select(Sector.name).where(
+                Sector.id == occurrence.sector_id,
+                Sector.company_id == cid,
+                Sector.deleted_at.is_(None),
+            )
+        )
         if occurrence.sector_id
         else None
     )
     location_name = (
-        await session.scalar(select(Location.name).where(Location.id == occurrence.location_id))
+        await session.scalar(
+            select(Location.name).where(
+                Location.id == occurrence.location_id,
+                Location.company_id == cid,
+                Location.deleted_at.is_(None),
+            )
+        )
         if occurrence.location_id
         else None
     )
     owner_name = (
-        await session.scalar(select(User.name).where(User.id == occurrence.owner_user_id))
+        await session.scalar(
+            select(User.name).where(
+                User.id == occurrence.owner_user_id,
+                User.company_id == cid,
+                User.deleted_at.is_(None),
+            )
+        )
         if occurrence.owner_user_id
         else None
     )
@@ -71,11 +90,6 @@ async def list_occurrences(
 async def _sync_participants(
     session: AsyncSession, occurrence_id: int, participant_ids: list[int]
 ) -> None:
-    await session.execute(
-        select(OccurrenceParticipant).where(
-            OccurrenceParticipant.occurrence_id == occurrence_id
-        )
-    )
     from sqlalchemy import delete as sa_delete
 
     await session.execute(
@@ -157,11 +171,9 @@ async def create_occurrence(
         notify_user_ids=notify_user_ids,
     )
     session.add(record)
-    await session.commit()
-    await session.refresh(record)
+    await session.flush()
     if participant_ids:
         await _sync_participants(session, record.id, participant_ids)
-        await session.commit()
     await record_event(
         session,
         company_id=company_id,
@@ -171,6 +183,7 @@ async def create_occurrence(
         event_type="create",
     )
     await session.commit()
+    await session.refresh(record)
     await notify_record_event(
         session,
         company_id=company_id,

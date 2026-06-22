@@ -161,7 +161,9 @@ def app(test_session_factory):
         if USE_POSTGRES:
             from sqlalchemy import text
 
-            await session.execute(text(f"SET LOCAL app.current_company_id = '{cid}'"))
+            await session.execute(
+                text("SET LOCAL app.current_company_id = :cid"), {"cid": str(cid)}
+            )
 
         return AuthenticatedUser(
             id=int(claims["sub"]),

@@ -87,8 +87,7 @@ async def create_user(
         active=active,
     )
     session.add(record)
-    await session.commit()
-    await session.refresh(record)
+    await session.flush()
     await record_event(
         session,
         company_id=company_id,
@@ -98,6 +97,7 @@ async def create_user(
         event_type="create",
     )
     await session.commit()
+    await session.refresh(record)
     return record
 
 
@@ -152,7 +152,11 @@ async def update_profile(
     updates: dict,
 ) -> User | None:
     record = await session.scalar(
-        select(User).where(User.id == user_id, User.deleted_at.is_(None))
+        select(User).where(
+            User.id == user_id,
+            User.company_id == company_id,
+            User.deleted_at.is_(None),
+        )
     )
     if record is None:
         return None

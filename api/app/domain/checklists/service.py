@@ -121,14 +121,12 @@ async def create_template(
     await session.flush()
     for item in items:
         session.add(ChecklistTemplateItem(template_id=rec.id, **item))
-    await session.commit()
-    await session.refresh(rec)
-
     await record_event(
         session, company_id=company_id, user_id=user_id,
         entity_type="checklist_template", entity_id=rec.id, event_type="create",
     )
     await session.commit()
+    await session.refresh(rec)
     return await get_template(session, company_id, rec.id)
 
 

@@ -67,7 +67,9 @@ class Invoice(Base, TenantMixin, TimestampMixin):
 
 class CompanySetting(Base, TenantMixin, TimestampMixin):
     __tablename__ = "company_settings"
-    __table_args__ = (UniqueConstraint("company_id", "key", name="uq_company_settings_company_key"),)
+    __table_args__ = (
+        UniqueConstraint("company_id", "key", name="uq_company_settings_company_key"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     key: Mapped[str] = mapped_column(String(120), index=True)

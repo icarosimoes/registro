@@ -7,12 +7,10 @@ from app.core.validators import validate_cpf_cnpj, validate_email_basic
 
 
 def _validate_payload(payload: dict[str, Any]) -> dict[str, Any]:
-    if doc := payload.get("taxpayerDoc"):
-        if isinstance(doc, str) and doc.strip():
-            payload["taxpayerDoc"] = validate_cpf_cnpj(doc)
-    if email := payload.get("taxpayerEmail"):
-        if isinstance(email, str) and email.strip():
-            payload["taxpayerEmail"] = validate_email_basic(email)
+    if (doc := payload.get("taxpayerDoc")) and isinstance(doc, str) and doc.strip():
+        payload["taxpayerDoc"] = validate_cpf_cnpj(doc)
+    if (email := payload.get("taxpayerEmail")) and isinstance(email, str) and email.strip():
+        payload["taxpayerEmail"] = validate_email_basic(email)
     return payload
 
 
