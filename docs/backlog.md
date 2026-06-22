@@ -186,6 +186,71 @@
 11. ~~**Paginação por cursor**~~ — ✅ Utilitário genérico `app/core/pagination.py` com encode/decode de cursor opaco (base64). Endpoints `/cursor` adicionados em ocorrências, OS e timeline como alternativa aos endpoints offset existentes. Response: `{items, next_cursor, has_more}`.
 12. ~~**Backup e deploy**~~ — ✅ Service `backup` melhorado com validação `pg_restore --list`. Novo service `backup-minio` com `mc mirror` diário. Script `scripts/backup-restore.sh` para backup/restore manual. Documentação completa em `docs/infra/backup-restore.md` com RTO/RPO, procedimento de restore, checklist pós-restore e estratégia off-site.
 
+## P8 — auditoria de segurança e qualidade (2026-06-22)
+
+Itens identificados na auditoria completa de sistema. Documentação detalhada em `docs/auditoria-2026-06-22.md`.
+
+### Critical — corrigir imediatamente
+
+- [ ] **[C1] Fix SQL injection no RLS context** — `auth.py:31` usa f-string em `SET LOCAL`. Trocar por binding parametrizado. (~1h)
+- [ ] **[C2] Remover credenciais hardcoded do admin login** — `admin/app/(auth)/login/page.tsx` tem email e senha em `defaultValue`. (~30min)
+- [ ] **[C3] Testes para integração Chess Hotel** — 4 endpoints sem nenhum teste: auth por header, resolução de email, criação de tickets, tracking por protocolo. (~4h)
+
+### High — corrigir em breve
+
+- [ ] **[H1] Fix SQL injection no import V1** — `import_v1.py:46` usa f-string para SELECT. Usar ORM reflection ou mapa validado. (~2h)
+- [ ] **[H2] Adicionar soft-delete filter em lookups de Role/Sector** — `users/service.py` `_role_name()` sem filtro `company_id`. (~2h)
+- [ ] **[H3] Fix N+1 query em notificações WhatsApp** — `notifications.py:246` busca telefone em loop. Pre-fetch em query única. (~1h)
+- [ ] **[H4] Padronizar error handling nos routers** — `ValueError` de services não capturado em todos os routers. Gera 500 ao invés de 422. (~4h)
+- [ ] **[H5] Adicionar CSP headers no Next.js** — configurar Content-Security-Policy, X-Frame-Options, X-Content-Type-Options, Referrer-Policy em `web/next.config.ts` e `admin/next.config.ts`. (~2h)
+- [ ] **[H6] Implementar CSRF protection** — Server Actions sem token CSRF. Implementar geração e validação. (~4h)
+- [ ] **[H7] Criar middleware de proteção de rotas** — ambas as apps fazem redirect em cada page. Centralizar em `middleware.ts`. (~3h)
+- [ ] **[H8] Implementar token refresh no admin** — `admin/lib/api.ts` `platformFetch()` sem retry no 401. (~2h)
+- [ ] **[H9] Habilitar access logs em produção** — remover `--no-access-log` do Uvicorn no Dockerfile. (~30min)
+- [ ] **[H10] Fix rate limiter para X-Forwarded-For** — `rate_limit.py` usa `get_remote_address`, quebrado atrás de Traefik. (~2h)
+- [ ] **[H11] Adicionar approval gate no deploy** — `publish.yml` faz deploy automático no push. Adicionar environment protection rule ou manual approval. (~2h)
+- [ ] **[H12] Adicionar testes no frontend** — configurar vitest no web e admin, cobrir fluxos críticos (login, CRUD, forms). (~8h+)
+
+### Medium — planejar correção
+
+- [ ] **[M1] Fix race condition em attachments** — validação de `max_per_entity` via COUNT sem lock. Usar constraint de banco ou SELECT FOR UPDATE. (~2h)
+- [ ] **[M2] Restringir filename sanitization a ASCII** — regex aceita unicode. (~30min)
+- [ ] **[M3] Substituir `except Exception` na integração Asaas** — capturar exceções específicas (`httpx.HTTPError`, `KeyError`). (~1h)
+- [ ] **[M4] Documentar padrão de paginação** — offset vs cursor usados sem regra clara. Definir quando usar cada um. (~1h)
+- [ ] **[M5] Gerar Request ID quando ausente** — `main.py:56` deixa string vazia. Gerar UUID. (~30min)
+- [ ] **[M6] Mover script do Service Worker para arquivo** — `dangerouslySetInnerHTML` em `web/app/layout.tsx`. Criar `/public/sw-loader.js`. (~30min)
+- [ ] **[M7] Implementar refresh token rotation** — emitir novo refresh token a cada refresh, revogar o anterior. (~4h)
+- [ ] **[M8] Extrair auth logic duplicada** — `tryRefresh()` duplicado entre `actions.ts` e `api.ts`. Criar `lib/auth.ts`. (~2h)
+- [ ] **[M9] Validação de tipo nas respostas da API** — `response.json()` sem validação. Avaliar Zod para runtime validation. (~8h+)
+- [ ] **[M10] Reduzir uso de `"use client"`** — extrair partes server-side de componentes grandes. (~4h)
+- [ ] **[M11] Validação de arquivo no client antes do upload** — tipo e tamanho no `fiscal-request-form.tsx`. (~1h)
+- [ ] **[M12] Acessibilidade** — keyboard navigation em dropdowns, ARIA labels, `role` em autocomplete. (~4h)
+- [ ] **[M13] Configurar error tracking centralizado** — Sentry ou similar para capturar erros 500 em produção. (~4h)
+- [ ] **[M14] Habilitar persistência no Redis** — configurar AOF ou RDB no docker-stack.yml. (~1h)
+- [ ] **[M15] Avaliar PostgreSQL com failover** — single replica em produção. Considerar streaming replication ou managed DB. (~8h+)
+- [ ] **[M16] Configurar log rotation no Docker** — adicionar `logging` driver com `max-size` e `max-file`. (~1h)
+- [ ] **[M17] Testar procedimento de restore** — agendar teste mensal de restore de backup. Documentar. (~2h)
+- [ ] **[M18] Avaliar replicação do MinIO** — storage single node. Considerar clustering ou S3 externo. (~4h)
+
+### Low — quando houver oportunidade
+
+- [ ] **[L1] Cookie `secure` explícito por ambiente** — usar env var ao invés de `NODE_ENV`. (~30min)
+- [ ] **[L2] Log de permissão específica para wildcard** — registrar qual permissão foi checada mesmo com `*`. (~1h)
+- [ ] **[L3] Avaliar i18n** — texto hardcoded em português. Considerar `next-intl` se multi-idioma necessário. (~8h+)
+- [ ] **[L4] Configurar image optimization no Next.js** — habilitar webp/avif em `next.config.ts`. (~30min)
+- [ ] **[L5] Revisar filtros do Alembic env.py** — filtra mudanças de índice/FK, pode mascarar drift. (~1h)
+- [ ] **[L6] Padronizar error response** — definir schema único para erros (`{code, message}`). (~2h)
+
+### Testes — gaps de cobertura
+
+- [ ] **[T1] Testes para domínio occurrences** — domínio core sem testes dedicados. (~4h)
+- [ ] **[T2] Testes para domínio users** — CRUD de usuários sem testes. (~3h)
+- [ ] **[T3] Testes para domínio dashboard** — métricas e KPIs sem testes. (~3h)
+- [ ] **[T4] Testes para domínio notifications** — lógica de service sem testes isolados. (~3h)
+- [ ] **[T5] Testes para domínios restantes** — meetings, platform, settings, roles, procedures, timeline, shift_reports, work_diaries, apartment_inspections, check_suites, inspection_suites, modules, registries. (~16h+)
+- [ ] **[T6] Testes unitários de service layer** — 90% são integração. Adicionar testes isolados de business logic. (~8h+)
+- [ ] **[T7] Testes de negative path** — ~70% dos domínios testam só happy path. Cobrir validações e erros. (~8h+)
+
 ## Definition of Done por módulo
 
 Contrato, autorização, isolamento por empresa, estados de UI, CRUD necessário, anexos/exportações, testes, comparação de dados, observabilidade, documentação e rollback precisam estar aprovados antes do corte. Uma entrega não está concluída se a documentação pertinente em `/docs` estiver ausente ou desatualizada.

@@ -42,6 +42,10 @@ Nunca registrar senha, JWT, URL completa de banco, dados pessoais desnecessário
 
 Chaves futuras do Asaas entram por Docker Secret, separadas do token do webhook. Webhooks falham fechado, deduplicam eventos e nunca confiam em `company_id` enviado pelo provedor ou cliente.
 
+## Auditoria
+
+Auditoria completa realizada em 2026-06-22 — ver `docs/auditoria-2026-06-22.md`. Itens pendentes rastreados no backlog seção P8.
+
 ## Mudança crítica
 
 Migration, restore, rotação de credencial, alteração de volume/rede ou corte de domínio exige backup novo, validação do artefato, plano de rollback e registro em `docs/registro-trabalho.md`.
