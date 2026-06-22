@@ -4,6 +4,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import compute_diff, record_event
+from app.core.cache import invalidate_dashboard
 from app.integrations.notifications import notify_record_event
 from app.models import (
     Location,
@@ -183,6 +184,7 @@ async def create_occurrence(
         event_type="create",
     )
     await session.commit()
+    await invalidate_dashboard(company_id)
     await session.refresh(record)
     await notify_record_event(
         session,
@@ -243,6 +245,7 @@ async def update_occurrence(
             diff=diff,
         )
     await session.commit()
+    await invalidate_dashboard(company_id)
     await session.refresh(record)
     if diff:
         detail = "; ".join(f"{k}: {v}" for k, v in diff.items())
@@ -289,6 +292,7 @@ async def delete_occurrence(
         event_type="delete",
     )
     await session.commit()
+    await invalidate_dashboard(company_id)
     return True
 
 

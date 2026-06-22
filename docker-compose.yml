@@ -37,6 +37,18 @@ services:
     profiles:
       - mysql-import
 
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - registro-redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   minio:
     image: minio/minio:latest
     environment:
@@ -66,6 +78,7 @@ services:
       CHESS_HOTEL_COMPANY_SLUG: ${CHESS_HOTEL_COMPANY_SLUG:-aero-hotel}
       REGISTRO_WEB_URL: ${REGISTRO_WEB_URL:-http://localhost:3000}
       DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://registro:registro@postgres:5432/registro}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       JWT_SECRET: ${JWT_SECRET:-registro-development-only-change-me}
       SEED_DEFAULT_PASSWORD: ${SEED_DEFAULT_PASSWORD:-Registro@123}
       PLATFORM_ADMIN_PASSWORD: ${PLATFORM_ADMIN_PASSWORD:-RegistroAdmin@123}
@@ -85,6 +98,8 @@ services:
     command: ["sh", "-c", "alembic upgrade head && python -m app.seed && uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"]
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
       minio:
         condition: service_healthy
@@ -128,4 +143,5 @@ services:
 volumes:
   registro-postgres-data:
   registro-mysql-data:
+  registro-redis-data:
   registro-minio-data:

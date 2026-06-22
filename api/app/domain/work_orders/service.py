@@ -4,6 +4,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import compute_diff, record_event
+from app.core.cache import invalidate_dashboard
 from app.integrations.notifications import notify_record_event
 from app.models import User, WorkOrder
 from app.models.operations import WORK_ORDER_STATUSES
@@ -146,6 +147,7 @@ async def create_order(
         entity_type="work_order", entity_id=rec.id, event_type="create",
     )
     await session.commit()
+    await invalidate_dashboard(company_id)
     await session.refresh(rec)
 
     await notify_record_event(
@@ -191,6 +193,7 @@ async def update_order(
             event_type="update", diff=diff,
         )
     await session.commit()
+    await invalidate_dashboard(company_id)
 
     if diff:
         detail = "; ".join(f"{k}: {v}" for k, v in diff.items())
@@ -260,6 +263,7 @@ async def transition_order(
         event_type="update", diff=diff,
     )
     await session.commit()
+    await invalidate_dashboard(company_id)
 
     detail = f"Status: {STATUS_LABELS.get(old_status)} → {STATUS_LABELS.get(target_status)}"
     if notes:
@@ -292,6 +296,7 @@ async def delete_order(
         entity_type="work_order", entity_id=rec.id, event_type="delete",
     )
     await session.commit()
+    await invalidate_dashboard(company_id)
     return True
 
 

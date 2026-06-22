@@ -3,15 +3,29 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.audit import record_event
+from app.core.cache import cache_get, cache_set
 from app.models import Permission, Role, User
 
+TTL_PERMISSIONS = 3600
 
-async def list_permissions(session: AsyncSession) -> list[Permission]:
+
+async def list_permissions(session: AsyncSession) -> list:
+    from types import SimpleNamespace
+
+    cache_key = "registro:global:permissions"
+    hit = await cache_get(cache_key)
+    if hit is not None:
+        return [SimpleNamespace(**p) for p in hit]
+
     rows = (
         await session.execute(
             select(Permission).order_by(Permission.module, Permission.code)
         )
     ).scalars().all()
+    serialized = [
+        {"id": p.id, "code": p.code, "name": p.name, "module": p.module} for p in rows
+    ]
+    await cache_set(cache_key, serialized, TTL_PERMISSIONS)
     return list(rows)
 
 

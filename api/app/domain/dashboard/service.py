@@ -3,7 +3,12 @@ from datetime import datetime, timedelta
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.cache import cache_get, cache_set
 from app.models import FiscalRequest, Occurrence, Sector, User, WorkOrder
+
+TTL_METRICS = 300
+TTL_RECENT = 180
+TTL_KPIS = 600
 
 
 async def get_metrics(
@@ -11,6 +16,10 @@ async def get_metrics(
     company_id: int,
     user_id: int,
 ) -> dict:
+    cache_key = f"registro:{company_id}:dashboard:metrics:{user_id}"
+    hit = await cache_get(cache_key)
+    if hit is not None:
+        return hit
     base = [Occurrence.company_id == company_id, Occurrence.deleted_at.is_(None)]
 
     open_occurrences = (
@@ -73,7 +82,7 @@ async def get_metrics(
     recent = await _recent_all(session, company_id)
     kpis = await _compute_kpis(session, company_id)
 
-    return {
+    result = {
         "open_occurrences": open_occurrences,
         "my_occurrences": my_occurrences,
         "open_fiscal": open_fiscal,
@@ -83,9 +92,16 @@ async def get_metrics(
         "recent": recent,
         "kpis": kpis,
     }
+    await cache_set(cache_key, result, TTL_METRICS)
+    return result
 
 
 async def _recent_all(session: AsyncSession, company_id: int) -> list[dict]:
+    cache_key = f"registro:{company_id}:dashboard:recent"
+    hit = await cache_get(cache_key)
+    if hit is not None:
+        return hit
+
     from sqlalchemy import text as raw
 
     sql = raw("""
@@ -183,10 +199,16 @@ async def _recent_all(session: AsyncSession, company_id: int) -> list[dict]:
             "updated_at": row.updated_at,
         })
 
+    await cache_set(cache_key, result, TTL_RECENT)
     return result
 
 
 async def _compute_kpis(session: AsyncSession, company_id: int) -> dict:
+    cache_key = f"registro:{company_id}:dashboard:kpis"
+    hit = await cache_get(cache_key)
+    if hit is not None:
+        return hit
+
     now = datetime.now()
     month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
     week_ago = now - timedelta(days=7)
@@ -408,7 +430,7 @@ async def _compute_kpis(session: AsyncSession, company_id: int) -> dict:
             "fiscal_requests": fr_day,
         })
 
-    return {
+    result = {
         "work_orders": {
             "total": wo_total,
             "by_status": wo_by_status,
@@ -434,3 +456,5 @@ async def _compute_kpis(session: AsyncSession, company_id: int) -> dict:
         },
         "trend": trend,
     }
+    await cache_set(cache_key, result, TTL_KPIS)
+    return result

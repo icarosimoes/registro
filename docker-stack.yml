@@ -10,6 +10,7 @@ services:
       CHESS_HOTEL_INTEGRATION_KEY_FILE: /run/secrets/chess_hotel_integration_key
       CHESS_HOTEL_COMPANY_SLUG: ${CHESS_HOTEL_COMPANY_SLUG:-aero-hotel}
       REGISTRO_WEB_URL: https://${REGISTRO_WEB_HOST}
+      REDIS_URL: redis://redis:6379/0
     secrets:
       - registro_database_url
       - registro_jwt_secret
@@ -91,11 +92,27 @@ services:
         - traefik.http.routers.registro-admin.tls.certresolver=le
         - traefik.http.services.registro-admin.loadbalancer.server.port=3001
 
+  redis:
+    image: redis:7-alpine
+    networks:
+      - registro-internal
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    volumes:
+      - registro-redis-data:/data
+
 networks:
   registro-internal:
     driver: overlay
   traefik-public:
     external: true
+
+volumes:
+  registro-redis-data:
 
 secrets:
   registro_database_url:

@@ -65,13 +65,17 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    from app.core.cache import start_redis, stop_redis
+
     try:
         from app.core.storage import ensure_bucket
 
         ensure_bucket()
     except Exception:
         pass
+    await start_redis(settings.redis_url)
     yield
+    await stop_redis()
     if engine is not None:
         await engine.dispose()
 

@@ -5,6 +5,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import compute_diff, record_event
+from app.core.cache import invalidate_dashboard
 from app.core.config import Settings
 from app.core.sla import calculate_business_deadline, pause_sla, resume_sla
 from app.domain.settings.router import get_module_recipients
@@ -168,6 +169,7 @@ async def create_from_chess(
             entity_id=record.id,
         )
     await session.commit()
+    await invalidate_dashboard(company_id)
     return record
 
 
@@ -241,6 +243,7 @@ async def create_fiscal_request(
         event_type="create",
     )
     await session.commit()
+    await invalidate_dashboard(company_id)
     await session.refresh(record)
     return record
 
@@ -287,6 +290,7 @@ async def update_fiscal_request(
             diff=diff,
         )
     await session.commit()
+    await invalidate_dashboard(company_id)
     await session.refresh(record)
     return record
 
@@ -315,6 +319,7 @@ async def delete_fiscal_request(
     )
     await session.delete(record)
     await session.commit()
+    await invalidate_dashboard(company_id)
     return True
 
 
