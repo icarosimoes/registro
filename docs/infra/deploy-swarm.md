@@ -10,6 +10,7 @@ Para primeiro deploy ou troca de domínio, siga o procedimento completo em [Depl
 - A VPS mantém a aplicação em `/opt/registro`.
 - Imagens são publicadas no GHCR com tag imutável `sha-<GITHUB_SHA completo>`.
 - O workflow `Publish images` publica API, web e admin em paralelo a cada push em `main`.
+- Após publicação, o job `deploy` conecta via SSH e atualiza os serviços no Swarm automaticamente.
 - Deploy usa `--with-registry-auth` e atualização gradual `start-first`.
 - Nenhum segredo é versionado em `.env`, stack ou imagem.
 
@@ -57,7 +58,25 @@ IMAGE_TAG=sha-<sha-completo>
 
 A API é publicada em `api.registro.solidsd.com.br`; seus endpoints permanecem sob `/api/v1`.
 
-## Deploy
+## Deploy automático (CI/CD)
+
+O workflow `Publish images` (`.github/workflows/publish.yml`) executa dois jobs:
+
+1. **publish** — builda e publica as imagens no GHCR com tag `sha-<commit>`.
+2. **deploy** — conecta via SSH na VPS e atualiza os 3 serviços no Swarm com `docker service update --image ... --detach`.
+
+Secrets necessários no GitHub (já configurados):
+
+| Secret | Valor |
+|---|---|
+| `VPS_SSH_KEY` | Chave privada Ed25519 para `root@VPS` |
+| `VPS_HOST` | IP da VPS (`95.111.250.4`) |
+
+O deploy roda com `--detach` para não bloquear o CI. O Swarm faz rolling update conforme a `update_config` de cada serviço no `docker-stack.yml`.
+
+## Deploy manual
+
+Para deploy manual ou primeira instalação:
 
 ```bash
 cd /opt/registro
@@ -66,6 +85,13 @@ set -a
 set +a
 docker stack config -c docker-stack.yml >/dev/null
 docker stack deploy -c docker-stack.yml --with-registry-auth registro
+```
+
+Para atualizar um serviço específico:
+
+```bash
+docker service update --image ghcr.io/icarosimoes/registro/web:sha-<commit> registro_web
+docker service update --image ghcr.io/icarosimoes/registro/api:sha-<commit> registro_api
 ```
 
 Nunca usar apenas `latest` em produção. O CI deve publicar e o deploy deve informar a tag completa baseada no SHA.

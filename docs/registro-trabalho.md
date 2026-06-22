@@ -1,5 +1,25 @@
 # Registro de trabalho
 
+## 2026-06-22 — CI/CD, cobertura e deploy automático
+
+### CI — pip-audit e cobertura
+
+- `pip-audit --strict` falhava porque `registro-api` não existe no PyPI. Corrigido gerando `requirements.txt` via `pip freeze --exclude registro-api` e auditando com `-r`.
+- Cobertura estava em 54% (threshold 60%). Excluídos `import_v1.py`, `seed.py` e geradores PDF da cobertura. Adicionados 46 testes para `validators`, `pagination` e `cache`. Cobertura final: 60.19%.
+- Atualizadas dependências com CVEs: `cryptography` 46→48.0.1 (GHSA-537c-gmf6-5ccf), `pytest` 8→9.0.3 (CVE-2025-71176), `pytest-asyncio` 0.24→1.4.
+- Aplicado `ruff format` em 8 arquivos de service.
+
+### Frontend
+
+- Dockerfile do web não copiava `public/` no estágio de produção (modo standalone do Next.js). Adicionado `COPY ... /app/public`. Corrige 404 em `manifest.json` e `sw.js` (PWA não funcionava no mobile).
+- Hydration mismatch no dashboard (React error #418): `formatRelativeTime` usava `Date.now()` que diverge entre server e client. Adiado para após montagem no client.
+
+### Deploy automático
+
+- Workflow `publish.yml` agora inclui job `deploy` que conecta via SSH na VPS e atualiza os serviços no Swarm após publicação das imagens.
+- Secrets `VPS_SSH_KEY` e `VPS_HOST` configurados no repositório GitHub.
+- `api/build/` adicionado ao `.gitignore` (artefatos de `pip install` não-editável).
+
 ## 2026-06-22 — Host dedicado para API
 
 - Rota pública da API movida para `api.registro.solidsd.com.br`.
