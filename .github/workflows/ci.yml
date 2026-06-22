@@ -47,9 +47,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -e ".[dev]" pip-audit
+      - run: pip install ".[dev]" pip-audit
       - name: Verificar CVEs em dependências
-        run: pip-audit --strict --desc --skip-editable
+        run: pip-audit --strict --desc
 
   api-migrations:
     name: API — Alembic check
