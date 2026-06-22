@@ -13,6 +13,7 @@
 - Corrigida a página `/definir-senha` para renderizar `useSearchParams` sob `Suspense`, permitindo o build de produção do Next.js.
 - `httpx` movido para as dependências de runtime da API, pois integrações Brevo, Evolution e Asaas o importam na imagem de produção.
 - Seed inicial corrigido para reutilizar permissões criadas pelas migrations, mantendo execução idempotente em PostgreSQL novo.
+- Routers do Registro alinhados ao certificate resolver `letsencrypt` configurado no Traefik compartilhado da VPS.
 
 ## 2026-06-21 — Controle de Estoque e Pendências de Turno
 

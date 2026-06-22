@@ -124,7 +124,7 @@ services:
         - traefik.docker.network=traefik-public
         - traefik.http.routers.registro-api.rule=Host(`${REGISTRO_WEB_HOST}`) && PathPrefix(`/api/v1`)
         - traefik.http.routers.registro-api.entrypoints=websecure
-        - traefik.http.routers.registro-api.tls.certresolver=le
+        - traefik.http.routers.registro-api.tls.certresolver=letsencrypt
         - traefik.http.routers.registro-api.priority=100
         - traefik.http.services.registro-api.loadbalancer.server.port=8000
 
@@ -154,7 +154,7 @@ services:
         - traefik.docker.network=traefik-public
         - traefik.http.routers.registro-web.rule=Host(`${REGISTRO_WEB_HOST}`)
         - traefik.http.routers.registro-web.entrypoints=websecure
-        - traefik.http.routers.registro-web.tls.certresolver=le
+        - traefik.http.routers.registro-web.tls.certresolver=letsencrypt
         - traefik.http.services.registro-web.loadbalancer.server.port=3000
 
   admin:
@@ -177,7 +177,7 @@ services:
         - traefik.docker.network=traefik-public
         - traefik.http.routers.registro-admin.rule=Host(`${REGISTRO_ADMIN_HOST}`)
         - traefik.http.routers.registro-admin.entrypoints=websecure
-        - traefik.http.routers.registro-admin.tls.certresolver=le
+        - traefik.http.routers.registro-admin.tls.certresolver=letsencrypt
         - traefik.http.services.registro-admin.loadbalancer.server.port=3001
 
   redis:
