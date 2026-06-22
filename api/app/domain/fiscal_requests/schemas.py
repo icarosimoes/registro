@@ -26,11 +26,19 @@ class FiscalRequestCreate(BaseModel):
     hotel: str
     reservation_number: str | None = Field(default=None, alias="reservationNumber")
     origin: str = Field(default="chess-hotel", alias="origem")
+    screenshots: list[str] = Field(default_factory=list)
 
     @field_validator("requester_email")
     @classmethod
     def normalize_requester_email(cls, value: str) -> str:
         return validate_email_basic(value)
+
+    @field_validator("screenshots")
+    @classmethod
+    def limit_screenshots(cls, value: list[str]) -> list[str]:
+        if len(value) > 5:
+            raise ValueError("Máximo de 5 screenshots por chamado")
+        return value
 
 
 class FiscalRequestCreated(BaseModel):
@@ -39,6 +47,7 @@ class FiscalRequestCreated(BaseModel):
     responsible: str | None
     sla_deadline: datetime
     url: str
+    attachments_count: int = 0
 
 
 class ChessUserResolve(BaseModel):

@@ -125,8 +125,39 @@ X-Registro-Key: <chave>
 | `apartment` | string | não | Número do apartamento/UH |
 | `reservationNumber` | string | não | Número da reserva |
 | `origem` | string | não | Default: `"chess-hotel"` |
+| `screenshots` | string[] | não | Array de imagens em base64 (PNG/JPEG/WebP). Máximo 5 |
 
 O body aceita campos extras (schema aberto). Campos adicionais são armazenados no payload para referência.
+
+#### Screenshots (anexos de imagem)
+
+O campo `screenshots` permite enviar capturas de tela junto com o chamado. As imagens são enviadas como strings **base64** (sem prefixo `data:image/...;base64,`).
+
+| Regra | Valor |
+|-------|-------|
+| Máximo de screenshots | 5 por chamado |
+| Formatos aceitos | PNG, JPEG, WebP |
+| Tamanho máximo por imagem | 10 MB (após decode) |
+| Detecção de formato | Automática (magic bytes) |
+
+**Exemplo com screenshot:**
+```json
+{
+  "module": "solicitacoes-fiscais",
+  "requestType": "NF-e",
+  "hotel": "aero-hotel",
+  "solicitante": "João Silva",
+  "solicitanteEmail": "joao@hotel.com",
+  "chessUserId": "chess-42",
+  "apartment": "204",
+  "screenshots": [
+    "iVBORw0KGgoAAAANSUhEUg...",
+    "/9j/4AAQSkZJRgABAQ..."
+  ]
+}
+```
+
+Screenshots inválidos (formato não suportado, base64 malformado) são ignorados silenciosamente — o chamado é criado normalmente, apenas o anexo inválido não é salvo.
 
 **Resposta 201:**
 ```json
@@ -135,7 +166,8 @@ O body aceita campos extras (schema aberto). Campos adicionais são armazenados 
   "status": "Em andamento",
   "responsible": null,
   "sla_deadline": "2026-06-24T18:00:00Z",
-  "url": "https://registro.solidsd.com.br/solicitacoes-fiscais?protocol=REG-000042"
+  "url": "https://registro.solidsd.com.br/solicitacoes-fiscais?protocol=REG-000042",
+  "attachments_count": 2
 }
 ```
 
@@ -294,6 +326,7 @@ Para conectar o Chess Hotel ao Registro, o desenvolvedor precisa configurar:
 | Número da reserva | `reservationNumber` | `"RES-2026-001"` |
 | CPF/CNPJ do tomador | `taxpayerDoc` (dentro do body) | `"123.456.789-00"` |
 | E-mail do tomador | `taxpayerEmail` (dentro do body) | `"tomador@email.com"` |
+| Prints de tela | `screenshots` | Array de base64 (ver seção Screenshots) |
 
 ### Pré-requisitos
 

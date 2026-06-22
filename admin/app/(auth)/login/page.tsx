@@ -22,7 +22,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
               name="email"
               type="email"
               required
-              defaultValue="admin@registro.local"
+              placeholder="admin@empresa.com"
               className="mt-1.5 w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3461]/30 focus:border-[#1D3461]"
             />
           </label>
@@ -32,7 +32,6 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
               name="password"
               type="password"
               required
-              defaultValue="RegistroAdmin@123"
               className="mt-1.5 w-full rounded-lg border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3461]/30 focus:border-[#1D3461]"
             />
           </label>
@@ -44,7 +43,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             Entrar
           </button>
         </form>
-        <p className="mt-5 text-xs text-gray-400 text-center">Credenciais demonstrativas — somente ambiente local.</p>
+        <p className="mt-5 text-xs text-gray-400 text-center">Acesso restrito a administradores da plataforma.</p>
       </section>
     </main>
   );

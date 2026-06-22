@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from starlette.middleware.base import BaseHTTPMiddleware
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.core.config import get_settings
 from app.core.database import engine
@@ -97,6 +98,7 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type", "X-Request-ID", "X-Registro-Key"],
 )
 app.add_middleware(RequestLoggingMiddleware)
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 
 v1_router = APIRouter(prefix=settings.api_prefix)
 v1_router.include_router(health_router)

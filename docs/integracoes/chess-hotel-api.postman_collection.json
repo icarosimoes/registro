@@ -1,0 +1,280 @@
+{
+  "info": {
+    "name": "Registro — Integração Chess Hotel",
+    "description": "Endpoints para o Chess Hotel abrir e acompanhar solicitações fiscais no Registro.\n\n## Autenticação\nTodos os endpoints exigem o header `X-Registro-Key` com a chave de integração fornecida pelo Registro.\n\n## Fluxo\n1. (Opcional) Resolver usuário por e-mail\n2. Criar o ticket\n3. Acompanhar status pelo protocolo ou listar por e-mail",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000/api/v1",
+      "description": "URL base da API. Produção: https://registro.solidsd.com.br/api/v1"
+    },
+    {
+      "key": "integration_key",
+      "value": "sua-chave-de-integracao-aqui",
+      "description": "Chave de integração fornecida pelo Registro (mínimo 32 caracteres em produção)"
+    },
+    {
+      "key": "hotel_slug",
+      "value": "aero-hotel",
+      "description": "Slug do hotel no Registro"
+    }
+  ],
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-Registro-Key"
+      },
+      {
+        "key": "value",
+        "value": "{{integration_key}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "1. Resolver usuário (opcional)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/integrations/chess-hotel/users/resolve",
+          "host": ["{{base_url}}"],
+          "path": ["integrations", "chess-hotel", "users", "resolve"]
+        },
+        "description": "Verifica se um e-mail existe como usuário ativo no Registro antes de abrir o chamado.\n\n**Quando usar:** antes de abrir o chamado, para validar que o e-mail do solicitante está cadastrado no Registro.\n\n**Erros:**\n- 401: Chave de integração inválida\n- 404: E-mail não encontrado no Registro",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"usuario@hotel.com\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "200 — Usuário encontrado",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"exists\": true,\n  \"id\": 42,\n  \"name\": \"João Silva\",\n  \"email\": \"usuario@hotel.com\"\n}"
+        },
+        {
+          "name": "404 — Usuário não encontrado",
+          "status": "Not Found",
+          "code": 404,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"detail\": {\n    \"code\": \"registro_user_not_found\"\n  }\n}"
+        },
+        {
+          "name": "401 — Chave inválida",
+          "status": "Unauthorized",
+          "code": 401,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"detail\": {\n    \"code\": \"invalid_integration_key\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "2. Criar solicitação fiscal",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/integrations/chess-hotel/tickets",
+          "host": ["{{base_url}}"],
+          "path": ["integrations", "chess-hotel", "tickets"]
+        },
+        "description": "Cria uma solicitação fiscal no Registro a partir do Chess Hotel.\n\nO e-mail do solicitante (`solicitanteEmail`) deve existir como usuário ativo no Registro.\n\nO body aceita campos extras (schema aberto) — campos adicionais são armazenados no payload.\n\n**Screenshots:** envie prints de tela como array de strings base64 no campo `screenshots` (máximo 5, formatos PNG/JPEG/WebP, até 10MB cada). Screenshots inválidos são ignorados silenciosamente.\n\n**Rate limit:** 30 requisições por minuto por IP.\n\n**Erros:**\n- 401: Chave de integração inválida\n- 404: E-mail do solicitante não encontrado\n- 422: Módulo não suportado ou hotel inválido\n- 429: Rate limit excedido\n- 503: Empresa não encontrada (erro de configuração)",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"module\": \"solicitacoes-fiscais\",\n  \"requestType\": \"NF-e\",\n  \"hotel\": \"{{hotel_slug}}\",\n  \"solicitante\": \"João Silva\",\n  \"solicitanteEmail\": \"joao@hotel.com\",\n  \"chessUserId\": \"chess-42\",\n  \"apartment\": \"204\",\n  \"reservationNumber\": \"RES-2026-001\",\n  \"origem\": \"chess-hotel\",\n  \"screenshots\": []\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "200 — Ticket criado",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"protocol\": \"REG-000042\",\n  \"status\": \"Em andamento\",\n  \"responsible\": null,\n  \"sla_deadline\": \"2026-06-24T18:00:00Z\",\n  \"url\": \"https://registro.solidsd.com.br/solicitacoes-fiscais?protocol=REG-000042\",\n  \"attachments_count\": 0\n}"
+        },
+        {
+          "name": "200 — Ticket criado com screenshots",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"protocol\": \"REG-000043\",\n  \"status\": \"Em andamento\",\n  \"responsible\": null,\n  \"sla_deadline\": \"2026-06-24T18:00:00Z\",\n  \"url\": \"https://registro.solidsd.com.br/solicitacoes-fiscais?protocol=REG-000043\",\n  \"attachments_count\": 2\n}"
+        },
+        {
+          "name": "404 — Usuário não encontrado",
+          "status": "Not Found",
+          "code": 404,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"detail\": {\n    \"code\": \"registro_user_not_found\"\n  }\n}"
+        },
+        {
+          "name": "422 — Módulo não suportado",
+          "status": "Unprocessable Entity",
+          "code": 422,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"detail\": {\n    \"code\": \"unsupported_module\"\n  }\n}"
+        },
+        {
+          "name": "422 — Hotel inválido",
+          "status": "Unprocessable Entity",
+          "code": 422,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"detail\": {\n    \"code\": \"invalid_hotel\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "2b. Criar solicitação com screenshot (exemplo)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/integrations/chess-hotel/tickets",
+          "host": ["{{base_url}}"],
+          "path": ["integrations", "chess-hotel", "tickets"]
+        },
+        "description": "Exemplo de criação de ticket com screenshot anexado.\n\nO campo `screenshots` aceita até 5 imagens em base64 (sem prefixo data:image/...).\n\nFormatos aceitos: PNG, JPEG, WebP. Máximo 10MB por imagem.\n\nNo Laravel, use `base64_encode(file_get_contents($path))` para converter a imagem.\n\nNo JavaScript (frontend do Chess), use `canvas.toDataURL().split(',')[1]` para capturar um print.",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"module\": \"solicitacoes-fiscais\",\n  \"requestType\": \"NF-e\",\n  \"hotel\": \"{{hotel_slug}}\",\n  \"solicitante\": \"João Silva\",\n  \"solicitanteEmail\": \"joao@hotel.com\",\n  \"chessUserId\": \"chess-42\",\n  \"apartment\": \"204\",\n  \"screenshots\": [\n    \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==\"\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "response": [
+        {
+          "name": "200 — Ticket criado com 1 screenshot",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"protocol\": \"REG-000044\",\n  \"status\": \"Em andamento\",\n  \"responsible\": null,\n  \"sla_deadline\": \"2026-06-24T18:00:00Z\",\n  \"url\": \"https://registro.solidsd.com.br/solicitacoes-fiscais?protocol=REG-000044\",\n  \"attachments_count\": 1\n}"
+        }
+      ]
+    },
+    {
+      "name": "3. Listar tickets por e-mail",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/integrations/chess-hotel/tickets?email=joao@hotel.com",
+          "host": ["{{base_url}}"],
+          "path": ["integrations", "chess-hotel", "tickets"],
+          "query": [
+            {
+              "key": "email",
+              "value": "joao@hotel.com",
+              "description": "E-mail do solicitante (deve existir no Registro)"
+            }
+          ]
+        },
+        "description": "Retorna todas as solicitações fiscais de um usuário, ordenadas da mais recente para a mais antiga (máximo 50).\n\nInclui histórico completo de eventos (criação, atualizações, mudanças de status).\n\n**Erros:**\n- 401: Chave de integração inválida\n- 404: E-mail não encontrado no Registro"
+      },
+      "response": [
+        {
+          "name": "200 — Lista de tickets",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"user\": {\n    \"exists\": true,\n    \"id\": 42,\n    \"name\": \"João Silva\",\n    \"email\": \"joao@hotel.com\"\n  },\n  \"items\": [\n    {\n      \"protocol\": \"REG-000042\",\n      \"request_type\": \"NF-e\",\n      \"status\": \"Em andamento\",\n      \"responsible\": \"Maria Souza\",\n      \"sla_deadline\": \"2026-06-24T18:00:00Z\",\n      \"completed\": false,\n      \"updated_at\": \"2026-06-22T14:30:00Z\",\n      \"url\": \"https://registro.solidsd.com.br/solicitacoes-fiscais?protocol=REG-000042\",\n      \"history\": [\n        {\n          \"event\": \"create_from_chess\",\n          \"user\": \"João Silva\",\n          \"at\": \"2026-06-22T10:00:00Z\",\n          \"changes\": null\n        },\n        {\n          \"event\": \"update\",\n          \"user\": \"Maria Souza\",\n          \"at\": \"2026-06-22T14:30:00Z\",\n          \"changes\": {\n            \"status\": [\"Em andamento\", \"Concluído\"]\n          }\n        }\n      ]\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "4. Consultar ticket por protocolo",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{base_url}}/integrations/chess-hotel/tickets/REG-000042?email=joao@hotel.com",
+          "host": ["{{base_url}}"],
+          "path": ["integrations", "chess-hotel", "tickets", "REG-000042"],
+          "query": [
+            {
+              "key": "email",
+              "value": "joao@hotel.com",
+              "description": "E-mail do solicitante (deve ser o dono do ticket)"
+            }
+          ]
+        },
+        "description": "Consulta o status e histórico de um ticket específico pelo protocolo.\n\nO e-mail deve ser do solicitante que criou o ticket.\n\n**Erros:**\n- 401: Chave de integração inválida\n- 404: E-mail não encontrado ou ticket não pertence ao usuário"
+      },
+      "response": [
+        {
+          "name": "200 — Detalhes do ticket",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"protocol\": \"REG-000042\",\n  \"request_type\": \"NF-e\",\n  \"status\": \"Concluído\",\n  \"responsible\": \"Maria Souza\",\n  \"sla_deadline\": \"2026-06-24T18:00:00Z\",\n  \"completed\": true,\n  \"updated_at\": \"2026-06-23T09:15:00Z\",\n  \"url\": \"https://registro.solidsd.com.br/solicitacoes-fiscais?protocol=REG-000042\",\n  \"history\": [\n    {\n      \"event\": \"create_from_chess\",\n      \"user\": \"João Silva\",\n      \"at\": \"2026-06-22T10:00:00Z\",\n      \"changes\": null\n    },\n    {\n      \"event\": \"update\",\n      \"user\": \"Maria Souza\",\n      \"at\": \"2026-06-23T09:15:00Z\",\n      \"changes\": {\n        \"status\": [\"Em andamento\", \"Concluído\"]\n      }\n    }\n  ]\n}"
+        },
+        {
+          "name": "404 — Ticket não encontrado",
+          "status": "Not Found",
+          "code": 404,
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "body": "{\n  \"detail\": {\n    \"code\": \"ticket_not_found\"\n  }\n}"
+        }
+      ]
+    }
+  ]
+}

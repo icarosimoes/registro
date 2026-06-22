@@ -1,5 +1,7 @@
+import base64
 from typing import Annotated
 
+import structlog
 from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,6 +10,7 @@ from app.core.dependencies import require_session
 from app.core.permissions import require_permission
 from app.core.rate_limit import limiter
 from app.core.sla import compute_sla_status
+from app.domain.attachments.service import create_attachment
 from app.domain.auth.repository import AuthenticatedUser
 from app.domain.fiscal_requests.schemas import (
     ChessUserResolve,
@@ -34,6 +37,8 @@ from app.domain.fiscal_requests.service import (
     resolve_chess_user,
     update_fiscal_request,
 )
+
+logger = structlog.get_logger()
 
 router = APIRouter(tags=["fiscal-requests"])
 
@@ -128,6 +133,7 @@ async def create_from_chess_hotel(
     company_id = await _require_company(session, settings)
     registro_user = await _require_chess_user(session, company_id, body.requester_email)
 
+    payload = body.model_dump(by_alias=True, exclude_none=True, exclude={"screenshots"})
     record = await create_from_chess(
         session,
         settings,
@@ -139,14 +145,52 @@ async def create_from_chess_hotel(
         chess_user_id=body.chess_user_id,
         reservation_number=body.reservation_number,
         origin=body.origin,
-        payload=body.model_dump(by_alias=True, exclude_none=True),
+        payload=payload,
     )
+
+    attachments_count = 0
+    for i, screenshot_b64 in enumerate(body.screenshots, 1):
+        try:
+            data = base64.b64decode(screenshot_b64, validate=True)
+        except Exception:
+            logger.warning("screenshot_decode_failed", index=i, protocol=record.protocol)
+            continue
+
+        if data[:4] == b"\x89PNG":
+            ext, ct = "png", "image/png"
+        elif data[:3] == b"\xff\xd8\xff":
+            ext, ct = "jpg", "image/jpeg"
+        elif data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+            ext, ct = "webp", "image/webp"
+        else:
+            logger.warning("screenshot_unsupported_format", index=i, protocol=record.protocol)
+            continue
+
+        result = await create_attachment(
+            session,
+            company_id,
+            registro_user.id,
+            entity_type="fiscal_request",
+            entity_id=record.id,
+            filename=f"screenshot-{i}.{ext}",
+            content_type=ct,
+            data=data,
+            skip_audit=True,
+        )
+        if isinstance(result, str):
+            logger.warning(
+                "screenshot_save_failed", index=i, error=result, protocol=record.protocol
+            )
+        else:
+            attachments_count += 1
+
     return FiscalRequestCreated(
         protocol=record.protocol,
         status=record.status,
         responsible=None,
         sla_deadline=record.sla_deadline,
         url=f"{settings.registro_web_url.rstrip('/')}/solicitacoes-fiscais?protocol={record.protocol}",
+        attachments_count=attachments_count,
     )
 
 
