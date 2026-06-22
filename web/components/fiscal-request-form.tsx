@@ -68,11 +68,31 @@ export function FiscalRequestForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const addFiles = useCallback((files: FileList | File[]) => {
-    const items = Array.from(files).map((file) => ({
-      file,
-      preview: file.type.startsWith("image/") ? URL.createObjectURL(file) : "",
-    }));
-    setLocalFiles((prev) => [...prev, ...items]);
+    const MAX_SIZE = 10 * 1024 * 1024;
+    const ALLOWED_TYPES = new Set([
+      "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml",
+      "application/pdf", "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "text/csv", "text/plain", "application/zip",
+    ]);
+    const items: { file: File; preview: string }[] = [];
+    for (const file of Array.from(files)) {
+      if (file.size > MAX_SIZE) {
+        alert(`"${file.name}" excede o limite de 10MB.`);
+        continue;
+      }
+      if (file.type && !ALLOWED_TYPES.has(file.type)) {
+        alert(`Tipo "${file.type}" não permitido para "${file.name}".`);
+        continue;
+      }
+      items.push({
+        file,
+        preview: file.type.startsWith("image/") ? URL.createObjectURL(file) : "",
+      });
+    }
+    if (items.length) setLocalFiles((prev) => [...prev, ...items]);
   }, []);
 
   const removeLocalFile = (index: number) => {

@@ -96,6 +96,34 @@ def decode_platform_token(token: str, secret: str) -> dict[str, Any]:
     return payload
 
 
+def create_platform_refresh_token(
+    *,
+    subject: int,
+    role: str,
+    secret: str,
+    days: int,
+) -> str:
+    now = datetime.now(UTC)
+    return jwt.encode(
+        {
+            "sub": str(subject),
+            "role": role,
+            "type": "platform_refresh",
+            "iat": now,
+            "exp": now + timedelta(days=days),
+        },
+        secret,
+        algorithm=ALGORITHM,
+    )
+
+
+def decode_platform_refresh_token(token: str, secret: str) -> dict[str, Any]:
+    payload: dict[str, Any] = jwt.decode(token, secret, algorithms=[ALGORITHM])
+    if payload.get("type") != "platform_refresh":
+        raise jwt.InvalidTokenError("tipo de token inválido")
+    return payload
+
+
 def create_invite_token(
     *,
     user_id: int,

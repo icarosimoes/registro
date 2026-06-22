@@ -40,7 +40,41 @@ def permission_code(controller: str, action: str) -> str:
     return f"legacy.{normalized}.{action.lower()}"[:120]
 
 
+VALID_TABLES: set[str] = {
+    "acls",
+    "users",
+    "procedures",
+    "procedure_files",
+    "occurrences",
+    "occurrence_comments",
+    "occurrence_participants",
+    "meetings",
+    "meeting_subjects",
+    "meeting_new_subjects",
+    "meeting_invited_participants",
+    "meeting_registered_participants",
+    "shift_reports",
+    "shift_report_frequencies",
+    "shift_report_maintenences",
+    "shift_report_customer_complaints",
+    "shift_report_extras",
+    "shift_report_comments",
+    "check_suites",
+    "check_suite_items",
+    "audit_reports",
+    "audit_report_item1s",
+    "audit_report_item2s",
+    "audit_report_item3s",
+    "notifications",
+    "sectors",
+    "locals",
+    "funcs",
+}
+
+
 async def source_rows(session: AsyncSession, table: str, columns: str = "*") -> list[dict]:
+    if table not in VALID_TABLES:
+        raise ValueError(f"Tabela '{table}' não é permitida para importação V1")
     dialect = session.bind.dialect.name if session.bind else "postgresql"
     q = "`" if dialect == "mysql" else '"'
     result = await session.execute(text(f"SELECT {columns} FROM {q}{table}{q}"))  # noqa: S608

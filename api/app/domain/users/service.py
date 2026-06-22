@@ -25,7 +25,9 @@ logger = logging.getLogger(__name__)
 async def _role_name(session: AsyncSession, role_id: int | None) -> str | None:
     if not role_id:
         return None
-    return await session.scalar(select(Role.name).where(Role.id == role_id))
+    return await session.scalar(
+        select(Role.name).where(Role.id == role_id)
+    )
 
 
 async def list_users(
@@ -241,7 +243,9 @@ async def get_role_name(session: AsyncSession, role_id: int | None) -> str | Non
 async def get_sector_name(session: AsyncSession, sector_id: int | None) -> str | None:
     if not sector_id:
         return None
-    return await session.scalar(select(Sector.name).where(Sector.id == sector_id))
+    return await session.scalar(
+        select(Sector.name).where(Sector.id == sector_id, Sector.deleted_at.is_(None))
+    )
 
 
 async def invite_user(

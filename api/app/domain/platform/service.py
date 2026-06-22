@@ -1,11 +1,12 @@
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
+import httpx
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings
-from app.integrations.asaas import AsaasClient
+from app.integrations.asaas import AsaasClient, AsaasError
 from app.models import Company, Invoice, Plan, PlatformAuditLog, Subscription, User
 
 
@@ -566,7 +567,7 @@ async def reconcile_billing(
     for sub in subs:
         try:
             remote = await client.get_subscription(sub.billing_provider_subscription_id)
-        except Exception:
+        except (httpx.HTTPError, AsaasError, KeyError):
             discrepancies.append(
                 {
                     "subscription_id": sub.id,

@@ -301,7 +301,7 @@ td strong { font-weight: 600; }
 /* ─── Autocomplete ─── */
 .autocomplete-wrap { position: relative; }.autocomplete-wrap input { width: 100%; min-height: var(--input-height); padding: var(--sp-3); border: 1px solid var(--field-border); border-radius: var(--radius-md); background: var(--field-bg); }
 .autocomplete-list { position: absolute; z-index: 90; top: 100%; left: 0; right: 0; margin: 4px 0 0; padding: 4px; list-style: none; background: white; border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: var(--shadow-modal); max-height: 200px; overflow-y: auto; }
-.autocomplete-list li { padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer; display: grid; gap: 2px; }.autocomplete-list li:hover { background: #f0f4ff; }.autocomplete-list li strong { font-size: var(--font-sm); }.autocomplete-list li small { color: var(--muted); font-size: 11px; }
+.autocomplete-list li { padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer; display: grid; gap: 2px; }.autocomplete-list li:hover, .autocomplete-list li.active { background: #f0f4ff; }.autocomplete-list li[aria-selected="true"] { background: #dbe7fd; }.autocomplete-list li strong { font-size: var(--font-sm); }.autocomplete-list li small { color: var(--muted); font-size: 11px; }
 .notify-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }.notify-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; background: #e8f0fe; color: #1a3c6e; border-radius: 20px; font-size: 12px; font-weight: 600; }.notify-chip button { background: none; border: none; cursor: pointer; font-size: 14px; color: #1a3c6e; padding: 0 2px; line-height: 1; }
 
 /* ─── Notificação e campos auxiliares ─── */

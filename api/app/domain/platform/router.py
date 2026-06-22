@@ -5,13 +5,20 @@ import jwt
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi import Query as QueryParam
 from fastapi.security import OAuth2PasswordBearer
+from pydantic import BaseModel
 from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings, get_settings
 from app.core.dependencies import require_session
 from app.core.rate_limit import limiter
-from app.core.security import create_platform_token, decode_platform_token, verify_laravel_password
+from app.core.security import (
+    create_platform_refresh_token,
+    create_platform_token,
+    decode_platform_refresh_token,
+    decode_platform_token,
+    verify_laravel_password,
+)
 from app.domain.platform import service
 from app.domain.platform.schemas import (
     InvoiceSummary,
@@ -98,6 +105,63 @@ async def platform_login(
             role=user.role,
             secret=settings.jwt_secret,
             minutes=settings.access_token_minutes,
+        ),
+        refresh_token=create_platform_refresh_token(
+            subject=user.id,
+            role=user.role,
+            secret=settings.jwt_secret,
+            days=settings.refresh_token_days,
+        ),
+        expires_in=settings.access_token_minutes * 60,
+        name=user.name,
+        role=user.role,
+    )
+
+
+class PlatformRefreshRequest(BaseModel):
+    refresh_token: str
+
+
+@router.post("/auth/refresh", response_model=PlatformTokenResponse)
+@limiter.limit("20/minute")
+async def platform_refresh(
+    request: Request,
+    body: PlatformRefreshRequest,
+    session: Annotated[AsyncSession, Depends(require_session)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> PlatformTokenResponse:
+    try:
+        claims = decode_platform_refresh_token(body.refresh_token, settings.jwt_secret)
+        user_id = int(claims["sub"])
+    except (jwt.InvalidTokenError, KeyError, TypeError, ValueError) as exc:
+        raise HTTPException(
+            status_code=401,
+            detail={"code": "invalid_refresh_token", "message": "Refresh token inválido"},
+        ) from exc
+    user = await session.scalar(
+        select(PlatformUser).where(
+            PlatformUser.id == user_id,
+            PlatformUser.active.is_(True),
+            PlatformUser.deleted_at.is_(None),
+        )
+    )
+    if user is None:
+        raise HTTPException(
+            status_code=401,
+            detail={"code": "inactive_platform_user", "message": "Usuário indisponível"},
+        )
+    return PlatformTokenResponse(
+        access_token=create_platform_token(
+            subject=user.id,
+            role=user.role,
+            secret=settings.jwt_secret,
+            minutes=settings.access_token_minutes,
+        ),
+        refresh_token=create_platform_refresh_token(
+            subject=user.id,
+            role=user.role,
+            secret=settings.jwt_secret,
+            days=settings.refresh_token_days,
         ),
         expires_in=settings.access_token_minutes * 60,
         name=user.name,

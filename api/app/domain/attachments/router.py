@@ -18,7 +18,7 @@ from app.domain.attachments.service import (
 )
 from app.domain.auth.repository import AuthenticatedUser
 
-_UNSAFE_FILENAME_RE = re.compile(r"[^\w\s\-\.\(\)]", re.UNICODE)
+_UNSAFE_FILENAME_RE = re.compile(r"[^a-zA-Z0-9_\s\-\.\(\)]")
 
 
 def _sanitize_filename(name: str) -> str:

@@ -39,22 +39,33 @@ function UserAutocomplete({ name, defaultValue, placeholder, required }: { name:
   const [options, setOptions] = useState<UserOption[]>([]);
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const listId = `${name}-listbox`;
 
   function handleChange(v: string) {
     setQuery(v);
     setSelectedId(null);
+    setActiveIndex(-1);
     clearTimeout(timer.current);
     if (v.trim().length < 2) { setOptions([]); setOpen(false); return; }
     timer.current = setTimeout(() => {
-      searchUsers(v).then((r) => { setOptions(r); setOpen(r.length > 0); });
+      searchUsers(v).then((r) => { setOptions(r); setOpen(r.length > 0); setActiveIndex(-1); });
     }, 250);
   }
 
-  return <div className="autocomplete-wrap">
-    <input name={`${name}_display`} value={query} onChange={(e) => handleChange(e.target.value)} onFocus={() => { if (options.length) setOpen(true); }} onBlur={() => setTimeout(() => setOpen(false), 200)} placeholder={placeholder} required={required} autoComplete="off"/>
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (!open || !options.length) return;
+    if (e.key === "ArrowDown") { e.preventDefault(); setActiveIndex((i) => Math.min(i + 1, options.length - 1)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setActiveIndex((i) => Math.max(i - 1, 0)); }
+    else if (e.key === "Enter" && activeIndex >= 0) { e.preventDefault(); const u = options[activeIndex]; setQuery(u.name); setSelectedId(u.id); setOpen(false); }
+    else if (e.key === "Escape") { setOpen(false); }
+  }
+
+  return <div className="autocomplete-wrap" role="combobox" aria-expanded={open} aria-haspopup="listbox" aria-owns={listId}>
+    <input name={`${name}_display`} value={query} onChange={(e) => handleChange(e.target.value)} onFocus={() => { if (options.length) setOpen(true); }} onBlur={() => setTimeout(() => setOpen(false), 200)} onKeyDown={handleKeyDown} placeholder={placeholder} required={required} autoComplete="off" aria-autocomplete="list" aria-controls={listId} aria-activedescendant={activeIndex >= 0 ? `${listId}-${activeIndex}` : undefined}/>
     <input type="hidden" name={name} value={selectedId ?? query}/>
-    {open && <ul className="autocomplete-list">{options.map((u) => <li key={u.id} onMouseDown={() => { setQuery(u.name); setSelectedId(u.id); setOpen(false); }}><strong>{u.name}</strong><small>{u.email}</small></li>)}</ul>}
+    {open && <ul id={listId} className="autocomplete-list" role="listbox">{options.map((u, i) => <li key={u.id} id={`${listId}-${i}`} role="option" aria-selected={i === activeIndex} className={i === activeIndex ? "active" : undefined} onMouseDown={() => { setQuery(u.name); setSelectedId(u.id); setOpen(false); }}><strong>{u.name}</strong><small>{u.email}</small></li>)}</ul>}
   </div>;
 }
 
@@ -63,14 +74,17 @@ function UserMultiSelect({ name, defaultValues }: { name: string; defaultValues?
   const [query, setQuery] = useState("");
   const [options, setOptions] = useState<UserOption[]>([]);
   const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const listId = `${name}-multi-listbox`;
 
   function handleChange(v: string) {
     setQuery(v);
+    setActiveIndex(-1);
     clearTimeout(timer.current);
     if (v.trim().length < 2) { setOptions([]); setOpen(false); return; }
     timer.current = setTimeout(() => {
-      searchUsers(v).then((r) => { setOptions(r.filter((u) => !selected.some((s) => s.id === u.id))); setOpen(r.length > 0); });
+      searchUsers(v).then((r) => { const filtered = r.filter((u) => !selected.some((s) => s.id === u.id)); setOptions(filtered); setOpen(filtered.length > 0); setActiveIndex(-1); });
     }, 250);
   }
 
@@ -79,17 +93,26 @@ function UserMultiSelect({ name, defaultValues }: { name: string; defaultValues?
     setQuery("");
     setOptions([]);
     setOpen(false);
+    setActiveIndex(-1);
   }
 
   function remove(id: number) {
     setSelected((prev) => prev.filter((u) => u.id !== id));
   }
 
-  return <div className="autocomplete-wrap">
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (!open || !options.length) return;
+    if (e.key === "ArrowDown") { e.preventDefault(); setActiveIndex((i) => Math.min(i + 1, options.length - 1)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setActiveIndex((i) => Math.max(i - 1, 0)); }
+    else if (e.key === "Enter" && activeIndex >= 0) { e.preventDefault(); add(options[activeIndex]); }
+    else if (e.key === "Escape") { setOpen(false); }
+  }
+
+  return <div className="autocomplete-wrap" role="combobox" aria-expanded={open} aria-haspopup="listbox" aria-owns={listId}>
     <input type="hidden" name={name} value={JSON.stringify(selected.map((u) => u.id))}/>
-    {selected.length > 0 && <div className="notify-chips">{selected.map((u) => <span key={u.id} className="notify-chip">{u.name}<button type="button" onClick={() => remove(u.id)} aria-label="Remover">×</button></span>)}</div>}
-    <input value={query} onChange={(e) => handleChange(e.target.value)} onFocus={() => { if (options.length) setOpen(true); }} onBlur={() => setTimeout(() => setOpen(false), 200)} placeholder="Buscar usuário..." autoComplete="off"/>
-    {open && <ul className="autocomplete-list">{options.map((u) => <li key={u.id} onMouseDown={() => add(u)}><strong>{u.name}</strong><small>{u.email}</small></li>)}</ul>}
+    {selected.length > 0 && <div className="notify-chips" role="list">{selected.map((u) => <span key={u.id} className="notify-chip" role="listitem">{u.name}<button type="button" onClick={() => remove(u.id)} aria-label={`Remover ${u.name}`}>×</button></span>)}</div>}
+    <input value={query} onChange={(e) => handleChange(e.target.value)} onFocus={() => { if (options.length) setOpen(true); }} onBlur={() => setTimeout(() => setOpen(false), 200)} onKeyDown={handleKeyDown} placeholder="Buscar usuário..." autoComplete="off" aria-autocomplete="list" aria-controls={listId} aria-activedescendant={activeIndex >= 0 ? `${listId}-${activeIndex}` : undefined}/>
+    {open && <ul id={listId} className="autocomplete-list" role="listbox">{options.map((u, i) => <li key={u.id} id={`${listId}-${i}`} role="option" aria-selected={i === activeIndex} className={i === activeIndex ? "active" : undefined} onMouseDown={() => add(u)}><strong>{u.name}</strong><small>{u.email}</small></li>)}</ul>}
   </div>;
 }
 
@@ -150,6 +173,17 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
   const [selectedAttachments, setSelectedAttachments] = useState<AttachmentItem[]>([]);
   const [toast, setToast] = useState("");
+
+  useEffect(() => {
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        if (editing) setEditing(null);
+        else if (selected) setSelected(null);
+      }
+    }
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [editing, selected]);
 
   useEffect(() => {
     if (isApiBacked) {

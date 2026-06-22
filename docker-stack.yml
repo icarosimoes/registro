@@ -114,6 +114,11 @@ services:
 
   api:
     image: ghcr.io/icarosimoes/registro/api:${IMAGE_TAG:-latest}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       APP_NAME: Registro API
       ENVIRONMENT: production
@@ -163,6 +168,11 @@ services:
 
   web:
     image: ghcr.io/icarosimoes/registro/web:${IMAGE_TAG:-latest}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       API_URL: http://api:8000/api/v1
     networks:
@@ -192,6 +202,11 @@ services:
 
   admin:
     image: ghcr.io/icarosimoes/registro/admin:${IMAGE_TAG:-latest}
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     environment:
       API_URL: http://api:8000/api/v1
     networks:
@@ -215,6 +230,7 @@ services:
 
   redis:
     image: redis:7-alpine
+    command: redis-server --appendonly yes --appendfsync everysec
     networks:
       - registro-internal
     deploy:

@@ -21,6 +21,7 @@ dependencies = [
   "slowapi>=0.1.9,<1",
   "reportlab>=4.2,<5",
   "openpyxl>=3.1,<4",
+  "sentry-sdk[fastapi]>=2.0,<3",
 ]
 
 [project.optional-dependencies]

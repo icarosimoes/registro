@@ -40,11 +40,13 @@ async def create_attachment(
 
     count = (
         await session.scalar(
-            select(func.count(Attachment.id)).where(
+            select(func.count(Attachment.id))
+            .where(
                 Attachment.company_id == company_id,
                 Attachment.entity_type == entity_type,
                 Attachment.entity_id == entity_id,
             )
+            .with_for_update()
         )
         or 0
     )

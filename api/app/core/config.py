@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     asaas_api_url: str = "https://sandbox.asaas.com/api/v3"
     asaas_webhook_token: str = ""
     asaas_webhook_token_file: str | None = None
+    sentry_dsn: str = ""
 
     @field_validator("web_origins", mode="before")
     @classmethod

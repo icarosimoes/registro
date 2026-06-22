@@ -53,6 +53,7 @@ jobs:
     name: Deploy to VPS
     needs: publish
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: webfactory/ssh-agent@v0.9.1
         with:

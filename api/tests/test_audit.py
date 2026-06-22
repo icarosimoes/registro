@@ -175,3 +175,73 @@ def test_compute_diff_multiple_changes():
     assert len(result) == 2
     assert "status" in result
     assert "title" in result
+
+
+def test_compute_diff_added_field():
+    """Campo presente apenas no after deve aparecer no diff."""
+    before = {"status": "Em andamento"}
+    after = {"status": "Em andamento", "priority": "alta"}
+    result = compute_diff(before, after)
+    assert result is not None
+    assert "priority" in result
+    assert result["priority"]["from"] is None
+    assert result["priority"]["to"] == "alta"
+
+
+def test_compute_diff_none_to_value():
+    """Transicao de None para um valor deve ser detectada."""
+    before = {"notes": None}
+    after = {"notes": "observacao"}
+    result = compute_diff(before, after)
+    assert result is not None
+    assert result["notes"]["from"] is None
+    assert result["notes"]["to"] == "observacao"
+
+
+def test_compute_diff_value_to_none():
+    """Transicao de um valor para None deve ser detectada."""
+    before = {"notes": "observacao"}
+    after = {"notes": None}
+    result = compute_diff(before, after)
+    assert result is not None
+    assert result["notes"]["from"] == "observacao"
+    assert result["notes"]["to"] is None
+
+
+def test_compute_diff_both_none_no_change():
+    """Dois None devem ser considerados iguais (sem diff)."""
+    before = {"notes": None}
+    after = {"notes": None}
+    result = compute_diff(before, after)
+    assert result is None
+
+
+def test_compute_diff_empty_dicts():
+    before = {}
+    after = {}
+    result = compute_diff(before, after)
+    assert result is None
+
+
+@pytest.mark.asyncio
+async def test_record_event_update_empty_dict_skipped(session):
+    """Update com diff={} (dict vazio) deve ser tratado como sem diff."""
+    await record_event(
+        session,
+        company_id=TENANT_A,
+        user_id=1,
+        entity_type="test_entity",
+        entity_id=999,
+        event_type="update",
+        diff={},
+    )
+    await session.flush()
+
+    row = await session.scalar(
+        select(AuditEvent).where(
+            AuditEvent.company_id == TENANT_A,
+            AuditEvent.entity_id == 999,
+            AuditEvent.event_type == "update",
+        )
+    )
+    assert row is None

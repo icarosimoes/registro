@@ -51,12 +51,12 @@ async def _resolve_users(session: AsyncSession, user_ids: list[int]) -> list[dic
         return []
     rows = (
         await session.execute(
-            select(User.id, User.name, User.email).where(
+            select(User.id, User.name, User.email, User.phone).where(
                 User.id.in_(user_ids), User.active.is_(True)
             )
         )
     ).all()
-    return [{"id": r.id, "name": r.name, "email": r.email} for r in rows]
+    return [{"id": r.id, "name": r.name, "email": r.email, "phone": r.phone} for r in rows]
 
 
 async def _load_preferences(
@@ -243,7 +243,7 @@ async def prepare_notifications(
             user_pref = prefs.get(r["id"], {"in_app": True, "email": True})
             if not user_pref.get("whatsapp", True):
                 continue
-            phone = await session.scalar(select(User.phone).where(User.id == r["id"]))
+            phone = r.get("phone")
             if not phone:
                 continue
             whatsapp_tasks.append(_WhatsAppTask(phone=phone, text=whatsapp_text))

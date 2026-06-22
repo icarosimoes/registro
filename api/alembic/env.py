@@ -19,15 +19,15 @@ target_metadata = Base.metadata
 
 
 def include_object(object_, name, type_, reflected, compare_to):
-    """Keep autogenerate focused on structural schema drift.
+    """Filter autogenerate to structural schema changes.
 
-    Existing constraints, indexes and column options predate consistent model
-    metadata. New or removed tables and columns are still reported by
-    ``alembic check``.
+    Column attribute modifications (server_default, nullable) on existing
+    columns are skipped to avoid noisy diffs from legacy schema, but new/removed
+    tables, columns, indexes and FKs are all reported.
     """
-    if type_ in {"index", "foreign_key_constraint"}:
+    if type_ == "column" and compare_to is not None:
         return False
-    return not (type_ == "column" and compare_to is not None)
+    return True
 
 
 def run_migrations_offline() -> None:

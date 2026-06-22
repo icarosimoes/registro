@@ -60,11 +60,11 @@ export function NotificationPanel() {
   }
 
   return (
-    <div className="notification-list">
+    <div className="notification-list" role="region" aria-label="Notificações" aria-live="polite">
       {unread > 0 && (
         <div className="notification-actions">
-          <span>{unread} não lida{unread > 1 ? "s" : ""}</span>
-          <button onClick={handleReadAll}><CheckCheck size={14} /> Marcar todas</button>
+          <span aria-live="polite">{unread} não lida{unread > 1 ? "s" : ""}</span>
+          <button onClick={handleReadAll} aria-label="Marcar todas como lidas"><CheckCheck size={14} /> Marcar todas</button>
         </div>
       )}
       {items.length === 0 ? (
@@ -75,6 +75,10 @@ export function NotificationPanel() {
             key={n.id}
             className={n.read_at ? "notification-item read" : "notification-item"}
             onClick={() => !n.read_at && handleRead(n.id)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === "Enter" && !n.read_at) handleRead(n.id); }}
+            aria-label={`${n.title}${n.read_at ? "" : " — não lida"}`}
           >
             <span className={`notification-icon ${n.read_at ? "" : "blue"}`}>
               {categoryIcon(n.category)}
