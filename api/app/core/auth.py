@@ -28,6 +28,8 @@ async def current_user(
     if user is None:
         raise HTTPException(status_code=401, detail={"code": "inactive_user"})
     cid = int(user.company_id)
-    await session.execute(text("SET LOCAL app.current_company_id = :cid"), {"cid": str(cid)})
+    await session.execute(
+        text("SELECT set_config('app.current_company_id', :cid, true)"), {"cid": str(cid)}
+    )
     structlog.contextvars.bind_contextvars(company_id=cid, user_id=user.id)
     return user
