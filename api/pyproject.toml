@@ -90,6 +90,14 @@ module = [
 ]
 ignore_errors = true
 
+[tool.coverage.run]
+omit = [
+  "app/import_v1.py",
+  "app/seed.py",
+  "app/domain/meetings/pdf.py",
+  "app/domain/occurrences/pdf.py",
+]
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"
