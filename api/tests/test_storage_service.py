@@ -90,17 +90,23 @@ class TestCheckMagic:
 
     def test_zip_magic_accepts_docx(self):
         data = b"PK\x03\x04 rest of zip"
-        assert _check_magic(
-            data,
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        ) is True
+        assert (
+            _check_magic(
+                data,
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            )
+            is True
+        )
 
     def test_zip_magic_accepts_xlsx(self):
         data = b"PK\x03\x04 rest of zip"
-        assert _check_magic(
-            data,
-            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        ) is True
+        assert (
+            _check_magic(
+                data,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+            is True
+        )
 
     def test_rar_magic(self):
         data = b"Rar!\x1a\x07\x00 rest of rar"
@@ -187,14 +193,21 @@ class TestValidateFile:
         mock_settings.return_value = self._mock_settings()
         # Map extensions to a valid content type
         ext_to_ct = {
-            ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
-            ".gif": "image/gif", ".webp": "image/webp", ".svg": "image/svg+xml",
-            ".pdf": "application/pdf", ".doc": "application/msword",
+            ".jpg": "image/jpeg",
+            ".jpeg": "image/jpeg",
+            ".png": "image/png",
+            ".gif": "image/gif",
+            ".webp": "image/webp",
+            ".svg": "image/svg+xml",
+            ".pdf": "application/pdf",
+            ".doc": "application/msword",
             ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
             ".xls": "application/vnd.ms-excel",
             ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            ".csv": "text/csv", ".txt": "text/plain",
-            ".zip": "application/zip", ".rar": "application/x-rar-compressed",
+            ".csv": "text/csv",
+            ".txt": "text/plain",
+            ".zip": "application/zip",
+            ".rar": "application/x-rar-compressed",
             ".7z": "application/x-7z-compressed",
         }
         for ext in ALLOWED_EXTENSIONS:

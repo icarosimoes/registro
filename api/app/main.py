@@ -115,6 +115,7 @@ async def value_error_handler(request: Request, exc: ValueError):
         content={"detail": str(exc)},
     )
 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.web_origins,

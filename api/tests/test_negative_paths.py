@@ -53,18 +53,14 @@ class TestAuthNegative:
 
     @pytest.mark.asyncio
     async def test_refresh_invalid_token(self, client: AsyncClient):
-        r = await client.post(
-            f"{API}/auth/refresh", json={"refresh_token": "not.a.valid.token"}
-        )
+        r = await client.post(f"{API}/auth/refresh", json={"refresh_token": "not.a.valid.token"})
         assert r.status_code == 401
 
     @pytest.mark.asyncio
     async def test_refresh_with_access_token(self, client: AsyncClient):
         """Using an access token where a refresh token is expected must fail."""
         access_token = make_token(TENANT_A, user_id=1)
-        r = await client.post(
-            f"{API}/auth/refresh", json={"refresh_token": access_token}
-        )
+        r = await client.post(f"{API}/auth/refresh", json={"refresh_token": access_token})
         assert r.status_code == 401
 
     @pytest.mark.asyncio
@@ -119,9 +115,7 @@ class TestAuthNegative:
         """Weak password should be rejected even with a valid invite token."""
         from app.core.security import create_invite_token
 
-        token = create_invite_token(
-            user_id=1, company_id=TENANT_A, secret=JWT_SECRET, hours=48
-        )
+        token = create_invite_token(user_id=1, company_id=TENANT_A, secret=JWT_SECRET, hours=48)
         r = await client.post(
             f"{API}/auth/set-password",
             json={"token": token, "password": "short"},
@@ -147,9 +141,7 @@ class TestAuthNegative:
 class TestOccurrencesNegative:
     @pytest.mark.asyncio
     async def test_create_missing_title(self, client: AsyncClient):
-        r = await client.post(
-            f"{API}/occurrences", json={}, headers=auth_header(TENANT_A)
-        )
+        r = await client.post(f"{API}/occurrences", json={}, headers=auth_header(TENANT_A))
         assert r.status_code == 422
 
     @pytest.mark.asyncio
@@ -163,58 +155,42 @@ class TestOccurrencesNegative:
 
     @pytest.mark.asyncio
     async def test_delete_nonexistent(self, client: AsyncClient):
-        r = await client.delete(
-            f"{API}/occurrences/999999", headers=auth_header(TENANT_A)
-        )
+        r = await client.delete(f"{API}/occurrences/999999", headers=auth_header(TENANT_A))
         assert r.status_code == 404
 
     @pytest.mark.asyncio
     async def test_clone_nonexistent(self, client: AsyncClient):
-        r = await client.post(
-            f"{API}/occurrences/999999/clone", headers=auth_header(TENANT_A)
-        )
+        r = await client.post(f"{API}/occurrences/999999/clone", headers=auth_header(TENANT_A))
         assert r.status_code == 404
 
     @pytest.mark.asyncio
     async def test_get_nonexistent(self, client: AsyncClient):
-        r = await client.get(
-            f"{API}/occurrences/999999", headers=auth_header(TENANT_A)
-        )
+        r = await client.get(f"{API}/occurrences/999999", headers=auth_header(TENANT_A))
         assert r.status_code == 404
 
     @pytest.mark.asyncio
     async def test_list_page_zero(self, client: AsyncClient):
-        r = await client.get(
-            f"{API}/occurrences?page=0", headers=auth_header(TENANT_A)
-        )
+        r = await client.get(f"{API}/occurrences?page=0", headers=auth_header(TENANT_A))
         assert r.status_code == 422
 
     @pytest.mark.asyncio
     async def test_list_page_negative(self, client: AsyncClient):
-        r = await client.get(
-            f"{API}/occurrences?page=-1", headers=auth_header(TENANT_A)
-        )
+        r = await client.get(f"{API}/occurrences?page=-1", headers=auth_header(TENANT_A))
         assert r.status_code == 422
 
     @pytest.mark.asyncio
     async def test_list_page_size_too_large(self, client: AsyncClient):
-        r = await client.get(
-            f"{API}/occurrences?page_size=101", headers=auth_header(TENANT_A)
-        )
+        r = await client.get(f"{API}/occurrences?page_size=101", headers=auth_header(TENANT_A))
         assert r.status_code == 422
 
     @pytest.mark.asyncio
     async def test_list_page_size_zero(self, client: AsyncClient):
-        r = await client.get(
-            f"{API}/occurrences?page_size=0", headers=auth_header(TENANT_A)
-        )
+        r = await client.get(f"{API}/occurrences?page_size=0", headers=auth_header(TENANT_A))
         assert r.status_code == 422
 
     @pytest.mark.asyncio
     async def test_create_without_auth(self, client: AsyncClient):
-        r = await client.post(
-            f"{API}/occurrences", json={"title": "no auth"}
-        )
+        r = await client.post(f"{API}/occurrences", json={"title": "no auth"})
         assert r.status_code == 401
 
     @pytest.mark.asyncio
@@ -245,9 +221,7 @@ class TestOccurrencesNegative:
 class TestFiscalRequestsNegative:
     @pytest.mark.asyncio
     async def test_create_missing_required_fields(self, client: AsyncClient):
-        r = await client.post(
-            f"{API}/fiscal-requests", json={}, headers=auth_header(TENANT_A)
-        )
+        r = await client.post(f"{API}/fiscal-requests", json={}, headers=auth_header(TENANT_A))
         assert r.status_code == 422
 
     @pytest.mark.asyncio
@@ -317,23 +291,17 @@ class TestFiscalRequestsNegative:
 
     @pytest.mark.asyncio
     async def test_delete_nonexistent(self, client: AsyncClient):
-        r = await client.delete(
-            f"{API}/fiscal-requests/999999", headers=auth_header(TENANT_A)
-        )
+        r = await client.delete(f"{API}/fiscal-requests/999999", headers=auth_header(TENANT_A))
         assert r.status_code == 404
 
     @pytest.mark.asyncio
     async def test_list_page_zero(self, client: AsyncClient):
-        r = await client.get(
-            f"{API}/fiscal-requests?page=0", headers=auth_header(TENANT_A)
-        )
+        r = await client.get(f"{API}/fiscal-requests?page=0", headers=auth_header(TENANT_A))
         assert r.status_code == 422
 
     @pytest.mark.asyncio
     async def test_list_page_size_too_large(self, client: AsyncClient):
-        r = await client.get(
-            f"{API}/fiscal-requests?page_size=101", headers=auth_header(TENANT_A)
-        )
+        r = await client.get(f"{API}/fiscal-requests?page_size=101", headers=auth_header(TENANT_A))
         assert r.status_code == 422
 
     @pytest.mark.asyncio
@@ -432,16 +400,12 @@ class TestUsersNegative:
 
     @pytest.mark.asyncio
     async def test_delete_nonexistent(self, client: AsyncClient):
-        r = await client.delete(
-            f"{API}/users/999999", headers=auth_header(TENANT_A)
-        )
+        r = await client.delete(f"{API}/users/999999", headers=auth_header(TENANT_A))
         assert r.status_code == 404
 
     @pytest.mark.asyncio
     async def test_profile_update_no_changes(self, client: AsyncClient):
-        r = await client.patch(
-            f"{API}/users/me", json={}, headers=auth_header(TENANT_A)
-        )
+        r = await client.patch(f"{API}/users/me", json={}, headers=auth_header(TENANT_A))
         assert r.status_code == 422
         assert r.json()["detail"]["code"] == "no_fields"
 
@@ -490,16 +454,12 @@ class TestUsersNegative:
 class TestAttachmentsNegative:
     @pytest.mark.asyncio
     async def test_download_nonexistent(self, client: AsyncClient):
-        r = await client.get(
-            f"{API}/attachments/999999/download", headers=auth_header(TENANT_A)
-        )
+        r = await client.get(f"{API}/attachments/999999/download", headers=auth_header(TENANT_A))
         assert r.status_code == 404
 
     @pytest.mark.asyncio
     async def test_delete_nonexistent(self, client: AsyncClient):
-        r = await client.delete(
-            f"{API}/attachments/999999", headers=auth_header(TENANT_A)
-        )
+        r = await client.delete(f"{API}/attachments/999999", headers=auth_header(TENANT_A))
         assert r.status_code == 404
 
     @pytest.mark.asyncio
@@ -559,16 +519,12 @@ class TestAttachmentsNegative:
 class TestWorkOrdersNegative:
     @pytest.mark.asyncio
     async def test_create_missing_title(self, client: AsyncClient):
-        r = await client.post(
-            f"{API}/work-orders", json={}, headers=auth_header(TENANT_A)
-        )
+        r = await client.post(f"{API}/work-orders", json={}, headers=auth_header(TENANT_A))
         assert r.status_code == 422
 
     @pytest.mark.asyncio
     async def test_get_nonexistent(self, client: AsyncClient):
-        r = await client.get(
-            f"{API}/work-orders/999999", headers=auth_header(TENANT_A)
-        )
+        r = await client.get(f"{API}/work-orders/999999", headers=auth_header(TENANT_A))
         assert r.status_code == 404
 
     @pytest.mark.asyncio
@@ -591,9 +547,7 @@ class TestWorkOrdersNegative:
 
     @pytest.mark.asyncio
     async def test_delete_nonexistent(self, client: AsyncClient):
-        r = await client.delete(
-            f"{API}/work-orders/999999", headers=auth_header(TENANT_A)
-        )
+        r = await client.delete(f"{API}/work-orders/999999", headers=auth_header(TENANT_A))
         assert r.status_code == 404
 
     @pytest.mark.asyncio
@@ -616,23 +570,17 @@ class TestWorkOrdersNegative:
 
     @pytest.mark.asyncio
     async def test_list_page_zero(self, client: AsyncClient):
-        r = await client.get(
-            f"{API}/work-orders?page=0", headers=auth_header(TENANT_A)
-        )
+        r = await client.get(f"{API}/work-orders?page=0", headers=auth_header(TENANT_A))
         assert r.status_code == 422
 
     @pytest.mark.asyncio
     async def test_list_page_size_too_large(self, client: AsyncClient):
-        r = await client.get(
-            f"{API}/work-orders?page_size=101", headers=auth_header(TENANT_A)
-        )
+        r = await client.get(f"{API}/work-orders?page_size=101", headers=auth_header(TENANT_A))
         assert r.status_code == 422
 
     @pytest.mark.asyncio
     async def test_create_without_auth(self, client: AsyncClient):
-        r = await client.post(
-            f"{API}/work-orders", json={"title": "no auth"}
-        )
+        r = await client.post(f"{API}/work-orders", json={"title": "no auth"})
         assert r.status_code == 401
 
     @pytest.mark.asyncio

@@ -25,9 +25,7 @@ logger = logging.getLogger(__name__)
 async def _role_name(session: AsyncSession, role_id: int | None) -> str | None:
     if not role_id:
         return None
-    return await session.scalar(
-        select(Role.name).where(Role.id == role_id)
-    )
+    return await session.scalar(select(Role.name).where(Role.id == role_id))
 
 
 async def list_users(

@@ -21,9 +21,7 @@ def chess_headers(key: str | None = INTEGRATION_KEY) -> dict[str, str]:
 @pytest.fixture()
 async def chess_company(session: AsyncSession) -> Company:
     """Cria a company com slug 'aero-hotel' que a integração espera."""
-    existing = await session.scalar(
-        select(Company).where(Company.slug == CHESS_SLUG)
-    )
+    existing = await session.scalar(select(Company).where(Company.slug == CHESS_SLUG))
     if existing:
         await session.commit()
         return existing
@@ -65,9 +63,7 @@ async def chess_role(session: AsyncSession, chess_company: Company) -> Role:
 
 
 @pytest.fixture()
-async def chess_user(
-    session: AsyncSession, chess_company: Company, chess_role: Role
-) -> User:
+async def chess_user(session: AsyncSession, chess_company: Company, chess_role: Role) -> User:
     """Cria um usuario ativo na company de integração."""
     existing = await session.scalar(
         select(User).where(
@@ -246,9 +242,7 @@ class TestCreateTicket:
         assert r.json()["protocol"].startswith("REG-")
 
     @pytest.mark.asyncio
-    async def test_create_ticket_unsupported_module_returns_422(
-        self, client, chess_user
-    ):
+    async def test_create_ticket_unsupported_module_returns_422(self, client, chess_user):
         body = _ticket_body(email=chess_user.email, module="outro-modulo")
         r = await client.post(
             f"{BASE}/tickets",
@@ -259,9 +253,7 @@ class TestCreateTicket:
         assert r.json()["detail"]["code"] == "unsupported_module"
 
     @pytest.mark.asyncio
-    async def test_create_ticket_invalid_hotel_returns_422(
-        self, client, chess_user
-    ):
+    async def test_create_ticket_invalid_hotel_returns_422(self, client, chess_user):
         body = _ticket_body(email=chess_user.email, hotel="wrong-hotel")
         r = await client.post(
             f"{BASE}/tickets",
@@ -272,9 +264,7 @@ class TestCreateTicket:
         assert r.json()["detail"]["code"] == "invalid_hotel"
 
     @pytest.mark.asyncio
-    async def test_create_ticket_unknown_email_returns_404(
-        self, client, chess_company
-    ):
+    async def test_create_ticket_unknown_email_returns_404(self, client, chess_company):
         body = _ticket_body(email="nobody@test.com")
         r = await client.post(
             f"{BASE}/tickets",
@@ -285,9 +275,7 @@ class TestCreateTicket:
         assert r.json()["detail"]["code"] == "registro_user_not_found"
 
     @pytest.mark.asyncio
-    async def test_create_ticket_invalid_email_format_returns_422(
-        self, client, chess_company
-    ):
+    async def test_create_ticket_invalid_email_format_returns_422(self, client, chess_company):
         body = _ticket_body(email="bad-email")
         r = await client.post(
             f"{BASE}/tickets",
@@ -356,9 +344,7 @@ class TestListTickets:
         assert "history" in item
 
     @pytest.mark.asyncio
-    async def test_list_tickets_unknown_email_returns_404(
-        self, client, chess_company
-    ):
+    async def test_list_tickets_unknown_email_returns_404(self, client, chess_company):
         r = await client.get(
             f"{BASE}/tickets",
             params={"email": "nobody@test.com"},
@@ -412,9 +398,7 @@ class TestTrackTicket:
         assert r.json()["detail"]["code"] == "ticket_not_found"
 
     @pytest.mark.asyncio
-    async def test_track_ticket_unknown_email_returns_404(
-        self, client, chess_company
-    ):
+    async def test_track_ticket_unknown_email_returns_404(self, client, chess_company):
         r = await client.get(
             f"{BASE}/tickets/REG-000001",
             params={"email": "nobody@test.com"},
