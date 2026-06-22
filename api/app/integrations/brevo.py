@@ -1,8 +1,7 @@
-import logging
-
 import httpx
+import structlog
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 BREVO_URL = "https://api.brevo.com/v3/smtp/email"
 
@@ -30,12 +29,16 @@ async def send_email(
     async with httpx.AsyncClient(timeout=30) as client:
         r = await client.post(
             BREVO_URL,
-            headers={"api-key": api_key, "accept": "application/json", "content-type": "application/json"},
+            headers={
+                "api-key": api_key,
+                "accept": "application/json",
+                "content-type": "application/json",
+            },
             json=payload,
         )
     if r.status_code >= 400:
-        logger.error("brevo failed: %s %s", r.status_code, r.text[:500])
+        logger.error("brevo_failed", status=r.status_code, body=r.text[:500])
         return {"error": True, "status": r.status_code}
     data = r.json()
-    logger.info("email sent to=%s subject=%s id=%s", to_email, subject, data.get("messageId"))
+    logger.info("email_sent", to=to_email, subject=subject, message_id=data.get("messageId"))
     return data

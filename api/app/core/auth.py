@@ -1,6 +1,7 @@
 from typing import Annotated
 
 import jwt
+import structlog
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import text
@@ -28,4 +29,5 @@ async def current_user(
         raise HTTPException(status_code=401, detail={"code": "inactive_user"})
     cid = int(user.company_id)
     await session.execute(text(f"SET app.current_company_id = '{cid}'"))
+    structlog.contextvars.bind_contextvars(company_id=cid, user_id=user.id)
     return user

@@ -45,7 +45,9 @@ async def list_records(
 
 
 async def get_record(
-    session: AsyncSession, company_id: int, record_id: int,
+    session: AsyncSession,
+    company_id: int,
+    record_id: int,
 ) -> tuple[MaintenanceRecord, str | None] | None:
     row = (
         await session.execute(
@@ -96,14 +98,24 @@ async def create_record(
     await session.commit()
     await session.refresh(rec)
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="maintenance", entity_id=rec.id, event_type="create",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="maintenance",
+        entity_id=rec.id,
+        event_type="create",
     )
     await session.commit()
     await notify_record_event(
-        session, company_id=company_id, actor_name=user_name, actor_email=user_email,
-        event="create", title=rec.title, module="Manutenção",
-        owner_user_id=owner_id, notify_user_ids=notify_user_ids,
+        session,
+        company_id=company_id,
+        actor_name=user_name,
+        actor_email=user_email,
+        event="create",
+        title=rec.title,
+        module="Manutenção",
+        owner_user_id=owner_id,
+        notify_user_ids=notify_user_ids,
     )
     owner_name = await session.scalar(select(User.name).where(User.id == owner_id))
     return rec, owner_name
@@ -133,29 +145,44 @@ async def update_record(
     diff = compute_diff(before, {k: str(v) for k, v in updates.items() if k != "notify_user_ids"})
     if diff:
         await record_event(
-            session, company_id=company_id, user_id=user_id,
-            entity_type="maintenance", entity_id=rec.id,
-            event_type="update", diff=diff,
+            session,
+            company_id=company_id,
+            user_id=user_id,
+            entity_type="maintenance",
+            entity_id=rec.id,
+            event_type="update",
+            diff=diff,
         )
     await session.commit()
     await session.refresh(rec)
     if diff:
         detail = "; ".join(f"{k}: {v}" for k, v in diff.items())
         await notify_record_event(
-            session, company_id=company_id, actor_name=user_name, actor_email=user_email,
-            event="update", title=rec.title, module="Manutenção",
-            owner_user_id=rec.owner_user_id, created_by_user_id=rec.created_by_user_id,
-            notify_user_ids=rec.notify_user_ids, detail=detail,
+            session,
+            company_id=company_id,
+            actor_name=user_name,
+            actor_email=user_email,
+            event="update",
+            title=rec.title,
+            module="Manutenção",
+            owner_user_id=rec.owner_user_id,
+            created_by_user_id=rec.created_by_user_id,
+            notify_user_ids=rec.notify_user_ids,
+            detail=detail,
         )
     owner_name = (
         await session.scalar(select(User.name).where(User.id == rec.owner_user_id))
-        if rec.owner_user_id else None
+        if rec.owner_user_id
+        else None
     )
     return rec, owner_name
 
 
 async def delete_record(
-    session: AsyncSession, company_id: int, user_id: int, record_id: int,
+    session: AsyncSession,
+    company_id: int,
+    user_id: int,
+    record_id: int,
 ) -> bool:
     rec = await session.scalar(
         select(MaintenanceRecord).where(
@@ -168,8 +195,12 @@ async def delete_record(
         return False
     rec.deleted_at = datetime.now()
     await record_event(
-        session, company_id=company_id, user_id=user_id,
-        entity_type="maintenance", entity_id=rec.id, event_type="delete",
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="maintenance",
+        entity_id=rec.id,
+        event_type="delete",
     )
     await session.commit()
     return True

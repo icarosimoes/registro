@@ -160,6 +160,32 @@
 
 8. ~~**App mobile / PWA**~~ — ✅ PWA implementado com manifest, service worker (network-first para navegação, cache-first para assets), ícones SVG, meta tags Apple, safe-area-inset e display standalone.
 
+## P7 — melhorias de engenharia
+
+### Alta — bloqueiam produção
+
+1. ~~**Structured logging com structlog**~~ — ✅ `app/core/logging.py` configura structlog com contextvars (company_id, user_id, request_id). Middleware em `main.py` limpa/vincula contexto por request. `auth.py` vincula company_id/user_id ao autenticar. Todos os 5 módulos que usavam `logging.getLogger` migrados para `structlog.get_logger()`. JSON em produção, console colorido em dev.
+2. ~~**Testes de integração contra PostgreSQL real**~~ — ✅ `conftest.py` detecta `DATABASE_URL` ou `TEST_DATABASE_URL` e usa PostgreSQL quando disponível (SQLite como fallback local). Em PostgreSQL, `_current_user_test` seta `SET LOCAL app.current_company_id` para exercitar RLS. CI já roda com PostgreSQL 17 + Alembic migrations. `docker-compose.test.yml` com PostgreSQL tmpfs para testes locais. `aiosqlite` adicionado a dev dependencies.
+3. **CI mais robusto** — adicionar validação de migrations (alembic check), typecheck com mypy no CI, e gate de cobertura mínima com pytest-cov.
+
+### Média — valor operacional
+
+4. **Cache e performance** — Redis com TTL curto (30-60s) nos endpoints pesados: `/dashboard/metrics`, `/roles/permissions`. Avaliar cache por tenant.
+5. **Background tasks** — mover geração de PDF, envio de notificações (Evolution/Brevo) e `generate` de checklists/preventivas para background. Começar com `BackgroundTasks` do FastAPI, evoluir para Celery/ARQ se necessário.
+6. **Exportação em lote** — CSV/Excel para OS, manutenção, checklists e estoque. Hotelaria sempre pede relatórios exportáveis.
+7. **Versionamento da API** — estratégia de breaking changes com header `Accept-Version` ou prefixo `/v2`. Essencial antes de integrações externas além do Chess Hotel.
+
+### Média — qualidade de código
+
+8. ~~**Schemas inline no router**~~ — ✅ `maintenance/schemas.py` e `bulletin/schemas.py` criados. Routers importam de schemas ao invés de definir Pydantic models inline. Consistente com o padrão dos outros domínios.
+9. **Tipagem dos retornos de service** — services retornam `Row` genérico ou `dict`. Definir TypedDicts ou dataclasses para os retornos dos services, melhorando autocompletion e refactoring.
+10. **Testes de permissão** — validar que usuário com apenas `meeting.view` recebe 403 ao tentar `DELETE /meetings/{id}`. Testes atuais usam wildcard `*`, não exercitam o ACL real.
+
+### Baixa — preparação para escala
+
+11. **Paginação por cursor** — substituir offset-based pagination por cursor-based nos módulos com mais volume (ocorrências, OS, timeline). Offset degrada com N grande.
+12. **Backup e deploy** — pg_dump agendado ou WAL archiving. Plano de deploy com Docker Swarm (já planejado) documentado antes do corte.
+
 ## Definition of Done por módulo
 
 Contrato, autorização, isolamento por empresa, estados de UI, CRUD necessário, anexos/exportações, testes, comparação de dados, observabilidade, documentação e rollback precisam estar aprovados antes do corte. Uma entrega não está concluída se a documentação pertinente em `/docs` estiver ausente ou desatualizada.
