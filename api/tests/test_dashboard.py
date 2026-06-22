@@ -4,7 +4,9 @@ import pytest
 
 from tests.conftest import TENANT_A, USE_POSTGRES, auth_header
 
-pytestmark = pytest.mark.skipif(not USE_POSTGRES, reason="Dashboard uses raw SQL requiring PostgreSQL")
+pytestmark = pytest.mark.skipif(
+    not USE_POSTGRES, reason="Dashboard uses raw SQL requiring PostgreSQL"
+)
 
 HEADERS_A = auth_header(TENANT_A, 1)
 DASH_URL = "/api/v1/dashboard/metrics"

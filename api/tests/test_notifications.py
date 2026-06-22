@@ -1,7 +1,6 @@
 """Testes de notificações via API."""
 
 import pytest
-from sqlalchemy import select
 
 from app.models import Notification
 from tests.conftest import TENANT_A, TENANT_B, auth_header

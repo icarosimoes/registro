@@ -28,9 +28,7 @@ def include_object(object_, name, type_, reflected, compare_to):
     """
     if type_ in {"index", "foreign_key_constraint"}:
         return False
-    if type_ == "column" and compare_to is not None:
-        return False
-    return True
+    return not (type_ == "column" and compare_to is not None)
 
 
 def run_migrations_offline() -> None:

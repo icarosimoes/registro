@@ -3,7 +3,6 @@
 from unittest.mock import patch
 
 from app.core.storage import (
-    ALLOWED_CONTENT_TYPES,
     ALLOWED_EXTENSIONS,
     _check_magic,
     build_object_key,
