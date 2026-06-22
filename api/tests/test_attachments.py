@@ -12,7 +12,10 @@ def mock_storage():
     with (
         patch("app.domain.attachments.service.upload_file", return_value="fake/key.pdf"),
         patch("app.domain.attachments.service.delete_file"),
-        patch("app.domain.attachments.router.download_file", return_value=(b"content", "application/pdf")),
+        patch(
+            "app.domain.attachments.router.download_file",
+            return_value=(b"content", "application/pdf"),
+        ),
     ):
         yield
 
