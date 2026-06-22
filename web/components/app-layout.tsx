@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  ArrowRightLeft, Bell, BookOpen, Building2, CalendarCheck, ClipboardCheck, ClipboardList,
-  FileClock, FileText, HardHat, Home, Menu, MessageSquareText, Package,
-  PanelLeftClose, PanelLeftOpen, Receipt,
-  Settings, ShieldCheck, Timer, Users, Wrench, X,
+  ArrowRightLeft, Bell, BookOpen, Building2, CalendarCheck, ChevronDown,
+  ClipboardCheck, ClipboardList, FileClock, FileText, HardHat, Home,
+  MapPin, Menu, MessageSquareText, Package, PanelLeftClose, PanelLeftOpen,
+  Receipt, Settings, Shield, ShieldCheck, Timer, UserCog, Users, Wrench, X,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -31,15 +31,27 @@ const navOperation = [
 
 const navAdmin = [
   { slug: "procedimentos", label: "Procedimentos", icon: BookOpen, href: "/procedimentos" },
-  { slug: "cadastros", label: "Cadastros", icon: Building2, href: "/cadastros" },
-  { slug: "usuarios", label: "Usuários e acesso", icon: ShieldCheck, href: "/usuarios" },
+  { slug: "usuarios", label: "Usuários", icon: ShieldCheck, href: "/usuarios" },
+  { slug: "perfis", label: "Perfis de acesso", icon: Shield, href: "/perfis" },
   { slug: "mural", label: "Mural de avisos", icon: Bell, href: "/mural" },
+];
+
+const cadastrosSub = [
+  { slug: "cadastros-setores", label: "Setores", icon: Building2, href: "/cadastros/setores" },
+  { slug: "cadastros-locais", label: "Locais", icon: MapPin, href: "/cadastros/locais" },
+  { slug: "cadastros-funcoes", label: "Funções", icon: UserCog, href: "/cadastros/funcoes" },
 ];
 
 export function AppLayout({ user, children }: { user: TenantUser; children: ReactNode }) {
   const pathname = usePathname();
-  const currentSlug = pathname === "/" || pathname === "/dashboard" ? "dashboard" : pathname.replace(/^\//, "").split("/")[0];
+  const pathParts = pathname.replace(/^\//, "").split("/");
+  const currentSlug = pathname === "/" || pathname === "/dashboard" ? "dashboard" : pathParts[0];
+  const isCadastrosPage = currentSlug === "cadastros";
+  const cadastrosSubSlug = isCadastrosPage && pathParts[1]
+    ? `cadastros-${pathParts[1]}`
+    : isCadastrosPage ? "cadastros" : "";
   const [collapsed, setCollapsed] = useState(false);
+  const [cadastrosOpen, setCadastrosOpen] = useState(isCadastrosPage);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [panel, setPanel] = useState<"notifications" | "profile" | null>(null);
 
@@ -73,6 +85,20 @@ export function AppLayout({ user, children }: { user: TenantUser; children: Reac
             <Link key={slug} href={href} className={`nav-item ${currentSlug === slug ? "active" : ""}`} title={collapsed ? label : undefined}>
               <Icon size={19} aria-hidden="true" />
               {!collapsed && <span>{label}</span>}
+            </Link>
+          ))}
+          <button
+            className={`nav-item ${isCadastrosPage ? "active" : ""}`}
+            onClick={() => setCadastrosOpen((v) => !v)}
+            title={collapsed ? "Cadastros" : undefined}
+          >
+            <Building2 size={19} aria-hidden="true" />
+            {!collapsed && <><span>Cadastros</span><ChevronDown size={14} className={`nav-chevron ${cadastrosOpen ? "open" : ""}`} /></>}
+          </button>
+          {cadastrosOpen && !collapsed && cadastrosSub.map(({ slug, label, icon: SubIcon, href }) => (
+            <Link key={slug} href={href} className={`nav-item nav-sub-item ${cadastrosSubSlug === slug ? "active" : ""}`}>
+              {SubIcon ? <SubIcon size={16} aria-hidden="true" /> : <span className="nav-sub-dot" />}
+              <span>{label}</span>
             </Link>
           ))}
         </nav>

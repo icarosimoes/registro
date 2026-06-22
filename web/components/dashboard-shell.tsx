@@ -12,7 +12,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { TenantUser } from "@/lib/api";
 import Link from "next/link";
 
@@ -195,7 +195,9 @@ export function DashboardShell({ user, metrics }: { user?: TenantUser; metrics?:
   const displayName = user?.name ?? "Usuário";
   const firstName = displayName.split(" ")[0];
 
-  const { greeting, dateLabel } = useMemo(formatGreeting, []);
+  const [greetingData, setGreetingData] = useState({ greeting: "", dateLabel: "" });
+  useEffect(() => setGreetingData(formatGreeting()), []);
+  const { greeting, dateLabel } = greetingData;
 
   const tickets: Ticket[] = useMemo(() => {
     if (!metrics?.recent?.length) return [];

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, UploadFile
 from pydantic import BaseModel, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,10 +15,13 @@ from app.domain.users.service import (
     create_user,
     delete_user,
     get_role_name,
+    get_sector_name,
+    invite_user,
     list_users,
     search_users,
     update_profile,
     update_user,
+    upload_avatar,
 )
 
 router = APIRouter(prefix="/users", tags=["users"])
@@ -29,7 +32,11 @@ class UserSummary(BaseModel):
     name: str
     email: str
     phone: str | None = None
+    role_id: int | None = None
     role_name: str | None
+    job_title: str | None = None
+    sector_name: str | None = None
+    avatar_url: str | None = None
     active: bool
     updated_at: datetime
 
@@ -47,6 +54,8 @@ class UserCreate(BaseModel):
     phone: str | None = None
     password: str
     role_id: int | None = None
+    job_title: str | None = None
+    sector_id: int | None = None
     active: bool = True
 
     @field_validator("password")
@@ -61,6 +70,9 @@ class UserUpdate(BaseModel):
     phone: str | None = None
     password: str | None = None
     role_id: int | None = None
+    job_title: str | None = None
+    sector_id: int | None = None
+    avatar_url: str | None = None
     active: bool | None = None
 
     @field_validator("password")
@@ -84,10 +96,32 @@ class ProfileUpdate(BaseModel):
         return v
 
 
+class UserInvite(BaseModel):
+    name: str
+    email: str
+    phone: str | None = None
+    role_id: int | None = None
+    job_title: str | None = None
+    sector_id: int | None = None
+    active: bool = True
+
+
 class UserOption(BaseModel):
     id: int
     name: str
     email: str
+
+
+async def _to_summary(session: AsyncSession, record) -> UserSummary:
+    role_name = await get_role_name(session, record.role_id)
+    sector_name = await get_sector_name(session, record.sector_id)
+    return UserSummary(
+        id=record.id, name=record.name, email=record.email, phone=record.phone,
+        role_id=record.role_id, role_name=role_name,
+        job_title=record.job_title, sector_name=sector_name,
+        avatar_url=record.avatar_url,
+        active=record.active, updated_at=record.updated_at,
+    )
 
 
 @router.patch("/me", response_model=UserSummary)
@@ -104,11 +138,7 @@ async def update_profile_endpoint(
     record = await update_profile(session, user.id, user.company_id, updates)
     if record is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
-    role_name = await get_role_name(session, record.role_id)
-    return UserSummary(
-        id=record.id, name=record.name, email=record.email, phone=record.phone,
-        role_name=role_name, active=record.active, updated_at=record.updated_at,
-    )
+    return await _to_summary(session, record)
 
 
 @router.get("", response_model=UserListResponse)
@@ -124,9 +154,12 @@ async def list_users_endpoint(
         items=[
             UserSummary(
                 id=u.id, name=u.name, email=u.email, phone=u.phone,
-                role_name=role_name, active=u.active, updated_at=u.updated_at,
+                role_id=u.role_id, role_name=role_name,
+                job_title=u.job_title, sector_name=sector_name,
+                avatar_url=u.avatar_url,
+                active=u.active, updated_at=u.updated_at,
             )
-            for u, role_name in rows
+            for u, role_name, sector_name in rows
         ],
         total=total, page=page, page_size=page_size,
     )
@@ -152,17 +185,14 @@ async def create_user_endpoint(
         session, user.company_id, user.id,
         name=body.name, email=body.email, phone=body.phone,
         password=body.password, role_id=body.role_id, active=body.active,
+        job_title=body.job_title, sector_id=body.sector_id,
     )
     if record is None:
         raise HTTPException(
             status_code=409,
             detail={"code": "conflict", "message": "Não foi possível criar o usuário"},
         )
-    role_name = await get_role_name(session, record.role_id)
-    return UserSummary(
-        id=record.id, name=record.name, email=record.email, phone=record.phone,
-        role_name=role_name, active=record.active, updated_at=record.updated_at,
-    )
+    return await _to_summary(session, record)
 
 
 @router.patch("/{user_id}", response_model=UserSummary)
@@ -176,11 +206,55 @@ async def update_user_endpoint(
     record = await update_user(session, user.company_id, user.id, user_id, updates)
     if record is None:
         raise HTTPException(status_code=404, detail={"code": "not_found"})
-    role_name = await get_role_name(session, record.role_id)
-    return UserSummary(
-        id=record.id, name=record.name, email=record.email, phone=record.phone,
-        role_name=role_name, active=record.active, updated_at=record.updated_at,
+    return await _to_summary(session, record)
+
+
+@router.post("/invite", response_model=UserSummary, status_code=201)
+@limiter.limit("10/minute")
+async def invite_user_endpoint(
+    request: Request,
+    body: UserInvite,
+    user: Annotated[AuthenticatedUser, require_permission("user.create")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> UserSummary:
+    record = await invite_user(
+        session, user.company_id, user.id,
+        name=body.name, email=body.email, phone=body.phone,
+        role_id=body.role_id, job_title=body.job_title,
+        sector_id=body.sector_id, active=body.active,
     )
+    if record is None:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "conflict", "message": "E-mail já cadastrado"},
+        )
+    return await _to_summary(session, record)
+
+
+@router.post("/{user_id}/avatar", response_model=UserSummary)
+async def upload_avatar_endpoint(
+    user_id: int,
+    file: UploadFile,
+    user: Annotated[AuthenticatedUser, require_permission("user.edit")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> UserSummary:
+    data = await file.read()
+    max_size = 2 * 1024 * 1024
+    if len(data) > max_size:
+        raise HTTPException(status_code=400, detail={"code": "file_too_large"})
+    try:
+        record = await upload_avatar(
+            session, user.company_id, user.id, user_id,
+            data=data, filename=file.filename or "avatar.jpg",
+            content_type=file.content_type or "image/jpeg",
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=400, detail={"code": "invalid_file", "message": str(e)}
+        ) from e
+    if record is None:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+    return await _to_summary(session, record)
 
 
 @router.delete("/{user_id}", status_code=204)

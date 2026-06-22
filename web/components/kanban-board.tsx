@@ -4,6 +4,7 @@ import {
   createWorkOrderAction,
   deleteWorkOrderAction,
   transitionWorkOrderAction,
+  updateWorkOrderAction,
 } from "@/app/actions";
 import type { TenantUser } from "@/lib/api";
 import type { ModuleDefinition, ModuleRecord } from "@/lib/module-definitions";
@@ -54,6 +55,7 @@ export function KanbanBoard({
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [showCreate, setShowCreate] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<ModuleRecord | null>(null);
   const [draggedId, setDraggedId] = useState<number | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -189,7 +191,7 @@ export function KanbanBoard({
                     draggable={canEdit}
                     onDragStart={(e) => handleDragStart(e, record.id, col.key)}
                     onDragEnd={() => { setDraggedId(null); setDragOverColumn(null); }}
-                    onClick={() => router.push(`/ordens-servico?selected=${record.id}`)}
+                    onClick={() => canEdit ? setEditingRecord(record) : undefined}
                   >
                     <div className="kanban-card-header">
                       <span className="kanban-card-id">
@@ -239,6 +241,14 @@ export function KanbanBoard({
         <CreateWorkOrderModal
           onClose={() => setShowCreate(false)}
           onCreated={() => { setShowCreate(false); router.refresh(); }}
+        />
+      )}
+
+      {editingRecord && (
+        <EditWorkOrderModal
+          record={editingRecord}
+          onClose={() => setEditingRecord(null)}
+          onSaved={() => { setEditingRecord(null); router.refresh(); }}
         />
       )}
     </>
@@ -343,6 +353,100 @@ function CreateWorkOrderModal({
             <button type="button" onClick={onClose}>Cancelar</button>
             <button type="submit" disabled={isPending || !title.trim()}>
               {isPending ? "Criando…" : "Criar OS"}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function EditWorkOrderModal({
+  record,
+  onClose,
+  onSaved,
+}: {
+  record: ModuleRecord;
+  onClose: () => void;
+  onSaved: () => void;
+}) {
+  const [title, setTitle] = useState(record.title);
+  const [description, setDescription] = useState(record.description ?? "");
+  const [priority, setPriority] = useState(record.priority ?? "");
+  const [category, setCategory] = useState(record.category === "Geral" ? "" : record.category);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!title.trim()) return;
+
+    startTransition(async () => {
+      const result = await updateWorkOrderAction(record.id, {
+        title: title.trim(),
+        description: description.trim() || undefined,
+        priority: priority || undefined,
+        category: category.trim() || undefined,
+      });
+      if (!result.ok) {
+        setError(result.error ?? "Erro ao atualizar OS.");
+        return;
+      }
+      onSaved();
+    });
+  };
+
+  return (
+    <div className="modal-layer" onClick={onClose}>
+      <div className="module-panel kanban-create-modal" onClick={(e) => e.stopPropagation()}>
+        <header className="kanban-modal-header">
+          <h2>Editar OS #{record.id}</h2>
+          <button onClick={onClose} aria-label="Fechar"><X size={20} /></button>
+        </header>
+        <form onSubmit={handleSubmit} className="kanban-create-form">
+          {error && <div className="kanban-form-error">{error}</div>}
+          <label>
+            Título *
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              autoFocus
+            />
+          </label>
+          <label>
+            Descrição
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={3}
+            />
+          </label>
+          <div className="form-grid">
+            <label>
+              Prioridade
+              <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+                <option value="">Sem prioridade</option>
+                {PRIORITIES.map((p) => (
+                  <option key={p.value} value={p.value}>{p.label}</option>
+                ))}
+              </select>
+            </label>
+            <label>
+              Categoria
+              <input
+                type="text"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="Ex: Elétrica, Hidráulica"
+              />
+            </label>
+          </div>
+          <footer>
+            <button type="button" onClick={onClose}>Cancelar</button>
+            <button type="submit" disabled={isPending || !title.trim()}>
+              {isPending ? "Salvando…" : "Salvar"}
             </button>
           </footer>
         </form>

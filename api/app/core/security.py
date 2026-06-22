@@ -94,3 +94,31 @@ def decode_platform_token(token: str, secret: str) -> dict[str, Any]:
     if payload.get("type") != "platform_access":
         raise jwt.InvalidTokenError("tipo de token inválido")
     return payload
+
+
+def create_invite_token(
+    *,
+    user_id: int,
+    company_id: int,
+    secret: str,
+    hours: int = 48,
+) -> str:
+    now = datetime.now(UTC)
+    return jwt.encode(
+        {
+            "sub": str(user_id),
+            "company_id": company_id,
+            "type": "invite",
+            "iat": now,
+            "exp": now + timedelta(hours=hours),
+        },
+        secret,
+        algorithm=ALGORITHM,
+    )
+
+
+def decode_invite_token(token: str, secret: str) -> dict[str, Any]:
+    payload: dict[str, Any] = jwt.decode(token, secret, algorithms=[ALGORITHM])
+    if payload.get("type") != "invite":
+        raise jwt.InvalidTokenError("tipo de token inválido")
+    return payload

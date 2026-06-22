@@ -11,6 +11,7 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `POST` | `/auth/login` | pública (10/min) | JWT access + refresh e perfil |
 | `POST` | `/auth/refresh` | pública (20/min) | renova tokens via refresh token |
 | `GET` | `/auth/me` | Bearer | perfil revalidado no PostgreSQL |
+| `POST` | `/auth/set-password` | pública (5/min) | define senha via token de convite |
 | `GET` | `/occurrences` | `occurrence.view` | ocorrências paginadas e isoladas por empresa |
 | `GET` | `/occurrences/{id}` | `occurrence.view` | detalhe com participantes |
 | `POST` | `/occurrences` | `occurrence.create` | cria ocorrência |
@@ -30,6 +31,8 @@ Base local: `http://localhost:8000/api/v1`. OpenAPI: `http://localhost:8000/docs
 | `GET` | `/users` | `user.view` | usuários paginados do tenant |
 | `GET` | `/users/search?q=` | `user.view` | autocomplete de usuários ativos (max 10) |
 | `POST` | `/users` | `user.create` | cria usuário |
+| `POST` | `/users/invite` | `user.create` (10/min) | cria usuário e envia convite por e-mail |
+| `POST` | `/users/{id}/avatar` | `user.edit` | upload de foto (JPEG/PNG/WebP, max 2MB) |
 | `PATCH` | `/users/{id}` | `user.edit` | atualiza usuário |
 | `DELETE` | `/users/{id}` | `user.delete` | soft delete de usuário |
 | `GET` | `/roles` | `user.view` | lista roles do tenant com contagem de usuários |

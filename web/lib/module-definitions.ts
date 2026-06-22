@@ -58,6 +58,11 @@ export type ModuleRecord = {
   notes_maintenance?: string;
   notes_ti?: string;
   notes_security?: string;
+  roleId?: number;
+  jobTitle?: string;
+  sectorName?: string;
+  avatarUrl?: string;
+  sectorId?: number;
 };
 
 export type ModuleDefinition = {
@@ -74,6 +79,10 @@ export type ModuleDefinition = {
     page: number;
     pageSize: number;
     search?: string;
+  };
+  extraData?: {
+    roles?: { id: number; name: string }[];
+    sectors?: { id: number; name: string }[];
   };
 };
 
@@ -155,12 +164,23 @@ export const moduleDefinitions: Record<string, ModuleDefinition> = {
   },
   cadastros: {
     slug: "cadastros", title: "Cadastros", singular: "cadastro", action: "Novo cadastro",
-    description: "Gerencie setores, locais, funções e procedimentos.",
-    records: [
-      { id: 51, title: "Governança", category: "Setor", owner: "Administração", status: "Ativo", updatedAt: today },
-      { id: 50, title: "Bloco administrativo", category: "Local", owner: "Administração", status: "Ativo", updatedAt: "18/06/2026" },
-      { id: 49, title: "Supervisor de operação", category: "Função", owner: "Recursos humanos", status: "Ativo", updatedAt: "17/06/2026" },
-    ],
+    description: "Gerencie setores, locais e funções da empresa.",
+    records: [],
+  },
+  "cadastros/setores": {
+    slug: "cadastros/setores", title: "Setores", singular: "setor", action: "Novo setor",
+    description: "Departamentos e setores da operação.",
+    records: [],
+  },
+  "cadastros/locais": {
+    slug: "cadastros/locais", title: "Locais", singular: "local", action: "Novo local",
+    description: "Locais, unidades habitacionais e áreas.",
+    records: [],
+  },
+  "cadastros/funcoes": {
+    slug: "cadastros/funcoes", title: "Funções", singular: "função", action: "Nova função",
+    description: "Funções e cargos operacionais.",
+    records: [],
   },
   usuarios: {
     slug: "usuarios", title: "Usuários e acesso", singular: "usuário", action: "Convidar usuário",

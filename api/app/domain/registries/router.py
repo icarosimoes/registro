@@ -12,6 +12,7 @@ from app.domain.registries.service import (
     MODELS,
     create_registry,
     delete_registry,
+    list_options,
     list_registries,
     update_registry,
 )
@@ -42,6 +43,21 @@ class RegistryUpdate(BaseModel):
     name: str | None = None
 
 
+class RegistryOption(BaseModel):
+    id: int
+    name: str
+
+
+@router.get("/options/{category}", response_model=list[RegistryOption])
+async def registry_options(
+    category: str,
+    user: Annotated[AuthenticatedUser, require_permission("registry.view")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> list[RegistryOption]:
+    items = await list_options(session, user.company_id, category)
+    return [RegistryOption(**i) for i in items]
+
+
 @router.get("", response_model=RegistryListResponse)
 async def list_registries_endpoint(
     user: Annotated[AuthenticatedUser, require_permission("registry.view")],
@@ -49,8 +65,11 @@ async def list_registries_endpoint(
     page: Annotated[int, Query(ge=1)] = 1,
     page_size: Annotated[int, Query(ge=1, le=100)] = 20,
     search: str | None = None,
+    category: str | None = None,
 ) -> RegistryListResponse:
-    rows, total = await list_registries(session, user.company_id, page, page_size, search)
+    rows, total = await list_registries(
+        session, user.company_id, page, page_size, search, category,
+    )
     return RegistryListResponse(
         items=[
             RegistrySummary(

@@ -10,8 +10,8 @@ from app.models.operations import WORK_ORDER_STATUSES
 
 TRANSITIONS: dict[str, list[str]] = {
     "aberta": ["em_andamento"],
-    "em_andamento": ["aguardando_material", "concluida"],
-    "aguardando_material": ["em_andamento"],
+    "em_andamento": ["aberta", "aguardando_material", "concluida"],
+    "aguardando_material": ["em_andamento", "aberta", "concluida"],
     "concluida": ["validada", "em_andamento"],
     "validada": [],
 }

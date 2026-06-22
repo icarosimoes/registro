@@ -16,5 +16,11 @@ async def require_session() -> AsyncIterator[AsyncSession]:
     async with SessionLocal() as session:
         try:
             yield session
+        except Exception:
+            await session.rollback()
+            raise
         finally:
-            await session.execute(text("RESET app.current_company_id"))
+            try:
+                await session.execute(text("RESET app.current_company_id"))
+            except Exception:
+                await session.rollback()

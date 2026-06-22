@@ -1,4 +1,4 @@
-const CACHE_NAME = "registro-v1";
+const CACHE_NAME = "registro-v2";
 const PRECACHE = ["/", "/login"];
 
 self.addEventListener("install", (event) => {
@@ -22,6 +22,8 @@ self.addEventListener("fetch", (event) => {
   if (request.method !== "GET") return;
 
   const url = new URL(request.url);
+
+  if (url.protocol !== "http:" && url.protocol !== "https:") return;
 
   // Skip API calls and auth — always network
   if (url.pathname.startsWith("/api") || url.pathname.startsWith("/login")) return;

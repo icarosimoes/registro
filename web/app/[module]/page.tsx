@@ -107,29 +107,49 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
         name: string;
         email: string;
         phone: string | null;
+        role_id: number | null;
         role_name: string | null;
+        job_title: string | null;
+        sector_name: string | null;
+        avatar_url: string | null;
         active: boolean;
         updated_at: string;
       };
       type UserPage = { items: UserItem[]; total: number; page: number; page_size: number };
+      type RoleItem = { id: number; code: string; name: string; permission_codes: string[]; user_count: number };
+      type RolePage = { items: RoleItem[]; total: number };
+      type SectorItem = { id: number; name: string; category: string };
+      type SectorPage = { items: SectorItem[]; total: number };
       try {
         const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
         const search = query.search ?? "";
         const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
-        const data = await tenantFetch<UserPage>(`/users?page=${pg}&page_size=20${searchParam}`);
+        const [data, rolesData, sectorsData] = await Promise.all([
+          tenantFetch<UserPage>(`/users?page=${pg}&page_size=20${searchParam}`),
+          tenantFetch<RolePage>("/roles?page=1&page_size=100"),
+          tenantFetch<SectorPage>("/registries?category=setor&page=1&page_size=100"),
+        ]);
         hydratedDefinition = {
           ...definition,
           source: "api",
           records: data.items.map((item) => ({
             id: item.id,
             title: item.name,
-            category: item.role_name ?? "Sem cargo",
+            category: item.role_name ?? "Sem perfil",
             owner: item.email,
             phone: item.phone ?? undefined,
             status: item.active ? "Ativo" : "Inativo",
             updatedAt: new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
+            roleId: item.role_id ?? undefined,
+            jobTitle: item.job_title ?? undefined,
+            sectorName: item.sector_name ?? undefined,
+            avatarUrl: item.avatar_url ?? undefined,
           })),
           serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
+          extraData: {
+            roles: rolesData.items.map((r) => ({ id: r.id, name: r.name })),
+            sectors: sectorsData.items.map((s) => ({ id: s.id, name: s.name })),
+          },
         };
       } catch (error) {
         if (error instanceof Error && error.message === "unauthorized") throw error;

@@ -1,3 +1,5 @@
+import logging
+import secrets
 from datetime import datetime
 
 import bcrypt
@@ -5,7 +7,11 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.audit import compute_diff, record_event
-from app.models import Role, User
+from app.core.config import get_settings
+from app.core.storage import build_object_key, upload_file, validate_file
+from app.models import Role, Sector, User
+
+logger = logging.getLogger(__name__)
 
 
 async def _role_name(session: AsyncSession, role_id: int | None) -> str | None:
@@ -28,8 +34,9 @@ async def list_users(
     total = await session.scalar(select(func.count(User.id)).where(*filters)) or 0
     rows = (
         await session.execute(
-            select(User, Role.name)
+            select(User, Role.name, Sector.name)
             .outerjoin(Role, Role.id == User.role_id)
+            .outerjoin(Sector, Sector.id == User.sector_id)
             .where(*filters)
             .order_by(User.name)
             .offset((page - 1) * page_size)
@@ -65,6 +72,8 @@ async def create_user(
     password: str,
     role_id: int | None,
     active: bool,
+    job_title: str | None = None,
+    sector_id: int | None = None,
 ) -> User | None:
     existing = await session.scalar(
         select(User.id).where(
@@ -85,6 +94,8 @@ async def create_user(
         password=password_hash,
         role_id=role_id,
         active=active,
+        job_title=job_title,
+        sector_id=sector_id,
     )
     session.add(record)
     await session.flush()
@@ -215,3 +226,108 @@ async def delete_user(
 
 async def get_role_name(session: AsyncSession, role_id: int | None) -> str | None:
     return await _role_name(session, role_id)
+
+
+async def get_sector_name(session: AsyncSession, sector_id: int | None) -> str | None:
+    if not sector_id:
+        return None
+    return await session.scalar(select(Sector.name).where(Sector.id == sector_id))
+
+
+async def invite_user(
+    session: AsyncSession,
+    company_id: int,
+    actor_id: int,
+    *,
+    name: str,
+    email: str,
+    phone: str | None = None,
+    role_id: int | None = None,
+    job_title: str | None = None,
+    sector_id: int | None = None,
+    active: bool = True,
+) -> User | None:
+    temp_password = secrets.token_urlsafe(24)
+    record = await create_user(
+        session, company_id, actor_id,
+        name=name, email=email, phone=phone,
+        password=temp_password, role_id=role_id, active=active,
+        job_title=job_title, sector_id=sector_id,
+    )
+    if record is None:
+        return None
+
+    from app.core.security import create_invite_token
+    settings = get_settings()
+    token = create_invite_token(
+        user_id=record.id, company_id=company_id, secret=settings.jwt_secret,
+    )
+    invite_url = f"{settings.registro_web_url}/definir-senha?token={token}"
+
+    from app.integrations.brevo import send_email
+    await send_email(
+        api_key=settings.brevo_api_key,
+        from_address=settings.mail_from_address,
+        from_name=settings.mail_from_name,
+        to_email=record.email,
+        to_name=record.name,
+        subject="Bem-vindo ao Registro — Defina sua senha",
+        html=(
+            f"<h2>Bem-vindo ao Registro</h2>"
+            f"<p>Olá {record.name},</p>"
+            f"<p>Você foi convidado para acessar o sistema. "
+            f"Clique no link abaixo para definir sua senha:</p>"
+            f'<p><a href="{invite_url}">Definir minha senha</a></p>'
+            f"<p>Este link expira em 48 horas.</p>"
+        ),
+    )
+    logger.info("invite_sent user_id=%s email=%s", record.id, record.email)
+    return record
+
+
+async def upload_avatar(
+    session: AsyncSession,
+    company_id: int,
+    actor_id: int,
+    user_id: int,
+    *,
+    data: bytes,
+    filename: str,
+    content_type: str,
+) -> User | None:
+    record = await session.scalar(
+        select(User).where(
+            User.id == user_id,
+            User.company_id == company_id,
+            User.deleted_at.is_(None),
+        )
+    )
+    if record is None:
+        return None
+
+    error = validate_file(filename, content_type, len(data), data)
+    if error:
+        raise ValueError(error)
+
+    if content_type not in {"image/jpeg", "image/png", "image/webp"}:
+        raise ValueError("Avatar deve ser JPEG, PNG ou WebP")
+
+    settings = get_settings()
+    key = build_object_key(company_id, "avatar", user_id, filename)
+    upload_file(data, key, content_type)
+
+    old_url = record.avatar_url
+    record.avatar_url = f"{settings.s3_public_url}/{settings.s3_bucket}/{key}"
+
+    await record_event(
+        session,
+        company_id=company_id,
+        user_id=actor_id,
+        entity_type="user",
+        entity_id=record.id,
+        event_type="update",
+        diff={"avatar_url": {"from": old_url or "", "to": record.avatar_url}},
+    )
+    await session.commit()
+    await session.refresh(record)
+    return record

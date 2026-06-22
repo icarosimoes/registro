@@ -15,9 +15,39 @@ async def list_registries(
     page: int,
     page_size: int,
     search: str | None = None,
+    category: str | None = None,
 ) -> tuple[list, int]:
+    target_models = (
+        {category: MODELS[category]} if category and category in MODELS
+        else MODELS
+    )
+
+    if len(target_models) == 1:
+        label, model = next(iter(target_models.items()))
+        filters = [model.company_id == company_id, model.deleted_at.is_(None)]
+        if search:
+            filters.append(model.name.ilike(f"%{search.strip()}%"))
+        total = await session.scalar(
+            select(func.count(model.id)).where(*filters),
+        ) or 0
+        rows = (
+            await session.execute(
+                select(
+                    model.id,
+                    model.name,
+                    cast(literal_column(f"'{label}'"), String).label("category"),
+                    model.updated_at,
+                )
+                .where(*filters)
+                .order_by(model.name)
+                .offset((page - 1) * page_size)
+                .limit(page_size)
+            )
+        ).all()
+        return rows, total
+
     queries = []
-    for label, model in MODELS.items():
+    for label, model in target_models.items():
         q = select(
             model.id,
             model.name,
@@ -29,7 +59,9 @@ async def list_registries(
         queries.append(q)
 
     combined = union_all(*queries).subquery()
-    total = await session.scalar(select(func.count()).select_from(combined)) or 0
+    total = await session.scalar(
+        select(func.count()).select_from(combined),
+    ) or 0
     rows = (
         await session.execute(
             select(combined)
@@ -39,6 +71,22 @@ async def list_registries(
         )
     ).all()
     return rows, total
+
+
+async def list_options(
+    session: AsyncSession, company_id: int, category: str,
+) -> list:
+    model = MODELS.get(category)
+    if model is None:
+        return []
+    rows = (
+        await session.execute(
+            select(model.id, model.name)
+            .where(model.company_id == company_id, model.deleted_at.is_(None))
+            .order_by(model.name)
+        )
+    ).all()
+    return [{"id": r.id, "name": r.name} for r in rows]
 
 
 async def create_registry(

@@ -3,7 +3,7 @@
 import {
   createFiscalRequestAction, createOccurrenceAction, deleteFiscalRequestAction, deleteOccurrenceAction,
   updateFiscalRequestAction, updateOccurrenceAction,
-  createUserAction, updateUserAction, deleteUserAction,
+  createUserAction, updateUserAction, deleteUserAction, inviteUserAction,
   createRegistryAction, updateRegistryAction, deleteRegistryAction,
   createModuleRecordAction, updateModuleRecordAction, deleteModuleRecordAction,
   createProcedureAction, updateProcedureAction, deleteProcedureAction,
@@ -116,7 +116,11 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
   const isFiscal = definition.slug === "solicitacoes-fiscais";
   const isOcorrencias = definition.slug === "ocorrencias";
   const isUsers = definition.slug === "usuarios";
-  const isCadastros = definition.slug === "cadastros";
+  const isCadastros = definition.slug === "cadastros" || definition.slug.startsWith("cadastros/");
+  const cadastroCategory: Record<string, string> = {
+    "cadastros/setores": "Setor", "cadastros/locais": "Local", "cadastros/funcoes": "Função",
+  };
+  const fixedCategory = cadastroCategory[definition.slug] ?? null;
   const isProcedimentos = definition.slug === "procedimentos";
   const isGenericModule = ["inspecoes", "diarios-obra", "manutencao"].includes(definition.slug);
   const isMeetings = definition.slug === "reunioes";
@@ -302,19 +306,26 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       } else if (isUsers) {
         const password = String(formData.get("password") ?? "");
         const phone = String(formData.get("phone") ?? "").replace(/\D/g, "") || undefined;
+        const roleId = formData.get("role_id") ? Number(formData.get("role_id")) : undefined;
+        const jobTitle = String(formData.get("job_title") ?? "") || undefined;
+        const sectorId = formData.get("sector_id") ? Number(formData.get("sector_id")) : undefined;
+        const invite = formData.get("invite") === "on";
         if (current) {
-          const body: Record<string, unknown> = { name: fields.title, email: fields.owner, phone, active: fields.status === "Ativo" };
+          const body: Record<string, unknown> = { name: fields.title, email: fields.owner, phone, active: fields.status === "Ativo", role_id: roleId, job_title: jobTitle, sector_id: sectorId };
           if (password) body.password = password;
           result = await updateUserAction(current.id, body);
+        } else if (invite) {
+          result = await inviteUserAction({ name: fields.title, email: fields.owner, phone, role_id: roleId, job_title: jobTitle, sector_id: sectorId });
         } else {
           if (!password) { setToast("Senha é obrigatória para novos usuários."); return; }
-          result = await createUserAction({ name: fields.title, email: fields.owner, phone, password, active: fields.status === "Ativo" });
+          result = await createUserAction({ name: fields.title, email: fields.owner, phone, password, active: fields.status === "Ativo", role_id: roleId, job_title: jobTitle, sector_id: sectorId });
         }
       } else if (isCadastros) {
+        const cat = fixedCategory ?? fields.category;
         if (current) {
-          result = await updateRegistryAction(current.id, { name: fields.title }, current.category);
+          result = await updateRegistryAction(current.id, { name: fields.title }, cat);
         } else {
-          result = await createRegistryAction({ name: fields.title, category: fields.category });
+          result = await createRegistryAction({ name: fields.title, category: cat });
         }
       } else if (isProcedimentos) {
         const link = String(formData.get("link") ?? "") || undefined;
@@ -519,7 +530,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
       if (isFiscal) result = await deleteFiscalRequestAction(record.id);
       else if (isOcorrencias) result = await deleteOccurrenceAction(record.id);
       else if (isUsers) result = await deleteUserAction(record.id);
-      else if (isCadastros) result = await deleteRegistryAction(record.id, record.category);
+      else if (isCadastros) result = await deleteRegistryAction(record.id, fixedCategory ?? record.category);
       else if (isProcedimentos) result = await deleteProcedureAction(record.id);
       else if (isMeetings) { const { deleteMeetingAction } = await import("@/app/actions"); result = await deleteMeetingAction(record.id); }
       else if (isShiftReports) { const { deleteShiftReportAction } = await import("@/app/actions"); result = await deleteShiftReportAction(record.id); }
@@ -549,7 +560,7 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
 
       {definition.layout === "settings" ? <SettingsForm storageKey={storageKey} onSaved={() => setToast("Configurações salvas com sucesso.")}/> : definition.layout === "profile" ? <ProfileForm user={user} onSaved={(msg) => { setToast(msg); window.setTimeout(() => setToast(""), 2600); }}/> : <section className="module-panel">
         <div className="module-toolbar"><label><Search size={18}/><input value={query} onChange={(event) => handleServerSearch(event.target.value)} placeholder={`Buscar em ${definition.title.toLocaleLowerCase("pt-BR")}`}/></label>{!sp ? <select value={status} onChange={(event) => { setStatus(event.target.value); setPage(1); }}>{statuses.map((item) => <option key={item}>{item}</option>)}</select> : null}{!isApiBacked && !sp ? <button onClick={() => { setRecords(definition.records); localStorage.removeItem(storageKey); setToast("Dados fictícios restaurados."); }} title="Restaurar dados"><RefreshCw size={17}/></button> : null}<button onClick={exportCsv}><Download size={17}/> Exportar</button></div>
-        {!ready ? <div className="module-state">Carregando registros…</div> : !visible.length ? <div className="module-state"><Search size={30}/><strong>Nenhum resultado</strong><span>Ajuste os filtros ou crie um novo registro.</span></div> : definition.layout === "cards" ? <div className="notice-grid">{visible.map((record) => <article key={record.id} onClick={() => isUsers ? setEditing(record) : setSelected(record)}><span>{record.category}</span><h2>{record.title}</h2><p>{record.description}</p><footer><small>{record.owner} · {record.updatedAt}</small><i className={statusClass(record.status)}>{record.status}</i></footer></article>)}</div> : <div className="module-table-wrap"><table><thead><tr><th>ID</th><th>{definition.singular}</th>{isFiscal && <th>UH</th>}<th>Categoria</th><th>Responsável</th><th>Status</th>{isFiscal && <th>SLA</th>}<th>Atualização</th>{canMutate ? <th>Ações</th> : null}</tr></thead><tbody>{visible.map((record) => <tr key={record.id} onClick={() => isUsers ? setEditing(record) : setSelected(record)}><td className="protocol">#{record.id}</td><td><strong>{record.title}</strong></td>{isFiscal && <td>{record.apartment ?? "—"}</td>}<td>{record.category}</td><td>{record.owner}</td><td><span className={statusClass(record.status)}>{record.status}</span></td>{isFiscal && <td>{record.slaDeadline ? <SlaIndicator deadline={record.slaDeadline}/> : "—"}</td>}<td className="muted">{record.updatedAt}</td>{canMutate ? <td><div className="row-actions">{canEdit ? <button onClick={(event) => { event.stopPropagation(); setEditing(record); }} aria-label="Editar"><Pencil size={16}/></button> : null}{canDelete ? <button onClick={(event) => { event.stopPropagation(); remove(record); }} aria-label="Excluir"><Trash2 size={16}/></button> : null}</div></td> : null}</tr>)}</tbody></table></div>}
+        {!ready ? <div className="module-state">Carregando registros…</div> : !visible.length ? <div className="module-state"><Search size={30}/><strong>Nenhum resultado</strong><span>Ajuste os filtros ou crie um novo registro.</span></div> : definition.layout === "cards" ? <div className="notice-grid">{visible.map((record) => <article key={record.id} onClick={() => (isUsers || isCadastros) ? setEditing(record) : setSelected(record)}><span>{record.category}</span><h2>{record.title}</h2><p>{record.description}</p><footer><small>{record.owner} · {record.updatedAt}</small><i className={statusClass(record.status)}>{record.status}</i></footer></article>)}</div> : <div className="module-table-wrap"><table><thead><tr><th>ID</th><th>{definition.singular}</th>{isFiscal && <th>UH</th>}{!fixedCategory && <th>Categoria</th>}<th>Responsável</th><th>Status</th>{isFiscal && <th>SLA</th>}<th>Atualização</th>{canMutate ? <th>Ações</th> : null}</tr></thead><tbody>{visible.map((record) => <tr key={record.id} onClick={() => (isUsers || isCadastros) ? setEditing(record) : setSelected(record)}><td className="protocol">#{record.id}</td><td><strong>{record.title}</strong></td>{isFiscal && <td>{record.apartment ?? "—"}</td>}{!fixedCategory && <td>{record.category}</td>}<td>{record.owner}</td><td><span className={statusClass(record.status)}>{record.status}</span></td>{isFiscal && <td>{record.slaDeadline ? <SlaIndicator deadline={record.slaDeadline}/> : "—"}</td>}<td className="muted">{record.updatedAt}</td>{canMutate ? <td><div className="row-actions">{canEdit ? <button onClick={(event) => { event.stopPropagation(); setEditing(record); }} aria-label="Editar"><Pencil size={16}/></button> : null}{canDelete ? <button onClick={(event) => { event.stopPropagation(); remove(record); }} aria-label="Excluir"><Trash2 size={16}/></button> : null}</div></td> : null}</tr>)}</tbody></table></div>}
         <footer className="module-pagination"><span>{totalItems} registro(s)</span><div><button disabled={page <= 1} onClick={() => handleServerPage(page - 1)}><ChevronLeft/></button><span>Pagina {Math.min(page, pages)} de {pages}</span><button disabled={page >= pages} onClick={() => handleServerPage(page + 1)}><ChevronRight/></button></div></footer>
       </section>}
 
@@ -559,17 +570,26 @@ export function OperationalModule({ definition, user }: { definition: ModuleDefi
         <label>Nome<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
         <label>E-mail<input name="owner" type="email" required defaultValue={editing === "new" ? "" : editing.owner}/></label>
         <label>Telefone<input name="phone" type="tel" placeholder="(00) 00000-0000" defaultValue={editing === "new" ? "" : formatPhone(editing.phone ?? "")} onChange={(e) => { e.target.value = formatPhone(e.target.value); }}/></label>
-        <label>Senha{editing !== "new" && <small className="field-hint"> (deixe vazio para manter a atual)</small>}<input name="password" type="password" {...(editing === "new" ? { required: true } : {})} placeholder={editing === "new" ? "" : "••••••••"}/></label>
         <div className="form-grid">
-          <label>Cargo<input name="category" defaultValue={editing === "new" ? "" : editing.category}/></label>
+          <label>Cargo / Função<input name="job_title" placeholder="Ex: Recepcionista" defaultValue={editing === "new" ? "" : editing.jobTitle ?? ""}/></label>
+          <label>Perfil de acesso<select name="role_id" defaultValue={editing === "new" ? "" : String(editing.roleId ?? "")}><option value="">Sem perfil</option>{definition.extraData?.roles?.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}</select></label>
+        </div>
+        <div className="form-grid">
+          <label>Setor<select name="sector_id" defaultValue={editing === "new" ? "" : String(editing.sectorId ?? "")}><option value="">Nenhum</option>{definition.extraData?.sectors?.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
           <label>Status<select name="status" defaultValue={editing === "new" ? "Ativo" : editing.status}><option>Ativo</option><option>Inativo</option></select></label>
         </div>
+        {editing === "new" && <label className="invite-toggle"><input name="invite" type="checkbox" onChange={(e) => { const pwField = e.target.form?.querySelector<HTMLInputElement>('[name="password"]'); if (pwField) { pwField.closest("label")!.style.display = e.target.checked ? "none" : ""; pwField.required = !e.target.checked; } }}/> Convidar por e-mail (o usuário definirá a própria senha)</label>}
+        <label>Senha{editing !== "new" && <small className="field-hint"> (deixe vazio para manter a atual)</small>}<input name="password" type="password" {...(editing === "new" ? { required: true } : {})} placeholder={editing === "new" ? "" : "••••••••"}/></label>
       </> : isCadastros ? <>
         <label>Nome<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
-        <div className="form-grid">
+        {fixedCategory ? (
+          <input type="hidden" name="category" value={fixedCategory} />
+        ) : (
           <label>Tipo<select name="category" defaultValue={editing === "new" ? "Setor" : editing.category}><option>Setor</option><option>Local</option><option>Função</option></select></label>
-          <label>Status<select name="status" defaultValue="Ativo"><option>Ativo</option></select></label>
-        </div>
+        )}
+        <input type="hidden" name="status" value="Ativo" />
+        <input type="hidden" name="owner" value="Administração" />
+        <input type="hidden" name="description" value="" />
       </> : isProcedimentos ? <>
         <label>Nome<input name="title" required defaultValue={editing === "new" ? "" : editing.title}/></label>
         <label>Link externo<input name="link" type="url" placeholder="https://..." defaultValue={editing === "new" ? "" : editing.description ?? ""}/></label>

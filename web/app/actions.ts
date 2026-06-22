@@ -238,7 +238,18 @@ export interface UserPayload {
   phone?: string;
   password?: string;
   role_id?: number | null;
+  job_title?: string;
+  sector_id?: number | null;
   active?: boolean;
+}
+
+export interface InvitePayload {
+  name: string;
+  email: string;
+  phone?: string;
+  role_id?: number | null;
+  job_title?: string;
+  sector_id?: number | null;
 }
 
 export async function createUserAction(body: UserPayload): Promise<MutationResult> {
@@ -268,6 +279,46 @@ export async function deleteUserAction(id: number): Promise<MutationResult> {
     return { ok: false, error: "Erro ao excluir usuário." };
   }
   return { ok: true };
+}
+
+export async function inviteUserAction(body: InvitePayload): Promise<MutationResult> {
+  const response = await authedFetch("/users/invite", { method: "POST", body: JSON.stringify(body) });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    if (response.status === 409) return { ok: false, error: "E-mail já cadastrado." };
+    return { ok: false, error: "Erro ao convidar usuário." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
+export async function setPasswordAction(token: string, password: string): Promise<MutationResult> {
+  const response = await fetch(`${apiUrl}/auth/set-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token, password }),
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    if (response.status === 401) return { ok: false, error: "Token inválido ou expirado." };
+    return { ok: false, error: "Erro ao definir senha." };
+  }
+  return { ok: true };
+}
+
+export async function uploadAvatarAction(userId: number, formData: FormData): Promise<MutationResult> {
+  const jar = await cookies();
+  const token = jar.get("tenant_token")?.value;
+  if (!token) throw new Error("unauthorized");
+  const response = await fetch(`${apiUrl}/users/${userId}/avatar`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao enviar avatar." };
+  }
+  return { ok: true, data: await response.json() };
 }
 
 export interface RegistryPayload {
@@ -336,6 +387,23 @@ export async function deleteModuleRecordAction(moduleSlug: string, id: number): 
     return { ok: false, error: "Erro ao excluir registro." };
   }
   return { ok: true };
+}
+
+// --- Registry Options ---
+
+export interface RegistryOption {
+  id: number;
+  name: string;
+}
+
+export async function fetchRegistryOptions(
+  category: string,
+): Promise<RegistryOption[]> {
+  const response = await authedFetch(
+    `/registries/options/${encodeURIComponent(category)}`,
+  );
+  if (!response.ok) return [];
+  return response.json();
 }
 
 // --- Procedures ---

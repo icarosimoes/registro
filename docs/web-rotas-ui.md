@@ -17,7 +17,9 @@
 | `/solicitacoes-fiscais` | lista, formulário condicional, SLA, anexos e tratativa | CRUD via API + mutações server-side | API `fiscal_requests` isolada por tenant |
 | `/procedimentos` | lista, CRUD e anexos | CRUD via API + upload/download de anexos | API `procedures` + `attachments` isolada por tenant |
 | `/cadastros` | lista e CRUD | CRUD via API + mutações server-side | API `registries` (setores, locais e funções) isolada por tenant |
-| `/usuarios` | lista e CRUD | CRUD via API + mutações server-side | API `users` isolada por tenant |
+| `/usuarios` | lista e CRUD + convite | CRUD via API + convite por e-mail + upload avatar | API `users` + `users/invite` isolada por tenant |
+| `/perfis` | gestão de perfis de acesso | CRUD de roles com checkboxes de permissões | API `roles` + `roles/permissions` isolada por tenant |
+| `/definir-senha` | definição de senha (público) | formulário público ativado por token de convite | API `auth/set-password` |
 | `/mural` | cartões e CRUD | CRUD via API + mutações server-side | API `bulletin` (tabela dedicada) isolada por tenant |
 | `/ordens-servico` | Kanban com drag-and-drop | CRUD + transições via API + server actions | API `work-orders` isolada por tenant |
 | `/preventivas` | lista e CRUD | CRUD via API + geração automática de OS | API `preventive-plans` isolada por tenant |
@@ -46,7 +48,9 @@ Todas as rotas operacionais estão integradas com a API. A tabela abaixo lista o
 | `/dashboard` | `GET /dashboard/metrics` |
 | `/ocorrencias` | `GET/POST/PATCH/DELETE /occurrences` |
 | `/solicitacoes-fiscais` | `GET/POST/PATCH/DELETE /fiscal-requests` |
-| `/usuarios` | `GET/POST/PATCH/DELETE /users` |
+| `/usuarios` | `GET/POST/PATCH/DELETE /users` + `POST /users/invite` + `POST /users/{id}/avatar` + `GET /roles` + `GET /registries?category=setor` |
+| `/perfis` | `GET/POST/PATCH/DELETE /roles` + `GET /roles/permissions` |
+| `/definir-senha` | `POST /auth/set-password` |
 | `/procedimentos` | `GET/POST/PATCH/DELETE /procedures` + `POST/GET/DELETE /attachments` |
 | `/cadastros` | `GET/POST/PATCH/DELETE /registries` |
 | `/reunioes` | `GET/POST/PATCH/DELETE /meetings` + subjects + clone |
@@ -97,6 +101,12 @@ Todo novo CSS deve usar esses tokens em vez de valores hardcoded.
 ## Padrão obrigatório de tela
 
 Toda lista tem título, contador, ação principal, filtros, tabela/cartões responsivos, paginação e estados de carregamento, vazio, erro e permissão. Exclusões exigem confirmação; ações exibem feedback. Ações sem permissão não aparecem e continuam bloqueadas na API.
+
+## Cadastros (setores, locais, funções)
+
+Cadastros são registros simples (nome + categoria fixa). Diferente dos módulos operacionais, clicar na linha da tabela abre diretamente o modal de edição — não o drawer de detalhes com status, tratativa e descrição. Isso porque cadastros não possuem timeline, descrição ou fluxo de tratativa; são entidades auxiliares de CRUD puro.
+
+O formulário de cadastro contém apenas o campo "Nome". A categoria é determinada pela sub-rota (`/cadastros/setores` → Setor, `/cadastros/locais` → Local, `/cadastros/funcoes` → Função) e enviada como campo hidden.
 
 ## Tratativa (timeline de conversa)
 

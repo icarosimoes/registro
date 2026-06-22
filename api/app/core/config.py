@@ -31,6 +31,9 @@ class Settings(BaseSettings):
     s3_public_url: str = "http://localhost:9000"
     attachment_max_size_mb: int = 10
     attachment_max_per_entity: int = 20
+    brevo_api_key: str = ""
+    mail_from_address: str = "noreply@registro.app"
+    mail_from_name: str = "Registro"
     asaas_api_key: str = ""
     asaas_api_key_file: str | None = None
     asaas_api_url: str = "https://sandbox.asaas.com/api/v3"

@@ -1,9 +1,12 @@
+from datetime import UTC, datetime
 from typing import Annotated
 
+import bcrypt
 import jwt
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import Settings, get_settings
@@ -13,10 +16,16 @@ from app.core.security import (
     create_access_token,
     create_refresh_token,
     decode_access_token,
+    decode_invite_token,
     decode_refresh_token,
 )
 from app.domain.auth.repository import find_active_user_by_id
-from app.domain.auth.schemas import LoginRequest, TokenResponse, UserResponse
+from app.domain.auth.schemas import (
+    LoginRequest,
+    TokenResponse,
+    UserResponse,
+    validate_password_strength,
+)
 from app.domain.auth.service import MultiTenantResult, authenticate, to_response
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -124,3 +133,58 @@ async def refresh(
         expires_in=settings.access_token_minutes * 60,
         user=to_response(user),
     )
+
+
+class SetPasswordRequest(BaseModel):
+    token: str
+    password: str
+
+    @field_validator("password")
+    @classmethod
+    def check_password(cls, v: str) -> str:
+        return validate_password_strength(v)
+
+
+@router.post("/set-password")
+@limiter.limit("5/minute")
+async def set_password(
+    request: Request,
+    body: SetPasswordRequest,
+    session: Annotated[AsyncSession, Depends(require_session)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> dict:
+    try:
+        claims = decode_invite_token(body.token, settings.jwt_secret)
+        user_id = int(claims["sub"])
+        company_id = int(claims["company_id"])
+    except (jwt.InvalidTokenError, KeyError, TypeError, ValueError) as exc:
+        raise HTTPException(
+            status_code=401,
+            detail={"code": "invalid_token", "message": "Token de convite inválido ou expirado"},
+        ) from exc
+
+    from app.models import User
+    record = await session.scalar(
+        select(User).where(
+            User.id == user_id,
+            User.company_id == company_id,
+            User.deleted_at.is_(None),
+        )
+    )
+    if record is None:
+        raise HTTPException(status_code=404, detail={"code": "not_found"})
+
+    record.password = bcrypt.hashpw(body.password.encode(), bcrypt.gensalt()).decode()
+    record.email_verified_at = datetime.now(UTC)
+
+    from app.core.audit import record_event
+    await record_event(
+        session,
+        company_id=company_id,
+        user_id=user_id,
+        entity_type="user",
+        entity_id=user_id,
+        event_type="set_password",
+    )
+    await session.commit()
+    return {"ok": True}

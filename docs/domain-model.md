@@ -47,7 +47,7 @@ Company
 
 | Agregado | Tabelas centrais | Regras a preservar |
 | --- | --- | --- |
-| Identidade e acesso | `users`, `roles`, `acls`, `modules`, `role_acl`, `companies` | bcrypt Laravel, status, soft delete, empresa e ACL |
+| Identidade e acesso | `users`, `roles`, `permissions`, `role_permissions`, `companies` | bcrypt, soft delete, empresa, RBAC com permissões por módulo, convite por e-mail |
 | Plataforma SaaS | `platform_users`, `plans`, `subscriptions`, `invoices`, `platform_audit_logs` | sessão isolada, centavos, estado explícito e auditoria |
 | Núcleo V1 importado | `sectors`, `locations`, `functions`, `procedures`, `occurrences` | tenant `aero-hotel` (Aero Hotel), `legacy_id` (nullable — null em registros criados pelo Registro), soft delete e relações remapeadas |
 | Cadastros | `sectors`, `locals`, `funcs`, `procedures`, `procedure_files` | empresa, anexos e exclusão lógica quando existente |

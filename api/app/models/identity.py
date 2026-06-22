@@ -1,6 +1,15 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, Column, DateTime, ForeignKey, String, Table, UniqueConstraint
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Table,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TenantMixin, TimestampMixin
@@ -61,6 +70,11 @@ class User(Base, TenantMixin, TimestampMixin):
     email: Mapped[str] = mapped_column(String(255), index=True)
     phone: Mapped[str | None] = mapped_column(String(20))
     password: Mapped[str] = mapped_column(String(255))
+    job_title: Mapped[str | None] = mapped_column(String(120))
+    sector_id: Mapped[int | None] = mapped_column(
+        Integer, ForeignKey("sectors.id", ondelete="SET NULL")
+    )
+    avatar_url: Mapped[str | None] = mapped_column(String(500))
     active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
     email_verified_at: Mapped[datetime | None] = mapped_column(DateTime)
     deleted_at: Mapped[datetime | None] = mapped_column(DateTime)
