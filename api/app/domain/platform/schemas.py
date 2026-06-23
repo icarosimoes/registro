@@ -35,6 +35,9 @@ class TenantSummary(BaseModel):
     id: int
     name: str
     slug: str
+    email: str | None = None
+    document: str | None = None
+    timezone: str = "America/Sao_Paulo"
     status: str
     users_count: int
     subscription_status: str | None

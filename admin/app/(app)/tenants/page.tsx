@@ -7,6 +7,8 @@ export type Tenant = {
   name: string;
   slug: string;
   email: string;
+  document: string | null;
+  timezone: string;
   status: string;
   users_count: number;
   subscription_status: string | null;

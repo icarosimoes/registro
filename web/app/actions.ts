@@ -582,6 +582,41 @@ export async function saveBrevoSettings(body: { api_key: string; from_address: s
   return { ok: true, data: await response.json() };
 }
 
+// --- Dados do Estabelecimento ---
+
+export interface CompanyInfo {
+  id: number;
+  name: string;
+  slug: string;
+  email: string | null;
+  document: string | null;
+  timezone: string;
+  status: string;
+}
+
+export async function getCompanyInfo(): Promise<CompanyInfo | null> {
+  const response = await authedFetch("/settings/company");
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return null;
+  }
+  return response.json();
+}
+
+export async function updateCompanyInfo(
+  body: { name?: string; email?: string; document?: string; timezone?: string },
+): Promise<MutationResult> {
+  const response = await authedFetch("/settings/company", {
+    method: "PATCH",
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    if (response.status === 401) throw new Error("unauthorized");
+    return { ok: false, error: "Erro ao salvar dados do estabelecimento." };
+  }
+  return { ok: true, data: await response.json() };
+}
+
 export type UserOption = z.infer<typeof UserOptionSchema>;
 
 export async function searchUsers(q: string): Promise<UserOption[]> {

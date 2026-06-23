@@ -34,6 +34,16 @@ function formatPhone(v: string): string {
   return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
 }
 
+function formatDocument(v: string): string {
+  const d = v.replace(/\D/g, "").slice(0, 14);
+  if (d.length <= 3) return d;
+  if (d.length <= 6) return `${d.slice(0, 3)}.${d.slice(3)}`;
+  if (d.length <= 9) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6)}`;
+  if (d.length <= 11) return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
+  if (d.length <= 12) return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8)}`;
+  return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}-${d.slice(12)}`;
+}
+
 function UserAutocomplete({ name, defaultValue, placeholder, required }: { name: string; defaultValue?: string; placeholder?: string; required?: boolean }) {
   const [query, setQuery] = useState(defaultValue ?? "");
   const [options, setOptions] = useState<UserOption[]>([]);
@@ -797,6 +807,7 @@ function CommentInput({ onSend }: { onSend: (message: string) => void }) {
 
 function SettingsForm({ storageKey, onSaved }: { storageKey: string; onSaved: () => void }) {
   return <div className="settings-form">
+    <CompanySettingsSection/>
     <form action={(data) => { localStorage.setItem(`${storageKey}:preferences`, JSON.stringify(Object.fromEntries(data))); onSaved(); }}>
       <section><h2>Notificações</h2><p>Escolha como deseja acompanhar as atualizações.</p><label className="switch-row"><span><strong>Notificações no sistema</strong><small>Alertas de atividades e menções.</small></span><input name="in_app" type="checkbox" defaultChecked/></label><label className="switch-row"><span><strong>Resumo por e-mail</strong><small>Resumo diário das pendências.</small></span><input name="email_digest" type="checkbox" defaultChecked/></label></section>
       <section><h2>Experiência</h2><p>Preferências aplicadas a este navegador.</p><label>Idioma<select name="language" defaultValue="pt-BR"><option value="pt-BR">Português (Brasil)</option><option value="en">English</option></select></label><label>Página inicial<select name="home" defaultValue="dashboard"><option value="dashboard">Dashboard</option><option value="ocorrencias">Ocorrências</option></select></label></section>
@@ -805,6 +816,76 @@ function SettingsForm({ storageKey, onSaved }: { storageKey: string; onSaved: ()
     <BrevoSettingsSection/>
     <EvolutionSettingsSection/>
   </div>;
+}
+
+function CompanySettingsSection() {
+  const [info, setInfo] = useState<import("@/app/actions").CompanyInfo | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    import("@/app/actions").then(({ getCompanyInfo }) =>
+      getCompanyInfo().then((data) => { setInfo(data); setLoading(false); })
+    ).catch(() => setLoading(false));
+  }, []);
+
+  if (loading) return <section><h2>Estabelecimento</h2><p>Carregando...</p></section>;
+  if (!info) return null;
+
+  return <form className="settings-evolution" onSubmit={async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setFeedback(null);
+    const fd = new FormData(e.currentTarget);
+    const body: Record<string, string> = {};
+    const name = String(fd.get("company_name") ?? "").trim();
+    const email = String(fd.get("company_email") ?? "").trim();
+    const document = String(fd.get("company_document") ?? "").trim();
+    const timezone = String(fd.get("company_timezone") ?? "");
+    if (name && name !== info.name) body.name = name;
+    if (email !== (info.email ?? "")) body.email = email;
+    if (document !== (info.document ?? "")) body.document = document;
+    if (timezone && timezone !== info.timezone) body.timezone = timezone;
+    if (!Object.keys(body).length) { setFeedback("Nenhum campo alterado."); setSaving(false); return; }
+    const { updateCompanyInfo } = await import("@/app/actions");
+    const result = await updateCompanyInfo(body);
+    setSaving(false);
+    if (result.ok) {
+      setInfo({ ...info, ...body });
+      setFeedback("Dados atualizados com sucesso.");
+    } else {
+      setFeedback(result.error ?? "Erro ao salvar.");
+    }
+  }}>
+    <section>
+      <h2>Estabelecimento</h2>
+      <p>Dados cadastrais do seu hotel ou empresa.</p>
+      {feedback && <p className={feedback.includes("sucesso") ? "settings-connected" : "settings-error"}>{feedback}</p>}
+      <div className="form-grid">
+        <label>Nome do estabelecimento<input name="company_name" type="text" required defaultValue={info.name}/></label>
+        <label>E-mail corporativo<input name="company_email" type="email" placeholder="contato@hotel.com" defaultValue={info.email ?? ""}/></label>
+      </div>
+      <div className="form-grid">
+        <label>CNPJ / CPF<input name="company_document" type="text" placeholder="00.000.000/0000-00" defaultValue={info.document ?? ""} onChange={(e) => { e.target.value = formatDocument(e.target.value); }}/></label>
+        <label>Fuso horário<select name="company_timezone" defaultValue={info.timezone}>
+          <option value="America/Sao_Paulo">Brasília (GMT-3)</option>
+          <option value="America/Manaus">Manaus (GMT-4)</option>
+          <option value="America/Belem">Belém (GMT-3)</option>
+          <option value="America/Fortaleza">Fortaleza (GMT-3)</option>
+          <option value="America/Recife">Recife (GMT-3)</option>
+          <option value="America/Bahia">Salvador (GMT-3)</option>
+          <option value="America/Cuiaba">Cuiabá (GMT-4)</option>
+          <option value="America/Campo_Grande">Campo Grande (GMT-4)</option>
+          <option value="America/Porto_Velho">Porto Velho (GMT-4)</option>
+          <option value="America/Rio_Branco">Rio Branco (GMT-5)</option>
+          <option value="America/Noronha">Fernando de Noronha (GMT-2)</option>
+        </select></label>
+      </div>
+      <label>Identificador (slug)<input type="text" value={info.slug} readOnly/><small className="field-hint">O slug é gerado automaticamente e não pode ser alterado.</small></label>
+    </section>
+    <button className="primary-button" type="submit" disabled={saving}>{saving ? "Salvando..." : "Salvar dados"}</button>
+  </form>;
 }
 
 function BrevoSettingsSection() {

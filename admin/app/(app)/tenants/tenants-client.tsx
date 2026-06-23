@@ -177,10 +177,101 @@ function NewTenantModal({ plans, onClose, onCreated }: { plans: Plan[]; onClose:
   );
 }
 
+function EditTenantModal({ tenant, onClose, onUpdated }: { tenant: Tenant; onClose: () => void; onUpdated: (t: Tenant) => void }) {
+  const [form, setForm] = useState({
+    name: tenant.name,
+    email: tenant.email ?? "",
+    document: tenant.document ?? "",
+    timezone: tenant.timezone ?? "America/Sao_Paulo",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      const body: Record<string, string> = {};
+      if (form.name !== tenant.name) body.name = form.name;
+      if (form.email !== (tenant.email ?? "")) body.email = form.email;
+      if (form.document !== (tenant.document ?? "")) body.document = form.document;
+      if (form.timezone !== (tenant.timezone ?? "America/Sao_Paulo")) body.timezone = form.timezone;
+      if (Object.keys(body).length === 0) { onClose(); return; }
+      await apiFetch(`/tenants/${tenant.id}`, { method: "PATCH", body: JSON.stringify(body) });
+      onUpdated({ ...tenant, ...body });
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro ao atualizar");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const INPUT = "w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1D3461]/30 focus:border-[#1D3461]";
+  const LABEL = "block text-xs font-medium text-gray-500 mb-1";
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between" style={{ background: "linear-gradient(135deg, #1D3461, #142548)" }}>
+          <div>
+            <h2 className="text-lg font-bold text-white">Editar empresa</h2>
+            <p className="text-xs text-white/60 mt-0.5">{tenant.slug}</p>
+          </div>
+          <button onClick={onClose} className="text-white/60 hover:text-white"><X className="h-5 w-5" /></button>
+        </div>
+        <div className="p-6">
+          {error && <p className="text-sm text-red-600 mb-3 p-3 bg-red-50 rounded-lg">{error}</p>}
+          <form onSubmit={submit} className="space-y-3">
+            <div>
+              <label className={LABEL}>Nome da empresa</label>
+              <input className={INPUT} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
+            </div>
+            <div>
+              <label className={LABEL}>E-mail</label>
+              <input type="email" className={INPUT} value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} placeholder="contato@hotel.com" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className={LABEL}>CNPJ / CPF</label>
+                <input className={INPUT} value={form.document} onChange={(e) => setForm((f) => ({ ...f, document: e.target.value }))} placeholder="00.000.000/0000-00" />
+              </div>
+              <div>
+                <label className={LABEL}>Fuso horário</label>
+                <select className={INPUT} value={form.timezone} onChange={(e) => setForm((f) => ({ ...f, timezone: e.target.value }))}>
+                  <option value="America/Sao_Paulo">Brasília (GMT-3)</option>
+                  <option value="America/Manaus">Manaus (GMT-4)</option>
+                  <option value="America/Belem">Belém (GMT-3)</option>
+                  <option value="America/Fortaleza">Fortaleza (GMT-3)</option>
+                  <option value="America/Recife">Recife (GMT-3)</option>
+                  <option value="America/Bahia">Salvador (GMT-3)</option>
+                  <option value="America/Cuiaba">Cuiabá (GMT-4)</option>
+                  <option value="America/Campo_Grande">Campo Grande (GMT-4)</option>
+                  <option value="America/Porto_Velho">Porto Velho (GMT-4)</option>
+                  <option value="America/Rio_Branco">Rio Branco (GMT-5)</option>
+                  <option value="America/Noronha">Fernando de Noronha (GMT-2)</option>
+                </select>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button type="button" onClick={onClose} className="px-4 py-2 text-sm rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">Cancelar</button>
+              <button type="submit" disabled={loading} className="px-4 py-2 text-sm rounded-lg text-white font-medium disabled:opacity-50 transition-colors" style={{ background: "linear-gradient(135deg, #1D3461, #142548)" }}>
+                {loading ? "Salvando…" : "Salvar"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function TenantsClient({ initialTenants, plans }: { initialTenants: Tenant[]; plans: Plan[] }) {
   const [tenants, setTenants] = useState<Tenant[]>(initialTenants);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState<Tenant | null>(null);
   const [deleting, setDeleting] = useState<number | null>(null);
   const [error, setError] = useState("");
 
@@ -272,6 +363,13 @@ export function TenantsClient({ initialTenants, plans }: { initialTenants: Tenan
                 <td className="px-4 py-3 text-right text-xs text-gray-400">{fmtDate(t.created_at)}</td>
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-1">
+                    <button
+                      onClick={() => setEditing(t)}
+                      className="rounded-md p-1.5 text-gray-400 hover:bg-white hover:text-[#1D3461]"
+                      title="Editar empresa"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </button>
                     <SubscriptionMenu
                       tenant={t}
                       onUpdated={(updated) => setTenants((prev) => prev.map((x) => (x.id === updated.id ? updated : x)))}
@@ -297,6 +395,17 @@ export function TenantsClient({ initialTenants, plans }: { initialTenants: Tenan
           plans={plans}
           onClose={() => setShowModal(false)}
           onCreated={(t) => setTenants((prev) => [t, ...prev])}
+        />
+      )}
+
+      {editing && (
+        <EditTenantModal
+          tenant={editing}
+          onClose={() => setEditing(null)}
+          onUpdated={(updated) => {
+            setTenants((prev) => prev.map((x) => (x.id === updated.id ? updated : x)));
+            setEditing(null);
+          }}
         />
       )}
     </div>

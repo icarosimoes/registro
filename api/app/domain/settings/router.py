@@ -6,10 +6,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm.attributes import flag_modified
 
+from app.core.audit import record_event
 from app.core.dependencies import require_session
 from app.core.permissions import require_permission
 from app.domain.auth.repository import AuthenticatedUser
-from app.models import CompanySetting
+from app.models import Company, CompanySetting
 
 router = APIRouter(prefix="/settings", tags=["settings"])
 
@@ -254,3 +255,90 @@ async def update_module_recipients(
         )
     await session.commit()
     return ModuleRecipientsOut(module=module, user_ids=body.user_ids)
+
+
+# ── Dados do Estabelecimento ──
+
+
+class CompanyRead(BaseModel):
+    id: int
+    name: str
+    slug: str
+    email: str | None = None
+    document: str | None = None
+    timezone: str
+    status: str
+
+
+class CompanyUpdate(BaseModel):
+    name: str | None = None
+    email: str | None = None
+    document: str | None = None
+    timezone: str | None = None
+
+
+@router.get("/company", response_model=CompanyRead)
+async def get_company(
+    user: Annotated[AuthenticatedUser, require_permission("settings.view")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> CompanyRead:
+    company = await session.get(Company, user.company_id)
+    if company is None:
+        raise HTTPException(status_code=404, detail={"code": "company_not_found"})
+    return CompanyRead(
+        id=company.id,
+        name=company.name,
+        slug=company.slug,
+        email=company.email,
+        document=company.document,
+        timezone=company.timezone,
+        status=company.status,
+    )
+
+
+@router.patch("/company", response_model=CompanyRead)
+async def update_company(
+    body: CompanyUpdate,
+    user: Annotated[AuthenticatedUser, require_permission("settings.edit")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> CompanyRead:
+    company = await session.get(Company, user.company_id)
+    if company is None:
+        raise HTTPException(status_code=404, detail={"code": "company_not_found"})
+
+    diff = {}
+    if body.name is not None and body.name != company.name:
+        diff["name"] = {"from": company.name, "to": body.name}
+        company.name = body.name
+    if body.email is not None and body.email != company.email:
+        diff["email"] = {"from": company.email, "to": body.email}
+        company.email = body.email
+    if body.document is not None and body.document != company.document:
+        diff["document"] = {"from": company.document, "to": body.document}
+        company.document = body.document
+    if body.timezone is not None and body.timezone != company.timezone:
+        diff["timezone"] = {"from": company.timezone, "to": body.timezone}
+        company.timezone = body.timezone
+
+    if diff:
+        await record_event(
+            session,
+            company_id=user.company_id,
+            user_id=user.id,
+            entity_type="company",
+            entity_id=company.id,
+            event_type="update",
+            diff=diff,
+        )
+
+    await session.commit()
+    await session.refresh(company)
+    return CompanyRead(
+        id=company.id,
+        name=company.name,
+        slug=company.slug,
+        email=company.email,
+        document=company.document,
+        timezone=company.timezone,
+        status=company.status,
+    )
