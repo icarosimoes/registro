@@ -1,4 +1,4 @@
-const CACHE_NAME = "registro-v2";
+const CACHE_NAME = "registro-v3";
 const PRECACHE = ["/", "/login"];
 
 self.addEventListener("install", (event) => {
@@ -25,16 +25,16 @@ self.addEventListener("fetch", (event) => {
 
   if (url.protocol !== "http:" && url.protocol !== "https:") return;
 
-  // Skip API calls and auth — always network
   if (url.pathname.startsWith("/api") || url.pathname.startsWith("/login")) return;
 
-  // For navigation requests: network-first with cache fallback
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+          }
           return response;
         })
         .catch(() => caches.match(request).then((cached) => cached || caches.match("/")))
@@ -42,7 +42,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // For static assets: cache-first
   if (
     url.pathname.startsWith("/_next/static") ||
     url.pathname.startsWith("/icons") ||
@@ -54,8 +53,10 @@ self.addEventListener("fetch", (event) => {
         (cached) =>
           cached ||
           fetch(request).then((response) => {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+            if (response.ok) {
+              const clone = response.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+            }
             return response;
           })
       )

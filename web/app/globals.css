@@ -75,8 +75,9 @@
 /* ─── Reset ─── */
 * { box-sizing: border-box; }
 html, body { min-height: 100%; min-height: 100dvh; }
+html { overscroll-behavior: none; -webkit-tap-highlight-color: transparent; }
 body { margin: 0; color: var(--ink); background: var(--canvas); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
-@media (display-mode: standalone) { body { -webkit-user-select: none; user-select: text; } }
+@media (display-mode: standalone) { body { -webkit-user-select: none; user-select: text; overscroll-behavior-y: contain; } }
 button, input { font: inherit; }
 button { color: inherit; }
 button:focus-visible, input:focus-visible { outline: 3px solid var(--blue-focus); outline-offset: 2px; }
