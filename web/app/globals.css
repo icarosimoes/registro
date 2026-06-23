@@ -206,7 +206,8 @@ td strong { font-weight: 600; }
 .text-button { margin: var(--sp-1) var(--sp-5); padding: var(--sp-2) 3px; border: 0; display: flex; align-items: center; gap: var(--sp-1); color: var(--blue); background: transparent; cursor: pointer; font-size: var(--font-sm); font-weight: 700; text-decoration: none; }
 
 /* ─── Drawers & modals ─── */
-.panel-backdrop, .backdrop { position: fixed; inset: 0; z-index: 48; border: 0; background: rgba(17,31,52,.18); backdrop-filter: blur(1px); }
+.panel-backdrop { position: fixed; inset: 0; z-index: 48; border: 0; background: rgba(17,31,52,.18); backdrop-filter: blur(1px); }
+.backdrop { position: fixed; inset: 0; z-index: 39; border: 0; background: rgba(17,31,52,.18); backdrop-filter: blur(1px); }
 .context-drawer { position: fixed; z-index: 50; inset: 0 0 0 auto; width: min(420px, 92vw); padding: 0 var(--sp-5); background: white; box-shadow: var(--shadow-drawer); animation: slide-in .2s ease-out; }
 @keyframes slide-in { from { transform: translateX(100%); } }
 .drawer-heading { height: 88px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }

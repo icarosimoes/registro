@@ -75,14 +75,14 @@ export function AppLayout({ user, children }: { user: TenantUser; children: Reac
         <nav className="nav-list">
           <p className="nav-section">{collapsed ? "" : "Operação"}</p>
           {navOperation.map(({ slug, label, icon: Icon, href }) => (
-            <Link key={slug} href={href} className={`nav-item ${currentSlug === slug ? "active" : ""}`} title={collapsed ? label : undefined}>
+            <Link key={slug} href={href} className={`nav-item ${currentSlug === slug ? "active" : ""}`} title={collapsed ? label : undefined} onClick={() => setMobileMenu(false)}>
               <Icon size={19} aria-hidden="true" />
               {!collapsed && <span>{label}</span>}
             </Link>
           ))}
           <p className="nav-section">{collapsed ? "" : "Administração"}</p>
           {navAdmin.map(({ slug, label, icon: Icon, href }) => (
-            <Link key={slug} href={href} className={`nav-item ${currentSlug === slug ? "active" : ""}`} title={collapsed ? label : undefined}>
+            <Link key={slug} href={href} className={`nav-item ${currentSlug === slug ? "active" : ""}`} title={collapsed ? label : undefined} onClick={() => setMobileMenu(false)}>
               <Icon size={19} aria-hidden="true" />
               {!collapsed && <span>{label}</span>}
             </Link>
@@ -96,14 +96,14 @@ export function AppLayout({ user, children }: { user: TenantUser; children: Reac
             {!collapsed && <><span>Cadastros</span><ChevronDown size={14} className={`nav-chevron ${cadastrosOpen ? "open" : ""}`} /></>}
           </button>
           {cadastrosOpen && !collapsed && cadastrosSub.map(({ slug, label, icon: SubIcon, href }) => (
-            <Link key={slug} href={href} className={`nav-item nav-sub-item ${cadastrosSubSlug === slug ? "active" : ""}`}>
+            <Link key={slug} href={href} className={`nav-item nav-sub-item ${cadastrosSubSlug === slug ? "active" : ""}`} onClick={() => setMobileMenu(false)}>
               {SubIcon ? <SubIcon size={16} aria-hidden="true" /> : <span className="nav-sub-dot" />}
               <span>{label}</span>
             </Link>
           ))}
         </nav>
         <div className="sidebar-footer">
-          <Link href="/configuracoes" className={`nav-item ${currentSlug === "configuracoes" ? "active" : ""}`}>
+          <Link href="/configuracoes" className={`nav-item ${currentSlug === "configuracoes" ? "active" : ""}`} onClick={() => setMobileMenu(false)}>
             <Settings size={19} />{!collapsed && <span>Configurações</span>}
           </Link>
           {!collapsed && <span className="version">Nova plataforma · prévia</span>}
