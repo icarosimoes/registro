@@ -17,7 +17,11 @@ async def list_categories(session: AsyncSession, company_id: int) -> list[str]:
 
     result = await session.execute(
         select(WorkOrder.category)
-        .where(WorkOrder.company_id == company_id, WorkOrder.category.isnot(None), WorkOrder.deleted_at.is_(None))
+        .where(
+            WorkOrder.company_id == company_id,
+            WorkOrder.category.isnot(None),
+            WorkOrder.deleted_at.is_(None),
+        )
         .distinct()
     )
     used = {row[0] for row in result.fetchall()}

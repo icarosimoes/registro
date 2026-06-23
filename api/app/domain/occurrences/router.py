@@ -218,6 +218,7 @@ async def get_occurrence_endpoint(
         title=record.title,
         description=record.description,
         category=sector or "Sem setor",
+        sector_id=record.sector_id,
         location=location,
         owner=owner or "Não atribuído",
         status=status_label(record.status),
