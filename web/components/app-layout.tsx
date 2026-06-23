@@ -1,10 +1,10 @@
 "use client";
 
 import {
-  ArrowRightLeft, Bell, BookOpen, Building2, CalendarCheck, ChevronDown,
-  ClipboardCheck, ClipboardList, FileClock, FileText, HardHat, Home, Landmark,
-  MapPin, Menu, MessageSquareText, Package, PanelLeftClose, PanelLeftOpen,
-  Receipt, Settings, Shield, ShieldCheck, Timer, UserCog, Users, Wrench, X,
+  Bell, BookOpen, Building2, ChevronDown,
+  ClipboardCheck, ClipboardList, FileClock, FileText, Home,
+  MapPin, Menu, Package, PanelLeftClose, PanelLeftOpen,
+  Receipt, Settings, Shield, ShieldCheck, Timer, UserCog, Users, X,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,37 +20,33 @@ const navOperation = [
   { slug: "reunioes", label: "Reuniões", icon: Users, href: "/reunioes" },
   { slug: "relatorios-turno", label: "Relatórios de turno", icon: FileText, href: "/relatorios-turno" },
   { slug: "inspecoes", label: "Inspeções", icon: ClipboardCheck, href: "/inspecoes" },
-  { slug: "diarios-obra", label: "Diário de obra", icon: HardHat, href: "/diarios-obra" },
-  { slug: "manutencao", label: "Manutenção", icon: Wrench, href: "/manutencao" },
   { slug: "preventivas", label: "Preventivas", icon: Timer, href: "/preventivas" },
-  { slug: "checklists", label: "Checklists", icon: CalendarCheck, href: "/checklists" },
-  { slug: "estoque", label: "Estoque", icon: Package, href: "/estoque" },
-  { slug: "pendencias", label: "Pendências turno", icon: ArrowRightLeft, href: "/pendencias" },
   { slug: "solicitacoes-fiscais", label: "Solicitações Fiscais", icon: Receipt, href: "/solicitacoes-fiscais" },
-];
-
-const navAdmin = [
-  { slug: "procedimentos", label: "Procedimentos", icon: BookOpen, href: "/procedimentos" },
-  { slug: "usuarios", label: "Usuários", icon: ShieldCheck, href: "/usuarios" },
-  { slug: "perfis", label: "Perfis de acesso", icon: Shield, href: "/perfis" },
   { slug: "mural", label: "Mural de avisos", icon: Bell, href: "/mural" },
 ];
 
 const cadastrosSub = [
-  { slug: "cadastros-estabelecimento", label: "Estabelecimento", icon: Landmark, href: "/cadastros/estabelecimento" },
   { slug: "cadastros-setores", label: "Setores", icon: Building2, href: "/cadastros/setores" },
   { slug: "cadastros-locais", label: "Locais", icon: MapPin, href: "/cadastros/locais" },
   { slug: "cadastros-funcoes", label: "Funções", icon: UserCog, href: "/cadastros/funcoes" },
+  { slug: "cadastros-procedimentos", label: "Procedimentos", icon: BookOpen, href: "/cadastros/procedimentos" },
+  { slug: "cadastros-categorias-os", label: "Categorias de OS", icon: ClipboardList, href: "/cadastros/categorias-os" },
+  { slug: "cadastros-usuarios", label: "Usuários", icon: ShieldCheck, href: "/usuarios" },
+  { slug: "cadastros-perfis", label: "Perfis de acesso", icon: Shield, href: "/perfis" },
 ];
 
 export function AppLayout({ user, children }: { user: TenantUser; children: ReactNode }) {
   const pathname = usePathname();
   const pathParts = pathname.replace(/^\//, "").split("/");
   const currentSlug = pathname === "/" || pathname === "/dashboard" ? "dashboard" : pathParts[0];
-  const isCadastrosPage = currentSlug === "cadastros";
-  const cadastrosSubSlug = isCadastrosPage && pathParts[1]
+  const isCadastrosPage = currentSlug === "cadastros" || currentSlug === "usuarios" || currentSlug === "perfis";
+  const cadastrosSubSlug = currentSlug === "usuarios"
+    ? "cadastros-usuarios"
+    : currentSlug === "perfis"
+    ? "cadastros-perfis"
+    : currentSlug === "cadastros" && pathParts[1]
     ? `cadastros-${pathParts[1]}`
-    : isCadastrosPage ? "cadastros" : "";
+    : currentSlug === "cadastros" ? "cadastros" : "";
   const [collapsed, setCollapsed] = useState(false);
   const [cadastrosOpen, setCadastrosOpen] = useState(isCadastrosPage);
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -76,13 +72,6 @@ export function AppLayout({ user, children }: { user: TenantUser; children: Reac
         <nav className="nav-list">
           <p className="nav-section">{collapsed ? "" : "Operação"}</p>
           {navOperation.map(({ slug, label, icon: Icon, href }) => (
-            <Link key={slug} href={href} className={`nav-item ${currentSlug === slug ? "active" : ""}`} title={collapsed ? label : undefined} onClick={() => setMobileMenu(false)}>
-              <Icon size={19} aria-hidden="true" />
-              {!collapsed && <span>{label}</span>}
-            </Link>
-          ))}
-          <p className="nav-section">{collapsed ? "" : "Administração"}</p>
-          {navAdmin.map(({ slug, label, icon: Icon, href }) => (
             <Link key={slug} href={href} className={`nav-item ${currentSlug === slug ? "active" : ""}`} title={collapsed ? label : undefined} onClick={() => setMobileMenu(false)}>
               <Icon size={19} aria-hidden="true" />
               {!collapsed && <span>{label}</span>}
@@ -139,7 +128,7 @@ export function AppLayout({ user, children }: { user: TenantUser; children: Reac
             ) : (
               <div className="profile-content">
                 <div className="profile-card"><div className="profile-avatar">{initials}</div><strong>{displayName}</strong><span>{user.role_name ?? "Demonstração"}</span></div>
-                <Link href="/minha-conta" onClick={() => setPanel(null)}><Users /> Minha conta</Link>
+                <Link href="/configuracoes?tab=conta" onClick={() => setPanel(null)}><Users /> Minha conta</Link>
                 <Link href="/usuarios" onClick={() => setPanel(null)}><ShieldCheck /> Segurança e acesso</Link>
                 <Link href="/configuracoes" onClick={() => setPanel(null)}><Settings /> Preferências</Link>
                 <form action={logoutAction}><button className="logout-button" type="submit">Sair da conta</button></form>

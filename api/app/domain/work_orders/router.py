@@ -21,6 +21,7 @@ from app.domain.work_orders.service import (
     create_order,
     delete_order,
     get_order,
+    list_categories,
     list_orders,
     list_orders_cursor,
     transition_order,
@@ -102,6 +103,14 @@ async def list_work_orders_cursor(
         next_cursor=result.next_cursor,
         has_more=result.has_more,
     )
+
+
+@router.get("/categories")
+async def work_order_categories(
+    user: Annotated[AuthenticatedUser, require_permission("work_order.view")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> list[str]:
+    return await list_categories(session, user.company_id)
 
 
 @router.get("/summary")

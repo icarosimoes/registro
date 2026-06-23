@@ -123,7 +123,7 @@ export const moduleDefinitions: Record<string, ModuleDefinition> = {
   },
   inspecoes: {
     slug: "inspecoes", title: "Inspeções", singular: "inspeção", action: "Nova inspeção",
-    description: "Planeje checklists, responsáveis, evidências e resultados.",
+    description: "Inspeções, vistorias, auditorias e checklists recorrentes.",
     records: [
       { id: 633, title: "Áreas comuns — Torre 1", category: "Predial", owner: "Marina Costa", status: "Em andamento", updatedAt: today },
       { id: 632, title: "Apartamento 302", category: "Vistoria", owner: "Rafael Lima", status: "Aguardando", updatedAt: today },
@@ -182,13 +182,12 @@ export const moduleDefinitions: Record<string, ModuleDefinition> = {
     description: "Funções e cargos operacionais.",
     records: [],
   },
-  "cadastros/estabelecimento": {
-    slug: "cadastros/estabelecimento",
-    title: "Estabelecimento",
-    singular: "estabelecimento",
-    action: "Salvar dados",
-    layout: "company",
-    description: "Dados cadastrais do seu hotel ou empresa.",
+  "cadastros/procedimentos": {
+    slug: "cadastros/procedimentos",
+    title: "Procedimentos",
+    singular: "procedimento",
+    action: "Novo procedimento",
+    description: "Gerencie documentos operacionais, SOPs e manuais da empresa.",
     records: [],
   },
   usuarios: {
@@ -212,10 +211,6 @@ export const moduleDefinitions: Record<string, ModuleDefinition> = {
   configuracoes: {
     slug: "configuracoes", title: "Configurações", singular: "preferência", action: "Salvar alterações", layout: "settings",
     description: "Personalize notificações, idioma e experiência da empresa.", records: [],
-  },
-  "minha-conta": {
-    slug: "minha-conta", title: "Minha conta", singular: "perfil", action: "Salvar perfil", layout: "profile",
-    description: "Atualize seus dados pessoais e preferências de acesso.", records: [],
   },
   preventivas: {
     slug: "preventivas", title: "Manutenção Preventiva", singular: "plano preventivo", action: "Novo plano",
@@ -249,5 +244,5 @@ export const moduleDefinitions: Record<string, ModuleDefinition> = {
 };
 
 export const navigationModules = [
-  "ocorrencias", "ordens-servico", "reunioes", "relatorios-turno", "inspecoes", "diarios-obra", "manutencao", "preventivas", "checklists", "estoque", "pendencias", "solicitacoes-fiscais",
+  "ocorrencias", "ordens-servico", "reunioes", "relatorios-turno", "inspecoes", "preventivas", "estoque", "solicitacoes-fiscais",
 ];

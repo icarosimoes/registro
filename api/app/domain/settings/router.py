@@ -257,6 +257,69 @@ async def update_module_recipients(
     return ModuleRecipientsOut(module=module, user_ids=body.user_ids)
 
 
+# ── Categorias de OS ──
+
+
+class CategoryList(BaseModel):
+    items: list[str]
+
+
+class CategoryAdd(BaseModel):
+    name: str
+
+
+@router.get("/work-order-categories", response_model=CategoryList)
+async def get_work_order_categories(
+    user: Annotated[AuthenticatedUser, require_permission("settings.view")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> CategoryList:
+    row = await _get_setting(session, user.company_id, "work_order_categories")
+    items = row.value.get("items", []) if row else []
+    return CategoryList(items=sorted(items))
+
+
+@router.post("/work-order-categories", response_model=CategoryList)
+async def add_work_order_category(
+    body: CategoryAdd,
+    user: Annotated[AuthenticatedUser, require_permission("settings.edit")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> CategoryList:
+    name = body.name.strip()
+    if not name:
+        raise HTTPException(status_code=422, detail={"code": "empty_name"})
+    row = await _get_setting(session, user.company_id, "work_order_categories")
+    if row:
+        items = list(row.value.get("items", []))
+        if name not in items:
+            items.append(name)
+        row.value = {"items": items}
+        flag_modified(row, "value")
+    else:
+        session.add(CompanySetting(
+            company_id=user.company_id,
+            key="work_order_categories",
+            value={"items": [name]},
+        ))
+    await session.commit()
+    return CategoryList(items=sorted(row.value["items"] if row else [name]))
+
+
+@router.delete("/work-order-categories/{name}")
+async def delete_work_order_category(
+    name: str,
+    user: Annotated[AuthenticatedUser, require_permission("settings.edit")],
+    session: Annotated[AsyncSession, Depends(require_session)],
+) -> CategoryList:
+    row = await _get_setting(session, user.company_id, "work_order_categories")
+    if not row:
+        return CategoryList(items=[])
+    items = [i for i in row.value.get("items", []) if i != name]
+    row.value = {"items": items}
+    flag_modified(row, "value")
+    await session.commit()
+    return CategoryList(items=sorted(items))
+
+
 # ── Dados do Estabelecimento ──
 
 

@@ -320,6 +320,7 @@ export interface ModuleRecordPayload {
   status?: string;
   owner_user_id?: number;
   notify_user_ids?: number[];
+  payload?: Record<string, unknown>;
 }
 
 export async function createModuleRecordAction(moduleSlug: string, body: ModuleRecordPayload): Promise<MutationResult> {
@@ -862,6 +863,26 @@ export interface ChecklistTemplatePayload {
   items?: { label: string; sort_order: number }[];
 }
 
+export interface ChecklistTemplateDetail {
+  id: number;
+  name: string;
+  description: string | null;
+  recurrence: string;
+  category: string | null;
+  assigned_user_id: number | null;
+  assigned_user_name: string | null;
+  active: boolean;
+  next_due: string | null;
+  item_count: number;
+  items: { id: number; label: string; sort_order: number }[];
+}
+
+export async function fetchChecklistTemplateAction(id: number): Promise<ChecklistTemplateDetail | null> {
+  const response = await authedFetch(`/checklists/templates/${id}`);
+  if (!response.ok) return null;
+  return response.json();
+}
+
 export async function createChecklistTemplateAction(body: ChecklistTemplatePayload): Promise<MutationResult> {
   const response = await authedFetch("/checklists/templates", { method: "POST", body: JSON.stringify(body) });
   if (!response.ok) {
@@ -1036,6 +1057,29 @@ export async function deleteHandoffAction(id: number): Promise<MutationResult> {
   return { ok: true };
 }
 
+export interface HandoffItem {
+  id: number;
+  title: string;
+  description: string | null;
+  priority: string;
+  category: string | null;
+  target_shift: string | null;
+  target_date: string;
+  status: string;
+  created_by_name: string | null;
+  read_at: string | null;
+  resolved_at: string | null;
+  resolution_notes: string | null;
+  created_at: string;
+}
+
+export async function fetchHandoffsForReportAction(shiftReportId: number): Promise<HandoffItem[]> {
+  const response = await authedFetch(`/handoffs?shift_report_id=${shiftReportId}&page_size=50`);
+  if (!response.ok) return [];
+  const data = await response.json();
+  return data.items ?? [];
+}
+
 // --- Work Orders ---
 
 export interface WorkOrderPayload {
@@ -1088,5 +1132,41 @@ export async function deleteWorkOrderAction(id: number): Promise<MutationResult>
     if (response.status === 401) throw new Error("unauthorized");
     return { ok: false, error: "Erro ao excluir ordem de serviço." };
   }
+  return { ok: true };
+}
+
+export async function fetchLocationsAction(): Promise<{ id: number; name: string }[]> {
+  const response = await authedFetch("/registries?category=Local&page=1&page_size=100");
+  if (!response.ok) return [];
+  const data = await response.json();
+  return (data.items ?? []).map((i: { id: number; name: string }) => ({ id: i.id, name: i.name }));
+}
+
+export async function fetchWorkOrderCategories(): Promise<string[]> {
+  const response = await authedFetch("/work-orders/categories");
+  if (!response.ok) return [];
+  return response.json();
+}
+
+export async function fetchConfiguredCategories(): Promise<string[]> {
+  const response = await authedFetch("/settings/work-order-categories");
+  if (!response.ok) return [];
+  const data = await response.json();
+  return data.items ?? [];
+}
+
+export async function addCategoryAction(name: string): Promise<MutationResult> {
+  const response = await authedFetch("/settings/work-order-categories", {
+    method: "POST", body: JSON.stringify({ name }),
+  });
+  if (!response.ok) return { ok: false, error: "Erro ao criar categoria." };
+  return { ok: true, data: await response.json() };
+}
+
+export async function deleteCategoryAction(name: string): Promise<MutationResult> {
+  const response = await authedFetch(`/settings/work-order-categories/${encodeURIComponent(name)}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) return { ok: false, error: "Erro ao excluir categoria." };
   return { ok: true };
 }

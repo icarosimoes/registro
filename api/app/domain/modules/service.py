@@ -63,6 +63,7 @@ async def create_record(
     status: str,
     owner_user_id: int | None,
     notify_user_ids: list[int] | None,
+    payload: dict | None = None,
 ) -> ModuleRecordRow:
     owner_id = owner_user_id or user_id
     record = ModuleRecord(
@@ -75,6 +76,7 @@ async def create_record(
         owner_user_id=owner_id,
         created_by_user_id=user_id,
         notify_user_ids=notify_user_ids,
+        payload=payload,
     )
     session.add(record)
     await session.flush()
@@ -123,10 +125,14 @@ async def update_record(
     )
     if record is None:
         return None
-    before = {k: str(getattr(record, k)) for k in updates if k != "notify_user_ids"}
+    skip_diff = {"notify_user_ids", "payload"}
+    before = {k: str(getattr(record, k)) for k in updates if k not in skip_diff}
     for field, value in updates.items():
         setattr(record, field, value)
-    diff = compute_diff(before, {k: str(v) for k, v in updates.items() if k != "notify_user_ids"})
+    if "payload" in updates:
+        from sqlalchemy.orm.attributes import flag_modified
+        flag_modified(record, "payload")
+    diff = compute_diff(before, {k: str(v) for k, v in updates.items() if k not in skip_diff})
     if diff:
         await record_event(
             session,

@@ -14,6 +14,7 @@ class OccurrenceSummary(BaseModel):
     title: str
     description: str | None
     category: str
+    sector_id: int | None
     location: str | None
     owner: str
     status: str

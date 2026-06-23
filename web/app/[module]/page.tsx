@@ -20,15 +20,20 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
     if (module === "ocorrencias") {
       try {
         type OccurrencePage = {
-          items: Array<{ id: number; legacy_id: number; title: string; description: string | null; category: string; location: string | null; owner: string; status: string; deadline: string | null; updated_at: string }>;
+          items: Array<{ id: number; legacy_id: number; title: string; description: string | null; category: string; location: string | null; owner: string; status: string; deadline: string | null; sector_id: number | null; updated_at: string }>;
           total: number;
           page: number;
           page_size: number;
         };
+        type SectorItem = { id: number; name: string; category: string };
+        type SectorPage = { items: SectorItem[]; total: number };
         const pg = Math.max(1, parseInt(query.page ?? "1", 10) || 1);
         const search = query.search ?? "";
         const searchParam = search ? `&search=${encodeURIComponent(search)}` : "";
-        const data = await tenantFetch<OccurrencePage>(`/occurrences?page=${pg}&page_size=20${searchParam}`);
+        const [data, localsData] = await Promise.all([
+          tenantFetch<OccurrencePage>(`/occurrences?page=${pg}&page_size=20${searchParam}`),
+          tenantFetch<SectorPage>("/registries?category=local&page=1&page_size=100"),
+        ]);
         hydratedDefinition = {
           ...definition,
           source: "api",
@@ -41,9 +46,13 @@ export default async function ModulePage({ params, searchParams }: { params: Pro
               owner: item.owner,
               status: item.status,
               deadline: item.deadline ?? undefined,
+              sectorId: item.sector_id ?? undefined,
               updatedAt: new Intl.DateTimeFormat("pt-BR").format(new Date(item.updated_at)),
           })),
           serverPagination: { total: data.total, page: data.page, pageSize: data.page_size, search },
+          extraData: {
+            sectors: localsData.items.map((s) => ({ id: s.id, name: s.name })),
+          },
         };
       } catch (error) {
         if (error instanceof Error && error.message === "unauthorized") throw error;

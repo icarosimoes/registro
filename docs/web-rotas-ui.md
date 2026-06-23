@@ -7,26 +7,25 @@
 | `/` | entrada | redireciona conforme cookie tenant | sessão server-side |
 | `/login` | autenticação tenant | operacional | API `/auth/login` |
 | `/dashboard` | dashboard autenticado | operacional | métricas reais via API `/dashboard/metrics` |
-| `/design-preview` | referência visual | protótipo livre | demonstração local |
-| `/ocorrencias` | lista e CRUD | CRUD via API + mutações server-side | API `occurrences` isolada por tenant |
+| `/ocorrencias` | lista e CRUD | CRUD via API, campo Local via select de cadastros | API `occurrences` + `registries` isolada por tenant |
 | `/reunioes` | lista e CRUD | CRUD via API + mutações server-side | API `meetings` (tabela dedicada) isolada por tenant |
-| `/relatorios-turno` | lista e CRUD | CRUD via API + mutações server-side | API `shift-reports` (tabela dedicada) isolada por tenant |
-| `/inspecoes` | lista e CRUD | CRUD via API + mutações server-side | API `modules/inspecoes` isolada por tenant |
-| `/diarios-obra` | lista e CRUD | CRUD via API + mutações server-side | API `modules/diarios-obra` isolada por tenant |
-| `/manutencao` | lista e CRUD | CRUD via API + mutações server-side | API `modules/manutencao` isolada por tenant |
+| `/relatorios-turno` | lista e CRUD + pendências inline | CRUD via API + seção HandoffSection integrada | API `shift-reports` + `handoffs` isolada por tenant |
+| `/inspecoes` | tela dedicada com abas | Inspeções: CRUD com checklist 30 itens + payload completo. Checklists: CRUD de templates com itens | API `modules/inspecoes` + `checklists/templates` |
 | `/solicitacoes-fiscais` | lista, formulário condicional, SLA, anexos e tratativa | CRUD via API + mutações server-side | API `fiscal_requests` isolada por tenant |
-| `/procedimentos` | lista, CRUD e anexos | CRUD via API + upload/download de anexos | API `procedures` + `attachments` isolada por tenant |
-| `/cadastros` | lista e CRUD | CRUD via API + mutações server-side | API `registries` (setores, locais e funções) isolada por tenant |
+| `/ordens-servico` | Kanban com drag-and-drop | CRUD + transições + categorias via select | API `work-orders` + `work-orders/categories` isolada por tenant |
+| `/preventivas` | lista e CRUD | CRUD via API + geração automática de OS | API `preventive-plans` isolada por tenant |
+| `/mural` | cartões e CRUD | CRUD via API + mutações server-side | API `bulletin` (tabela dedicada) isolada por tenant |
+| `/cadastros/setores` | CRUD simples | registries categoria Setor | API `registries` |
+| `/cadastros/locais` | CRUD simples | registries categoria Local | API `registries` |
+| `/cadastros/funcoes` | CRUD simples | registries categoria Função | API `registries` |
+| `/cadastros/procedimentos` | lista, CRUD e anexos | CRUD via API + upload/download de anexos | API `procedures` + `attachments` |
+| `/cadastros/categorias-os` | CRUD de categorias | gerencia categorias de OS via settings | API `settings/work-order-categories` + `work-orders/categories` |
 | `/usuarios` | lista e CRUD + convite | CRUD via API + convite por e-mail + upload avatar | API `users` + `users/invite` isolada por tenant |
 | `/perfis` | gestão de perfis de acesso | CRUD de roles com checkboxes de permissões | API `roles` + `roles/permissions` isolada por tenant |
+| `/configuracoes` | tela unificada com 3 abas | Estabelecimento + Integrações (Brevo/Evolution) + Minha conta | API `settings/company` + `settings/brevo` + `settings/evolution` + `users/me` |
 | `/definir-senha` | definição de senha (público) | formulário público ativado por token de convite | API `auth/set-password` |
-| `/mural` | cartões e CRUD | CRUD via API + mutações server-side | API `bulletin` (tabela dedicada) isolada por tenant |
-| `/ordens-servico` | Kanban com drag-and-drop | CRUD + transições via API + server actions | API `work-orders` isolada por tenant |
-| `/preventivas` | lista e CRUD | CRUD via API + geração automática de OS | API `preventive-plans` isolada por tenant |
-| `/checklists` | lista e CRUD | templates + execuções via API + geração automática | API `checklists/templates` + `checklists/executions` isolada por tenant |
-| `/estoque` | lista e CRUD + movimentações | itens de estoque com entrada/saída/ajuste | API `stock/items` + `stock/movements` isolada por tenant |
-| `/pendencias` | lista e CRUD + leitura/resolução | pendências entre turnos com confirmação | API `handoffs` isolada por tenant |
-| `/configuracoes`, `/minha-conta` | formulários | operacional local | preferências do navegador |
+
+Rotas ocultas do menu (acessíveis via URL): `/diarios-obra`, `/manutencao`, `/estoque`, `/checklists`, `/pendencias`, `/minha-conta`, `/procedimentos`.
 
 ## Painel administrativo (`admin/`)
 
@@ -102,11 +101,15 @@ Todo novo CSS deve usar esses tokens em vez de valores hardcoded.
 
 Toda lista tem título, contador, ação principal, filtros, tabela/cartões responsivos, paginação e estados de carregamento, vazio, erro e permissão. Exclusões exigem confirmação; ações exibem feedback. Ações sem permissão não aparecem e continuam bloqueadas na API.
 
-## Cadastros (setores, locais, funções)
+## Cadastros (setores, locais, funções, estabelecimento)
 
 Cadastros são registros simples (nome + categoria fixa). Diferente dos módulos operacionais, clicar na linha da tabela abre diretamente o modal de edição — não o drawer de detalhes com status, tratativa e descrição. Isso porque cadastros não possuem timeline, descrição ou fluxo de tratativa; são entidades auxiliares de CRUD puro.
 
 O formulário de cadastro contém apenas o campo "Nome". A categoria é determinada pela sub-rota (`/cadastros/setores` → Setor, `/cadastros/locais` → Local, `/cadastros/funcoes` → Função) e enviada como campo hidden.
+
+### Estabelecimento
+
+A rota `/cadastros/estabelecimento` possui uma page estática dedicada (`web/app/cadastros/estabelecimento/page.tsx`) em vez de usar a rota dinâmica `[sub]`. Isso porque o estabelecimento não é um registry — usa layout `company` com o componente `CompanySettingsSection`, que exibe e edita os dados cadastrais do tenant (nome, e-mail, CNPJ, fuso horário). A rota estática tem prioridade sobre a dinâmica no Next.js.
 
 ## Tratativa (timeline de conversa)
 

@@ -3,6 +3,7 @@
 import {
   createWorkOrderAction,
   deleteWorkOrderAction,
+  fetchWorkOrderCategories,
   transitionWorkOrderAction,
   updateWorkOrderAction,
 } from "@/app/actions";
@@ -10,7 +11,7 @@ import type { TenantUser } from "@/lib/api";
 import type { ModuleDefinition, ModuleRecord } from "@/lib/module-definitions";
 import { GripVertical, Plus, Search, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 
 const KANBAN_COLUMNS = [
   { key: "aberta", label: "Aberta", color: "#3b82f6" },
@@ -255,6 +256,52 @@ export function KanbanBoard({
   );
 }
 
+function useCategoryOptions() {
+  const [categories, setCategories] = useState<string[]>([]);
+  useEffect(() => {
+    fetchWorkOrderCategories().then(setCategories);
+  }, []);
+  return categories;
+}
+
+function CategorySelect({ value, onChange, categories }: {
+  value: string;
+  onChange: (v: string) => void;
+  categories: string[];
+}) {
+  const [custom, setCustom] = useState(false);
+
+  if (custom) {
+    return (
+      <div style={{ display: "flex", gap: "var(--sp-2)" }}>
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Nova categoria..."
+          autoFocus
+          style={{ flex: 1 }}
+        />
+        <button type="button" onClick={() => { setCustom(false); onChange(""); }}
+          style={{ fontSize: "var(--font-sm)", color: "var(--blue)", background: "none", border: "none", cursor: "pointer", whiteSpace: "nowrap" }}>
+          Voltar
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <select value={value} onChange={(e) => {
+      if (e.target.value === "__new__") { setCustom(true); onChange(""); }
+      else onChange(e.target.value);
+    }}>
+      <option value="">Sem categoria</option>
+      {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+      <option value="__new__">+ Nova categoria</option>
+    </select>
+  );
+}
+
 function CreateWorkOrderModal({
   onClose,
   onCreated,
@@ -269,6 +316,7 @@ function CreateWorkOrderModal({
   const [slaHours, setSlaHours] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const categories = useCategoryOptions();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -331,12 +379,7 @@ function CreateWorkOrderModal({
             </label>
             <label>
               Categoria
-              <input
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="Ex: Elétrica, Hidráulica"
-              />
+              <CategorySelect value={category} onChange={setCategory} categories={categories} />
             </label>
             <label>
               SLA (horas)
@@ -376,6 +419,7 @@ function EditWorkOrderModal({
   const [category, setCategory] = useState(record.category === "Geral" ? "" : record.category);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const categories = useCategoryOptions();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -435,12 +479,7 @@ function EditWorkOrderModal({
             </label>
             <label>
               Categoria
-              <input
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="Ex: Elétrica, Hidráulica"
-              />
+              <CategorySelect value={category} onChange={setCategory} categories={categories} />
             </label>
           </div>
           <footer>

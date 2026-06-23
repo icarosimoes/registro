@@ -110,3 +110,42 @@ Essa regra passa a integrar a Definition of Done: código sem a atualização do
 - Dados reais de ocorrências não são mais substituídos por cópias antigas do `localStorage`.
 - Como mutações ainda não existem na API, ocorrências reais ficam em modo leitura e a interface comunica essa limitação.
 - Para crescimento de volume, permanece planejada paginação e busca server-side sob demanda, sem hidratar todo o conjunto no Next.js.
+
+## 2026-06-23 — Simplificação do produto e inspeções
+
+### Reestruturação do menu lateral
+
+O menu lateral foi simplificado de ~22 para ~16 itens:
+- Diário de obra e Manutenção corretiva removidos do menu (rotas permanecem acessíveis via URL)
+- Estoque ocultado do menu
+- Pendências de turno absorvidas como seção dentro de Relatórios de turno (componente `HandoffSection`)
+- Checklists absorvidos como aba dentro de Inspeções (aba "Checklists" em `/inspecoes?tab=checklists`)
+- Procedimentos movidos de Administração para Cadastros (`/cadastros/procedimentos`)
+- Usuários e Perfis de acesso movidos para Cadastros
+- Configurações, Minha conta e Estabelecimento unificados em `/configuracoes` com 3 abas
+- Seção "Administração" eliminada (Mural subiu para Operação)
+
+### Inspeções — dados do payload expostos
+
+As 4.497 conferências de suíte armazenadas em `module_records` possuem um `payload` JSON com dados que o frontend não exibia:
+- `date` (data da conferência), `maid` (camareira), `obs` (observação), `location_id` (local/UH)
+- `items[]` com 30 itens de checklist, cada um com `valuation` (sim/nao), `register` (observação) e `occurrence_id`
+
+A tela de inspeções foi reescrita com componente dedicado (`InspectionViewer`) que exibe tabela com camareira, local, data, score de itens, e drawer de detalhes com checklist completo. CRUD completo implementado com formulário interativo (toggle sim/não por item).
+
+Os nomes dos 30 itens do checklist foram extraídos do template Blade da V1 (`check_suites/create.blade.php`) e hardcoded no componente. Se os itens mudarem no Chess Hotel, o array `CHECKLIST_LABELS` em `inspection-viewer.tsx` precisa ser atualizado.
+
+### Categorias de OS
+
+Adicionado endpoint `GET /work-orders/categories` que retorna categorias distintas (merge entre as usadas em OS existentes e as cadastradas via `company_settings`). CRUD de categorias em `/cadastros/categorias-os`. O campo categoria nos modais de OS (Kanban) foi alterado de texto livre para `<select>` com as opções existentes + opção "Nova categoria".
+
+### Ocorrências — campo Setor/Local
+
+O campo "Categoria" no formulário de ocorrências foi substituído por um `<select>` de Locais (vindos de `/cadastros/locais`), que é o que a API realmente aceita como `sector_id`. O campo de texto livre "Geral" que existia antes era ignorado pela API.
+
+### Migração V1 para produção — pontos de atenção
+
+- **`module_records.payload`**: o endpoint genérico `/modules/{slug}` agora retorna e aceita `payload` (JSON). Ao migrar dados da V1, garantir que o campo `payload` seja populado com a estrutura `{date, maid, obs, location_id, items[]}` para inspeções.
+- **`location_id` no payload de inspeções**: referencia IDs da tabela `locations` (cadastro de Locais). Se os IDs mudarem na migração, o `location_id` dentro do payload JSON precisará ser remapeado — diferente de FKs normais, o JSON não é atualizado por CASCADE.
+- **Categorias de OS**: as categorias existentes (Acabamento, Elétrica, HVAC, Hidráulica) vêm do campo `work_orders.category`. Ao migrar, elas aparecem automaticamente. Categorias adicionais podem ser pré-cadastradas via `company_settings` com key `work_order_categories`.
+- **Nomes dos itens de checklist**: hardcoded em `CHECKLIST_LABELS` no frontend (`web/components/inspection-viewer.tsx`). São os mesmos 30 itens do template Blade V1. Se o Chess Hotel usar itens diferentes por tipo de suíte, será necessário tornar essa lista dinâmica (ex: vindo de um `checklist_template`).

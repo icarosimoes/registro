@@ -1,17 +1,21 @@
 import { AppLayout } from "@/components/app-layout";
-import { OperationalModule } from "@/components/operational-module";
 import { currentTenantUser } from "@/lib/api";
-import { moduleDefinitions } from "@/lib/module-definitions";
 import { redirect } from "next/navigation";
+import { CategoryManager } from "./manager";
 
-export default async function EstabelecimentoPage() {
-  const definition = moduleDefinitions["cadastros/estabelecimento"];
-
+export default async function CategoriasOSPage() {
   try {
     const user = await currentTenantUser();
     return (
       <AppLayout user={user}>
-        <OperationalModule definition={definition} user={user} />
+        <header className="module-heading">
+          <div>
+            <p className="eyebrow">Cadastros</p>
+            <h1>Categorias de OS</h1>
+            <p>Gerencie as categorias disponíveis para Ordens de Serviço.</p>
+          </div>
+        </header>
+        <CategoryManager />
       </AppLayout>
     );
   } catch (error) {

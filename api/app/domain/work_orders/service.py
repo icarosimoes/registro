@@ -12,6 +12,27 @@ from app.models import User, WorkOrder
 from app.models.operations import WORK_ORDER_STATUSES
 
 
+async def list_categories(session: AsyncSession, company_id: int) -> list[str]:
+    from app.models import CompanySetting
+
+    result = await session.execute(
+        select(WorkOrder.category)
+        .where(WorkOrder.company_id == company_id, WorkOrder.category.isnot(None), WorkOrder.deleted_at.is_(None))
+        .distinct()
+    )
+    used = {row[0] for row in result.fetchall()}
+
+    setting = (await session.execute(
+        select(CompanySetting).where(
+            CompanySetting.company_id == company_id,
+            CompanySetting.key == "work_order_categories",
+        )
+    )).scalar_one_or_none()
+    configured = set(setting.value.get("items", [])) if setting else set()
+
+    return sorted(used | configured)
+
+
 class WorkOrderRow(NamedTuple):
     order: WorkOrder
     assigned_name: str | None

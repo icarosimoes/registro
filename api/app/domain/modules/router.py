@@ -26,6 +26,7 @@ class ModuleRecordSummary(BaseModel):
     category: str | None
     owner: str
     status: str
+    payload: dict | None = None
     updated_at: datetime
 
 
@@ -43,6 +44,7 @@ class ModuleRecordCreate(BaseModel):
     status: str = "Em andamento"
     owner_user_id: int | None = None
     notify_user_ids: list[int] | None = None
+    payload: dict | None = None
 
 
 class ModuleRecordUpdate(BaseModel):
@@ -52,6 +54,7 @@ class ModuleRecordUpdate(BaseModel):
     status: str | None = None
     owner_user_id: int | None = None
     notify_user_ids: list[int] | None = None
+    payload: dict | None = None
 
 
 def _validate_module(module_slug: str) -> None:
@@ -79,6 +82,7 @@ async def list_records_endpoint(
                 category=rec.category,
                 owner=owner_name or "Não atribuído",
                 status=rec.status,
+                payload=rec.payload,
                 updated_at=rec.updated_at,
             )
             for rec, owner_name in rows
@@ -110,6 +114,7 @@ async def create_record_endpoint(
         status=body.status,
         owner_user_id=body.owner_user_id,
         notify_user_ids=body.notify_user_ids,
+        payload=body.payload,
     )
     return ModuleRecordSummary(
         id=record.id,
@@ -118,6 +123,7 @@ async def create_record_endpoint(
         category=record.category,
         owner=owner_name or "Não atribuído",
         status=record.status,
+        payload=record.payload,
         updated_at=record.updated_at,
     )
 
@@ -152,6 +158,7 @@ async def update_record_endpoint(
         category=record.category,
         owner=owner_name or "Não atribuído",
         status=record.status,
+        payload=record.payload,
         updated_at=record.updated_at,
     )
 

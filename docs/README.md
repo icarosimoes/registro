@@ -4,6 +4,8 @@ Esta pasta é a fonte de verdade técnica, funcional e operacional do Registro. 
 
 ## Comece aqui
 
+- [O que e o Registro (contexto tecnico-funcional)](contexto-registro.md)
+- [Apresentacao do Registro (visao externa)](apresentacao-registro.md)
 - [Estado atual e mapa do sistema](mapa.md)
 - [Arquitetura](arquitetura.md)
 - [Modelo de domínio](domain-model.md)
