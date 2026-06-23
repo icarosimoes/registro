@@ -26,12 +26,14 @@ async def list_categories(session: AsyncSession, company_id: int) -> list[str]:
     )
     used = {row[0] for row in result.fetchall()}
 
-    setting = (await session.execute(
-        select(CompanySetting).where(
-            CompanySetting.company_id == company_id,
-            CompanySetting.key == "work_order_categories",
+    setting = (
+        await session.execute(
+            select(CompanySetting).where(
+                CompanySetting.company_id == company_id,
+                CompanySetting.key == "work_order_categories",
+            )
         )
-    )).scalar_one_or_none()
+    ).scalar_one_or_none()
     configured = set(setting.value.get("items", [])) if setting else set()
 
     return sorted(used | configured)

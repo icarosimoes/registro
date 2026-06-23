@@ -131,6 +131,7 @@ async def update_record(
         setattr(record, field, value)
     if "payload" in updates:
         from sqlalchemy.orm.attributes import flag_modified
+
         flag_modified(record, "payload")
     diff = compute_diff(before, {k: str(v) for k, v in updates.items() if k not in skip_diff})
     if diff:

@@ -295,11 +295,13 @@ async def add_work_order_category(
         row.value = {"items": items}
         flag_modified(row, "value")
     else:
-        session.add(CompanySetting(
-            company_id=user.company_id,
-            key="work_order_categories",
-            value={"items": [name]},
-        ))
+        session.add(
+            CompanySetting(
+                company_id=user.company_id,
+                key="work_order_categories",
+                value={"items": [name]},
+            )
+        )
     await session.commit()
     return CategoryList(items=sorted(row.value["items"] if row else [name]))
 
