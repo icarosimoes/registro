@@ -71,7 +71,7 @@ export type ModuleDefinition = {
   description: string;
   singular: string;
   action: string;
-  layout?: "table" | "cards" | "settings" | "profile" | "kanban";
+  layout?: "table" | "cards" | "settings" | "profile" | "kanban" | "company";
   source?: "local" | "api";
   records: ModuleRecord[];
   serverPagination?: {
@@ -180,6 +180,15 @@ export const moduleDefinitions: Record<string, ModuleDefinition> = {
   "cadastros/funcoes": {
     slug: "cadastros/funcoes", title: "Funções", singular: "função", action: "Nova função",
     description: "Funções e cargos operacionais.",
+    records: [],
+  },
+  "cadastros/estabelecimento": {
+    slug: "cadastros/estabelecimento",
+    title: "Estabelecimento",
+    singular: "estabelecimento",
+    action: "Salvar dados",
+    layout: "company",
+    description: "Dados cadastrais do seu hotel ou empresa.",
     records: [],
   },
   usuarios: {

@@ -2,7 +2,7 @@
 
 import {
   ArrowRightLeft, Bell, BookOpen, Building2, CalendarCheck, ChevronDown,
-  ClipboardCheck, ClipboardList, FileClock, FileText, HardHat, Home,
+  ClipboardCheck, ClipboardList, FileClock, FileText, HardHat, Home, Landmark,
   MapPin, Menu, MessageSquareText, Package, PanelLeftClose, PanelLeftOpen,
   Receipt, Settings, Shield, ShieldCheck, Timer, UserCog, Users, Wrench, X,
 } from "lucide-react";
@@ -37,6 +37,7 @@ const navAdmin = [
 ];
 
 const cadastrosSub = [
+  { slug: "cadastros-estabelecimento", label: "Estabelecimento", icon: Landmark, href: "/cadastros/estabelecimento" },
   { slug: "cadastros-setores", label: "Setores", icon: Building2, href: "/cadastros/setores" },
   { slug: "cadastros-locais", label: "Locais", icon: MapPin, href: "/cadastros/locais" },
   { slug: "cadastros-funcoes", label: "Funções", icon: UserCog, href: "/cadastros/funcoes" },
